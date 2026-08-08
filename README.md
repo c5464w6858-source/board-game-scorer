@@ -40,10 +40,11 @@ reference — there's no local Supabase stack wired up in this repo.
 
 ## Deploy
 
-Deployed to the existing Netlify site `board-game-scorer.netlify.app`
-(`netlify.toml` sets the build command/publish dir and SPA redirect). Env
-vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) are set on the
-Netlify site itself.
+Deployed to the existing Netlify site `board-game-scorer.netlify.app`, linked
+to this repo's `main` branch for continuous deployment — pushes to `main`
+trigger a new build automatically (`netlify.toml` sets the build
+command/publish dir and SPA redirect). Env vars (`VITE_SUPABASE_URL`,
+`VITE_SUPABASE_PUBLISHABLE_KEY`) are set on the Netlify site itself.
 
 ## Not yet built
 
