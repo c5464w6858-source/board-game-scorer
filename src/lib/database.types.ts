@@ -56,6 +56,72 @@ export type Database = {
           },
         ]
       }
+      course_imports: {
+        Row: {
+          course_count: number | null
+          error: string | null
+          finished_at: string | null
+          id: number
+          started_at: string
+        }
+        Insert: {
+          course_count?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: never
+          started_at?: string
+        }
+        Update: {
+          course_count?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: never
+          started_at?: string
+        }
+        Relationships: []
+      }
+      courses: {
+        Row: {
+          booking_url: string | null
+          holes: number | null
+          id: string
+          lat: number
+          lon: number
+          name: string
+          phone: string | null
+          postcode: string | null
+          town: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          booking_url?: string | null
+          holes?: number | null
+          id: string
+          lat: number
+          lon: number
+          name: string
+          phone?: string | null
+          postcode?: string | null
+          town?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          booking_url?: string | null
+          holes?: number | null
+          id?: string
+          lat?: number
+          lon?: number
+          name?: string
+          phone?: string | null
+          postcode?: string | null
+          town?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -134,6 +200,7 @@ export type Database = {
       rounds: {
         Row: {
           cancelled: boolean
+          course_id: string | null
           course_name: string
           created_at: string
           holes: number
@@ -148,6 +215,7 @@ export type Database = {
         }
         Insert: {
           cancelled?: boolean
+          course_id?: string | null
           course_name: string
           created_at?: string
           holes?: number
@@ -162,6 +230,7 @@ export type Database = {
         }
         Update: {
           cancelled?: boolean
+          course_id?: string | null
           course_name?: string
           created_at?: string
           holes?: number
@@ -175,6 +244,13 @@ export type Database = {
           tee_time?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "rounds_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "rounds_host_id_fkey"
             columns: ["host_id"]
