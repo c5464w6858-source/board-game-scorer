@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --color-fairway: #0e1f16;
+  --color-fairway-2: #17301f;
+  --color-fairway-line: #2a4033;
+  --color-green: #137a3a;
+  --color-green-dark: #0e5c2b;
+  --color-green-tint: #e4f3e8;
+  --color-flag: #c8f169;
+  --color-clubhouse: #f5f4ef;
+  --color-card: #ffffff;
+  --color-line: #e3e1d8;
+  --color-line-soft: #eceae2;
+  --color-chip: #f0eee7;
+  --color-segment: #e9e7df;
+  --color-muted: #5b6660;
+  --color-muted-dark: #b9c7be;
+  --color-alert: #e5532d;
+  --color-danger: #b83a1c;
+  --color-amber: #e5a23b;
+
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+}
+
 :root {
   color-scheme: light;
 }
@@ -12,7 +37,18 @@ body,
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f0fdf4;
-  color: #052e16;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  background: var(--color-line);
+  color: var(--color-fairway);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: 2px;
 }

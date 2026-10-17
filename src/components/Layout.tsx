@@ -1,32 +1,13 @@
-import { NavLink, Outlet } from 'react-router-dom'
-
-const tabs = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/courses', label: 'Courses', end: false },
-]
+import { Outlet } from 'react-router-dom'
+import { BottomTabBar } from './ui'
 
 export function Layout() {
   return (
-    <div className="flex min-h-full flex-col">
-      <main className="mx-auto w-full max-w-xl flex-1 p-4 pb-24">
+    <div className="mx-auto flex min-h-full max-w-[480px] flex-col bg-clubhouse">
+      <main className="flex-1 px-5 pt-5 pb-28">
         <Outlet />
       </main>
-      <nav className="fixed inset-x-0 bottom-0 z-[1000] border-t border-green-200 bg-white">
-        <div className="mx-auto flex max-w-xl">
-          {tabs.map((t) => (
-            <NavLink
-              key={t.to}
-              to={t.to}
-              end={t.end}
-              className={({ isActive }) =>
-                `flex-1 py-3 text-center text-sm font-semibold ${isActive ? 'text-green-700' : 'text-slate-500'}`
-              }
-            >
-              {t.label}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
+      <BottomTabBar />
     </div>
   )
 }
