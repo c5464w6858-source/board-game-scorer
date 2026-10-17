@@ -68,3 +68,31 @@ export const playStyles = [
 ] as const
 
 export const playStyleLabel = (v: string) => playStyles.find((p) => p.value === v)?.label ?? v
+
+const ymd = (d: Date) => part(d, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-')
+
+// The next `n` calendar days in UK time, for date chips.
+export function upcomingDays(n: number, now = new Date()) {
+  return Array.from({ length: n }, (_, i) => {
+    const d = new Date(now.getTime() + i * 864e5)
+    return { key: ymd(d), dow: part(d, { weekday: 'short' }), day: part(d, { day: 'numeric' }) }
+  })
+}
+
+// "2026-10-26" + "07:30" as UK wall-clock time to a UTC ISO string.
+export function londonToIso(day: string, time: string) {
+  const asUtc = Date.parse(`${day}T${time}:00Z`)
+  const shown = new Date(
+    new Intl.DateTimeFormat('sv-SE', {
+      timeZone: TZ,
+      dateStyle: 'short',
+      timeStyle: 'medium',
+    })
+      .format(new Date(asUtc))
+      .replace(' ', 'T') + 'Z',
+  ).getTime()
+  return new Date(asUtc - (shown - asUtc)).toISOString()
+}
+
+export const weekdayName = (day: string) =>
+  part(new Date(`${day}T12:00:00Z`), { weekday: 'long' })
