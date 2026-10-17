@@ -237,6 +237,7 @@ export function Discover() {
           <Link to="/host" className="font-semibold text-green">Host a round</Link>
         </Empty>
       )}
+      <Link to="/courses" className="self-center text-sm font-medium text-green">Browse all courses</Link>
     </div>
   )
 }
