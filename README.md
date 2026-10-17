@@ -20,7 +20,10 @@ npm run dev
 - `rounds`: a hosted tee time (course, date/time, 2–4 players including the host, 9 or 18 holes, optional handicap range)
 - `round_requests`: a golfer asking to join a round. The host accepts or declines, and the requester can withdraw. Accepted requests are visible to everyone, so a round shows who's playing. Pending ones are visible only to the requester and the host. A trigger blocks overfilling a round and joining one that's cancelled or already teed off.
 - `courses`: every named UK golf course from OpenStreetMap (name, location, town, postcode, website, phone). `rounds.course_id` links a round to one.
+- `round_messages`: round chat, readable and writable only by the host and accepted players (Supabase Realtime).
 - `connections`: golfer-to-golfer requests (one per pair). Only the two golfers involved can see them.
+
+Rounds also carry `format`, `walking`, `pace_note`, `green_fee_pence` (information only, never charged), `visibility` (public or buddies) and `auto_accept_buddies`. Profiles carry `home_club_id`, `play_style`, `bag` and `handicap_source` (self-declared until an official link exists). An `avatars` storage bucket holds profile photos, one folder per user.
 
 Your upcoming games are rounds you host plus rounds where your request was accepted, with `tee_time` in the future.
 
@@ -39,3 +42,13 @@ select net.http_post(
 ```
 
 There's no public tee-time API (most UK clubs use BRS/GolfNow, which don't offer one), so **Check live tee times** opens the club's own booking page: `booking_url` if set, else the club website. Courses with neither get a web search for "<course> tee times". OpenStreetMap's licence requires the "© OpenStreetMap contributors" credit shown in the app.
+
+## Demo data
+
+`npm run seed` creates two golfers, Paul (the signed-in user) and Steve, with a few rounds, a buddy connection and some chat. It needs the service-role key, which bypasses row-level security, so keep it out of the repo and out of `.env`:
+
+```bash
+SUPABASE_SERVICE_ROLE_KEY=... SEED_PASSWORD=... npm run seed
+```
+
+Sign in as `paul@buddygolf.test` with `SEED_PASSWORD`. Re-running rebuilds their rounds.
