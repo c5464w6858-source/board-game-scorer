@@ -1,0 +1,1487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BuddyGolf Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E3E1D8;font-family:'Geist',system-ui,sans-serif;color:#0E1F16}
+button{font:inherit;cursor:pointer}
+a{color:#137A3A}
+.board.dark a{color:#C8F169}
+header.top{padding:32px 24px 8px}
+header.top h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;letter-spacing:-.03em;margin:0 0 12px}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px}
+nav.toc a{background:#FFFFFF;color:#0E1F16;text-decoration:none;font-size:13px;padding:6px 12px;border-radius:999px}
+.grid{display:flex;flex-wrap:wrap;gap:40px;padding:24px}
+.board > h2{font-size:14px;font-weight:600;margin:0 0 10px;color:#3F4A44}
+.frame{max-width:calc(100vw - 48px);overflow:auto;border-radius:28px;box-shadow:0 20px 40px -24px rgba(14,31,22,.45)}
+</style>
+</head>
+<body>
+<header class="top"><h1>BuddyGolf Redesign</h1><nav class="toc" aria-label="Screens"><a href="#Main">Home</a><a href="#Discover">Discover: match cards</a><a href="#Round">Round detail</a><a href="#Host">Host a round</a><a href="#Score">Live scorecard</a><a href="#Recap">Round recap + kudos</a><a href="#Profile">Golfer profile</a><a href="#Brand">Brand system</a><a href="#NeedFourth">Need a player alert</a><a href="#Free">I'm free broadcast + calendar sync</a><a href="#Book">Pick tee time (pay at the club)</a><a href="#Verify">Verification + safe games</a><a href="#Report">Block + report</a><a href="#Society">Society (Societies Pro)</a><a href="#League">Leagues + ladders</a><a href="#Events">Events + away days</a><a href="#Range">Range + practice buddies</a><a href="#GPS">GPS yardages + weather</a><a href="#Stats">Stats</a><a href="#Watch">Apple Watch scoring</a><a href="#Travel">Travel mode + golf trips</a><a href="#Market">Kit marketplace</a><a href="#Plus">BuddyGolf Plus</a><a href="#Perks">Perks (opt-in partners)</a><a href="#Club">Club dashboard (B2B)</a></nav></header>
+<div class="grid">
+<section class="board" id="Main">
+<h2>Home</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 8px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#137A3A"></rect><g fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"><path d="M9 7v18"></path><circle cx="15.5" cy="21" r="6.5"></circle><circle cx="24.5" cy="21" r="6.5"></circle><path d="M31 21v7a6 6 0 0 1-6 6h-3"></path></g></svg>
+      <div>
+        <div style="font-size: 13px; color: #5B6660">Saturday, 18 Oct</div>
+        <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em">Morning, Paul</div>
+      </div>
+    </div>
+    <button aria-label="Notifications, 3 new" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; position: relative; padding: 0">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+      <span style="position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; border-radius: 5px; background: #E5532D; border: 2px solid #FFFFFF"></span>
+    </button>
+  </header>
+
+  <main style="flex: 1; overflow: hidden; padding: 12px 20px 0; display: flex; flex-direction: column; gap: 22px">
+
+    <section aria-label="Your next round" style="border-radius: 24px; background: #0E1F16; color: #FFFFFF; overflow: hidden">
+      <div style="position: relative; height: 128px">
+        <img src="assets/green.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85">
+        <div style="position: absolute; left: 16px; top: 14px; background: #C8F169; color: #0E1F16; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px">Tomorrow · 07:30</div>
+        <div style="position: absolute; right: 16px; top: 14px; background: rgba(14,31,22,0.72); font-size: 12px; padding: 5px 10px; border-radius: 999px">12° · light breeze</div>
+      </div>
+      <div style="padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 14px">
+        <div>
+          <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em">Sunday Stableford</div>
+          <div style="color: #B9C7BE; font-size: 14px; margin-top: 2px">Canons Brook GC · Harlow · 18 holes</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div style="display: flex; align-items: center">
+            <img src="assets/steve.jpg" alt="Steve" style="width: 34px; height: 34px; border-radius: 17px; border: 2px solid #0E1F16; object-fit: cover">
+            <img src="assets/paul.jpg" alt="You" style="width: 34px; height: 34px; border-radius: 17px; border: 2px solid #0E1F16; object-fit: cover; margin-left: -10px">
+            <span style="width: 34px; height: 34px; border-radius: 17px; border: 2px dashed #5E7A69; margin-left: -10px; box-sizing: border-box; background: #0E1F16"></span>
+            <span style="width: 34px; height: 34px; border-radius: 17px; border: 2px dashed #5E7A69; margin-left: -10px; box-sizing: border-box; background: #0E1F16"></span>
+            <span style="margin-left: 10px; font-size: 13px; color: #B9C7BE">2 spots open</span>
+          </div>
+          <a href="#Round" style="background: #FFFFFF; color: #0E1F16; text-decoration: none; font-weight: 600; font-size: 14px; padding: 11px 16px; border-radius: 999px">Open round</a>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Quick actions" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <a href="#Discover" style="text-decoration: none; color: #0E1F16; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 18px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <span><span style="display: block; font-weight: 600">Find a game</span><span style="display: block; font-size: 13px; color: #5B6660">24 open near you</span></span>
+      </a>
+      <a href="#Host" style="text-decoration: none; color: #FFFFFF; background: #137A3A; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 18px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"></path><path d="M5 4h11l-2 4 2 4H5"></path></svg>
+        <span><span style="display: block; font-weight: 600">Host a round</span><span style="display: block; font-size: 13px; color: #D5EBDC">Fill your four</span></span>
+      </a>
+    </section>
+
+    <section aria-label="Games for you" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em">Picked for you</h2>
+        <a href="#Discover" style="font-size: 14px; font-weight: 500; text-decoration: none">See all</a>
+      </div>
+      <div style="display: flex; gap: 12px; margin-right: -20px">
+        <article style="flex: 0 0 236px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; background: #E4F3E8; color: #0E5C2B; padding: 4px 8px; border-radius: 999px">92% match</span>
+            <span style="font-size: 13px; color: #5B6660">4.2 mi</span>
+          </div>
+          <div>
+            <div style="font-weight: 600">Hanbury Manor</div>
+            <div style="font-size: 13px; color: #5B6660">Sun 26 Oct · 09:10 · 2 spots</div>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap">
+            <span style="font-size: 12px; border: 1px solid #E3E1D8; padding: 3px 8px; border-radius: 999px">HCP 8–18</span>
+            <span style="font-size: 12px; border: 1px solid #E3E1D8; padding: 3px 8px; border-radius: 999px">Walking</span>
+          </div>
+        </article>
+        <article style="flex: 0 0 236px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; background: #E4F3E8; color: #0E5C2B; padding: 4px 8px; border-radius: 999px">86% match</span>
+            <span style="font-size: 13px; color: #5B6660">7.9 mi</span>
+          </div>
+          <div>
+            <div style="font-weight: 600">Abridge G&amp;CC</div>
+            <div style="font-size: 13px; color: #5B6660">Wed 29 Oct · 17:40 · 9 holes</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section aria-label="Buddy activity" style="display: flex; gap: 12px; align-items: center; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 20px; padding: 12px 14px">
+      <img src="assets/steve.jpg" alt="" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover">
+      <div style="flex: 1; font-size: 14px; line-height: 1.35"><strong style="font-weight: 600">Steve</strong> shot 38 pts at Canons Brook and gave you <strong style="font-weight: 600">Kept the pace</strong></div>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; background: #FFFFFF; border-top: 1px solid #E3E1D8; padding: 8px 8px 26px">
+    <a href="#Main" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: #137A3A; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Home</a>
+    <a href="#Discover" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: #5B6660; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m15.5 8.5-2 5-5 2 2-5z"></path></svg>Discover</a>
+    <a href="#Host" aria-label="Host a round" style="justify-self: center; width: 52px; height: 52px; border-radius: 26px; background: #0E1F16; display: grid; place-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F169" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+    <a href="#Round" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: #5B6660; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>Chats</a>
+    <a href="#Profile" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: #5B6660; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>You</a>
+  </nav>
+</div>
+</div>
+</section><section class="board" id="Discover">
+<h2>Discover: match cards</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Find a game</h1>
+      <div role="group" aria-label="View" style="display: flex; background: #E9E7DF; border-radius: 999px; padding: 3px">
+        <button aria-pressed="true" style="border: 0; background: #FFFFFF; color: #0E1F16; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; min-height: 36px">Cards</button>
+        <button aria-pressed="false" style="border: 0; background: transparent; color: #5B6660; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 999px; min-height: 36px">Map</button>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px; overflow: hidden; margin-right: -20px">
+      <button style="flex: 0 0 auto; border: 0; background: #0E1F16; color: #FFFFFF; font-size: 13px; font-weight: 500; padding: 9px 14px; border-radius: 999px; display: flex; gap: 6px; align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>Filters · 3</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">This weekend</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">Within 15 mi</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">HCP 8–20</button>
+    </div>
+  </header>
+
+  <main style="flex: 1; position: relative; padding: 18px 20px 0">
+    <div aria-hidden="true" style="position: absolute; left: 36px; right: 36px; top: 30px; height: 520px; border-radius: 28px; background: #DCE9DF"></div>
+    <div aria-hidden="true" style="position: absolute; left: 28px; right: 28px; top: 24px; height: 520px; border-radius: 28px; background: #C4DCCB"></div>
+
+    <article style="position: relative; background: #FFFFFF; border-radius: 28px; overflow: hidden; box-shadow: 0 18px 40px -18px rgba(14,31,22,0.35)">
+      <div style="position: relative; height: 230px">
+        <img src="assets/group.jpg" alt="Golfers walking down a fairway at sunset" style="width: 100%; height: 100%; object-fit: cover; display: block">
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 110px; background: linear-gradient(transparent, rgba(14,31,22,0.85))"></div>
+        <div style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 6px; background: #C8F169; color: #0E1F16; font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 13px; padding: 6px 11px; border-radius: 999px">92% match</div>
+        <div style="position: absolute; left: 16px; right: 16px; bottom: 14px; color: #FFFFFF">
+          <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.02em; line-height: 1.05">Sunday Stableford</div>
+          <div style="font-size: 14px; color: #DCE7E0; margin-top: 4px">Sun 26 Oct · 07:30 · Canons Brook GC</div>
+        </div>
+      </div>
+
+      <div style="padding: 16px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <img src="assets/steve.jpg" alt="" style="width: 44px; height: 44px; border-radius: 22px; object-fit: cover">
+          <div style="flex: 1">
+            <div style="font-weight: 600">Hosted by Steve B.</div>
+            <div style="font-size: 13px; color: #5B6660">HCP 16.4 · 31 rounds · shows up 100%</div>
+          </div>
+          <div style="text-align: right">
+            <div style="font-family: 'Geist Mono', monospace; font-weight: 600">3/4</div>
+            <div style="font-size: 12px; color: #5B6660">spots left</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap">
+          <span style="font-size: 13px; background: #F0EEE7; padding: 5px 10px; border-radius: 999px">Walking</span>
+          <span style="font-size: 13px; background: #F0EEE7; padding: 5px 10px; border-radius: 999px">Quick pace</span>
+          <span style="font-size: 13px; background: #F0EEE7; padding: 5px 10px; border-radius: 999px">Bit of banter</span>
+          <span style="font-size: 13px; background: #F0EEE7; padding: 5px 10px; border-radius: 999px">£38, pay at club</span>
+        </div>
+
+        <div style="border-top: 1px solid #ECEAE2; padding-top: 12px; display: flex; flex-direction: column; gap: 8px">
+          <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5B6660">Why you match</div>
+          <div style="display: flex; gap: 8px; align-items: center; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Handicap within 7 shots of yours</div>
+          <div style="display: flex; gap: 8px; align-items: center; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>You've played with Steve twice before</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <a href="#Plus" style="align-self: center; margin-bottom: 10px; font-size: 13px; color: #3F4A44; text-decoration: none"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; color: #0E5C2B">1 of 2</span> free rounds left this month · <span style="color: #0E5C2B; font-weight: 600; text-decoration: underline">Go unlimited</span></a>
+  <div style="display: flex; justify-content: center; align-items: center; gap: 18px; padding: 0 20px 34px">
+    <button aria-label="Skip this game" style="width: 64px; height: 64px; border-radius: 32px; border: 1px solid #D9D6CB; background: #FFFFFF; display: grid; place-items: center; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    <a href="#Round" style="flex: 1; height: 64px; border-radius: 32px; background: #137A3A; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px">Request to join</a>
+    <button aria-label="Save for later" style="width: 64px; height: 64px; border-radius: 32px; border: 1px solid #D9D6CB; background: #FFFFFF; display: grid; place-items: center; padding: 0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"></path></svg></button>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Round">
+<h2>Round detail</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <div style="position: relative; height: 200px; flex: 0 0 auto">
+    <img src="assets/green.jpg" alt="Golf ball on the lip of the cup" style="width: 100%; height: 100%; object-fit: cover; display: block">
+    <a href="#Discover" aria-label="Back" style="position: absolute; left: 16px; top: 16px; width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.92); display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+    <button aria-label="Share round" style="position: absolute; right: 16px; top: 16px; width: 44px; height: 44px; border-radius: 22px; border: 0; background: rgba(255,255,255,0.92); display: grid; place-items: center; padding: 0"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"></path></svg></button>
+  </div>
+
+  <main style="flex: 1; margin-top: -24px; position: relative; background: #F5F4EF; border-radius: 24px 24px 0 0; padding: 22px 20px 0; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+    <div>
+      <div style="font-size: 13px; font-weight: 600; color: #137A3A">Sun 26 Oct · Tee off 07:30</div>
+      <h1 style="margin: 4px 0 2px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -0.03em">Sunday Stableford</h1>
+      <div style="font-size: 14px; color: #5B6660">Canons Brook GC · Harlow CM19</div>
+    </div>
+
+    <section aria-label="Who's playing" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; text-align: center">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <img src="assets/steve.jpg" alt="" style="width: 56px; height: 56px; border-radius: 28px; object-fit: cover; outline: 2px solid #137A3A; outline-offset: 2px">
+        <div style="font-size: 13px; font-weight: 600">Steve</div><div style="font-size: 12px; color: #5B6660; margin-top: -6px">Host · 16.4</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <img src="assets/paul.jpg" alt="" style="width: 56px; height: 56px; border-radius: 28px; object-fit: cover; opacity: 0.55">
+        <div style="font-size: 13px; font-weight: 600">You</div><div style="font-size: 12px; color: #5B6660; margin-top: -6px">Requested · 9.8</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <div style="width: 56px; height: 56px; border-radius: 28px; border: 2px dashed #9AA59F; box-sizing: border-box; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B6660" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></div>
+        <div style="font-size: 13px; font-weight: 600">Open</div><div style="font-size: 12px; color: #5B6660; margin-top: -6px">HCP 8–20</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <div style="width: 56px; height: 56px; border-radius: 28px; border: 2px dashed #9AA59F; box-sizing: border-box; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B6660" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></div>
+        <div style="font-size: 13px; font-weight: 600">Open</div><div style="font-size: 12px; color: #5B6660; margin-top: -6px">HCP 8–20</div>
+      </div>
+    </section>
+
+    <section aria-label="Round details" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #E3E1D8; border: 1px solid #E3E1D8; border-radius: 18px; overflow: hidden">
+      <div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #5B6660">Format</div><div style="font-weight: 600">Stableford</div></div>
+      <div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #5B6660">Holes</div><div style="font-weight: 600">18 · walking</div></div>
+      <div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #5B6660">Pace</div><div style="font-weight: 600">Under 4 hrs</div></div>
+      <div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #5B6660">Green fee</div><div style="font-weight: 600">£38 · pay at the club</div></div>
+    </section>
+
+    <section aria-label="Round chat" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 600">Round chat</h2>
+        <span style="font-size: 12px; color: #5B6660">Opens once you're in</span>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-start">
+        <img src="assets/steve.jpg" alt="" style="width: 28px; height: 28px; border-radius: 14px; object-fit: cover">
+        <div style="background: #F0EEE7; padding: 8px 12px; border-radius: 4px 14px 14px 14px; font-size: 14px">Bacon roll at 7 in the clubhouse, first one's on me</div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-start">
+        <img src="assets/steve.jpg" alt="" style="width: 28px; height: 28px; border-radius: 14px; object-fit: cover">
+        <div style="background: #F0EEE7; padding: 8px 12px; border-radius: 4px 14px 14px 14px; font-size: 14px">Everyone pays the pro shop on the day</div>
+      </div>
+    </section>
+  </main>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-top: 1px solid #E3E1D8; padding: 14px 20px 30px; display: flex; align-items: center; gap: 14px">
+    <div style="flex: 1">
+      <div style="font-weight: 600; font-size: 15px">Request sent</div>
+      <div style="font-size: 12px; color: #5B6660">Nothing to pay now. £38 at the club.</div>
+    </div>
+    <button style="border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 600; font-size: 15px; padding: 0 20px; height: 54px; border-radius: 27px">Withdraw</button>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Host">
+<h2>Host a round</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 6px">
+    <a href="#Main" aria-label="Close" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; box-sizing: border-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+    <span style="font-size: 13px; color: #5B6660">Step 1 of 2</span>
+    <span style="width: 44px"></span>
+  </header>
+
+  <main style="flex: 1; padding: 8px 20px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em; line-height: 1.05">Host a round</h1>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="course" style="font-size: 13px; font-weight: 600">Course</label>
+      <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1.5px solid #137A3A; border-radius: 16px; padding: 10px 12px">
+        <img src="assets/green.jpg" alt="" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover">
+        <div style="flex: 1; min-width: 0">
+          <input id="course" value="Canons Brook GC" style="border: 0; padding: 0; font: inherit; font-weight: 600; color: #0E1F16; width: 100%; background: transparent; outline: none">
+          <div style="font-size: 13px; color: #5B6660">Harlow · 6,763 yds · par 73</div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+      </div>
+    </div>
+
+    <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+      <legend style="font-size: 13px; font-weight: 600; padding: 0; margin-bottom: 8px">When</legend>
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 14px; padding: 8px 0; color: #0E1F16"><span style="display: block; font-size: 11px; color: #5B6660">Fri</span><span style="display: block; font-weight: 600">24</span></button>
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 14px; padding: 8px 0; color: #0E1F16"><span style="display: block; font-size: 11px; color: #5B6660">Sat</span><span style="display: block; font-weight: 600">25</span></button>
+        <button aria-pressed="true" style="border: 0; background: #0E1F16; border-radius: 14px; padding: 8px 0; color: #FFFFFF"><span style="display: block; font-size: 11px; color: #B9C7BE">Sun</span><span style="display: block; font-weight: 600">26</span></button>
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 14px; padding: 8px 0; color: #0E1F16"><span style="display: block; font-size: 11px; color: #5B6660">Mon</span><span style="display: block; font-weight: 600">27</span></button>
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 14px; padding: 8px 0; color: #0E1F16"><span style="display: block; font-size: 11px; color: #5B6660">Tue</span><span style="display: block; font-weight: 600">28</span></button>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap">
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 999px; padding: 8px 12px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #0E1F16">07:10</button>
+        <button aria-pressed="true" style="border: 0; background: #C8F169; border-radius: 999px; padding: 8px 12px; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600; color: #0E1F16">07:30</button>
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 999px; padding: 8px 12px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #0E1F16">08:20</button>
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; border-radius: 999px; padding: 8px 12px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #0E1F16">09:40</button>
+        <span style="font-size: 12px; color: #5B6660; align-self: center">Live from the club's tee sheet</span>
+      </div>
+    </fieldset>
+
+    <fieldset style="border: 0; margin: 0; padding: 0">
+      <legend style="font-size: 13px; font-weight: 600; padding: 0; margin-bottom: 8px">Format</legend>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #E9E7DF; border-radius: 14px; padding: 3px">
+        <button aria-pressed="true" style="border: 0; background: #FFFFFF; border-radius: 11px; padding: 10px 0; font-size: 13px; font-weight: 600; color: #0E1F16">Stableford</button>
+        <button style="border: 0; background: transparent; padding: 10px 0; font-size: 13px; color: #3F4A44">Stroke</button>
+        <button style="border: 0; background: transparent; padding: 10px 0; font-size: 13px; color: #3F4A44">Match</button>
+        <button style="border: 0; background: transparent; padding: 10px 0; font-size: 13px; color: #3F4A44">Scramble</button>
+      </div>
+    </fieldset>
+
+    <fieldset style="border: 0; margin: 0; padding: 0">
+      <legend style="font-size: 13px; font-weight: 600; padding: 0; margin-bottom: 8px">Who can join</legend>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px">
+        <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #ECEAE2"><input type="radio" name="who" checked style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0"><span style="flex: 1"><span style="display: block; font-weight: 500">Anyone with HCP 8–20</span><span style="display: block; font-size: 13px; color: #5B6660">You approve each request</span></span></label>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #ECEAE2"><input type="radio" name="who" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0"><span style="flex: 1; font-weight: 500">Buddies only</span></label>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px"><span style="flex: 1; font-weight: 500">Auto-accept buddies</span><input type="checkbox" checked style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0"></label>
+      </div>
+    </fieldset>
+  </main>
+
+  <div style="padding: 14px 20px 30px">
+    <a href="#Round" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 28px; background: #137A3A; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 16px">Continue</a>
+  </div>
+</div>
+</div>
+</section><section class="board dark" id="Score">
+<h2>Live scorecard</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0E1F16; color: #FFFFFF; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 18px 20px 0; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #B9C7BE"><span style="width: 8px; height: 8px; border-radius: 4px; background: #C8F169"></span>Live · Canons Brook</span>
+      <a href="#Round" style="font-size: 13px; font-weight: 500; text-decoration: none">Round chat</a>
+    </div>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between">
+      <div>
+        <div style="font-size: 13px; color: #B9C7BE">Hole</div>
+        <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 84px; line-height: 0.85; letter-spacing: -0.04em">7</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, auto); gap: 4px 18px; text-align: right">
+        <span style="font-size: 12px; color: #B9C7BE">Par</span><span style="font-size: 12px; color: #B9C7BE">Yds</span><span style="font-size: 12px; color: #B9C7BE">SI</span>
+        <span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">4</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">382</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">5</span>
+      </div>
+    </div>
+    <div aria-label="Hole 7 of 18" style="display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 3px">
+      <span style="height: 4px; border-radius: 2px; background: #C8F169"></span><span style="height: 4px; border-radius: 2px; background: #C8F169"></span><span style="height: 4px; border-radius: 2px; background: #C8F169"></span><span style="height: 4px; border-radius: 2px; background: #C8F169"></span><span style="height: 4px; border-radius: 2px; background: #C8F169"></span><span style="height: 4px; border-radius: 2px; background: #C8F169"></span><span style="height: 4px; border-radius: 2px; background: #FFFFFF"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span><span style="height: 4px; border-radius: 2px; background: #2A4033"></span>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 10px">
+    
+      <div style="display: flex; align-items: center; gap: 12px; background: #17301F; border-radius: 18px; padding: 10px 10px 10px 12px">
+        <img src="assets/paul.jpg" alt="" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover">
+        <div style="flex: 1; min-width: 0">
+          <div style="font-weight: 600">You</div>
+          <div style="font-size: 12px; color: #B9C7BE">HCP 10 · 1 shot · 3 pts</div>
+        </div>
+        <button aria-label="One fewer stroke for You" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #2F4A3A; background: transparent; color: #FFFFFF; font-size: 22px; padding: 0">−</button>
+        <span style="width: 30px; text-align: center; font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">4</span>
+        <button aria-label="One more stroke for You" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #C8F169; color: #0E1F16; font-size: 22px; padding: 0">+</button>
+      </div>
+    
+      <div style="display: flex; align-items: center; gap: 12px; background: #17301F; border-radius: 18px; padding: 10px 10px 10px 12px">
+        <img src="assets/steve.jpg" alt="" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover">
+        <div style="flex: 1; min-width: 0">
+          <div style="font-weight: 600">Steve</div>
+          <div style="font-size: 12px; color: #B9C7BE">HCP 16 · 1 shot · 2 pts</div>
+        </div>
+        <button aria-label="One fewer stroke for Steve" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #2F4A3A; background: transparent; color: #FFFFFF; font-size: 22px; padding: 0">−</button>
+        <span style="width: 30px; text-align: center; font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">5</span>
+        <button aria-label="One more stroke for Steve" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #C8F169; color: #0E1F16; font-size: 22px; padding: 0">+</button>
+      </div>
+    
+
+    <section aria-label="Leaderboard" style="margin-top: 8px; border-top: 1px solid #2A4033; padding-top: 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #B9C7BE">Stableford points</h2>
+        <span style="font-size: 12px; color: #B9C7BE">Thru 6</span>
+      </div>
+      
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 16px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #B9C7BE">1</span>
+          <span style="flex: 1">You</span>
+          <span style="font-family: 'Geist Mono', monospace; font-weight: 600">17</span>
+        </div>
+      
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 16px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #B9C7BE">2</span>
+          <span style="flex: 1">Steve</span>
+          <span style="font-family: 'Geist Mono', monospace; font-weight: 600">14</span>
+        </div>
+      
+    </section>
+  </main>
+
+  <div style="padding: 14px 20px 30px; display: flex; gap: 10px">
+    <button style="height: 56px; padding: 0 22px; border-radius: 28px; border: 1px solid #2F4A3A; background: transparent; color: #FFFFFF; font-weight: 500">Hole 6</button>
+    <a href="#Recap" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 28px; background: #FFFFFF; color: #0E1F16; text-decoration: none; font-weight: 600; font-size: 16px">Save · Hole 8</a>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Recap">
+<h2>Round recap + kudos</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <section aria-label="Result" style="background: #0E1F16; color: #FFFFFF; padding: 22px 20px 22px; border-radius: 0 0 28px 28px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <span style="font-size: 13px; color: #B9C7BE">Sun 26 Oct · Canons Brook</span>
+      <a href="#Main" style="font-size: 14px; font-weight: 500; color: #C8F169; text-decoration: none">Done</a>
+    </div>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between">
+      <div>
+        <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.03em; line-height: 1">You won</div>
+        <div style="font-size: 14px; color: #B9C7BE; margin-top: 6px">Beat Steve by 3 points</div>
+      </div>
+      <div style="text-align: right">
+        <div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 40px; line-height: 1; color: #C8F169">36</div>
+        <div style="font-size: 12px; color: #B9C7BE">pts</div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #17301F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 12px; color: #B9C7BE">Gross</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 18px">84</div></div>
+      <div style="background: #17301F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 12px; color: #B9C7BE">Fairways</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 18px">8/14</div></div>
+      <div style="background: #17301F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 12px; color: #B9C7BE">Putts</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 18px">31</div></div>
+    </div>
+  </section>
+
+  <main style="flex: 1; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+    <section aria-labelledby="kudos-h" style="display: flex; flex-direction: column; gap: 12px">
+      <div>
+        <h2 id="kudos-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.01em">Give kudos</h2>
+        <div style="font-size: 13px; color: #5B6660">Private until everyone's done. Builds trust scores.</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <img src="assets/steve.jpg" alt="" style="width: 36px; height: 36px; border-radius: 18px; object-fit: cover">
+          <span style="flex: 1; font-weight: 600">Steve</span>
+          <button style="border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 500; display: flex; gap: 6px; align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Buddy</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <button aria-pressed="true" style="border: 0; background: #137A3A; color: #FFFFFF; border-radius: 999px; padding: 8px 12px; font-size: 13px">Great company</button>
+          <button aria-pressed="true" style="border: 0; background: #137A3A; color: #FFFFFF; border-radius: 999px; padding: 8px 12px; font-size: 13px">Kept the pace</button>
+          <button style="border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; border-radius: 999px; padding: 8px 12px; font-size: 13px">Clutch putter</button>
+          <button style="border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; border-radius: 999px; padding: 8px 12px; font-size: 13px">Would play again</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div style="padding: 14px 20px 30px; display: flex; gap: 10px">
+    <button style="flex: 1; height: 56px; border-radius: 28px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 600">Share card</button>
+    <a href="#Host" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 28px; background: #137A3A; color: #FFFFFF; text-decoration: none; font-weight: 600">Rebook this four</a>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Profile">
+<h2>Golfer profile</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 14px">
+      <img src="assets/paul.jpg" alt="Paul W." style="width: 76px; height: 76px; border-radius: 38px; object-fit: cover; outline: 3px solid #C8F169; outline-offset: 2px">
+      <div style="flex: 1">
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -0.03em">Paul W.</h1>
+        <div style="font-size: 14px; color: #5B6660">Harlow</div>
+        <div style="font-size: 13px; color: #137A3A; font-weight: 600; margin-top: 2px">Member, Canons Brook GC</div>
+      </div>
+      <button aria-label="Edit profile" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; padding: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg></button>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 18px 20px 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <section aria-label="Handicap" style="background: #0E1F16; color: #FFFFFF; border-radius: 22px; padding: 16px; display: flex; align-items: center; gap: 16px">
+      <div>
+        <div style="font-size: 12px; color: #B9C7BE">Handicap index</div>
+        <div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 38px; line-height: 1.1">9.8</div>
+        <div style="font-size: 12px; color: #C8F169">Down 1.4 since June</div>
+      </div>
+      <svg role="img" aria-label="Handicap trending down from 11.2 to 9.8 over five months" viewBox="0 0 160 64" style="flex: 1; height: 64px"><path d="M2 14 L32 10 L62 22 L92 28 L122 40 L158 50" fill="none" stroke="#C8F169" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="158" cy="50" r="4" fill="#C8F169"></circle></svg>
+    </section>
+
+    <section aria-label="Stats" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">42</div><div style="font-size: 12px; color: #5B6660">Rounds</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">18</div><div style="font-size: 12px; color: #5B6660">Buddies</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">98%</div><div style="font-size: 12px; color: #5B6660">Shows up</div></div>
+    </section>
+
+    <section aria-labelledby="style-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="style-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">How I play</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px">
+        <span style="font-size: 13px; background: #FFFFFF; border: 1px solid #E3E1D8; padding: 6px 11px; border-radius: 999px">Early tee times</span>
+        <span style="font-size: 13px; background: #FFFFFF; border: 1px solid #E3E1D8; padding: 6px 11px; border-radius: 999px">Walking</span>
+        <span style="font-size: 13px; background: #FFFFFF; border: 1px solid #E3E1D8; padding: 6px 11px; border-radius: 999px">Small stakes</span>
+        <span style="font-size: 13px; background: #FFFFFF; border: 1px solid #E3E1D8; padding: 6px 11px; border-radius: 999px">Stays for one</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="kudos-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="kudos-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Kudos from buddies</h2>
+      <div style="display: flex; gap: 8px">
+        <span style="flex: 1; background: #E4F3E8; color: #0E5C2B; border-radius: 14px; padding: 10px 12px; font-size: 13px"><strong style="display: block; font-family: 'Geist Mono', monospace; font-size: 17px">27</strong>Great company</span>
+        <span style="flex: 1; background: #E4F3E8; color: #0E5C2B; border-radius: 14px; padding: 10px 12px; font-size: 13px"><strong style="display: block; font-family: 'Geist Mono', monospace; font-size: 17px">19</strong>Kept the pace</span>
+        <span style="flex: 1; background: #E4F3E8; color: #0E5C2B; border-radius: 14px; padding: 10px 12px; font-size: 13px"><strong style="display: block; font-family: 'Geist Mono', monospace; font-size: 17px">11</strong>Clutch putter</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="bag-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 4px 14px">
+      <h2 id="bag-h" style="margin: 10px 0 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">In the bag</h2>
+      <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ECEAE2; font-size: 14px"><span style="color: #5B6660">Driver</span><span style="font-weight: 500">Titleist 917D</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ECEAE2; font-size: 14px"><span style="color: #5B6660">Irons</span><span style="font-weight: 500">Titleist 716</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ECEAE2; font-size: 14px"><span style="color: #5B6660">Putter</span><span style="font-weight: 500">Odyssey</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 0 10px; font-size: 14px"><span style="color: #5B6660">Ball</span><span style="font-weight: 500">Seed</span></div>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; background: #FFFFFF; border-top: 1px solid #E3E1D8; padding: 8px 8px 26px; margin-top: 12px">
+    <a href="#Main" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: #5B6660; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Home</a>
+    <a href="#Discover" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: #5B6660; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m15.5 8.5-2 5-5 2 2-5z"></path></svg>Discover</a>
+    <a href="#Host" aria-label="Host a round" style="justify-self: center; width: 52px; height: 52px; border-radius: 26px; background: #0E1F16; display: grid; place-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F169" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+    <a href="#Round" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: #5B6660; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>Chats</a>
+    <a href="#Profile" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: #137A3A; text-decoration: none; min-height: 44px; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>You</a>
+  </nav>
+</div>
+</div>
+</section><section class="board" id="Brand">
+<h2>Brand system</h2>
+<div class="frame" style="width:880px">
+
+<div style="width: 880px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: grid; grid-template-columns: 340px 1fr; overflow: hidden">
+
+  <div style="background: #0E1F16; color: #FFFFFF; padding: 40px; display: flex; flex-direction: column; justify-content: space-between">
+    <div style="display: flex; flex-direction: column; gap: 18px">
+      <svg width="96" height="96" viewBox="0 0 40 40" role="img" aria-label="BuddyGolf mark"><rect width="40" height="40" rx="12" fill="#137A3A"></rect><g fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"><path d="M9 7v18"></path><circle cx="15.5" cy="21" r="6.5"></circle><circle cx="24.5" cy="21" r="6.5"></circle><path d="M31 21v7a6 6 0 0 1-6 6h-3"></path></g></svg>
+      <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 44px; letter-spacing: -0.04em; line-height: 1">buddy<span style="color: #C8F169">golf</span></div>
+      <div style="font-size: 16px; color: #B9C7BE; line-height: 1.45">Find a four. Play it. Do it again.</div>
+    </div>
+    <img src="assets/highfive.jpg" alt="Two golfers sharing a handshake on the course" style="width: 100%; height: 220px; object-fit: cover; border-radius: 20px">
+  </div>
+
+  <div style="padding: 40px; display: flex; flex-direction: column; gap: 30px">
+    <section aria-labelledby="col-h" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="col-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Colour</h2>
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px">
+        <div><div style="height: 76px; border-radius: 14px; background: #0E1F16"></div><div style="font-size: 13px; font-weight: 600; margin-top: 6px">Fairway</div><div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B6660">#0E1F16</div></div>
+        <div><div style="height: 76px; border-radius: 14px; background: #137A3A"></div><div style="font-size: 13px; font-weight: 600; margin-top: 6px">Buddy green</div><div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B6660">#137A3A</div></div>
+        <div><div style="height: 76px; border-radius: 14px; background: #C8F169"></div><div style="font-size: 13px; font-weight: 600; margin-top: 6px">Flag</div><div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B6660">#C8F169</div></div>
+        <div><div style="height: 76px; border-radius: 14px; background: #F5F4EF; border: 1px solid #E3E1D8; box-sizing: border-box"></div><div style="font-size: 13px; font-weight: 600; margin-top: 6px">Clubhouse</div><div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B6660">#F5F4EF</div></div>
+        <div><div style="height: 76px; border-radius: 14px; background: #E5532D"></div><div style="font-size: 13px; font-weight: 600; margin-top: 6px">Alert</div><div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5B6660">#E5532D</div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="type-h" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="type-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Type</h2>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #E3E1D8; padding-bottom: 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.03em">Sunday Stableford</span><span style="font-size: 12px; color: #5B6660; margin-left: auto">Bricolage Grotesque</span></div>
+      <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #E3E1D8; padding-bottom: 10px"><span style="font-size: 17px">You've played with Steve twice before.</span><span style="font-size: 12px; color: #5B6660; margin-left: auto">Geist</span></div>
+      <div style="display: flex; align-items: baseline; gap: 16px"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">9.8 · 36 pts · 07:30</span><span style="font-size: 12px; color: #5B6660; margin-left: auto">Geist Mono, for numbers</span></div>
+    </section>
+
+    <section aria-labelledby="cmp-h" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="cmp-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Components</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+        <button style="border: 0; background: #137A3A; color: #FFFFFF; font-weight: 600; height: 52px; padding: 0 24px; border-radius: 26px">Request to join</button>
+        <button style="border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 600; height: 52px; padding: 0 24px; border-radius: 26px">Share card</button>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600; background: #C8F169; padding: 6px 11px; border-radius: 999px">92% match</span>
+        <span style="font-size: 13px; background: #F0EEE7; padding: 6px 11px; border-radius: 999px">Walking</span>
+        <span style="font-size: 13px; background: #E4F3E8; color: #0E5C2B; padding: 6px 11px; border-radius: 999px">Kept the pace</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center">
+        <img src="assets/steve.jpg" alt="" style="width: 44px; height: 44px; border-radius: 22px; object-fit: cover">
+        <img src="assets/paul.jpg" alt="" style="width: 44px; height: 44px; border-radius: 22px; object-fit: cover">
+        <span style="width: 44px; height: 44px; border-radius: 22px; border: 2px dashed #9AA59F; box-sizing: border-box"></span>
+        <span style="font-size: 13px; color: #5B6660; margin-left: 6px">Open spots are always dashed</span>
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+</section><section class="board dark" id="NeedFourth">
+<h2>Need a player alert</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0E1F16; color: #FFFFFF; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 0">
+    <a href="#Main" aria-label="Close" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #2F4A3A; display: grid; place-items: center; box-sizing: border-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+    <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #0E1F16; background: #C8F169; padding: 6px 12px; border-radius: 999px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg>Need a player</span>
+    <span style="width: 44px"></span>
+  </header>
+
+  <main style="flex: 1; padding: 26px 20px 0; display: flex; flex-direction: column; gap: 20px">
+    <div>
+      <div style="font-size: 14px; color: #B9C7BE">Tees off in</div>
+      <div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: #C8F169">1h 50m</div>
+      <h1 style="margin: 12px 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -0.03em; line-height: 1.1">Steve needs a playing partner at Abridge</h1>
+      <div style="font-size: 14px; color: #B9C7BE">Today 13:20 · 18 holes · 6.1 mi from you</div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; background: #17301F; border-radius: 18px; padding: 12px 14px">
+      <div style="display: flex">
+        <img src="assets/steve.jpg" alt="Steve" style="width: 38px; height: 38px; border-radius: 19px; border: 2px solid #17301F; object-fit: cover">
+        <span style="width: 38px; height: 38px; border-radius: 19px; border: 2px dashed #C8F169; box-sizing: border-box; margin-left: -10px; background: #17301F"></span>
+      </div>
+      <div style="font-size: 14px; line-height: 1.35">Steve is a buddy of yours<br><span style="color: #B9C7BE">HCP 16.4 · walking</span></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #17301F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 12px; color: #B9C7BE">At the club</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 17px">£29</div></div>
+      <div style="background: #17301F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 12px; color: #B9C7BE">Weather</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 17px">14° dry</div></div>
+      <div style="background: #17301F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 12px; color: #B9C7BE">Drive</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 17px">14 min</div></div>
+    </div>
+
+    <p style="margin: 0; font-size: 13px; color: #B9C7BE; line-height: 1.45">Sent to 9 golfers who fit. First to say yes gets the spot. Nothing to pay in the app: you pay the pro shop when you arrive.</p>
+  </main>
+
+  <div style="padding: 14px 20px 30px; display: flex; flex-direction: column; gap: 10px">
+    <a href="#Round" style="display: flex; align-items: center; justify-content: center; height: 58px; border-radius: 29px; background: #C8F169; color: #0E1F16; text-decoration: none; font-weight: 700; font-size: 17px">I'm in</a>
+    <a href="#Main" style="display: flex; align-items: center; justify-content: center; height: 48px; color: #FFFFFF; text-decoration: none; font-weight: 500">Not this time</a>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Free">
+<h2>I'm free broadcast + calendar sync</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 12px; padding: 16px 20px 6px">
+    <a href="#Main" aria-label="Back" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; box-sizing: border-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+  </header>
+
+  <main style="flex: 1; padding: 8px 20px 0; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+    <div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">I'm free</h1>
+      <div style="font-size: 14px; color: #5B6660; margin-top: 2px">Tell hosts when you can play. They come to you.</div>
+    </div>
+
+    <fieldset style="border: 0; margin: 0; padding: 0">
+      <legend style="font-size: 13px; font-weight: 600; padding: 0; margin-bottom: 8px">This week</legend>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; text-align: center">
+        <span style="font-size: 11px; color: #5B6660">Mon</span><span style="font-size: 11px; color: #5B6660">Tue</span><span style="font-size: 11px; color: #5B6660">Wed</span><span style="font-size: 11px; color: #5B6660">Thu</span><span style="font-size: 11px; color: #5B6660">Fri</span><span style="font-size: 11px; color: #5B6660">Sat</span><span style="font-size: 11px; color: #5B6660">Sun</span>
+        <button aria-label="Monday morning" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">AM</button>
+        <button aria-label="Tuesday morning, busy in calendar" style="height: 40px; border-radius: 10px; border: 0; background: #E9E7DF; font-size: 11px; color: #5B6660; text-decoration: line-through">AM</button>
+        <button aria-label="Wednesday morning" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">AM</button>
+        <button aria-label="Thursday morning, busy in calendar" style="height: 40px; border-radius: 10px; border: 0; background: #E9E7DF; font-size: 11px; color: #5B6660; text-decoration: line-through">AM</button>
+        <button aria-label="Friday morning" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">AM</button>
+        <button aria-pressed="true" aria-label="Saturday morning" style="height: 40px; border-radius: 10px; border: 0; background: #137A3A; font-size: 11px; color: #FFFFFF; font-weight: 600">AM</button>
+        <button aria-pressed="true" aria-label="Sunday morning" style="height: 40px; border-radius: 10px; border: 0; background: #137A3A; font-size: 11px; color: #FFFFFF; font-weight: 600">AM</button>
+        <button aria-label="Monday evening" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">PM</button>
+        <button aria-label="Tuesday evening" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">PM</button>
+        <button aria-pressed="true" aria-label="Wednesday evening" style="height: 40px; border-radius: 10px; border: 0; background: #137A3A; font-size: 11px; color: #FFFFFF; font-weight: 600">PM</button>
+        <button aria-label="Thursday evening" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">PM</button>
+        <button aria-label="Friday evening, busy in calendar" style="height: 40px; border-radius: 10px; border: 0; background: #E9E7DF; font-size: 11px; color: #5B6660; text-decoration: line-through">PM</button>
+        <button aria-label="Saturday afternoon" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">PM</button>
+        <button aria-label="Sunday afternoon" style="height: 40px; border-radius: 10px; border: 1px solid #E3E1D8; background: #FFFFFF; font-size: 11px; color: #5B6660">PM</button>
+      </div>
+    </fieldset>
+
+    <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px">
+      <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #ECEAE2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+        <span style="flex: 1"><span style="display: block; font-weight: 500">Sync my calendar</span><span style="display: block; font-size: 13px; color: #5B6660">Busy slots are crossed out. Booked rounds get added.</span></span>
+        <input type="checkbox" checked style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0">
+      </label>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+        <span style="flex: 1; font-weight: 500">Within</span>
+        <span style="font-family: 'Geist Mono', monospace; font-weight: 600">15 mi</span>
+      </div>
+    </div>
+
+    <section aria-labelledby="hosts-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="hosts-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Already matching your slots</h2>
+      <a href="#Round" style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 10px 12px; text-decoration: none; color: #0E1F16">
+        <img src="assets/steve.jpg" alt="" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover">
+        <span style="flex: 1"><span style="display: block; font-weight: 600">Sun 07:30 · Canons Brook</span><span style="display: block; font-size: 13px; color: #5B6660">Steve's game · 2 spots</span></span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; background: #E4F3E8; color: #0E5C2B; padding: 4px 8px; border-radius: 999px">92%</span>
+      </a>
+      <a href="#Round" style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 10px 12px; text-decoration: none; color: #0E1F16">
+        <img src="assets/steve.jpg" alt="" style="width: 40px; height: 40px; border-radius: 20px; object-fit: cover">
+        <span style="flex: 1"><span style="display: block; font-weight: 600">Wed 17:40 · Abridge</span><span style="display: block; font-size: 13px; color: #5B6660">Steve's 9 holes · 2 spots</span></span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; background: #E4F3E8; color: #0E5C2B; padding: 4px 8px; border-radius: 999px">86%</span>
+      </a>
+    </section>
+  </main>
+
+  <div style="padding: 14px 20px 30px">
+    <button style="width: 100%; height: 56px; border-radius: 28px; border: 0; background: #137A3A; color: #FFFFFF; font-weight: 600; font-size: 16px">Let hosts know I'm free</button>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Book">
+<h2>Pick tee time (pay at the club)</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 12px; padding: 16px 20px 6px">
+    <a href="#Host" aria-label="Back" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; box-sizing: border-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+    <span style="font-size: 13px; color: #5B6660">Step 2 of 2</span>
+  </header>
+
+  <main style="flex: 1; padding: 8px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+    <div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Pick a tee time</h1>
+      <div style="font-size: 14px; color: #5B6660; margin-top: 2px">Canons Brook GC · Sun 26 Oct</div>
+    </div>
+
+    <section aria-labelledby="sheet-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="sheet-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Tee sheet</h2>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; overflow: hidden">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid #ECEAE2; color: #5B6660"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; width: 48px">07:10</span><span style="flex: 1; font-size: 14px">Full</span><span style="font-size: 13px">9° · cloud</span></div>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid #ECEAE2; background: #E4F3E8"><input type="radio" name="slot" checked style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; width: 48px">07:30</span><span style="flex: 1; font-size: 14px; font-weight: 500">4 free · £38</span><span style="font-size: 13px; color: #3F4A44">10° · sun</span></label>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid #ECEAE2"><input type="radio" name="slot" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; width: 48px">08:20</span><span style="flex: 1; font-size: 14px">4 free · £42</span><span style="font-size: 13px; color: #5B6660">11° · sun</span></label>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 11px 14px"><input type="radio" name="slot" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; width: 48px">13:50</span><span style="flex: 1; font-size: 14px">2 free · £29</span><span style="font-size: 13px; color: #5B6660">14° · breezy</span></label>
+      </div>
+    </section>
+
+    <section aria-labelledby="who-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="who-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Who's playing</h2>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 4px 14px">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #ECEAE2"><img src="assets/paul.jpg" alt="" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover"><span style="flex: 1; font-size: 14px">You</span><span style="font-size: 12px; font-weight: 600; color: #0E5C2B">Host</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #ECEAE2"><img src="assets/steve.jpg" alt="" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover"><span style="flex: 1; font-size: 14px">Steve</span><span style="font-size: 12px; color: #5B6660">Invited</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0"><span style="width: 30px; height: 30px; border-radius: 15px; border: 2px dashed #9AA59F; box-sizing: border-box"></span><span style="flex: 1; font-size: 14px; color: #5B6660">2 open spots</span><span style="font-size: 12px; color: #5B6660">Anyone HCP 8–20</span></div>
+      </div>
+    </section>
+
+    <section aria-label="Paying" style="display: flex; gap: 12px; align-items: flex-start; background: #E4F3E8; border-radius: 16px; padding: 12px 14px; font-size: 14px; color: #0E3D20">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 auto; margin-top: 1px"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+      <span><strong style="font-weight: 600">Nothing to pay in the app.</strong> The club holds the slot and everyone pays £38 at the pro shop on the day, so no one is out of pocket if someone doesn't show.</span>
+    </section>
+  </main>
+
+  <div style="padding: 14px 20px 30px">
+    <button style="width: 100%; height: 56px; border-radius: 28px; border: 0; background: #0E1F16; color: #FFFFFF; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px">Hold tee time and post round</button>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Verify">
+<h2>Verification + safe games</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 12px; padding: 16px 20px 6px">
+    <a href="#Profile" aria-label="Back" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; box-sizing: border-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+  </header>
+
+  <main style="flex: 1; padding: 8px 20px 0; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+    <div style="display: flex; align-items: center; gap: 14px">
+      <div style="position: relative">
+        <img src="assets/paul.jpg" alt="" style="width: 64px; height: 64px; border-radius: 32px; object-fit: cover">
+        <span style="position: absolute; right: -2px; bottom: -2px; width: 24px; height: 24px; border-radius: 12px; background: #137A3A; border: 3px solid #F5F4EF; display: grid; place-items: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+      </div>
+      <div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -0.03em">Verified golfer</h1>
+        <div style="font-size: 14px; color: #5B6660">3 of 3 checks done</div>
+      </div>
+    </div>
+
+    <section aria-labelledby="checks-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 4px 14px">
+      <h2 id="checks-h" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Checks</h2>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #ECEAE2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span style="flex: 1"><span style="display: block; font-weight: 500">Phone number</span><span style="display: block; font-size: 13px; color: #5B6660">+44 •••• ••• 482</span></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #ECEAE2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span style="flex: 1"><span style="display: block; font-weight: 500">Photo matches selfie</span><span style="display: block; font-size: 13px; color: #5B6660">Checked 12 Oct</span></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span style="flex: 1"><span style="display: block; font-weight: 500">Official handicap linked</span><span style="display: block; font-size: 13px; color: #5B6660">WHS index 9.8 · updates after each round</span></span>
+      </div>
+    </section>
+
+    <section aria-labelledby="safe-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="safe-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Games I'm shown</h2>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px">
+        <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #ECEAE2"><span style="flex: 1"><span style="display: block; font-weight: 500">Verified golfers only</span><span style="display: block; font-size: 13px; color: #5B6660">Hide games with unverified players</span></span><input type="checkbox" checked style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0"></label>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #ECEAE2"><span style="flex: 1"><span style="display: block; font-weight: 500">Women-only games</span><span style="display: block; font-size: 13px; color: #5B6660">Host and join games just for women</span></span><input type="checkbox" style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0"></label>
+        <label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px"><span style="flex: 1"><span style="display: block; font-weight: 500">Beginner-friendly games</span><span style="display: block; font-size: 13px; color: #5B6660">No pressure, any score welcome</span></span><input type="checkbox" checked style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0"></label>
+      </div>
+    </section>
+
+    <div style="display: flex; gap: 12px; align-items: center; background: #E4F3E8; border-radius: 16px; padding: 12px 14px; font-size: 14px; color: #0E3D20">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+      <span>Share round details with a friend before you meet someone new.</span>
+    </div>
+  </main>
+
+  <div style="padding: 14px 20px 30px">
+    <a href="#Report" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 26px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; text-decoration: none; font-weight: 600">Blocked golfers and reports</a>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Report">
+<h2>Block + report</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #5E6862; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; position: relative">
+
+  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; padding: 40px 20px; display: flex; align-items: center; gap: 14px; opacity: 0.5">
+    <span style="width: 64px; height: 64px; border-radius: 32px; background: #9AA59F"></span>
+    <div style="color: #FFFFFF; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px">Golfer profile</div>
+  </div>
+
+  <section role="dialog" aria-labelledby="rep-h" style="position: relative; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 12px 20px 30px; display: flex; flex-direction: column; gap: 16px">
+    <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #D9D6CB"></span>
+    <div>
+      <h1 id="rep-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: -0.02em">What happened?</h1>
+      <div style="font-size: 14px; color: #5B6660; margin-top: 2px">Reports are private. We review every one within 24 hours.</div>
+    </div>
+
+    <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid #ECEAE2">
+      <legend style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Reason</legend>
+      <label style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #ECEAE2"><input type="radio" name="why" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0">Didn't show up</label>
+      <label style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #ECEAE2"><input type="radio" name="why" checked style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0">Rude or abusive behaviour</label>
+      <label style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #ECEAE2"><input type="radio" name="why" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0">Made me feel unsafe</label>
+      <label style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #ECEAE2"><input type="radio" name="why" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0">Fake profile or handicap</label>
+      <label style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #ECEAE2"><input type="radio" name="why" style="accent-color: #137A3A; width: 18px; height: 18px; margin: 0">Payment problem</label>
+    </fieldset>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="details" style="font-size: 13px; font-weight: 600">Anything else? (optional)</label>
+      <textarea id="details" rows="3" style="font: inherit; border: 1px solid #D9D6CB; border-radius: 14px; padding: 10px 12px; resize: none; color: #0E1F16"></textarea>
+    </div>
+
+    <label style="display: flex; align-items: center; gap: 12px; font-weight: 500"><input type="checkbox" checked style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0">Also block them. They won't see your games.</label>
+
+    <button style="height: 56px; border-radius: 28px; border: 0; background: #B83A1C; color: #FFFFFF; font-weight: 600; font-size: 16px">Send report</button>
+  </section>
+</div>
+</div>
+</section><section class="board" id="Society">
+<h2>Society (Societies Pro)</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <section aria-label="Society" style="position: relative; height: 190px; flex: 0 0 auto">
+    <img src="assets/group.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block">
+    <div style="position: absolute; inset: 0; background: rgba(14,31,22,0.55)"></div>
+    <a href="#Main" aria-label="Back" style="position: absolute; left: 16px; top: 16px; width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.92); display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+    <span style="position: absolute; right: 16px; top: 24px; font-size: 12px; font-weight: 600; background: #C8F169; color: #0E1F16; padding: 5px 10px; border-radius: 999px">Society Pro</span>
+    <div style="position: absolute; left: 20px; right: 20px; bottom: 16px; color: #FFFFFF">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Harlow Hackers</h1>
+      <div style="font-size: 14px; color: #DCE7E0">24 members · monthly away days</div>
+    </div>
+  </section>
+
+  <main style="flex: 1; padding: 18px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+    <section aria-labelledby="fx-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 id="fx-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Next fixture</h2>
+        <span style="font-size: 13px; color: #5B6660">Sat 8 Nov</span>
+      </div>
+      <div>
+        <div style="font-weight: 600; font-size: 17px">Hanbury Manor · Stableford</div>
+        <div style="font-size: 13px; color: #5B6660">4 tee times from 09:00 · £55, pay the club on the day</div>
+      </div>
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px"><span>Confirmed</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600">14 / 16</span></div>
+        <div style="height: 8px; border-radius: 4px; background: #ECEAE2"><div style="width: 87.5%; height: 8px; border-radius: 4px; background: #137A3A"></div></div>
+      </div>
+      <div style="display: flex; gap: 8px">
+        <button style="flex: 1; height: 44px; border-radius: 22px; border: 0; background: #137A3A; color: #FFFFFF; font-weight: 600; font-size: 14px">You're in</button>
+        <button style="flex: 1; height: 44px; border-radius: 22px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 500; font-size: 14px">Draw &amp; tee times</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="oom-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 4px 14px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0 4px">
+        <h2 id="oom-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Order of merit 2026</h2>
+        <span style="font-size: 12px; color: #5B6660">Best 6 of 9</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #ECEAE2; background: #E4F3E8; margin: 0 -14px; padding-left: 14px; padding-right: 14px"><span style="width: 18px; font-family: 'Geist Mono', monospace; color: #3F4A44">1</span><img src="assets/paul.jpg" alt="" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover"><span style="flex: 1; font-weight: 600">You</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600">212</span></div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #ECEAE2"><span style="width: 18px; font-family: 'Geist Mono', monospace; color: #5B6660">2</span><img src="assets/steve.jpg" alt="" style="width: 30px; height: 30px; border-radius: 15px; object-fit: cover"><span style="flex: 1">Steve B.</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600">198</span></div>
+      <div style="padding: 10px 0 12px; font-size: 13px; color: #5B6660">See all 24 members</div>
+    </section>
+
+    <section aria-label="Organiser tools" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <button style="border: 1px solid #E3E1D8; background: #FFFFFF; border-radius: 14px; padding: 12px 6px; font-size: 13px; color: #0E1F16">Fixtures</button>
+      <button style="border: 1px solid #E3E1D8; background: #FFFFFF; border-radius: 14px; padding: 12px 6px; font-size: 13px; color: #0E1F16">Who's in</button>
+      <button style="border: 1px solid #E3E1D8; background: #FFFFFF; border-radius: 14px; padding: 12px 6px; font-size: 13px; color: #0E1F16">Results</button>
+    </section>
+  </main>
+  <div style="height: 30px"></div>
+</div>
+</div>
+</section><section class="board" id="League">
+<h2>Leagues + ladders</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 14px">
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Compete</h1>
+    <div role="tablist" aria-label="Competition type" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #E9E7DF; border-radius: 14px; padding: 3px">
+      <button role="tab" aria-selected="true" style="border: 0; background: #FFFFFF; border-radius: 11px; padding: 10px 0; font-size: 14px; font-weight: 600; color: #0E1F16">Match-play ladder</button>
+      <button role="tab" aria-selected="false" style="border: 0; background: transparent; padding: 10px 0; font-size: 14px; color: #3F4A44">Monthly league</button>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <div style="background: #0E1F16; color: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 13px; color: #B9C7BE">Essex Autumn Ladder · 48 players</span>
+        <span style="font-size: 12px; color: #C8F169">Ends 30 Nov</span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 54px; line-height: 1; letter-spacing: -0.04em">#7</span>
+        <span style="font-size: 14px; color: #B9C7BE">up 3 this week · 4 wins, 1 loss</span>
+      </div>
+    </div>
+
+    <section aria-labelledby="ch-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="ch-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">You can challenge</h2>
+      <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 10px 12px">
+        <span style="width: 26px; font-family: 'Geist Mono', monospace; font-weight: 600; color: #5B6660">#6</span>
+        <img src="assets/steve.jpg" alt="" style="width: 38px; height: 38px; border-radius: 19px; object-fit: cover">
+        <span style="flex: 1"><span style="display: block; font-weight: 600">Steve B.</span><span style="display: block; font-size: 13px; color: #5B6660">HCP 16.4 · you give 6 shots</span></span>
+        <button style="height: 40px; padding: 0 14px; border-radius: 20px; border: 0; background: #137A3A; color: #FFFFFF; font-weight: 600; font-size: 14px">Challenge</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="lg-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 id="lg-h" style="margin: 0; font-size: 15px; font-weight: 600">November Stableford League</h2>
+        <span style="font-size: 12px; color: #5B6660">Starts 1 Nov</span>
+      </div>
+      <div style="font-size: 14px; color: #5B6660; line-height: 1.4">Post your best 3 cards from any BuddyGolf round. Top 3 win a champion's badge.</div>
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <span style="font-family: 'Geist Mono', monospace; font-weight: 600">Free entry · 62 in</span>
+        <button style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 600; font-size: 14px">Enter</button>
+      </div>
+    </section>
+  </main>
+  <div style="height: 30px"></div>
+</div>
+</div>
+</section><section class="board" id="Events">
+<h2>Events + away days</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Events</h1>
+    <div style="font-size: 14px; color: #5B6660">Run by BuddyGolf. Sign up free, pay the club when you play.</div>
+  </header>
+
+  <main style="flex: 1; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <article style="background: #0E1F16; color: #FFFFFF; border-radius: 24px; overflow: hidden">
+      <div style="position: relative; height: 150px">
+        <img src="assets/tee2.jpg" alt="Gloved hand placing a ball on a tee" style="width: 100%; height: 100%; object-fit: cover; display: block">
+        <span style="position: absolute; left: 14px; top: 14px; font-size: 12px; font-weight: 600; background: #C8F169; color: #0E1F16; padding: 5px 10px; border-radius: 999px">Sat 15 Nov</span>
+      </div>
+      <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+        <div>
+          <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em">Essex Buddy Open</div>
+          <div style="font-size: 14px; color: #B9C7BE">Shotgun Stableford · 18 fourballs · prizes and food</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <span style="font-size: 14px"><span style="font-family: 'Geist Mono', monospace; font-weight: 600">£49</span> <span style="color: #B9C7BE">on the day · 22 spots</span></span>
+          <button style="height: 44px; padding: 0 18px; border-radius: 22px; border: 0; background: #FFFFFF; color: #0E1F16; font-weight: 600">Enter solo</button>
+        </div>
+      </div>
+    </article>
+
+    <article style="display: flex; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 12px">
+      <img src="assets/green.jpg" alt="" style="width: 76px; height: 76px; border-radius: 12px; object-fit: cover">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-size: 12px; font-weight: 600; color: #137A3A">Away day · Sat 29 Nov</div>
+        <div style="font-weight: 600">Coach trip to Woburn</div>
+        <div style="font-size: 13px; color: #5B6660">Coach, 18 holes, carvery · £129</div>
+      </div>
+    </article>
+
+    <article style="display: flex; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 12px">
+      <img src="assets/group.jpg" alt="" style="width: 76px; height: 76px; border-radius: 12px; object-fit: cover">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-size: 12px; font-weight: 600; color: #137A3A">Beginners · Every Thursday</div>
+        <div style="font-weight: 600">9-hole social, no scores</div>
+        <div style="font-size: 13px; color: #5B6660">Canons Brook · £18 · host on hand</div>
+      </div>
+    </article>
+
+    <article style="display: flex; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 12px">
+      <img src="assets/highfive.jpg" alt="" style="width: 76px; height: 76px; border-radius: 12px; object-fit: cover">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-size: 12px; font-weight: 600; color: #137A3A">Women's golf · Sun 23 Nov</div>
+        <div style="font-weight: 600">Ladies' Texas Scramble</div>
+        <div style="font-size: 13px; color: #5B6660">Abridge G&amp;CC · £35 · all levels</div>
+      </div>
+    </article>
+  </main>
+  <div style="height: 30px"></div>
+</div>
+</div>
+</section><section class="board" id="Range">
+<h2>Range + practice buddies</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 4px">
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Range &amp; practice</h1>
+    <div style="font-size: 14px; color: #5B6660">Hit a bucket together before you commit to 18.</div>
+  </header>
+
+  <main style="flex: 1; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <div style="display: flex; gap: 8px; overflow: hidden; margin-right: -20px">
+      <button aria-pressed="true" style="flex: 0 0 auto; border: 0; background: #0E1F16; color: #FFFFFF; font-size: 13px; padding: 9px 14px; border-radius: 999px">Driving range</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">Short game</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">Putting</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">Simulator</button>
+    </div>
+
+    <article style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <img src="assets/steve.jpg" alt="" style="width: 46px; height: 46px; border-radius: 23px; object-fit: cover">
+        <div style="flex: 1">
+          <div style="font-weight: 600">Steve is at the range tonight</div>
+          <div style="font-size: 13px; color: #5B6660">Harlow Golf Centre · 18:30 · bay 12</div>
+        </div>
+      </div>
+      <div style="font-size: 14px; background: #F0EEE7; border-radius: 12px; padding: 10px 12px">"Working on wedges. Happy to swap tips."</div>
+      <button style="height: 44px; border-radius: 22px; border: 0; background: #137A3A; color: #FFFFFF; font-weight: 600">Join Steve</button>
+    </article>
+
+    <article style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <img src="assets/paul.jpg" alt="" style="width: 46px; height: 46px; border-radius: 23px; object-fit: cover">
+        <div style="flex: 1">
+          <div style="font-weight: 600">Your putting challenge</div>
+          <div style="font-size: 13px; color: #5B6660">Canons Brook practice green · Sat 16:00 · 1 joined</div>
+        </div>
+      </div>
+      <button style="height: 44px; border-radius: 22px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 600">Edit session</button>
+    </article>
+
+    <a href="#Perks" style="display: flex; align-items: center; gap: 12px; background: #E4F3E8; border-radius: 18px; padding: 12px 14px; text-decoration: none; color: #0E3D20">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M6 21v-2a6 6 0 0 1 12 0v2"></path></svg>
+      <span style="flex: 1"><span style="display: block; font-weight: 600">Book a lesson with a local PGA pro</span><span style="display: block; font-size: 13px">From £35 for 30 minutes</span></span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+    </a>
+  </main>
+
+  <div style="padding: 14px 20px 30px">
+    <button style="width: 100%; height: 56px; border-radius: 28px; border: 0; background: #0E1F16; color: #FFFFFF; font-weight: 600; font-size: 16px">I'm going to the range</button>
+  </div>
+</div>
+</div>
+</section><section class="board dark" id="GPS">
+<h2>GPS yardages + weather</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0E1F16; color: #FFFFFF; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <svg role="img" aria-label="Map of hole 7, a dogleg right par 4 with two fairway bunkers and a greenside bunker" viewBox="0 0 390 844" style="position: absolute; inset: 0; width: 390px; height: 844px">
+    <rect width="390" height="844" fill="#173A25"></rect>
+    <path d="M150 760 C140 640 150 520 175 430 C200 340 250 260 270 180 C280 140 270 110 255 95" fill="none" stroke="#2E7A47" stroke-width="96" stroke-linecap="round"></path>
+    <ellipse cx="252" cy="110" rx="52" ry="40" fill="#4FAE66"></ellipse>
+    <ellipse cx="212" cy="392" rx="26" ry="16" fill="#E8DDBE"></ellipse>
+    <ellipse cx="258" cy="350" rx="20" ry="13" fill="#E8DDBE"></ellipse>
+    <ellipse cx="300" cy="140" rx="18" ry="12" fill="#E8DDBE"></ellipse>
+    <path d="M150 740 L205 395 L252 112" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="6 6"></path>
+    <circle cx="205" cy="395" r="9" fill="none" stroke="#C8F169" stroke-width="3"></circle>
+    <circle cx="150" cy="740" r="8" fill="#FFFFFF"></circle>
+    <path d="M252 112 V70" stroke="#FFFFFF" stroke-width="2"></path>
+    <path d="M252 70 L272 78 L252 86z" fill="#E5532D"></path>
+  </svg>
+
+  <header style="position: relative; padding: 16px 20px 0; display: flex; align-items: flex-start; justify-content: space-between">
+    <div style="background: rgba(14,31,22,0.88); border-radius: 18px; padding: 10px 14px">
+      <div style="font-size: 12px; color: #B9C7BE">Hole 7 · Par 4 · SI 5</div>
+      <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -0.03em">382 yds</div>
+    </div>
+    <div style="background: rgba(14,31,22,0.88); border-radius: 18px; padding: 10px 14px; display: flex; align-items: center; gap: 8px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8F169" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(35deg)"><path d="M12 20V4M6 10l6-6 6 6"></path></svg>
+      <div><div style="font-family: 'Geist Mono', monospace; font-weight: 600">11 mph</div><div style="font-size: 12px; color: #B9C7BE">into, from left · 12°</div></div>
+    </div>
+  </header>
+
+  <div style="position: relative; margin-left: 232px; margin-top: 236px; background: rgba(14,31,22,0.88); border-radius: 12px; padding: 6px 10px; width: max-content; font-size: 13px"><span style="font-family: 'Geist Mono', monospace; font-weight: 600; color: #C8F169">228</span> to carry bunker</div>
+
+  <div style="flex: 1"></div>
+
+  <section aria-label="Distances to green" style="position: relative; margin: 0 16px 16px; background: #FFFFFF; color: #0E1F16; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center">
+      <div><div style="font-size: 12px; color: #5B6660">Front</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 26px">142</div></div>
+      <div style="border-left: 1px solid #ECEAE2; border-right: 1px solid #ECEAE2"><div style="font-size: 12px; color: #137A3A; font-weight: 600">Middle</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 40px; line-height: 1.05">156</div></div>
+      <div><div style="font-size: 12px; color: #5B6660">Back</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 26px">171</div></div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; background: #F0EEE7; border-radius: 14px; padding: 10px 12px">
+      <span>Plays like <strong style="font-family: 'Geist Mono', monospace">164</strong> into the wind</span>
+      <span style="font-weight: 600">Your 6 iron</span>
+    </div>
+    <div style="display: flex; gap: 10px">
+      <button style="flex: 1; height: 48px; border-radius: 24px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-weight: 600">Mark shot</button>
+      <a href="#Score" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 24px; background: #137A3A; color: #FFFFFF; text-decoration: none; font-weight: 600">Score hole</a>
+    </div>
+  </section>
+  <div style="height: 14px"></div>
+</div>
+</div>
+</section><section class="board" id="Stats">
+<h2>Stats</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; align-items: center; justify-content: space-between">
+    <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Your game</h1>
+    <span style="font-size: 12px; font-weight: 600; background: #C8F169; color: #0E1F16; padding: 5px 10px; border-radius: 999px">Plus</span>
+  </header>
+
+  <main style="flex: 1; padding: 14px 20px 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <div role="group" aria-label="Period" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #E9E7DF; border-radius: 14px; padding: 3px">
+      <button aria-pressed="false" style="border: 0; background: transparent; padding: 9px 0; font-size: 13px; color: #3F4A44">Last 5</button>
+      <button aria-pressed="true" style="border: 0; background: #FFFFFF; border-radius: 11px; padding: 9px 0; font-size: 13px; font-weight: 600; color: #0E1F16">Last 20</button>
+      <button aria-pressed="false" style="border: 0; background: transparent; padding: 9px 0; font-size: 13px; color: #3F4A44">2026</button>
+    </div>
+
+    <section aria-label="Key stats" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-size: 12px; color: #5B6660">Avg Stableford</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">33.4</div><div style="font-size: 12px; color: #0E5C2B">+2.1 vs last 20</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-size: 12px; color: #5B6660">Fairways hit</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">54%</div><div style="font-size: 12px; color: #0E5C2B">+6 pts</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-size: 12px; color: #5B6660">Greens in reg</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">31%</div><div style="font-size: 12px; color: #5B6660">no change</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px"><div style="font-size: 12px; color: #5B6660">Putts / round</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 24px">32.6</div><div style="font-size: 12px; color: #B83A1C">+0.8</div></div>
+    </section>
+
+    <section aria-labelledby="par-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+      <h2 id="par-h" style="margin: 0; font-size: 15px; font-weight: 600">Average over par, by hole type</h2>
+      <div style="display: flex; align-items: center; gap: 10px; font-size: 14px"><span style="width: 48px; color: #5B6660">Par 3</span><span style="flex: 1; height: 14px; background: #F0EEE7; border-radius: 7px"><span style="display: block; width: 46%; height: 14px; background: #137A3A; border-radius: 7px"></span></span><span style="width: 40px; text-align: right; font-family: 'Geist Mono', monospace; font-weight: 600">+0.6</span></div>
+      <div style="display: flex; align-items: center; gap: 10px; font-size: 14px"><span style="width: 48px; color: #5B6660">Par 4</span><span style="flex: 1; height: 14px; background: #F0EEE7; border-radius: 7px"><span style="display: block; width: 69%; height: 14px; background: #137A3A; border-radius: 7px"></span></span><span style="width: 40px; text-align: right; font-family: 'Geist Mono', monospace; font-weight: 600">+0.9</span></div>
+      <div style="display: flex; align-items: center; gap: 10px; font-size: 14px"><span style="width: 48px; color: #5B6660">Par 5</span><span style="flex: 1; height: 14px; background: #F0EEE7; border-radius: 7px"><span style="display: block; width: 31%; height: 14px; background: #137A3A; border-radius: 7px"></span></span><span style="width: 40px; text-align: right; font-family: 'Geist Mono', monospace; font-weight: 600">+0.4</span></div>
+    </section>
+
+    <section aria-label="Insight" style="background: #0E1F16; color: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #C8F169">Biggest saving</div>
+      <div style="font-size: 16px; line-height: 1.4">Three-putts cost you about 2 points a round. A putting session with Steve could fix that.</div>
+      <a href="#Range" style="color: #C8F169; font-size: 14px; font-weight: 600; text-decoration: none; margin-top: 2px">Find a practice buddy</a>
+    </section>
+  </main>
+  <div style="height: 30px"></div>
+</div>
+</div>
+</section><section class="board" id="Watch">
+<h2>Apple Watch scoring</h2>
+<div class="frame" style="width:520px">
+
+<div style="width: 520px; height: 320px; box-sizing: border-box; background: #E9E7DF; color: #FFFFFF; font-family: 'Geist', system-ui, sans-serif; display: flex; align-items: center; justify-content: center; gap: 40px">
+
+  <section aria-label="Watch: yardages" style="width: 200px; height: 244px; border-radius: 52px; background: #000000; box-sizing: border-box; padding: 22px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 0 0 8px #2B2B2B">
+    <div style="display: flex; justify-content: space-between; font-size: 13px; color: #B9C7BE"><span>H7 · Par 4</span><span style="color: #C8F169">36 pts</span></div>
+    <div style="text-align: center">
+      <div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 62px; line-height: 1; color: #C8F169">156</div>
+      <div style="font-size: 12px; color: #B9C7BE; margin-top: 4px">to middle</div>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; font-size: 15px"><span><span style="font-family: 'Geist', sans-serif; font-size: 11px; color: #B9C7BE">F </span>142</span><span><span style="font-family: 'Geist', sans-serif; font-size: 11px; color: #B9C7BE">B </span>171</span></div>
+  </section>
+
+  <section aria-label="Watch: enter score" style="width: 200px; height: 244px; border-radius: 52px; background: #000000; box-sizing: border-box; padding: 22px 18px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 0 0 8px #2B2B2B">
+    <div style="font-size: 13px; color: #B9C7BE; text-align: center">Your score · H7</div>
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <button aria-label="One fewer" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #1F2A23; color: #FFFFFF; font-size: 22px">−</button>
+      <span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 56px; line-height: 1">5</span>
+      <button aria-label="One more" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #1F2A23; color: #FFFFFF; font-size: 22px">+</button>
+    </div>
+    <button style="height: 44px; border-radius: 22px; border: 0; background: #C8F169; color: #0E1F16; font-weight: 600">Save · 2 pts</button>
+  </section>
+</div>
+</div>
+</section><section class="board" id="Travel">
+<h2>Travel mode + golf trips</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <section aria-label="Trip" style="position: relative; height: 250px; flex: 0 0 auto">
+    <img src="assets/highfive.jpg" alt="Golfers on a sunny course with mountains behind" style="width: 100%; height: 100%; object-fit: cover; display: block">
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 140px; background: linear-gradient(transparent, rgba(14,31,22,0.88))"></div>
+    <span style="position: absolute; left: 20px; top: 20px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; background: #FFFFFF; color: #0E1F16; padding: 6px 12px; border-radius: 999px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16l20-6-2-3-7 2-5-5-2 1 3 6-5 2-2-2-1 1z"></path></svg>Travel mode on</span>
+    <div style="position: absolute; left: 20px; right: 20px; bottom: 16px; color: #FFFFFF">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Algarve, 3–7 Nov</h1>
+      <div style="font-size: 14px; color: #DCE7E0">Showing golfers and games near Vilamoura</div>
+    </div>
+  </section>
+
+  <main style="flex: 1; padding: 18px 20px 0; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <section aria-labelledby="loc-h" style="display: flex; flex-direction: column; gap: 8px">
+      <h2 id="loc-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6660">Games while you're there</h2>
+      <a href="#Round" style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px; text-decoration: none; color: #0E1F16">
+        <span style="width: 44px; text-align: center"><span style="display: block; font-size: 11px; color: #5B6660">Tue</span><span style="display: block; font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 18px">4</span></span>
+        <span style="flex: 1"><span style="display: block; font-weight: 600">Old Course Vilamoura · 10:20</span><span style="display: block; font-size: 13px; color: #5B6660">2 Brits on holiday need 2 · HCP 10–18</span></span>
+      </a>
+      <a href="#Round" style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px; text-decoration: none; color: #0E1F16">
+        <span style="width: 44px; text-align: center"><span style="display: block; font-size: 11px; color: #5B6660">Thu</span><span style="display: block; font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 18px">6</span></span>
+        <span style="flex: 1"><span style="display: block; font-weight: 600">Quinta do Lago South · 08:40</span><span style="display: block; font-size: 13px; color: #5B6660">Local member hosting · 1 spot</span></span>
+      </a>
+    </section>
+
+    <section aria-labelledby="trip-h" style="background: #0E1F16; color: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+      <h2 id="trip-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.01em">Plan a buddy trip</h2>
+      <div style="font-size: 14px; color: #B9C7BE; line-height: 1.4">Pick a destination, invite your four, plan flights, villa and tee times in one place.</div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap">
+        <span style="font-size: 13px; background: #17301F; padding: 6px 11px; border-radius: 999px">Algarve</span>
+        <span style="font-size: 13px; background: #17301F; padding: 6px 11px; border-radius: 999px">Costa del Sol</span>
+        <span style="font-size: 13px; background: #17301F; padding: 6px 11px; border-radius: 999px">Scottish links</span>
+        <span style="font-size: 13px; background: #17301F; padding: 6px 11px; border-radius: 999px">Belek</span>
+      </div>
+      <button style="height: 46px; border-radius: 23px; border: 0; background: #C8F169; color: #0E1F16; font-weight: 600; margin-top: 4px">Start a trip</button>
+    </section>
+  </main>
+  <div style="height: 30px"></div>
+</div>
+</div>
+</section><section class="board" id="Market">
+<h2>Kit marketplace</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Kit swap</h1>
+      <button style="height: 40px; padding: 0 14px; border-radius: 20px; border: 0; background: #0E1F16; color: #FFFFFF; font-weight: 600; font-size: 14px">Sell</button>
+    </div>
+    <label style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 14px; padding: 0 14px; height: 46px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6660" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search kit</span>
+      <input placeholder="Drivers, irons, trolleys…" style="flex: 1; border: 0; font: inherit; background: transparent; outline: none; color: #0E1F16">
+    </label>
+    <div style="display: flex; gap: 8px; overflow: hidden; margin-right: -20px">
+      <button aria-pressed="true" style="flex: 0 0 auto; border: 0; background: #137A3A; color: #FFFFFF; font-size: 13px; padding: 9px 14px; border-radius: 999px">Near me</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">From buddies</button>
+      <button style="flex: 0 0 auto; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px; padding: 9px 14px; border-radius: 999px">Left-handed</button>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 16px 20px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-content: start; overflow: hidden">
+    <article style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; overflow: hidden">
+      <div style="height: 120px; background: #E9E7DF; display: grid; place-items: center; font-size: 12px; color: #5B6660">[Driver photo]</div>
+      <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-family: 'Geist Mono', monospace; font-weight: 600">£120</div>
+        <div style="font-size: 14px; font-weight: 500">Titleist 917D, 10.5°</div>
+        <div style="font-size: 12px; color: #5B6660">Steve · buddy · 4.1 mi</div>
+      </div>
+    </article>
+    <article style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; overflow: hidden">
+      <div style="height: 120px; background: #E9E7DF; display: grid; place-items: center; font-size: 12px; color: #5B6660">[Irons photo]</div>
+      <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-family: 'Geist Mono', monospace; font-weight: 600">£260</div>
+        <div style="font-size: 14px; font-weight: 500">Ping i210 irons 5–PW</div>
+        <div style="font-size: 12px; color: #5B6660">Your listing · 3 enquiries</div>
+      </div>
+    </article>
+    <article style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; overflow: hidden">
+      <div style="height: 120px; background: #E9E7DF; display: grid; place-items: center; font-size: 12px; color: #5B6660">[Putter photo]</div>
+      <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-family: 'Geist Mono', monospace; font-weight: 600">£45</div>
+        <div style="font-size: 14px; font-weight: 500">Odyssey White Hot #7</div>
+        <div style="font-size: 12px; color: #5B6660">Steve · buddy · 4.1 mi</div>
+      </div>
+    </article>
+    <article style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; overflow: hidden">
+      <div style="height: 120px; background: #E9E7DF; display: grid; place-items: center; font-size: 12px; color: #5B6660">[Trolley photo]</div>
+      <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+        <div style="font-family: 'Geist Mono', monospace; font-weight: 600">£180</div>
+        <div style="font-size: 14px; font-weight: 500">Electric trolley, 36-hole</div>
+        <div style="font-size: 12px; color: #5B6660">Steve · buddy · 4.1 mi</div>
+      </div>
+    </article>
+  </main>
+
+  <div style="margin: 0 20px 30px; display: flex; gap: 10px; align-items: center; background: #E4F3E8; border-radius: 16px; padding: 12px 14px; font-size: 14px; color: #0E3D20">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg>
+    <span>Agree a price in chat and pay in person when you collect. Check the kit before you hand over any money.</span>
+  </div>
+</div>
+</div>
+</section><section class="board dark" id="Plus">
+<h2>BuddyGolf Plus</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0E1F16; color: #FFFFFF; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0">
+    <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.04em; line-height: 1">buddy<span style="color: #C8F169">golf</span> plus</div>
+    <a href="#Profile" aria-label="Close" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #2F4A3A; display: grid; place-items: center; box-sizing: border-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+  </header>
+
+  <main style="flex: 1; padding: 14px 20px 0; display: flex; flex-direction: column; gap: 14px">
+    <div style="background: #17301F; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; justify-content: space-between; font-size: 14px"><span>Free rounds joined this month</span><span style="font-family: 'Geist Mono', monospace; font-weight: 600; color: #C8F169">2 of 2</span></div>
+      <div style="height: 6px; border-radius: 3px; background: #2A4033"><div style="height: 6px; border-radius: 3px; background: #C8F169; width: 100%"></div></div>
+      <div style="font-size: 13px; color: #B9C7BE">Steve's Sunday game needs one more. Go Plus to join it.</div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px">
+      <caption style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Free compared with Plus</caption>
+      <thead>
+        <tr><th scope="col" style="text-align: left; font-weight: 500; font-size: 12px; color: #B9C7BE; padding: 0 0 6px"></th><th scope="col" style="width: 74px; text-align: center; font-weight: 500; font-size: 12px; color: #B9C7BE; padding: 0 0 6px">Free</th><th scope="col" style="width: 84px; text-align: center; font-weight: 700; font-size: 12px; color: #0E1F16; background: #C8F169; border-radius: 10px 10px 0 0; padding: 6px 0">Plus</th></tr>
+      </thead>
+      <tbody>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">Rounds you join</th><td style="text-align: center; color: #B9C7BE">2 a month</td><td style="text-align: center; font-weight: 600; background: #17301F">Unlimited</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">Join requests out</th><td style="text-align: center; color: #B9C7BE">1 at a time</td><td style="text-align: center; font-weight: 600; background: #17301F">5 at a time</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">Rounds you host</th><td style="text-align: center; color: #B9C7BE">Unlimited</td><td style="text-align: center; font-weight: 600; background: #17301F">Unlimited</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">Top of the host's list</th><td style="text-align: center; color: #B9C7BE">–</td><td style="text-align: center; font-weight: 600; background: #17301F; color: #C8F169">Yes</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">"Need a player" alerts</th><td style="text-align: center; color: #B9C7BE">Standard</td><td style="text-align: center; font-weight: 600; background: #17301F">10 min early</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">Filters</th><td style="text-align: center; color: #B9C7BE">Basic</td><td style="text-align: center; font-weight: 600; background: #17301F">All</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">Stats</th><td style="text-align: center; color: #B9C7BE">Last 5</td><td style="text-align: center; font-weight: 600; background: #17301F">Full history</td></tr>
+        <tr style="border-top: 1px solid #2A4033"><th scope="row" style="text-align: left; font-weight: 500; padding: 9px 0">See who viewed you</th><td style="text-align: center; color: #B9C7BE">–</td><td style="text-align: center; font-weight: 600; background: #17301F; color: #C8F169; border-radius: 0 0 10px 10px">Yes</td></tr>
+      </tbody>
+    </table>
+
+    <fieldset style="border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <legend style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Plan</legend>
+      <label style="position: relative; border: 2px solid #C8F169; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column">
+        <input type="radio" name="plan" checked style="position: absolute; opacity: 0">
+        <span style="position: absolute; top: -10px; right: 10px; font-size: 11px; font-weight: 700; background: #C8F169; color: #0E1F16; padding: 2px 8px; border-radius: 999px">Save 37%</span>
+        <span style="font-size: 12px; color: #B9C7BE">Yearly</span>
+        <span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">£29.99</span>
+      </label>
+      <label style="position: relative; border: 1px solid #2F4A3A; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column">
+        <input type="radio" name="plan" style="position: absolute; opacity: 0">
+        <span style="font-size: 12px; color: #B9C7BE">Monthly</span>
+        <span style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 20px">£3.99</span>
+      </label>
+    </fieldset>
+  </main>
+
+  <div style="padding: 12px 20px 26px; display: flex; flex-direction: column; gap: 6px">
+    <button style="height: 54px; border-radius: 27px; border: 0; background: #C8F169; color: #0E1F16; font-weight: 700; font-size: 16px">Try free for 14 days</button>
+    <div style="font-size: 12px; color: #B9C7BE; text-align: center">Your free rounds reset on 1 Nov. Cancel any time.</div>
+  </div>
+</div>
+</div>
+</section><section class="board" id="Perks">
+<h2>Perks (opt-in partners)</h2>
+<div class="frame" style="width:390px">
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; gap: 12px; padding: 16px 20px 6px">
+    <a href="#Profile" aria-label="Back" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E3E1D8; background: #FFFFFF; display: grid; place-items: center; box-sizing: border-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E1F16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+  </header>
+
+  <main style="flex: 1; padding: 8px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+    <div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.03em">Perks</h1>
+      <div style="font-size: 14px; color: #5B6660; margin-top: 2px">Deals from vetted partners. Only shown here, never in your games.</div>
+    </div>
+
+    <label style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 16px; padding: 12px 14px">
+      <span style="flex: 1"><span style="display: block; font-weight: 500">Tell me about new perks</span><span style="display: block; font-size: 13px; color: #5B6660">At most one email a month. Your data is never sold.</span></span>
+      <input type="checkbox" style="accent-color: #137A3A; width: 20px; height: 20px; margin: 0">
+    </label>
+
+    <a href="#Range" style="display: flex; gap: 14px; align-items: center; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; text-decoration: none; color: #0E1F16">
+      <span style="width: 48px; height: 48px; border-radius: 14px; background: #E4F3E8; display: grid; place-items: center; flex: 0 0 auto"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M6 21v-2a6 6 0 0 1 12 0v2"></path></svg></span>
+      <span style="flex: 1"><span style="display: block; font-weight: 600">Lessons with local PGA pros</span><span style="display: block; font-size: 13px; color: #5B6660">First 30-minute lesson [PARTNER PRICE]</span></span>
+    </a>
+    <a href="#Travel" style="display: flex; gap: 14px; align-items: center; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; text-decoration: none; color: #0E1F16">
+      <span style="width: 48px; height: 48px; border-radius: 14px; background: #E4F3E8; display: grid; place-items: center; flex: 0 0 auto"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16l20-6-2-3-7 2-5-5-2 1 3 6-5 2-2-2-1 1z"></path></svg></span>
+      <span style="flex: 1"><span style="display: block; font-weight: 600">Golf trips</span><span style="display: block; font-size: 13px; color: #5B6660">Package deals for your four [PARTNER OFFER]</span></span>
+    </a>
+    <a href="#Market" style="display: flex; gap: 14px; align-items: center; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; text-decoration: none; color: #0E1F16">
+      <span style="width: 48px; height: 48px; border-radius: 14px; background: #E4F3E8; display: grid; place-items: center; flex: 0 0 auto"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21 15 3"></path><path d="M15 3h3"></path><path d="M4 21h6"></path></svg></span>
+      <span style="flex: 1"><span style="display: block; font-weight: 600">Kit &amp; balls</span><span style="display: block; font-size: 13px; color: #5B6660">Member pricing [PARTNER OFFER]</span></span>
+    </a>
+    <a href="#Perks" style="display: flex; gap: 14px; align-items: center; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 14px; text-decoration: none; color: #0E1F16">
+      <span style="width: 48px; height: 48px; border-radius: 14px; background: #E4F3E8; display: grid; place-items: center; flex: 0 0 auto"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#137A3A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg></span>
+      <span style="flex: 1"><span style="display: block; font-weight: 600">Golf insurance</span><span style="display: block; font-weight: 400; font-size: 13px; color: #5B6660">Kit, hole-in-one and liability cover [PARTNER PRICE]</span></span>
+    </a>
+  </main>
+  <div style="height: 30px"></div>
+</div>
+</div>
+</section><section class="board" id="Club">
+<h2>Club dashboard (B2B)</h2>
+<div class="frame" style="width:1280px">
+
+<div style=" box-sizing: border-box; background: #F5F4EF; color: #0E1F16; font-family: 'Geist', system-ui, sans-serif; font-size: 15px; display: flex; flex-wrap: wrap">
+
+  <nav aria-label="Club dashboard" style="flex: 1 1 220px; max-width: 100%; background: #0E1F16; color: #FFFFFF; padding: 24px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="32" height="32" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#137A3A"></rect><g fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"><path d="M9 7v18"></path><circle cx="15.5" cy="21" r="6.5"></circle><circle cx="24.5" cy="21" r="6.5"></circle><path d="M31 21v7a6 6 0 0 1-6 6h-3"></path></g></svg>
+      <div><div style="font-weight: 600">BuddyGolf for Clubs</div><div style="font-size: 12px; color: #B9C7BE">Canons Brook GC</div></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 14px">
+      <a href="#Club" aria-current="page" style="color: #0E1F16; background: #C8F169; text-decoration: none; padding: 10px 12px; border-radius: 10px; font-weight: 600">Overview</a>
+      <a href="#Club" style="color: #FFFFFF; text-decoration: none; padding: 10px 12px; border-radius: 10px">Tee sheet</a>
+      <a href="#Club" style="color: #FFFFFF; text-decoration: none; padding: 10px 12px; border-radius: 10px">Promotions</a>
+      <a href="#Club" style="color: #FFFFFF; text-decoration: none; padding: 10px 12px; border-radius: 10px">Membership leads</a>
+      <a href="#Club" style="color: #FFFFFF; text-decoration: none; padding: 10px 12px; border-radius: 10px">Societies &amp; events</a>
+      <a href="#Club" style="color: #FFFFFF; text-decoration: none; padding: 10px 12px; border-radius: 10px">Reports</a>
+    </div>
+  </nav>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px; max-width: 1200px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+      <div>
+        <div style="font-size: 14px; color: #5B6660">October 2026</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.03em">Overview</h1>
+      </div>
+      <button style="height: 46px; padding: 0 20px; border-radius: 23px; border: 0; background: #137A3A; color: #FFFFFF; font-weight: 600">Promote quiet slots</button>
+    </div>
+
+    <section aria-label="This month" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #5B6660">Rounds via BuddyGolf</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 30px">184</div><div style="font-size: 13px; color: #0E5C2B">+38 vs September</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #5B6660">Green-fee revenue</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 30px">£6,420</div><div style="font-size: 13px; color: #0E5C2B">62% in off-peak slots</div></div>
+      <div style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #5B6660">New visitors</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 30px">97</div><div style="font-size: 13px; color: #5B6660">first time at the club</div></div>
+      <div style="background: #0E1F16; color: #FFFFFF; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #B9C7BE">Membership leads</div><div style="font-family: 'Geist Mono', monospace; font-weight: 600; font-size: 30px; color: #C8F169">14</div><div style="font-size: 13px; color: #B9C7BE">played here 3+ times</div></div>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px">
+      <section aria-labelledby="fill-h" style="flex: 1 1 340px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+        <h2 id="fill-h" style="margin: 0; font-size: 16px; font-weight: 600">Tee sheet fill by day</h2>
+        <div role="img" aria-label="Tee sheet fill: Monday 41%, Tuesday 38%, Wednesday 52%, Thursday 47%, Friday 71%, Saturday 96%, Sunday 94%" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; align-items: end; height: 180px">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">41%</span><span style="width: 100%; height: 41%; background: #E5A23B; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Mon</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">38%</span><span style="width: 100%; height: 38%; background: #E5A23B; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Tue</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">52%</span><span style="width: 100%; height: 52%; background: #E5A23B; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Wed</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">47%</span><span style="width: 100%; height: 47%; background: #E5A23B; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Thu</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">71%</span><span style="width: 100%; height: 71%; background: #137A3A; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Fri</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">96%</span><span style="width: 100%; height: 96%; background: #137A3A; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Sat</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end"><span style="font-family: 'Geist Mono', monospace; font-size: 12px">94%</span><span style="width: 100%; height: 94%; background: #137A3A; border-radius: 8px 8px 0 0"></span><span style="font-size: 12px; color: #5B6660">Sun</span></div>
+        </div>
+        <div style="font-size: 13px; color: #5B6660">Amber days are under 60% full. Promote them to golfers who said they're free.</div>
+      </section>
+
+      <section aria-labelledby="quiet-h" style="flex: 1 1 380px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+        <h2 id="quiet-h" style="margin: 0; font-size: 16px; font-weight: 600">Quiet slots this week</h2>
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 360px">
+            <thead><tr style="text-align: left; color: #5B6660; font-size: 12px"><th style="padding: 8px 0; font-weight: 500">Slot</th><th style="padding: 8px 0; font-weight: 500">Free</th><th style="padding: 8px 0; font-weight: 500">Matched golfers</th><th style="padding: 8px 0"></th></tr></thead>
+            <tbody>
+              <tr style="border-top: 1px solid #ECEAE2"><td style="padding: 10px 0; font-family: 'Geist Mono', monospace">Tue 13:20</td><td>12</td><td>31 free nearby</td><td style="text-align: right"><button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 0; background: #137A3A; color: #FFFFFF; font-size: 13px; font-weight: 600">Promote at £29</button></td></tr>
+              <tr style="border-top: 1px solid #ECEAE2"><td style="padding: 10px 0; font-family: 'Geist Mono', monospace">Wed 15:40</td><td>8</td><td>24 free nearby</td><td style="text-align: right"><button style="height: 36px; padding: 0 14px; border-radius: 18px; border: 0; background: #137A3A; color: #FFFFFF; font-size: 13px; font-weight: 600">Promote at £29</button></td></tr>
+              <tr style="border-top: 1px solid #ECEAE2"><td style="padding: 10px 0; font-family: 'Geist Mono', monospace">Thu 12:10</td><td>16</td><td>19 free nearby</td><td style="text-align: right"><span style="font-size: 13px; color: #0E5C2B; font-weight: 600">Live · 6 booked</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section aria-labelledby="leads-h" style="background: #FFFFFF; border: 1px solid #E3E1D8; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+      <h2 id="leads-h" style="margin: 0; font-size: 16px; font-weight: 600">Visitors who could become members</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <div style="flex: 1 1 240px; display: flex; align-items: center; gap: 12px; border: 1px solid #ECEAE2; border-radius: 14px; padding: 10px 12px"><img src="assets/steve.jpg" alt="" style="width: 38px; height: 38px; border-radius: 19px; object-fit: cover"><span style="flex: 1"><span style="display: block; font-weight: 600">Steve B.</span><span style="display: block; font-size: 13px; color: #5B6660">6 rounds here · HCP 16.4</span></span><button style="height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px">Send offer</button></div>
+        <div style="flex: 1 1 240px; display: flex; align-items: center; gap: 12px; border: 1px solid #ECEAE2; border-radius: 14px; padding: 10px 12px"><img src="assets/paul.jpg" alt="" style="width: 38px; height: 38px; border-radius: 19px; object-fit: cover"><span style="flex: 1"><span style="display: block; font-weight: 600">Paul W.</span><span style="display: block; font-size: 13px; color: #5B6660">3 rounds here · HCP 9.8</span></span><button style="height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #D9D6CB; background: #FFFFFF; color: #0E1F16; font-size: 13px">Send offer</button></div>
+      </div>
+      <div style="font-size: 12px; color: #5B6660">Only golfers who opted in to hearing from clubs are shown.</div>
+    </section>
+  </main>
+</div>
+</div>
+</section>
+</div>
+</body>
+</html>
