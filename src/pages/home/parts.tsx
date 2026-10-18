@@ -51,55 +51,53 @@ export function WaitingCard({ waiting, onDone, className }: { waiting: HomeData[
     }
   }
 
+  const single = waiting.length === 1
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {/* Lime edge marks this as the card that needs an answer. */}
-      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5 bg-flag" />
-      <ul className="m-0 flex list-none flex-col divide-y divide-line-soft p-0">
-        {waiting.slice(0, 3).map(({ round, request }) => (
-          <li key={request.id} className="flex flex-col gap-3 py-4 pr-4 pl-5">
-            <Link to={`/rounds/${round.id}/requests`} className="flex items-center gap-3 text-fairway no-underline">
-              <Avatar name={request.profile?.display_name ?? 'Golfer'} src={request.profile?.avatar_url} size={44} />
-              <div className="min-w-0 flex-1">
-                <div className="text-[15px]">
-                  <strong className="font-semibold">{shortName(request.profile?.display_name ?? null)}</strong>
-                  {request.profile?.handicap != null && (
-                    <span className="text-muted"> · HCP <span className="font-mono">{request.profile.handicap.toFixed(1)}</span></span>
-                  )}
+    <div className="flex flex-col gap-2">
+      <ul className={`m-0 flex list-none gap-3 p-0 ${single ? '' : '-mx-5 snap-x scroll-px-5 overflow-x-auto px-5 pb-2'}`}>
+        {waiting.map(({ round, request }) => (
+          <li key={request.id} className={`relative shrink-0 snap-start overflow-hidden ${single ? 'w-full' : 'w-[300px]'} ${className}`}>
+            {/* Lime edge marks these as the cards that need an answer. */}
+            <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5 bg-flag" />
+            <div className="flex h-full flex-col gap-3 py-4 pr-4 pl-5">
+              <Link to={`/rounds/${round.id}/requests`} className="flex items-center gap-3 text-fairway no-underline">
+                <Avatar name={request.profile?.display_name ?? 'Golfer'} src={request.profile?.avatar_url} size={44} />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[15px]">
+                    <strong className="font-semibold">{shortName(request.profile?.display_name ?? null)}</strong>
+                    {request.profile?.handicap != null && (
+                      <span className="text-muted"> · HCP <span className="font-mono">{request.profile.handicap.toFixed(1)}</span></span>
+                    )}
+                  </div>
+                  <div className="truncate text-[13px] text-muted">
+                    For {roundTitle(round)} · {shortDate(round.tee_time)} <span className="font-mono">{teeTime(round.tee_time)}</span>
+                  </div>
                 </div>
-                <div className="truncate text-[13px] text-muted">
-                  For {roundTitle(round)} · {shortDate(round.tee_time)} <span className="font-mono">{teeTime(round.tee_time)}</span>
-                </div>
+              </Link>
+              {request.message && <p className="m-0 truncate rounded-2xl bg-chip px-3.5 py-2 text-sm">“{request.message}”</p>}
+              <div className="mt-auto grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={busy === request.id}
+                  onClick={() => decide(request.id, 'declined')}
+                  className="min-h-11 rounded-full border border-[#CFCCC1] bg-card font-semibold text-fairway disabled:opacity-50"
+                >
+                  Decline
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === request.id || spotsLeft(round) === 0}
+                  onClick={() => decide(request.id, 'accepted')}
+                  className="min-h-11 rounded-full bg-green font-semibold text-white disabled:opacity-50"
+                >
+                  {spotsLeft(round) === 0 ? 'Round full' : 'Accept'}
+                </button>
               </div>
-            </Link>
-            {request.message && <p className="m-0 rounded-2xl bg-chip px-3.5 py-2 text-sm">“{request.message}”</p>}
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                disabled={busy === request.id}
-                onClick={() => decide(request.id, 'declined')}
-                className="min-h-11 rounded-full border border-line bg-card font-semibold text-fairway disabled:opacity-50"
-              >
-                Decline
-              </button>
-              <button
-                type="button"
-                disabled={busy === request.id || spotsLeft(round) === 0}
-                onClick={() => decide(request.id, 'accepted')}
-                className="min-h-11 rounded-full bg-green font-semibold text-white disabled:opacity-50"
-              >
-                {spotsLeft(round) === 0 ? 'Round full' : 'Accept'}
-              </button>
             </div>
           </li>
         ))}
       </ul>
-      {waiting.length > 3 && (
-        <Link to={`/rounds/${waiting[3].round.id}/requests`} className="block border-t border-line-soft py-3 text-center text-sm font-semibold text-green no-underline">
-          See {waiting.length - 3} more
-        </Link>
-      )}
-      {error && <p role="alert" className="m-0 mx-4 mb-4 rounded-2xl bg-danger/10 px-3.5 py-2 text-sm text-danger">{error}</p>}
+      {error && <p role="alert" className="m-0 rounded-2xl bg-danger/10 px-3.5 py-2 text-sm text-danger">{error}</p>}
     </div>
   )
 }

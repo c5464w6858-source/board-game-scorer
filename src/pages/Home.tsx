@@ -10,13 +10,13 @@ import { Bell, Greeting, PickCard, WaitingCard } from './home/parts'
 import { useHomeData } from './home/useHomeData'
 
 // One card style for everything on the light sheet.
-const card = 'rounded-[22px] border border-line bg-card shadow-[0_10px_24px_-20px_rgba(14,31,22,0.35)]'
+const card = 'rounded-[22px] border border-[#DAD7CC] bg-card shadow-[0_12px_28px_-16px_rgba(14,31,22,0.35)]'
 
 function Section({ title, badge, action, children }: { title: string; badge?: number; action?: ReactNode; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2.5">
       <div className="flex items-center justify-between px-1">
-        <h2 className="m-0 flex items-center gap-2 text-xs font-semibold tracking-[0.08em] text-muted uppercase">
+        <h2 className="m-0 flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-fairway/80 uppercase">
           {title}
           {badge ? (
             <span className="grid min-w-5 place-items-center rounded-full bg-alert px-1.5 font-mono text-[11px] leading-5 tracking-normal text-white">{badge}</span>
@@ -61,7 +61,7 @@ export function Home() {
         </div>
       </section>
 
-      <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] bg-clubhouse px-5 pt-6 pb-4">
+      <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] bg-[#EDEBE4] px-5 pt-6 pb-4">
         {d.loading ? (
           <Loading />
         ) : d.error ? (
@@ -89,7 +89,7 @@ export function Home() {
                   <Link to={`/rounds/${next.id}`} className="flex flex-col gap-3 p-4 text-fairway no-underline">
                     <div>
                       <div className="font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(next)}</div>
-                      <div className="mt-1 text-sm text-muted">{next.course_name} · {next.holes} holes</div>
+                      <div className="mt-1 text-sm text-[#4A544E]">{next.course_name} · {next.holes} holes</div>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
