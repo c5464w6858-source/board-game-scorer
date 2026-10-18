@@ -43,8 +43,8 @@ export function RequestRow({ round, request }: HomeData['waiting'][number]) {
   )
 }
 
-// Light "Picked for you" card. `accent` adds a coloured strip for the format.
-export function PickCard({ round, match, miles, className = '', accent }: { round: RoundRow; match: Match; miles: number | null; className?: string; accent?: boolean }) {
+// "Picked for you" card with a coloured strip for the game format.
+export function PickCard({ round, match, miles, className = '' }: { round: RoundRow; match: Match; miles: number | null; className?: string }) {
   const strip: Record<RoundRow['format'], string> = {
     stableford: 'bg-green',
     stroke: 'bg-fairway',
@@ -53,22 +53,14 @@ export function PickCard({ round, match, miles, className = '', accent }: { roun
   }
   return (
     <Link to={`/rounds/${round.id}`} className={`flex w-[232px] shrink-0 snap-start flex-col overflow-hidden text-fairway no-underline ${className}`}>
-      {accent && (
-        <div className={`flex items-center justify-between px-4 py-2 text-xs font-semibold ${strip[round.format]} ${round.format === 'scramble' ? 'text-fairway' : 'text-white'}`}>
-          <span>{formatLabels[round.format]}</span>
-          <span className="font-mono">{match.percent}% match</span>
-        </div>
-      )}
+      <div className={`flex items-center justify-between px-4 py-2 text-xs font-semibold ${strip[round.format]} ${round.format === 'scramble' ? 'text-fairway' : 'text-white'}`}>
+        <span>{formatLabels[round.format]}</span>
+        <span className="font-mono">{match.percent}% match</span>
+      </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
-        {!accent && (
-          <div className="flex items-center justify-between text-[13px]">
-            <span className="rounded-full bg-green-tint px-2 py-0.5 font-mono font-semibold text-green-dark">{match.percent}% match</span>
-            {distanceText(miles) && <span className="text-muted">{distanceText(miles)}</span>}
-          </div>
-        )}
         <div className="min-w-0">
           <div className="truncate font-display text-[18px] font-bold tracking-[-0.02em]">{roundTitle(round)}</div>
-          <div className="truncate text-[13px] text-muted">{accent && distanceText(miles) ? `${distanceText(miles)} · ` : ''}{round.course_name}</div>
+          <div className="truncate text-[13px] text-muted">{distanceText(miles) ? `${distanceText(miles)} · ` : ''}{round.course_name}</div>
         </div>
         <div className="flex items-baseline gap-2">
           <span className="font-mono text-[22px] font-semibold">{teeTime(round.tee_time)}</span>
@@ -76,7 +68,7 @@ export function PickCard({ round, match, miles, className = '', accent }: { roun
         </div>
         <div className="mt-auto flex items-center justify-between border-t border-line-soft pt-3">
           <AvatarStack players={lineup(round)} total={round.max_players} size={26} />
-          <span className="text-[13px] text-muted">{spotsLeft(round)} {spotsLeft(round) === 1 ? 'spot' : 'spots'}{accent ? '' : ` · ${formatLabels[round.format]}`}</span>
+          <span className="text-[13px] text-muted">{spotsLeft(round)} {spotsLeft(round) === 1 ? 'spot' : 'spots'} open</span>
         </div>
       </div>
     </Link>
