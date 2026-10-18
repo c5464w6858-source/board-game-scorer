@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ClubPicker } from '../components/ClubPicker'
-import { Avatar, Button, Card, Chip, ErrorNote, Loading, Logo, Segmented, SectionLabel, ToggleRow } from '../components/ui'
+import { Avatar, Button, Card, Chip, ErrorNote, Loading, Logo, RoundIconButton, Segmented, SectionLabel, ToggleRow } from '../components/ui'
 import { fetchCourse, type Course } from '../lib/courses'
 import { playStyles } from '../lib/format'
 import { fetchPreferences, playFrequencies, savePreferences, updateProfile, uploadAvatar } from '../lib/profiles'
@@ -11,13 +11,13 @@ const field = 'min-h-12 w-full rounded-2xl border border-line bg-card px-4 text-
 
 const steps = [
   { title: 'About you', intro: 'So other golfers know who they’re playing with.' },
-  { title: 'Your golf club', intro: 'We use this to find games near you.' },
+  { title: 'Your golf club', intro: 'Your home club, or the course you play most. We use it to find games near you.' },
   { title: 'How you play', intro: 'We match you with golfers who play the same way.' },
 ]
 
 type Frequency = (typeof playFrequencies)[number]['value']
 
-// First-run setup after sign-up. Every step can be skipped and everything can
+// First-run setup after sign-up. Every step must be completed; everything can
 // be changed later from Edit profile.
 export function Welcome() {
   const { id, data, loading, error: loadError } = useMe()
@@ -32,7 +32,8 @@ export function Welcome() {
   const [noHandicap, setNoHandicap] = useState(false)
   const [area, setArea] = useState('')
   const [club, setClub] = useState<Course | null>(null)
-  const [member, setMember] = useState<'yes' | 'no'>('no')
+  // Empty until the golfer answers, so it can't be passed over by accident.
+  const [member, setMember] = useState<'yes' | 'no' | ''>('')
   const [looking, setLooking] = useState(false)
   const [clubsCanContact, setClubsCanContact] = useState(false)
   const [styles, setStyles] = useState<string[]>([])
@@ -44,7 +45,7 @@ export function Welcome() {
     setName(profile.display_name ?? '')
     setHandicap(profile.handicap == null ? '' : String(profile.handicap))
     setArea(profile.home_area ?? '')
-    setMember(profile.home_club_member ? 'yes' : 'no')
+    if (profile.home_club_member) setMember('yes')
     setStyles(profile.play_style)
     setAvatar(profile.avatar_url)
     if (profile.home_club_id) fetchCourse(profile.home_club_id).then(setClub, () => {})
@@ -81,11 +82,28 @@ export function Welcome() {
     }
   }
 
-  async function next(save: boolean) {
+  // What's still needed before this step can be completed, or null when done.
+  function missing(): string | null {
+    if (step === 0) {
+      if (!name.trim()) return 'Add your name'
+      if (!noHandicap && !handicap.trim()) return 'Add your handicap, or tick that you don’t have one'
+      if (!area.trim()) return 'Add where you’re based'
+    } else if (step === 1) {
+      if (!club) return 'Choose your home club or the course you play most'
+      if (!member) return 'Say whether you’re a member there'
+    } else {
+      if (!styles.length) return 'Pick at least one way you like to play'
+      if (!frequency) return 'Choose how often you play'
+    }
+    return null
+  }
+
+  async function next() {
+    if (missing()) return
     setBusy(true)
     setError(null)
     try {
-      if (save) await saveStep()
+      await saveStep()
       if (step < steps.length - 1) setStep(step + 1)
       else await finish()
     } catch (e) {
@@ -106,27 +124,16 @@ export function Welcome() {
   }
 
   const last = step === steps.length - 1
+  const todo = missing()
 
   return (
     <main className="mx-auto flex min-h-full max-w-[480px] flex-col gap-6 bg-clubhouse px-5 pt-5 pb-8">
-      <header className="flex items-center justify-between">
-        <Logo size={32} />
-        <button
-          type="button"
-          disabled={busy}
-          onClick={async () => {
-            setBusy(true)
-            try {
-              await finish()
-            } catch (e) {
-              setError((e as Error).message)
-              setBusy(false)
-            }
-          }}
-          className="min-h-11 text-sm font-medium text-muted"
-        >
-          Skip setup
-        </button>
+      <header className="flex min-h-11 items-center justify-between">
+        {step > 0 ? (
+          <RoundIconButton label="Back" icon="back" onClick={() => setStep(step - 1)} />
+        ) : (
+          <Logo size={32} />
+        )}
       </header>
 
       <div className="flex gap-1.5" aria-label={`Step ${step + 1} of ${steps.length}`}>
@@ -172,7 +179,7 @@ export function Welcome() {
       {step === 1 && (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Home club</span>
+            <span className="text-sm font-medium">Home club or the course you play most</span>
             <ClubPicker club={club} onChange={setClub} />
           </div>
           {club && (
@@ -190,7 +197,7 @@ export function Welcome() {
             </div>
           )}
           <Card className="divide-y divide-line-soft overflow-hidden">
-            {(!club || member === 'no') && (
+            {member === 'no' && (
               <ToggleRow label="I’m looking for a club membership" checked={looking} onChange={setLooking} />
             )}
             <ToggleRow
@@ -247,12 +254,12 @@ export function Welcome() {
       {error && <ErrorNote message={error} />}
 
       <div className="mt-auto flex flex-col gap-2 pt-2">
-        <Button size="lg" full disabled={busy} onClick={() => next(true)}>
+        <Button size="lg" full disabled={busy || Boolean(todo)} onClick={next}>
           {busy ? 'Saving…' : last ? 'Finish' : 'Continue'}
         </Button>
-        <button type="button" disabled={busy} onClick={() => next(false)} className="min-h-11 text-sm font-medium text-muted">
-          {last ? 'Skip and finish' : 'Skip this step'}
-        </button>
+        <p aria-live="polite" className="m-0 min-h-5 text-center text-sm text-muted">
+          {todo}
+        </p>
       </div>
     </main>
   )
