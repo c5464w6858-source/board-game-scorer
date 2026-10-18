@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import photo from '../assets/login-group.jpg'
-import { dimpleTexture } from '../components/dimples'
-import { Grain } from '../components/Grain'
 import { HoleArt } from '../components/HoleArt'
 import { AvatarStack, ErrorNote, Icon, Loading, Logo } from '../components/ui'
 import { dayLabel, teeOffIn, teeTime } from '../lib/format'
@@ -50,14 +48,13 @@ export function Home() {
         src={photo}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[880px] w-full object-cover object-[45%_25%] [mask-image:linear-gradient(to_bottom,black_0%,black_35%,transparent_100%)]"
+        className="absolute inset-x-0 -top-[170px] h-[1050px] w-full object-cover object-[42%_center] [mask-image:linear-gradient(to_bottom,black_0%,black_40%,transparent_100%)]"
       />
 
       <section className="relative overflow-hidden px-5 pt-5 pb-14 text-white">
-        {/* Deep green tint over the photo, with a soft light from the top right. */}
-        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(120%_90%_at_100%_0%,rgba(36,101,60,0.55)_0%,transparent_60%),linear-gradient(180deg,rgba(14,31,22,0.9)_0%,rgba(18,41,28,0.82)_100%)]" />
-        <div aria-hidden="true" className="absolute inset-0" style={{ backgroundImage: dimpleTexture }} />
-        <Grain opacity={0.12} />
+        {/* Green tint over the photo: darker behind the greeting, lighter
+            lower down so the golfers show through. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,40,24,0.74)_0%,rgba(16,64,36,0.52)_55%,rgba(19,92,48,0.42)_100%)]" />
         <header className="relative flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="rounded-[13px] shadow-[0_0_0_1.5px_rgba(255,255,255,0.9)]">
@@ -79,11 +76,10 @@ export function Home() {
 
       <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] px-5 pt-6 pb-4">
         {/* Warm gradient with soft colour washes; the frosted cards pick these up. */}
-        <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-t-[30px] bg-gradient-to-b from-[#F4F2EC]/80 via-[#F0EEE7]/90 to-[#ECEAE3] backdrop-blur-[2px]">
+        <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-t-[30px] bg-gradient-to-b from-[#F4F2EC]/70 via-[#F0EEE7]/85 to-[#ECEAE3] backdrop-blur-[2px]">
           <div className="absolute top-24 -left-20 size-72 rounded-full bg-[#9DC39A]/45 blur-3xl" />
           <div className="absolute top-[42%] -right-24 size-72 rounded-full bg-flag/35 blur-3xl" />
           <div className="absolute bottom-10 left-10 size-64 rounded-full bg-[#B7D3B0]/40 blur-3xl" />
-          <Grain opacity={0.06} />
         </div>
         {d.loading ? (
           <div className="relative"><Loading /></div>
