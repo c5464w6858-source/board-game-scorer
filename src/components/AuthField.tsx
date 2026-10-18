@@ -3,7 +3,6 @@ import { Icon } from './ui'
 
 const inputTone = {
   light: 'border-line bg-card text-fairway placeholder:text-muted/70',
-  dark: 'border-fairway-line bg-fairway-2 text-white placeholder:text-muted-dark/60',
   glass: 'border-white/70 bg-white/80 text-fairway placeholder:text-muted/80',
 }
 
@@ -18,7 +17,7 @@ export function AuthField({
   const isPassword = type === 'password'
   return (
     <label className="flex flex-col gap-1.5">
-      <span className={`text-sm font-medium ${tone === 'dark' ? 'text-muted-dark' : ''}`}>{label}</span>
+      <span className="text-sm font-medium">{label}</span>
       <span className="relative">
         <input
           type={isPassword && shown ? 'text' : type}
@@ -30,7 +29,7 @@ export function AuthField({
             type="button"
             onClick={() => setShown((s) => !s)}
             aria-label={shown ? 'Hide password' : 'Show password'}
-            className={`absolute top-1/2 right-1 grid size-11 -translate-y-1/2 place-items-center rounded-full ${tone === 'dark' ? 'text-muted-dark' : 'text-muted'}`}
+            className="absolute top-1/2 right-1 grid size-11 -translate-y-1/2 place-items-center rounded-full text-muted"
           >
             <Icon name={shown ? 'eyeOff' : 'eye'} size={20} />
           </button>

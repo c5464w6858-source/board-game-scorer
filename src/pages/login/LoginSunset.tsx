@@ -1,8 +1,8 @@
 import groupImg from '../../assets/login-group.jpg'
-import { Logo } from '../../components/ui'
-import { FreeLine, LoginForm } from './LoginForm'
+import { Icon, Logo } from '../../components/ui'
+import { LoginForm } from './LoginForm'
 
-// Option 1: the group photo fills the screen; the form sits on a frosted card.
+// The group photo fills the screen; the sign-in form sits on a frosted card over it.
 export function LoginSunset() {
   return (
     <main className="relative mx-auto flex min-h-full max-w-[480px] flex-col overflow-hidden bg-fairway text-white">
@@ -29,9 +29,12 @@ export function LoginSunset() {
           <p className="mt-2 mb-0 text-[15px] font-medium text-white/90">Find a four near you, or fill your own.</p>
         </div>
         <section aria-label="Sign in" className="rounded-[28px] border border-white/40 bg-white/55 p-5 text-fairway shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl backdrop-saturate-150">
-          <LoginForm tone="glass" />
+          <LoginForm />
         </section>
-        <FreeLine tone="dark" />
+        <p className="m-0 flex items-center justify-center gap-2 text-center text-[13px] text-white/85">
+          <Icon name="shield" size={16} />
+          Free to join. Hosting is always free.
+        </p>
       </div>
     </main>
   )
