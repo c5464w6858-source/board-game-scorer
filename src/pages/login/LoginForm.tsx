@@ -11,7 +11,7 @@ export type Tone = 'light' | 'dark' | 'glass'
 const ctas: Record<Mode, string> = { signin: 'Sign in', signup: 'Create account', forgot: 'Send reset link' }
 
 function ModeSwitch({ mode, onChange, tone }: { mode: Mode; onChange: (m: Mode) => void; tone: Tone }) {
-  const track = tone === 'dark' ? 'bg-fairway-2' : tone === 'glass' ? 'bg-white/45' : 'bg-segment'
+  const track = tone === 'dark' ? 'bg-fairway-2' : tone === 'glass' ? 'bg-white/30' : 'bg-segment'
   const on = tone === 'dark' ? 'bg-flag text-fairway font-semibold' : 'bg-card font-semibold shadow-sm'
   const off = tone === 'dark' ? 'text-muted-dark' : tone === 'glass' ? 'text-fairway/75' : 'text-muted'
   return (
@@ -125,7 +125,7 @@ export function LoginForm({ tone = 'light' }: { tone?: Tone }) {
           <button
             type="button"
             onClick={() => switchTo('forgot')}
-            className={`-mt-1 min-h-11 self-end text-sm font-medium ${dark ? 'text-flag' : 'text-green'}`}
+            className={`-mt-1 min-h-11 self-end text-sm ${dark ? 'font-medium text-flag' : tone === 'glass' ? 'font-semibold text-green-dark' : 'font-medium text-green'}`}
           >
             Forgot password?
           </button>
