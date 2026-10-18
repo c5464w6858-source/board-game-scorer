@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import photo from '../assets/login-group.jpg'
 import { Contours } from '../components/Contours'
 import { GolfBall, dimpleTexture } from '../components/GolfBall'
 import { Grain } from '../components/Grain'
@@ -45,6 +46,9 @@ export function Home() {
       <div aria-hidden="true" className="fixed inset-0 mx-auto max-w-[480px] bg-fairway" />
 
       <section className="relative overflow-hidden bg-[radial-gradient(120%_90%_at_100%_0%,#24653C_0%,transparent_55%),radial-gradient(90%_70%_at_0%_100%,#1A3D29_0%,transparent_60%),linear-gradient(180deg,#0E1F16_0%,#12291C_100%)] px-5 pt-5 pb-14 text-white">
+        {/* The login's photo, very faded and tinted into the green. */}
+        <img src={photo} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover object-[45%_30%] opacity-25 mix-blend-luminosity" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-fairway/40 to-fairway/70" />
         <div aria-hidden="true" className="absolute -top-10 right-6 size-40 rounded-full bg-flag/15 blur-3xl" />
         <div aria-hidden="true" className="absolute inset-0" style={{ backgroundImage: dimpleTexture }} />
         <Contours className="text-white/[0.07]" />
@@ -72,6 +76,8 @@ export function Home() {
       <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] px-5 pt-6 pb-4">
         {/* Warm gradient with soft colour washes; the frosted cards pick these up. */}
         <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-t-[30px] bg-gradient-to-b from-[#F4F2EC] to-[#E7E4DA]">
+          <img src={photo} alt="" className="absolute inset-x-0 top-0 h-[70%] w-full scale-105 object-cover object-[45%_40%] opacity-[0.14] blur-[2px] grayscale-[40%]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#F1EFE8]/40 to-[#E7E4DA]" />
           <div className="absolute top-24 -left-20 size-72 rounded-full bg-[#9DC39A]/45 blur-3xl" />
           <div className="absolute top-[42%] -right-24 size-72 rounded-full bg-flag/35 blur-3xl" />
           <div className="absolute bottom-10 left-10 size-64 rounded-full bg-[#B7D3B0]/40 blur-3xl" />
