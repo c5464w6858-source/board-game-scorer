@@ -38,26 +38,20 @@ export function RequestRow({ round, request }: HomeData['waiting'][number]) {
         <strong className="font-semibold">{shortName(request.profile?.display_name ?? null)}</strong> <span className="text-muted">wants to join</span>{' '}
         <strong className="font-semibold">{roundTitle(round)}</strong>
       </div>
-      <span className="shrink-0 rounded-full bg-green px-3 py-1.5 text-sm font-semibold text-white">Review</span>
+      <span className="shrink-0 rounded-full bg-fairway px-3 py-1.5 text-sm font-semibold text-white">Review</span>
     </Link>
   )
 }
 
 // "Picked for you" card with a coloured strip for the game format.
 export function PickCard({ round, match, miles, className = '' }: { round: RoundRow; match: Match; miles: number | null; className?: string }) {
-  const strip: Record<RoundRow['format'], string> = {
-    stableford: 'bg-green',
-    stroke: 'bg-fairway',
-    match: 'bg-[#2F6FB0]',
-    scramble: 'bg-flag',
-  }
   return (
     <Link to={`/rounds/${round.id}`} className={`flex w-[232px] shrink-0 snap-start flex-col overflow-hidden text-fairway no-underline ${className}`}>
-      <div className={`flex items-center justify-between px-4 py-2 text-xs font-semibold ${strip[round.format]} ${round.format === 'scramble' ? 'text-fairway' : 'text-white'}`}>
-        <span>{formatLabels[round.format]}</span>
-        <span className="font-mono">{match.percent}% match</span>
-      </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
+        <div className="flex items-center justify-between text-xs">
+          <span className="rounded-full border border-line px-2 py-0.5 font-medium text-muted">{formatLabels[round.format]}</span>
+          <span className="font-mono font-semibold text-green-dark">{match.percent}% match</span>
+        </div>
         <div className="min-w-0">
           <div className="truncate font-display text-[18px] font-bold tracking-[-0.02em]">{roundTitle(round)}</div>
           <div className="truncate text-[13px] text-muted">{distanceText(miles) ? `${distanceText(miles)} · ` : ''}{round.course_name}</div>
