@@ -347,7 +347,11 @@ export type Database = {
     Functions: {
       golfer_stats: {
         Args: { p_user_id: string }
-        Returns: { buddies: number; rounds: number; shows_up_pct: number | null }[]
+        Returns: {
+          buddies: number
+          rounds: number
+          shows_up_pct: number
+        }[]
       }
       is_buddy: { Args: { p_user_id: string }; Returns: boolean }
       is_round_host: { Args: { p_round_id: string }; Returns: boolean }
@@ -372,3 +376,13 @@ export type TablesInsert<T extends keyof PublicSchema["Tables"]> =
 export type TablesUpdate<T extends keyof PublicSchema["Tables"]> =
   PublicSchema["Tables"][T]["Update"]
 export type Enums<T extends keyof PublicSchema["Enums"]> = PublicSchema["Enums"][T]
+
+export const Constants = {
+  public: {
+    Enums: {
+      request_status: ["pending", "accepted", "declined", "withdrawn"],
+      round_format: ["stableford", "stroke", "match", "scramble"],
+      round_visibility: ["public", "buddies"],
+    },
+  },
+} as const
