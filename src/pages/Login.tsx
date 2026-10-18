@@ -51,17 +51,22 @@ export function Login() {
   return (
     <main className="mx-auto flex min-h-full max-w-[480px] flex-col bg-clubhouse">
       <section aria-label="BuddyGolf" className="relative h-[220px] shrink-0 overflow-hidden bg-fairway text-white">
-        <img src={heroImg} alt="" className="size-full object-cover opacity-80" />
-        <div className="absolute inset-0 bg-gradient-to-t from-fairway via-fairway/40 to-transparent" />
+        <img src={heroImg} alt="" className="size-full object-cover opacity-60" />
+        {/* Darken the bright photo so the logo and white text stay sharp on top of it. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-fairway/70 via-fairway/30 to-fairway" />
         <div className="absolute top-5 left-5 flex items-center gap-2.5">
-          <Logo size={36} />
-          <span className="font-display text-xl font-bold tracking-[-0.02em]">BuddyGolf</span>
+          <span className="rounded-[13px] shadow-[0_0_0_1.5px_rgba(255,255,255,0.9),0_4px_12px_rgba(0,0,0,0.35)]">
+            <Logo size={36} />
+          </span>
+          <span className="font-display text-[21px] font-extrabold tracking-[-0.02em] [text-shadow:0_1px_8px_rgba(0,0,0,0.45)]">
+            BuddyGolf
+          </span>
         </div>
-        <div className="absolute inset-x-5 bottom-9">
+        <div className="absolute inset-x-5 bottom-9 [text-shadow:0_1px_10px_rgba(0,0,0,0.4)]">
           <h1 className="m-0 font-display text-[34px] leading-[1.02] font-extrabold tracking-[-0.04em]">
             Find your four.
           </h1>
-          <p className="mt-2 mb-0 text-[15px] text-muted-dark">
+          <p className="mt-2 mb-0 text-[15px] font-medium text-white/90">
             Host rounds, join games and play with golfers who match your pace.
           </p>
         </div>
