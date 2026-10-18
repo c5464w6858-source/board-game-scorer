@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import heroImg from '../assets/hero-green.jpg'
 import { AuthField } from '../components/AuthField'
+import { OAuthButtons } from '../components/OAuthButtons'
 import { Button, ErrorNote, Icon, Logo, Segmented } from '../components/ui'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
@@ -48,14 +49,14 @@ export function Login() {
 
   return (
     <main className="mx-auto flex min-h-full max-w-[480px] flex-col bg-clubhouse">
-      <section aria-label="BuddyGolf" className="relative h-[300px] shrink-0 overflow-hidden bg-fairway text-white">
+      <section aria-label="BuddyGolf" className="relative h-[220px] shrink-0 overflow-hidden bg-fairway text-white">
         <img src={heroImg} alt="" className="size-full object-cover opacity-80" />
         <div className="absolute inset-0 bg-gradient-to-t from-fairway via-fairway/40 to-transparent" />
         <div className="absolute top-5 left-5 flex items-center gap-2.5">
           <Logo size={36} />
           <span className="font-display text-xl font-bold tracking-[-0.02em]">BuddyGolf</span>
         </div>
-        <div className="absolute inset-x-5 bottom-10">
+        <div className="absolute inset-x-5 bottom-9">
           <h1 className="m-0 font-display text-[34px] leading-[1.02] font-extrabold tracking-[-0.04em]">
             Find your four.
           </h1>
@@ -65,7 +66,7 @@ export function Login() {
         </div>
       </section>
 
-      <div className="relative -mt-6 flex flex-1 flex-col gap-5 rounded-t-[28px] bg-clubhouse px-5 pt-6 pb-8">
+      <div className="relative -mt-6 flex flex-1 flex-col gap-4 rounded-t-[28px] bg-clubhouse px-5 pt-5 pb-6">
         {mode === 'forgot' ? (
           <div className="flex items-center gap-3">
             <button
@@ -90,7 +91,18 @@ export function Login() {
           />
         )}
 
-        <form onSubmit={submit} className="flex flex-col gap-4">
+        {mode !== 'forgot' && (
+          <>
+            <OAuthButtons onError={setError} />
+            <div className="flex items-center gap-3 text-[13px] text-muted" role="separator">
+              <span className="h-px flex-1 bg-line" />
+              or with email
+              <span className="h-px flex-1 bg-line" />
+            </div>
+          </>
+        )}
+
+        <form onSubmit={submit} className="flex flex-col gap-3.5">
           <AuthField
             label="Email"
             type="email"
