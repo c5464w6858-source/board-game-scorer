@@ -4,6 +4,13 @@ export type OAuthProvider = 'google' | 'apple'
 
 const names: Record<OAuthProvider, string> = { google: 'Google', apple: 'Apple' }
 
+// Providers to offer, e.g. VITE_OAUTH_PROVIDERS=apple,google. Empty hides the
+// buttons until each provider is switched on in Supabase.
+export const enabledProviders = (import.meta.env.VITE_OAUTH_PROVIDERS ?? '')
+  .split(',')
+  .map((p: string) => p.trim().toLowerCase())
+  .filter((p: string): p is OAuthProvider => p === 'apple' || p === 'google')
+
 // Supabase sends a disabled provider to a raw JSON error page, so check the
 // project's public auth settings first and explain instead.
 async function isEnabled(provider: OAuthProvider) {

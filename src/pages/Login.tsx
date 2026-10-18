@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import heroImg from '../assets/hero-green.jpg'
 import { AuthField } from '../components/AuthField'
 import { OAuthButtons } from '../components/OAuthButtons'
+import { enabledProviders } from '../lib/oauth'
 import { Button, ErrorNote, Icon, Logo, Segmented } from '../components/ui'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
@@ -91,7 +92,7 @@ export function Login() {
           />
         )}
 
-        {mode !== 'forgot' && (
+        {mode !== 'forgot' && enabledProviders.length > 0 && (
           <>
             <OAuthButtons onError={setError} />
             <div className="flex items-center gap-3 text-[13px] text-muted" role="separator">

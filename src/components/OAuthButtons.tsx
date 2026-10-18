@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { signInWith, type OAuthProvider } from '../lib/oauth'
+import { enabledProviders, signInWith, type OAuthProvider } from '../lib/oauth'
 
 function AppleMark() {
   return (
@@ -36,12 +36,16 @@ export function OAuthButtons({ onError }: { onError: (message: string | null) =>
 
   return (
     <div className="flex flex-col gap-2.5">
-      <button type="button" disabled={busy !== null} onClick={() => go('apple')} className={`${base} bg-black text-white`}>
-        <AppleMark /> {busy === 'apple' ? 'Opening Apple…' : 'Continue with Apple'}
-      </button>
-      <button type="button" disabled={busy !== null} onClick={() => go('google')} className={`${base} border border-line bg-card text-fairway`}>
-        <GoogleMark /> {busy === 'google' ? 'Opening Google…' : 'Continue with Google'}
-      </button>
+      {enabledProviders.includes('apple') && (
+        <button type="button" disabled={busy !== null} onClick={() => go('apple')} className={`${base} bg-black text-white`}>
+          <AppleMark /> {busy === 'apple' ? 'Opening Apple…' : 'Continue with Apple'}
+        </button>
+      )}
+      {enabledProviders.includes('google') && (
+        <button type="button" disabled={busy !== null} onClick={() => go('google')} className={`${base} border border-line bg-card text-fairway`}>
+          <GoogleMark /> {busy === 'google' ? 'Opening Google…' : 'Continue with Google'}
+        </button>
+      )}
     </div>
   )
 }
