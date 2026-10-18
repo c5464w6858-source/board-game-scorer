@@ -6,14 +6,14 @@ import { enabledProviders } from '../../lib/oauth'
 import { supabase } from '../../lib/supabase'
 
 type Mode = 'signin' | 'signup' | 'forgot'
-export type Tone = 'light' | 'dark'
+export type Tone = 'light' | 'dark' | 'glass'
 
 const ctas: Record<Mode, string> = { signin: 'Sign in', signup: 'Create account', forgot: 'Send reset link' }
 
 function ModeSwitch({ mode, onChange, tone }: { mode: Mode; onChange: (m: Mode) => void; tone: Tone }) {
-  const track = tone === 'dark' ? 'bg-fairway-2' : 'bg-segment'
+  const track = tone === 'dark' ? 'bg-fairway-2' : tone === 'glass' ? 'bg-white/45' : 'bg-segment'
   const on = tone === 'dark' ? 'bg-flag text-fairway font-semibold' : 'bg-card font-semibold shadow-sm'
-  const off = tone === 'dark' ? 'text-muted-dark' : 'text-muted'
+  const off = tone === 'dark' ? 'text-muted-dark' : tone === 'glass' ? 'text-fairway/75' : 'text-muted'
   return (
     <div role="radiogroup" aria-label="Sign in or create an account" className={`flex rounded-full p-1 ${track}`}>
       {(['signin', 'signup'] as const).map((m) => (
