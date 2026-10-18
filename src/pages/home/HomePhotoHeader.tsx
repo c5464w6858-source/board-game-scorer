@@ -6,7 +6,7 @@ import type { HomeData } from './useHomeData'
 
 // Frosted white card used on the light sheet.
 const card =
-  'rounded-[22px] border border-white/90 bg-white/80 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(14,31,22,0.06),0_16px_32px_-20px_rgba(14,31,22,0.45)]'
+  'rounded-[22px] border border-white/90 bg-white/80 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_2px_6px_rgba(14,31,22,0.08),0_10px_24px_-6px_rgba(14,31,22,0.18),0_24px_40px_-24px_rgba(14,31,22,0.4)]'
 
 // A: the photo behind a green header, running down behind a light sheet of
 // cards and fading out.

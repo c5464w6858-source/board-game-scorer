@@ -54,7 +54,7 @@ export function WaitingCard({ waiting, onDone, className }: { waiting: HomeData[
   const single = waiting.length === 1
   return (
     <div className="flex flex-col gap-2">
-      <ul className={`m-0 flex list-none gap-3 p-0 ${single ? '' : '-mx-5 snap-x scroll-px-5 overflow-x-auto px-5 pb-2'}`}>
+      <ul className={`m-0 flex list-none gap-3 p-0 ${single ? '' : '-mx-5 -my-3 snap-x scroll-px-5 overflow-x-auto px-5 py-3 pb-5'}`}>
         {waiting.map(({ round, request }) => (
           <li key={request.id} className={`relative shrink-0 snap-start overflow-hidden ${single ? 'w-full' : 'w-[300px]'} ${className}`}>
             {/* Lime edge marks these as the cards that need an answer. */}

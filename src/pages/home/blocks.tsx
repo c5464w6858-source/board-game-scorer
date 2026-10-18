@@ -122,7 +122,7 @@ export function Picks({ d, card }: { d: HomeData; card: string }) {
   return (
     <Section title="Tee times for you" icon="compass" action={<Link to="/discover" className="text-sm font-semibold text-green no-underline">See all</Link>}>
       {d.picks.length ? (
-        <div className="-mx-5 flex snap-x scroll-px-5 gap-3 overflow-x-auto px-5 pb-2">
+        <div className="-mx-5 -my-3 flex snap-x scroll-px-5 gap-3 overflow-x-auto px-5 py-3 pb-5">
           {d.picks.map((p) => <PickCard key={p.round.id} {...p} className={card} />)}
         </div>
       ) : (
