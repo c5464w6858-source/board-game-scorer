@@ -54,7 +54,7 @@ export function Home() {
       <section className="relative overflow-hidden px-5 pt-5 pb-14 text-white">
         {/* Green tint over the photo: darker behind the greeting, lighter
             lower down so the golfers show through. */}
-        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,36,22,0.84)_0%,rgba(14,52,30,0.68)_55%,rgba(17,74,40,0.6)_100%)]" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,30,19,0.9)_0%,rgba(12,42,25,0.8)_55%,rgba(14,58,32,0.74)_100%)]" />
         <header className="relative flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="rounded-[13px] shadow-[0_0_0_1.5px_rgba(255,255,255,0.9)]">
