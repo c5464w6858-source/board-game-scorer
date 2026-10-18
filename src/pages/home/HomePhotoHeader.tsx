@@ -33,7 +33,7 @@ export function HomePhotoHeader({ d }: { d: HomeData }) {
           </div>
           <Bell waiting={d.waiting} className="border border-white/15 bg-white/10 text-white backdrop-blur" />
         </header>
-        <div className="mt-6"><Actions onDark /></div>
+        <div className="mt-6"><Actions /></div>
       </section>
 
       <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] px-5 pt-6 pb-4">
@@ -42,7 +42,7 @@ export function HomePhotoHeader({ d }: { d: HomeData }) {
           <div className="absolute top-[42%] -right-24 size-72 rounded-full bg-flag/35 blur-3xl" />
           <div className="absolute bottom-10 left-10 size-64 rounded-full bg-[#B7D3B0]/40 blur-3xl" />
         </div>
-        <Section title="Next on the tee"><NextRoundHole d={d} card={card} /></Section>
+        <Section title="Next on the tee" icon="tee"><NextRoundHole d={d} card={card} /></Section>
         <Requests d={d} card={card} />
         <Picks d={d} card={card} />
       </div>
