@@ -49,6 +49,13 @@ const paths = {
   shield: <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z" />,
   filter: <path d="M4 7h16M7 12h10M10 17h4" />,
   send: <path d="m22 2-11 11M22 2l-7 20-4-9-9-4z" />,
+  // A ball sitting on a golf tee.
+  tee: (
+    <>
+      <circle cx="12" cy="6.5" r="4" />
+      <path d="M8.5 12h7l-2.2 2.6V21h-2.6v-6.4z" />
+    </>
+  ),
   eye: (
     <>
       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />

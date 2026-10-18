@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Contours } from '../components/Contours'
+import { GolfBall, dimpleTexture } from '../components/GolfBall'
 import { Grain } from '../components/Grain'
 import { HoleArt } from '../components/HoleArt'
 import { AvatarStack, ErrorNote, Icon, Loading, Logo } from '../components/ui'
-import { dayLabel, teeTime } from '../lib/format'
+import { dayLabel, teeOffIn, teeTime } from '../lib/format'
 import { roundTitle } from '../lib/rounds'
 import { lineup, spotsText } from './home/helpers'
 import { Bell, Greeting, PickCard, WaitingCard } from './home/parts'
+import { Scorecard } from './home/Scorecard'
 import { useHomeData } from './home/useHomeData'
 
 // One card style for everything on the light sheet: frosted white over the
@@ -44,7 +46,9 @@ export function Home() {
 
       <section className="relative overflow-hidden bg-[radial-gradient(120%_90%_at_100%_0%,#24653C_0%,transparent_55%),radial-gradient(90%_70%_at_0%_100%,#1A3D29_0%,transparent_60%),linear-gradient(180deg,#0E1F16_0%,#12291C_100%)] px-5 pt-5 pb-14 text-white">
         <div aria-hidden="true" className="absolute -top-10 right-6 size-40 rounded-full bg-flag/15 blur-3xl" />
-        <Contours className="text-white/[0.09]" />
+        <div aria-hidden="true" className="absolute inset-0" style={{ backgroundImage: dimpleTexture }} />
+        <Contours className="text-white/[0.07]" />
+        <GolfBall className="pointer-events-none absolute -top-16 -right-20 size-56 opacity-[0.13]" />
         <Grain opacity={0.12} />
         <header className="relative flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -79,13 +83,14 @@ export function Home() {
           <div className="relative"><ErrorNote message={d.error} /></div>
         ) : (
           <>
-            <Section title="Your next round">
+            <Section title="Next on the tee">
               <div className={`${card} overflow-hidden`}>
                 <div className="relative h-[124px]">
                   <HoleArt className="size-full" />
                   {next && (
                     <>
-                      <span className="absolute top-3 left-3 rounded-full bg-fairway px-3 py-1 text-[13px] font-semibold text-white">
+                      <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-fairway px-3 py-1 text-[13px] font-semibold text-white">
+                        <Icon name="tee" size={15} className="text-flag" />
                         {dayLabel(next.tee_time)} · <span className="font-mono text-flag">{teeTime(next.tee_time)}</span>
                       </span>
                       {d.forecast && (
@@ -99,9 +104,11 @@ export function Home() {
                 {next ? (
                   <Link to={`/rounds/${next.id}`} className="flex flex-col gap-3 p-4 text-fairway no-underline">
                     <div>
+                      <div className="text-xs font-semibold text-green">{teeOffIn(next.tee_time)}</div>
                       <div className="font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(next)}</div>
-                      <div className="mt-1 text-sm text-[#4A544E]">{next.course_name} · {next.holes} holes</div>
+                      <div className="mt-1 text-sm text-[#4A544E]">{next.course_name}</div>
                     </div>
+                    <Scorecard round={next} />
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <AvatarStack players={lineup(next)} total={next.max_players} />
@@ -125,7 +132,7 @@ export function Home() {
               </Section>
             )}
 
-            <Section title="Picked for you" action={<Link to="/discover" className="text-sm font-medium text-green no-underline">See all</Link>}>
+            <Section title="Tee times for you" action={<Link to="/discover" className="text-sm font-medium text-green no-underline">See all</Link>}>
               {d.picks.length ? (
                 <div className="-mx-5 flex snap-x scroll-px-5 gap-3 overflow-x-auto px-5 pb-2">
                   {d.picks.map((p) => <PickCard key={p.round.id} {...p} className={card} />)}

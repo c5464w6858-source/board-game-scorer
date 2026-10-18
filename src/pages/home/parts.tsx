@@ -116,6 +116,7 @@ export function PickCard({ round, match, miles, className = '' }: { round: Round
           <div className="truncate text-[13px] text-muted">{distanceText(miles) ? `${distanceText(miles)} · ` : ''}{round.course_name}</div>
         </div>
         <div className="flex items-baseline gap-2">
+          <Icon name="tee" size={16} className="self-center text-green" />
           <span className="font-mono text-[22px] font-semibold">{teeTime(round.tee_time)}</span>
           <span className="text-sm text-muted">{shortDate(round.tee_time)}</span>
         </div>
