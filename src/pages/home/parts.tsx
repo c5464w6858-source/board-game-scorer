@@ -74,13 +74,13 @@ export function WaitingCard({ waiting, onDone, className }: { waiting: HomeData[
                   </div>
                 </div>
               </Link>
-              {request.message && <p className="m-0 truncate rounded-2xl bg-chip px-3.5 py-2 text-sm">“{request.message}”</p>}
+              {request.message && <p className="m-0 truncate rounded-2xl bg-[#F1EFE8] px-3.5 py-2 text-sm">“{request.message}”</p>}
               <div className="mt-auto grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   disabled={busy === request.id}
                   onClick={() => decide(request.id, 'declined')}
-                  className="min-h-11 rounded-full border border-[#CFCCC1] bg-card font-semibold text-fairway disabled:opacity-50"
+                  className="min-h-11 rounded-full border border-[#D8D5CA] bg-white font-semibold text-fairway shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] disabled:opacity-50"
                 >
                   Decline
                 </button>
@@ -88,7 +88,7 @@ export function WaitingCard({ waiting, onDone, className }: { waiting: HomeData[
                   type="button"
                   disabled={busy === request.id || spotsLeft(round) === 0}
                   onClick={() => decide(request.id, 'accepted')}
-                  className="min-h-11 rounded-full bg-green font-semibold text-white disabled:opacity-50"
+                  className="min-h-11 rounded-full bg-gradient-to-b from-[#1C8E47] to-green-dark font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_18px_-10px_rgba(19,122,58,0.7)] disabled:opacity-50"
                 >
                   {spotsLeft(round) === 0 ? 'Round full' : 'Accept'}
                 </button>

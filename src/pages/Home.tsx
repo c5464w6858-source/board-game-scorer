@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Contours } from '../components/Contours'
+import { Grain } from '../components/Grain'
 import { HoleArt } from '../components/HoleArt'
 import { AvatarStack, ErrorNote, Icon, Loading, Logo } from '../components/ui'
 import { dayLabel, teeTime } from '../lib/format'
@@ -9,12 +10,14 @@ import { lineup, spotsText } from './home/helpers'
 import { Bell, Greeting, PickCard, WaitingCard } from './home/parts'
 import { useHomeData } from './home/useHomeData'
 
-// One card style for everything on the light sheet.
-const card = 'rounded-[22px] border border-[#DAD7CC] bg-card shadow-[0_12px_28px_-16px_rgba(14,31,22,0.35)]'
+// One card style for everything on the light sheet: frosted white over the
+// sheet's colour washes, with a highlight on the top edge and layered shadow.
+const card =
+  'rounded-[22px] border border-white/90 bg-white/80 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(14,31,22,0.06),0_16px_32px_-20px_rgba(14,31,22,0.45)]'
 
 function Section({ title, badge, action, children }: { title: string; badge?: number; action?: ReactNode; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-2.5">
+    <section className="relative flex flex-col gap-2.5">
       <div className="flex items-center justify-between px-1">
         <h2 className="m-0 flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-fairway/80 uppercase">
           {title}
@@ -39,9 +42,10 @@ export function Home() {
     <div className="relative -mx-5 -mt-5">
       <div aria-hidden="true" className="fixed inset-0 mx-auto max-w-[480px] bg-fairway" />
 
-      <section className="relative overflow-hidden bg-gradient-to-b from-fairway to-fairway-2 px-5 pt-5 pb-14 text-white">
-        <div aria-hidden="true" className="absolute -top-24 -right-16 size-64 rounded-full bg-green/30 blur-3xl" />
-        <Contours className="text-white/[0.06]" />
+      <section className="relative overflow-hidden bg-[radial-gradient(120%_90%_at_100%_0%,#24653C_0%,transparent_55%),radial-gradient(90%_70%_at_0%_100%,#1A3D29_0%,transparent_60%),linear-gradient(180deg,#0E1F16_0%,#12291C_100%)] px-5 pt-5 pb-14 text-white">
+        <div aria-hidden="true" className="absolute -top-10 right-6 size-40 rounded-full bg-flag/15 blur-3xl" />
+        <Contours className="text-white/[0.09]" />
+        <Grain opacity={0.12} />
         <header className="relative flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="rounded-[13px] shadow-[0_0_0_1.5px_rgba(255,255,255,0.9)]">
@@ -52,20 +56,27 @@ export function Home() {
           <Bell waiting={d.waiting} className="border border-white/15 bg-white/10 text-white backdrop-blur" />
         </header>
         <div className="relative mt-6 grid grid-cols-2 gap-2.5">
-          <Link to="/discover" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-flag font-semibold text-fairway no-underline">
+          <Link to="/discover" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#DBF79A] to-flag font-semibold text-fairway no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_8px_20px_-8px_rgba(200,241,105,0.55)]">
             <Icon name="search" size={18} /> Find a game
           </Link>
-          <Link to="/host" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 font-semibold text-white no-underline">
+          <Link to="/host" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.08] font-semibold text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur">
             <Icon name="flag" size={18} /> Host a round
           </Link>
         </div>
       </section>
 
-      <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] bg-[#EDEBE4] px-5 pt-6 pb-4">
+      <div className="relative -mt-7 flex min-h-[calc(100vh-12rem)] flex-col gap-6 rounded-t-[30px] px-5 pt-6 pb-4">
+        {/* Warm gradient with soft colour washes; the frosted cards pick these up. */}
+        <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-t-[30px] bg-gradient-to-b from-[#F4F2EC] to-[#E7E4DA]">
+          <div className="absolute top-24 -left-20 size-72 rounded-full bg-[#9DC39A]/45 blur-3xl" />
+          <div className="absolute top-[42%] -right-24 size-72 rounded-full bg-flag/35 blur-3xl" />
+          <div className="absolute bottom-10 left-10 size-64 rounded-full bg-[#B7D3B0]/40 blur-3xl" />
+          <Grain opacity={0.06} />
+        </div>
         {d.loading ? (
-          <Loading />
+          <div className="relative"><Loading /></div>
         ) : d.error ? (
-          <ErrorNote message={d.error} />
+          <div className="relative"><ErrorNote message={d.error} /></div>
         ) : (
           <>
             <Section title="Your next round">
