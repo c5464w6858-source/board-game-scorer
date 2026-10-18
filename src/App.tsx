@@ -16,11 +16,23 @@ import { RoundChat } from './pages/RoundChat'
 import { ResetPassword } from './pages/ResetPassword'
 import { RoundDetail } from './pages/RoundDetail'
 import { Login } from './pages/Login'
+import { Welcome } from './pages/Welcome'
+import { fetchOnboarded } from './lib/profiles'
+import { useAsync } from './lib/useAsync'
 
-function RequireAuth({ children }: { children: React.ReactNode }) {
+// Signed-in golfers who haven't been through first-run setup go there first.
+function Onboarded({ userId, children }: { userId: string; children: React.ReactNode }) {
+  const onboarded = useAsync(() => fetchOnboarded(userId), [userId])
+  if (onboarded.loading) return null
+  // If the check fails, let them in rather than lock them out.
+  return onboarded.data === false ? <Navigate to="/welcome" replace /> : <>{children}</>
+}
+
+function RequireAuth({ children, setup }: { children: React.ReactNode; setup?: boolean }) {
   const { session, loading } = useAuth()
   if (loading) return null
-  return session ? <>{children}</> : <Navigate to="/login" replace />
+  if (!session) return <Navigate to="/login" replace />
+  return setup ? <>{children}</> : <Onboarded userId={session.user.id}>{children}</Onboarded>
 }
 
 function App() {
@@ -29,6 +41,14 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/welcome"
+          element={
+            <RequireAuth setup>
+              <Welcome />
+            </RequireAuth>
+          }
+        />
         <Route
           element={
             <RequireAuth>

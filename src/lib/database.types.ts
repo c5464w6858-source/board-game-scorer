@@ -122,6 +122,38 @@ export type Database = {
         }
         Relationships: []
       }
+      golfer_preferences: {
+        Row: {
+          clubs_can_contact: boolean
+          looking_for_membership: boolean
+          play_frequency: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          clubs_can_contact?: boolean
+          looking_for_membership?: boolean
+          play_frequency?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          clubs_can_contact?: boolean
+          looking_for_membership?: boolean
+          play_frequency?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "golfer_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -133,7 +165,9 @@ export type Database = {
           handicap_source: string
           home_area: string | null
           home_club_id: string | null
+          home_club_member: boolean
           id: string
+          onboarded_at: string | null
           play_style: string[]
         }
         Insert: {
@@ -146,7 +180,9 @@ export type Database = {
           handicap_source?: string
           home_area?: string | null
           home_club_id?: string | null
+          home_club_member?: boolean
           id: string
+          onboarded_at?: string | null
           play_style?: string[]
         }
         Update: {
@@ -159,7 +195,9 @@ export type Database = {
           handicap_source?: string
           home_area?: string | null
           home_club_id?: string | null
+          home_club_member?: boolean
           id?: string
+          onboarded_at?: string | null
           play_style?: string[]
         }
         Relationships: [

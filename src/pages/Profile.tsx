@@ -40,7 +40,12 @@ export function Profile() {
         <div className="flex-1">
           <h1 className="m-0 font-display text-[26px] font-extrabold tracking-[-0.03em]">{shortName(profile.display_name)}</h1>
           {profile.home_area && <div className="text-sm text-muted">{profile.home_area}</div>}
-          {profile.home_club && <div className="mt-0.5 text-[13px] font-semibold text-green">Member, {profile.home_club.name}</div>}
+          {profile.home_club && (
+            <div className="mt-0.5 text-[13px] font-semibold text-green">
+              {profile.home_club_member ? 'Member, ' : 'Plays at '}
+              {profile.home_club.name}
+            </div>
+          )}
         </div>
         {own ? (
           <RoundIconButton label="Edit profile" icon="pencil" onClick={() => navigate('/me/edit')} />

@@ -1,11 +1,31 @@
 import { supabase } from './supabase'
-import type { Tables, TablesUpdate } from './database.types'
+import type { Tables, TablesInsert, TablesUpdate } from './database.types'
 
 export type Profile = Tables<'profiles'>
 export type ProfileUpdate = Pick<
   TablesUpdate<'profiles'>,
-  'display_name' | 'home_area' | 'bio' | 'handicap' | 'home_club_id' | 'play_style' | 'bag' | 'avatar_url'
+  | 'display_name'
+  | 'home_area'
+  | 'bio'
+  | 'handicap'
+  | 'home_club_id'
+  | 'home_club_member'
+  | 'play_style'
+  | 'bag'
+  | 'avatar_url'
+  | 'onboarded_at'
 >
+
+// Private to the golfer; clubs only ever see golfers with clubs_can_contact.
+export type Preferences = Tables<'golfer_preferences'>
+export type PreferencesUpdate = Omit<TablesInsert<'golfer_preferences'>, 'user_id' | 'updated_at'>
+
+export const playFrequencies = [
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'fortnightly', label: 'Fortnightly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'occasionally', label: 'Now and then' },
+] as const
 
 export interface GolferStats {
   rounds: number
@@ -58,4 +78,24 @@ export async function fetchBuddyIds(userId: string): Promise<string[]> {
     .eq('status', 'accepted')
   if (error) throw error
   return data.map((c) => (c.requester_id === userId ? c.addressee_id : c.requester_id))
+}
+
+export async function fetchPreferences(userId: string): Promise<Preferences | null> {
+  const { data, error } = await supabase.from('golfer_preferences').select('*').eq('user_id', userId).maybeSingle()
+  if (error) throw error
+  return data
+}
+
+export async function savePreferences(userId: string, patch: PreferencesUpdate) {
+  const { error } = await supabase
+    .from('golfer_preferences')
+    .upsert({ ...patch, user_id: userId, updated_at: new Date().toISOString() })
+  if (error) throw error
+}
+
+// Whether the golfer has finished (or skipped) first-run setup.
+export async function fetchOnboarded(userId: string): Promise<boolean> {
+  const { data, error } = await supabase.from('profiles').select('onboarded_at').eq('id', userId).maybeSingle()
+  if (error) throw error
+  return Boolean(data?.onboarded_at)
 }

@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Avatar, Button, Chip, ErrorNote, Loading, ScreenHeader, SectionLabel } from '../components/ui'
-import { fetchCourse, searchCourses, type Course } from '../lib/courses'
+import { Avatar, Button, Card, Chip, ErrorNote, Loading, ScreenHeader, SectionLabel, ToggleRow } from '../components/ui'
+import { ClubPicker } from '../components/ClubPicker'
+import { fetchCourse, type Course } from '../lib/courses'
 import { playStyles } from '../lib/format'
-import { updateProfile, uploadAvatar } from '../lib/profiles'
+import { fetchPreferences, playFrequencies, savePreferences, updateProfile, uploadAvatar } from '../lib/profiles'
 import { useMe } from '../lib/useMe'
 
 const bagFields = [
@@ -26,8 +27,10 @@ export function ProfileEdit() {
   const [styles, setStyles] = useState<string[]>([])
   const [bag, setBag] = useState<Record<string, string>>({})
   const [club, setClub] = useState<Course | null>(null)
-  const [clubQuery, setClubQuery] = useState('')
-  const [clubResults, setClubResults] = useState<Course[]>([])
+  const [member, setMember] = useState(false)
+  const [looking, setLooking] = useState(false)
+  const [clubsCanContact, setClubsCanContact] = useState(false)
+  const [frequency, setFrequency] = useState<string | null>(null)
   const [avatar, setAvatar] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,13 +44,15 @@ export function ProfileEdit() {
     setStyles(profile.play_style)
     setBag((profile.bag ?? {}) as Record<string, string>)
     setAvatar(profile.avatar_url)
+    setMember(profile.home_club_member)
     if (profile.home_club_id) fetchCourse(profile.home_club_id).then(setClub, () => {})
-  }, [profile])
-
-  useEffect(() => {
-    if (clubQuery.trim().length < 2) return setClubResults([])
-    searchCourses(clubQuery).then(setClubResults, () => setClubResults([]))
-  }, [clubQuery])
+    fetchPreferences(id).then((p) => {
+      if (!p) return
+      setLooking(p.looking_for_membership)
+      setClubsCanContact(p.clubs_can_contact)
+      setFrequency(p.play_frequency)
+    }, () => {})
+  }, [profile, id])
 
   if (loading) return <Loading />
   if (loadError) return <ErrorNote message={loadError} />
@@ -75,9 +80,15 @@ export function ProfileEdit() {
         bio: bio.trim() || null,
         handicap: h,
         home_club_id: club?.id ?? null,
+        home_club_member: Boolean(club) && member,
         play_style: styles,
         bag: Object.fromEntries(Object.entries(bag).filter(([, v]) => v.trim())),
         avatar_url: avatar,
+      })
+      await savePreferences(id, {
+        looking_for_membership: !member && looking,
+        clubs_can_contact: clubsCanContact,
+        play_frequency: frequency,
       })
       navigate('/me', { replace: true })
     } catch (err) {
@@ -109,15 +120,11 @@ export function ProfileEdit() {
 
       <section className="flex flex-col gap-2">
         <SectionLabel>Home club</SectionLabel>
-        {club && <p className="m-0 font-semibold text-green">{club.name}</p>}
-        <input value={clubQuery} onChange={(e) => setClubQuery(e.target.value)} aria-label="Search for your home club" placeholder="Search courses" className={field} />
-        {clubResults.map((c) => (
-          <button key={c.id} type="button" onClick={() => { setClub(c); setClubQuery('') }} className="min-h-11 rounded-2xl border border-line bg-card px-4 py-2 text-left">
-            <span className="block font-semibold">{c.name}</span>
-            {c.town && <span className="block text-sm text-muted">{c.town}</span>}
-          </button>
-        ))}
-        {club && <button type="button" onClick={() => setClub(null)} className="self-start text-sm text-muted underline">Remove home club</button>}
+        <ClubPicker club={club} onChange={setClub} />
+        <Card className="divide-y divide-line-soft overflow-hidden">
+          {club && <ToggleRow label={`I’m a member at ${club.name}`} checked={member} onChange={setMember} />}
+          {!member && <ToggleRow label="I’m looking for a club membership" checked={looking} onChange={setLooking} />}
+        </Card>
       </section>
 
       <section className="flex flex-col gap-2">
@@ -129,6 +136,29 @@ export function ProfileEdit() {
             </Chip>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <SectionLabel>How often I play</SectionLabel>
+        <div className="flex flex-wrap gap-2">
+          {playFrequencies.map((f) => (
+            <Chip key={f.value} outline={frequency !== f.value} active={frequency === f.value} onClick={() => setFrequency(f.value)}>
+              {f.label}
+            </Chip>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <SectionLabel>Privacy</SectionLabel>
+        <Card className="overflow-hidden">
+          <ToggleRow
+            label="Let golf clubs contact me about membership and offers"
+            hint="Off unless you turn it on. We never sell your data."
+            checked={clubsCanContact}
+            onChange={setClubsCanContact}
+          />
+        </Card>
       </section>
 
       <section className="flex flex-col gap-2">
