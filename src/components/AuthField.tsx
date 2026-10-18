@@ -4,7 +4,7 @@ import { Icon } from './ui'
 const inputTone = {
   light: 'border-line bg-card text-fairway placeholder:text-muted/70',
   dark: 'border-fairway-line bg-fairway-2 text-white placeholder:text-muted-dark/60',
-  glass: 'border-white/70 bg-white/75 text-fairway placeholder:text-muted/80',
+  glass: 'border-white/70 bg-white/80 text-fairway placeholder:text-muted/80',
 }
 
 // Labelled field for the sign-in screens. 16px text stops iOS zooming on focus.

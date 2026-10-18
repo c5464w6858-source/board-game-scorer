@@ -28,7 +28,7 @@ export function LoginSunset() {
           </h1>
           <p className="mt-2 mb-0 text-[15px] font-medium text-white/90">Find a four near you, or fill your own.</p>
         </div>
-        <section aria-label="Sign in" className="rounded-[28px] border border-white/40 bg-white/35 p-5 text-fairway shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl backdrop-saturate-150">
+        <section aria-label="Sign in" className="rounded-[28px] border border-white/40 bg-white/55 p-5 text-fairway shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl backdrop-saturate-150">
           <LoginForm tone="glass" />
         </section>
         <FreeLine tone="dark" />
