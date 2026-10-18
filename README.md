@@ -21,9 +21,10 @@ npm run dev
 - `round_requests`: a golfer asking to join a round. The host accepts or declines, and the requester can withdraw. Accepted requests are visible to everyone, so a round shows who's playing. Pending ones are visible only to the requester and the host. A trigger blocks overfilling a round and joining one that's cancelled or already teed off.
 - `courses`: every named UK golf course from OpenStreetMap (name, location, town, postcode, website, phone). `rounds.course_id` links a round to one.
 - `round_messages`: round chat, readable and writable only by the host and accepted players (Supabase Realtime).
+- `golfer_preferences`: private to each golfer (membership interest, how often they play, and `clubs_can_contact`). Clubs only ever see golfers who opt in; the data is never sold.
 - `connections`: golfer-to-golfer requests (one per pair). Only the two golfers involved can see them.
 
-Rounds also carry `format`, `walking`, `pace_note`, `green_fee_pence` (information only, never charged), `visibility` (public or buddies) and `auto_accept_buddies`. Profiles carry `home_club_id`, `play_style`, `bag` and `handicap_source` (self-declared until an official link exists). An `avatars` storage bucket holds profile photos, one folder per user.
+Rounds also carry `format`, `walking`, `pace_note`, `green_fee_pence` (information only, never charged), `visibility` (public or buddies) and `auto_accept_buddies`. Profiles carry `home_club_id`, `home_club_member`, `play_style`, `bag`, `handicap_source` and `onboarded_at` (set once first-run setup at `/welcome` is finished or skipped) (self-declared until an official link exists). An `avatars` storage bucket holds profile photos, one folder per user.
 
 Your upcoming games are rounds you host plus rounds where your request was accepted, with `tee_time` in the future.
 

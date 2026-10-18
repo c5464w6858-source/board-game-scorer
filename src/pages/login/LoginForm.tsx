@@ -31,6 +31,7 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => voi
 // Sign in, create account and forgot password, styled for the frosted card.
 export function LoginForm() {
   const [mode, setMode] = useState<Mode>('signin')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +53,11 @@ export function LoginForm() {
       mode === 'signin'
         ? await supabase.auth.signInWithPassword({ email, password })
         : mode === 'signup'
-          ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } })
+          ? await supabase.auth.signUp({
+              email,
+              password,
+              options: { emailRedirectTo: window.location.origin, data: { display_name: name.trim() } },
+            })
           : await supabase.auth.resetPasswordForEmail(email, {
               redirectTo: `${window.location.origin}/reset-password`,
             })
@@ -92,6 +97,18 @@ export function LoginForm() {
       )}
 
       <form onSubmit={submit} className="flex flex-col gap-3.5">
+        {mode === 'signup' && (
+          <AuthField
+            tone="glass"
+            label="Name"
+            type="text"
+            required
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="First and last name"
+          />
+        )}
         <AuthField
           tone="glass"
           label="Email"
