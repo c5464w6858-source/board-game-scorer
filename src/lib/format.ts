@@ -96,3 +96,13 @@ export function londonToIso(day: string, time: string) {
 
 export const weekdayName = (day: string) =>
   part(new Date(`${day}T12:00:00Z`), { weekday: 'long' })
+
+// "Tee off in 15 hrs" / "Tee off in 3 days" / "Teeing off now"
+export function teeOffIn(iso: string, now = new Date()) {
+  const mins = Math.round((new Date(iso).getTime() - now.getTime()) / 60000)
+  if (mins <= 0) return 'Teeing off now'
+  if (mins < 60) return `Tee off in ${mins} min`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 36) return `Tee off in ${hrs} hr${hrs === 1 ? '' : 's'}`
+  return `Tee off in ${Math.round(hrs / 24)} days`
+}

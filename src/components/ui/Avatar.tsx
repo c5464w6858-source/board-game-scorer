@@ -61,15 +61,17 @@ export function AvatarStack({
 }) {
   const open = Math.max(0, total - players.length)
   const edge = onDark ? '#0E1F16' : '#F5F4EF'
+  // Overlap scales with size so small stacks stay readable.
+  const overlap = -Math.round(size * 0.28)
   return (
     <span className="inline-flex items-center">
       {players.map((p, i) => (
-        <span key={i} style={{ marginLeft: i ? -10 : 0 }}>
+        <span key={i} style={{ marginLeft: i ? overlap : 0 }}>
           <Avatar name={p.name} src={p.avatarUrl} size={size} border={edge} />
         </span>
       ))}
       {Array.from({ length: open }, (_, i) => (
-        <span key={`o${i}`} style={{ marginLeft: players.length + i ? -10 : 0 }}>
+        <span key={`o${i}`} style={{ marginLeft: players.length + i ? overlap : 0 }}>
           <OpenSpot size={size} onDark={onDark} />
         </span>
       ))}
