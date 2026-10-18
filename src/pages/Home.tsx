@@ -6,7 +6,7 @@ import { AvatarStack, ErrorNote, Icon, Loading, Logo } from '../components/ui'
 import { dayLabel, teeTime } from '../lib/format'
 import { roundTitle } from '../lib/rounds'
 import { lineup, spotsText } from './home/helpers'
-import { Bell, Greeting, PickCard, RequestRow } from './home/parts'
+import { Bell, Greeting, PickCard, WaitingCard } from './home/parts'
 import { useHomeData } from './home/useHomeData'
 
 // Clean white panel used for everything below the next-round card.
@@ -96,6 +96,8 @@ export function Home() {
               )}
             </div>
 
+            {d.waiting.length > 0 && <WaitingCard waiting={d.waiting} onDone={d.reload} />}
+
             <div className="grid grid-cols-2 gap-3">
               <Link to="/discover" className={`${panel} flex items-center gap-2.5 px-3 py-3 text-fairway no-underline`}>
                 <span className="grid size-9 shrink-0 place-items-center rounded-full bg-fairway text-flag"><Icon name="search" size={18} /></span>
@@ -106,14 +108,6 @@ export function Home() {
                 <span className="text-[15px] font-semibold whitespace-nowrap">Host a round</span>
               </Link>
             </div>
-
-            {d.waiting.length > 0 && (
-              <Section title="Waiting on you">
-                <div className={`${panel} divide-y divide-line-soft`}>
-                  {d.waiting.slice(0, 3).map((w) => <RequestRow key={w.request.id} {...w} />)}
-                </div>
-              </Section>
-            )}
 
             <Section title="Picked for you" action={<Link to="/discover" className="text-sm font-medium text-green no-underline">See all</Link>}>
               {d.picks.length ? (

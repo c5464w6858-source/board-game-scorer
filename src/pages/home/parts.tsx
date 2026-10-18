@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Avatar, AvatarStack, Icon } from '../../components/ui'
 import { formatLabels, greeting, firstName, longDate, shortDate, shortName, teeTime } from '../../lib/format'
 import type { Match } from '../../lib/match'
+import { decideRequest } from '../../lib/requests'
 import { roundTitle, spotsLeft, type RoundRow } from '../../lib/rounds'
 import { distanceText, lineup } from './helpers'
 import type { HomeData } from './useHomeData'
@@ -30,16 +32,80 @@ export function Bell({ waiting, className }: { waiting: HomeData['waiting']; cla
   )
 }
 
-export function RequestRow({ round, request }: HomeData['waiting'][number]) {
+// The host's pending join requests, made to stand out: it's the one thing on
+// Home that needs an answer. Accept and decline work in place.
+export function WaitingCard({ waiting, onDone }: { waiting: HomeData['waiting']; onDone: () => void }) {
+  const [busy, setBusy] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  async function decide(requestId: string, status: 'accepted' | 'declined') {
+    setBusy(requestId)
+    setError(null)
+    try {
+      await decideRequest(requestId, status)
+      onDone()
+    } catch (e) {
+      setError((e as Error).message)
+    } finally {
+      setBusy(null)
+    }
+  }
+
   return (
-    <Link to={`/rounds/${round.id}/requests`} className="flex items-center gap-3 p-3.5 text-fairway no-underline">
-      <Avatar name={request.profile?.display_name ?? 'Golfer'} src={request.profile?.avatar_url} size={40} />
-      <div className="min-w-0 flex-1 text-[15px] leading-snug">
-        <strong className="font-semibold">{shortName(request.profile?.display_name ?? null)}</strong> <span className="text-muted">wants to join</span>{' '}
-        <strong className="font-semibold">{roundTitle(round)}</strong>
+    <section aria-label="Join requests waiting on you" className="relative overflow-hidden rounded-[24px] bg-fairway p-4 text-white shadow-[0_20px_40px_-24px_rgba(14,31,22,0.7)]">
+      <div aria-hidden="true" className="absolute -top-16 -right-12 size-44 rounded-full bg-green/40 blur-3xl" />
+      <div className="relative flex items-center gap-2.5">
+        <span className="grid min-w-6 place-items-center rounded-full bg-alert px-1.5 font-mono text-[13px] leading-6 font-semibold">{waiting.length}</span>
+        <h2 className="m-0 font-display text-[19px] font-bold tracking-[-0.02em]">
+          {waiting.length === 1 ? 'Golfer wants to join' : 'Golfers want to join'}
+        </h2>
       </div>
-      <span className="shrink-0 rounded-full bg-fairway px-3 py-1.5 text-sm font-semibold text-white">Review</span>
-    </Link>
+      <ul className="relative m-0 mt-3 flex list-none flex-col divide-y divide-white/10 p-0">
+        {waiting.slice(0, 3).map(({ round, request }) => (
+          <li key={request.id} className="flex flex-col gap-3 py-3 first:pt-1 last:pb-0">
+            <Link to={`/rounds/${round.id}/requests`} className="flex items-center gap-3 text-white no-underline">
+              <Avatar name={request.profile?.display_name ?? 'Golfer'} src={request.profile?.avatar_url} size={44} />
+              <div className="min-w-0 flex-1">
+                <div className="text-[15px] font-semibold">
+                  {shortName(request.profile?.display_name ?? null)}
+                  {request.profile?.handicap != null && (
+                    <span className="font-normal text-muted-dark"> · HCP <span className="font-mono">{request.profile.handicap.toFixed(1)}</span></span>
+                  )}
+                </div>
+                <div className="truncate text-[13px] text-muted-dark">
+                  {roundTitle(round)} · {shortDate(round.tee_time)} <span className="font-mono">{teeTime(round.tee_time)}</span>
+                </div>
+              </div>
+            </Link>
+            {request.message && <p className="m-0 rounded-2xl bg-white/[0.08] px-3.5 py-2 text-sm text-white/90">“{request.message}”</p>}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                disabled={busy === request.id}
+                onClick={() => decide(request.id, 'declined')}
+                className="min-h-11 rounded-full border border-white/20 font-semibold text-white disabled:opacity-50"
+              >
+                Decline
+              </button>
+              <button
+                type="button"
+                disabled={busy === request.id || spotsLeft(round) === 0}
+                onClick={() => decide(request.id, 'accepted')}
+                className="min-h-11 rounded-full bg-flag font-semibold text-fairway disabled:opacity-50"
+              >
+                {spotsLeft(round) === 0 ? 'Round full' : 'Accept'}
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {waiting.length > 3 && (
+        <Link to={`/rounds/${waiting[3].round.id}/requests`} className="relative mt-3 block text-center text-sm font-semibold text-flag no-underline">
+          See {waiting.length - 3} more
+        </Link>
+      )}
+      {error && <p role="alert" className="relative m-0 mt-3 rounded-2xl bg-danger/25 px-3.5 py-2 text-sm text-white">{error}</p>}
+    </section>
   )
 }
 

@@ -30,6 +30,7 @@ export function useHomeData() {
     .flatMap((r) => pendingRequests(r).map((q) => ({ round: r, request: q })))
 
   return {
+    reload: rounds.reload,
     loading,
     error,
     name: me.data?.profile?.display_name ?? null,
