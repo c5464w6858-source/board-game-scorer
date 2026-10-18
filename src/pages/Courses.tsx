@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { CourseMap } from '../components/CourseMap'
+import { Button, Card, Empty, ErrorNote, ScreenHeader } from '../components/ui'
 import {
   coursesNear,
   fetchCoursePins,
@@ -17,77 +18,83 @@ export function Courses() {
   const [query, setQuery] = useState('')
   const [center, setCenter] = useState<[number, number] | undefined>()
   const [status, setStatus] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchCoursePins()
-      .then(setPins)
-      .catch((e) => setStatus(e.message))
+    fetchCoursePins().then(setPins, (e: Error) => setError(e.message))
   }, [])
 
   async function search(e: FormEvent) {
     e.preventDefault()
     if (!query.trim()) return
     setStatus('Searching…')
+    setError(null)
     try {
       setResults(await searchCourses(query))
-      setStatus(null)
     } catch (err) {
-      setStatus((err as Error).message)
+      setError((err as Error).message)
     }
+    setStatus(null)
   }
 
   function nearMe() {
     setStatus('Finding your location…')
+    setError(null)
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         try {
           setCenter([coords.latitude, coords.longitude])
           setResults(await coursesNear(coords.latitude, coords.longitude))
-          setStatus(null)
         } catch (err) {
-          setStatus((err as Error).message)
+          setError((err as Error).message)
         }
+        setStatus(null)
       },
-      () => setStatus('Location unavailable, so search by name or town instead.'),
+      () => {
+        setStatus(null)
+        setError('Location unavailable, so search by name or town instead.')
+      },
     )
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Courses</h1>
-      <CourseMap pins={pins} center={center} zoom={center ? 10 : 5} />
+      <ScreenHeader center={<span className="font-display text-[22px] font-extrabold tracking-[-0.03em] text-fairway">Courses</span>} />
+      <div className="overflow-hidden rounded-[20px] border border-line">
+        <CourseMap pins={pins} center={center} zoom={center ? 10 : 5} />
+      </div>
       <form onSubmit={search} className="flex gap-2">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search courses"
           placeholder="Course, town or postcode"
-          className="min-w-0 flex-1 rounded border border-green-300 p-2"
+          className="min-h-12 min-w-0 flex-1 rounded-full border border-line bg-card px-4"
         />
-        <button className="rounded bg-green-700 px-3 font-semibold text-white">Search</button>
+        <Button type="submit">Search</Button>
       </form>
-      <button onClick={nearMe} className="rounded border border-green-700 p-2 font-semibold text-green-800">
-        Courses near me
-      </button>
-      {status && <p className="text-sm text-slate-600">{status}</p>}
-      {results && (
-        <ul className="divide-y divide-green-100 rounded-lg bg-white">
-          {results.length === 0 && <li className="p-3 text-sm">No courses found.</li>}
-          {results.map((c) => (
-            <li key={c.id}>
-              <Link to={`/courses/${encodeURIComponent(c.id)}`} className="flex justify-between gap-2 p-3">
+      <Button variant="outline" onClick={nearMe}>Courses near me</Button>
+      {status && <p role="status" className="m-0 text-sm text-muted">{status}</p>}
+      {error && <ErrorNote message={error} />}
+      {results &&
+        (results.length === 0 ? (
+          <Empty title="No courses found">
+            <p className="m-0 text-sm text-muted">Try a town or postcode instead.</p>
+          </Empty>
+        ) : (
+          <Card className="divide-y divide-line-soft overflow-hidden">
+            {results.map((c) => (
+              <Link key={c.id} to={`/courses/${encodeURIComponent(c.id)}`} className="flex min-h-14 justify-between gap-2 px-4 py-3 text-fairway no-underline">
                 <span>
-                  <span className="font-semibold">{c.name}</span>
-                  {c.town && <span className="block text-sm text-slate-600">{c.town}</span>}
+                  <span className="block font-semibold">{c.name}</span>
+                  {c.town && <span className="block text-sm text-muted">{c.town}</span>}
                 </span>
-                {c.distanceKm != null && (
-                  <span className="shrink-0 text-sm text-slate-600">{c.distanceKm.toFixed(1)} km</span>
-                )}
+                {c.distanceKm != null && <span className="shrink-0 font-mono text-sm text-muted">{(c.distanceKm * 0.621371).toFixed(1)} mi</span>}
               </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-      <p className="text-xs text-slate-500">
+            ))}
+          </Card>
+        ))}
+      <p className="m-0 text-xs text-muted">
         {pins.length.toLocaleString()} UK courses. Course data © OpenStreetMap contributors.
       </p>
     </div>

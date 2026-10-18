@@ -125,32 +125,91 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bag: Json
           bio: string | null
           created_at: string
           display_name: string | null
           handicap: number | null
+          handicap_source: string
           home_area: string | null
+          home_club_id: string | null
           id: string
+          play_style: string[]
         }
         Insert: {
           avatar_url?: string | null
+          bag?: Json
           bio?: string | null
           created_at?: string
           display_name?: string | null
           handicap?: number | null
+          handicap_source?: string
           home_area?: string | null
+          home_club_id?: string | null
           id: string
+          play_style?: string[]
         }
         Update: {
           avatar_url?: string | null
+          bag?: Json
           bio?: string | null
           created_at?: string
           display_name?: string | null
           handicap?: number | null
+          handicap_source?: string
           home_area?: string | null
+          home_club_id?: string | null
           id?: string
+          play_style?: string[]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_home_club_id_fkey"
+            columns: ["home_club_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      round_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          round_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          round_id: string
+          user_id?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          round_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "round_messages_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "round_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       round_requests: {
         Row: {
@@ -199,10 +258,13 @@ export type Database = {
       }
       rounds: {
         Row: {
+          auto_accept_buddies: boolean
           cancelled: boolean
           course_id: string | null
           course_name: string
           created_at: string
+          format: Database["public"]["Enums"]["round_format"]
+          green_fee_pence: number | null
           holes: number
           host_id: string
           id: string
@@ -211,13 +273,20 @@ export type Database = {
           max_players: number
           min_handicap: number | null
           notes: string | null
+          pace_note: string | null
           tee_time: string
+          title: string | null
+          visibility: Database["public"]["Enums"]["round_visibility"]
+          walking: boolean
         }
         Insert: {
+          auto_accept_buddies?: boolean
           cancelled?: boolean
           course_id?: string | null
           course_name: string
           created_at?: string
+          format?: Database["public"]["Enums"]["round_format"]
+          green_fee_pence?: number | null
           holes?: number
           host_id?: string
           id?: string
@@ -226,13 +295,20 @@ export type Database = {
           max_players?: number
           min_handicap?: number | null
           notes?: string | null
+          pace_note?: string | null
           tee_time: string
+          title?: string | null
+          visibility?: Database["public"]["Enums"]["round_visibility"]
+          walking?: boolean
         }
         Update: {
+          auto_accept_buddies?: boolean
           cancelled?: boolean
           course_id?: string | null
           course_name?: string
           created_at?: string
+          format?: Database["public"]["Enums"]["round_format"]
+          green_fee_pence?: number | null
           holes?: number
           host_id?: string
           id?: string
@@ -241,7 +317,11 @@ export type Database = {
           max_players?: number
           min_handicap?: number | null
           notes?: string | null
+          pace_note?: string | null
           tee_time?: string
+          title?: string | null
+          visibility?: Database["public"]["Enums"]["round_visibility"]
+          walking?: boolean
         }
         Relationships: [
           {
@@ -265,10 +345,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      golfer_stats: {
+        Args: { p_user_id: string }
+        Returns: {
+          buddies: number
+          rounds: number
+          shows_up_pct: number
+        }[]
+      }
+      is_buddy: { Args: { p_user_id: string }; Returns: boolean }
       is_round_host: { Args: { p_round_id: string }; Returns: boolean }
+      is_round_member: { Args: { p_round_id: string }; Returns: boolean }
     }
     Enums: {
       request_status: "pending" | "accepted" | "declined" | "withdrawn"
+      round_format: "stableford" | "stroke" | "match" | "scramble"
+      round_visibility: "public" | "buddies"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -284,3 +376,13 @@ export type TablesInsert<T extends keyof PublicSchema["Tables"]> =
 export type TablesUpdate<T extends keyof PublicSchema["Tables"]> =
   PublicSchema["Tables"][T]["Update"]
 export type Enums<T extends keyof PublicSchema["Enums"]> = PublicSchema["Enums"][T]
+
+export const Constants = {
+  public: {
+    Enums: {
+      request_status: ["pending", "accepted", "declined", "withdrawn"],
+      round_format: ["stableford", "stroke", "match", "scramble"],
+      round_visibility: ["public", "buddies"],
+    },
+  },
+} as const
