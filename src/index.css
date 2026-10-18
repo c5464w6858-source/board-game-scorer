@@ -41,6 +41,9 @@ body {
   font-size: 15px;
   background: var(--color-line);
   color: var(--color-fairway);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 button {

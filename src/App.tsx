@@ -13,6 +13,7 @@ import { Home } from './pages/Home'
 import { Profile } from './pages/Profile'
 import { ProfileEdit } from './pages/ProfileEdit'
 import { RoundChat } from './pages/RoundChat'
+import { ResetPassword } from './pages/ResetPassword'
 import { RoundDetail } from './pages/RoundDetail'
 import { Login } from './pages/Login'
 
@@ -27,6 +28,7 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           element={
             <RequireAuth>
