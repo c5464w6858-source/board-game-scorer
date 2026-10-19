@@ -51,6 +51,12 @@ select net.http_post(
 
 There's no public tee-time API (most UK clubs use BRS/GolfNow, which don't offer one), so **Check live tee times** opens the club's own booking page: `booking_url` if set, else the club website. Courses with neither get a web search for "<course> tee times". OpenStreetMap's licence requires the "© OpenStreetMap contributors" credit shown in the app.
 
+## Societies & trips
+
+A separate navy-and-gold section (`/groups`). A group is a society, golf trip or one-off event (`groups`), joined with a 6-letter invite code or link (`join_group(code)`). Organisers add the rounds they've booked (`group_rounds`), and any member can keep the card for their playing group (`group_scores`, live via Realtime). The group page totals Stableford points across rounds as an order of merit.
+
+**Ryder Cup mode** (`groups.ryder_cup`, `team_a_name`, `team_b_name`, `group_members.team`): organisers pick sides and set matches per round (`group_matches`: fourballs, foursomes or singles). Results are match play worked out from the hole scores, with shots off the lowest handicap in each match (half the pair's combined handicap in foursomes, whose one ball is scored under the pair's first player). Each match is worth a point, a half each if halved.
+
 ## Scorecards
 
 `supabase/functions/course-card` fetches a course's scorecard from the [UK Golf Course API](https://rapidapi.com/raznut303/api/uk-golf-course-data-api) on RapidAPI the first time the app needs it, then saves it to `course_tees` and `course_holes` so later visits never call the API. It matches the OpenStreetMap course to the API's club by name and distance (within 3 km), tries each course at most once a week, and needs the `GOLF_API_KEY` secret (the RapidAPI key) set under Edge Functions → Secrets. The free plan allows only a few requests a minute, so the function returns `busy` when rate limited and the app retries next time.

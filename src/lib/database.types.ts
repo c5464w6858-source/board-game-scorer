@@ -304,6 +304,246 @@ export type Database = {
           },
         ]
       }
+      group_matches: {
+        Row: {
+          created_at: string
+          format: Database["public"]["Enums"]["match_format"]
+          group_round_id: string
+          id: string
+          side_a: string[]
+          side_b: string[]
+          sort: number
+        }
+        Insert: {
+          created_at?: string
+          format: Database["public"]["Enums"]["match_format"]
+          group_round_id: string
+          id?: string
+          side_a: string[]
+          side_b: string[]
+          sort?: number
+        }
+        Update: {
+          created_at?: string
+          format?: Database["public"]["Enums"]["match_format"]
+          group_round_id?: string
+          id?: string
+          side_a?: string[]
+          side_b?: string[]
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_matches_group_round_id_fkey"
+            columns: ["group_round_id"]
+            isOneToOne: false
+            referencedRelation: "group_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_members: {
+        Row: {
+          group_id: string
+          joined_at: string
+          role: Database["public"]["Enums"]["group_role"]
+          team: number | null
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          joined_at?: string
+          role?: Database["public"]["Enums"]["group_role"]
+          team?: number | null
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          joined_at?: string
+          role?: Database["public"]["Enums"]["group_role"]
+          team?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_rounds: {
+        Row: {
+          course_id: string | null
+          course_name: string
+          created_at: string
+          group_id: string
+          holes: number
+          id: string
+          tee_id: string | null
+          tee_time: string
+          title: string | null
+        }
+        Insert: {
+          course_id?: string | null
+          course_name: string
+          created_at?: string
+          group_id: string
+          holes?: number
+          id?: string
+          tee_id?: string | null
+          tee_time: string
+          title?: string | null
+        }
+        Update: {
+          course_id?: string | null
+          course_name?: string
+          created_at?: string
+          group_id?: string
+          holes?: number
+          id?: string
+          tee_id?: string | null
+          tee_time?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_rounds_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_rounds_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_rounds_tee_id_fkey"
+            columns: ["tee_id"]
+            isOneToOne: false
+            referencedRelation: "course_tees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_scores: {
+        Row: {
+          group_round_id: string
+          hole: number
+          strokes: number
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          group_round_id: string
+          hole: number
+          strokes: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          group_round_id?: string
+          hole?: number
+          strokes?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_scores_group_round_id_fkey"
+            columns: ["group_round_id"]
+            isOneToOne: false
+            referencedRelation: "group_rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_scores_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          created_at: string
+          description: string | null
+          ends_on: string | null
+          id: string
+          invite_code: string
+          kind: Database["public"]["Enums"]["group_kind"]
+          location: string | null
+          name: string
+          owner_id: string
+          ryder_cup: boolean
+          starts_on: string | null
+          team_a_name: string
+          team_b_name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          ends_on?: string | null
+          id?: string
+          invite_code?: string
+          kind?: Database["public"]["Enums"]["group_kind"]
+          location?: string | null
+          name: string
+          owner_id?: string
+          ryder_cup?: boolean
+          starts_on?: string | null
+          team_a_name?: string
+          team_b_name?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          ends_on?: string | null
+          id?: string
+          invite_code?: string
+          kind?: Database["public"]["Enums"]["group_kind"]
+          location?: string | null
+          name?: string
+          owner_id?: string
+          ryder_cup?: boolean
+          starts_on?: string | null
+          team_a_name?: string
+          team_b_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "groups_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kudos: {
         Row: {
           created_at: string
@@ -719,8 +959,15 @@ export type Database = {
           shows_up_pct: number
         }[]
       }
+      group_of_round: { Args: { p_group_round_id: string }; Returns: string }
       is_blocked_between: { Args: { p_a: string; p_b: string }; Returns: boolean }
       is_buddy: { Args: { p_user_id: string }; Returns: boolean }
+      is_group_member: { Args: { p_group_id: string }; Returns: boolean }
+      is_group_organiser: { Args: { p_group_id: string }; Returns: boolean }
+      is_member_of_group: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: boolean
+      }
       is_round_host: { Args: { p_round_id: string }; Returns: boolean }
       is_round_member: { Args: { p_round_id: string }; Returns: boolean }
       is_round_player: {
@@ -728,15 +975,19 @@ export type Database = {
         Returns: boolean
       }
       is_woman: { Args: { p_user_id: string }; Returns: boolean }
+      join_group: { Args: { p_code: string }; Returns: string }
       kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
     }
     Enums: {
       day_slot: "am" | "pm"
+      group_kind: "society" | "trip" | "event"
+      group_role: "organiser" | "member"
       kudos_tag:
         | "great_company"
         | "kept_the_pace"
         | "clutch_putter"
         | "would_play_again"
+      match_format: "fourball" | "foursomes" | "singles"
       report_reason:
         | "no_show"
         | "abusive"
@@ -766,12 +1017,15 @@ export const Constants = {
   public: {
     Enums: {
       day_slot: ["am", "pm"],
+      group_kind: ["society", "trip", "event"],
+      group_role: ["organiser", "member"],
       kudos_tag: [
         "great_company",
         "kept_the_pace",
         "clutch_putter",
         "would_play_again",
       ],
+      match_format: ["fourball", "foursomes", "singles"],
       report_reason: [
         "no_show",
         "abusive",

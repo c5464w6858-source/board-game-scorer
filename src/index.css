@@ -20,6 +20,15 @@
   --color-danger: #b83a1c;
   --color-amber: #e5a23b;
 
+  /* Societies & trips: a clubhouse navy and gold, with Ryder Cup team colours. */
+  --color-navy: #0f1c33;
+  --color-navy-2: #172a4a;
+  --color-gold: #d9b45a;
+  --color-gold-soft: #f3e6c4;
+  --color-cream: #f6f2e9;
+  --color-team-blue: #1f4fa0;
+  --color-team-red: #b8262e;
+
   --font-sans: "Geist", system-ui, sans-serif;
   --font-display: "Bricolage Grotesque", system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;

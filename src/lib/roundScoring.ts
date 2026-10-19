@@ -26,7 +26,7 @@ export function playersOf(r: RoundRow, me: string): Player[] {
 }
 
 // Without a card from the API, fall back to par 4s so scoring still works.
-export function holesFor(r: RoundRow, card: Card | null): Hole[] {
+export function holesFor(r: Pick<RoundRow, 'holes'>, card: Card | null): Hole[] {
   const count = r.holes === 9 ? 9 : 18
   const fromCard = card?.holes.filter((h) => h.hole <= count) ?? []
   if (fromCard.length === count) return fromCard
@@ -35,12 +35,17 @@ export function holesFor(r: RoundRow, card: Card | null): Hole[] {
 
 // Everything needed to score a round: its holes, tees and each player's shots.
 export function setupScoring(round: RoundRow, card: Card | null, me: string) {
+  return scoringFor(round, card, playersOf(round, me))
+}
+
+// The same for any round shape, e.g. a society round, with its own players.
+export function scoringFor(round: { holes: number; tee_id: string | null }, card: Card | null, roster: Player[]) {
   const holes = holesFor(round, card)
   const tee = card ? (card.tees.find((t) => t.id === round.tee_id) ?? defaultTee(card)) : null
   const nine = holes.length === 9
   // On nine holes, play off half the handicap, using the stroke-index order of those nine.
   const siRank = new Map([...holes].sort((a, b) => a.stroke_index - b.stroke_index).map((h, i) => [h.hole, i + 1]))
-  const players = playersOf(round, me).map((p) => {
+  const players = roster.map((p) => {
     const full = playingHandicap(p.handicap, tee, card?.holes ?? holes)
     const playing = nine ? Math.round(full / 2) : full
     const shots = (h: Hole) => shotsOnHole(playing, nine ? siRank.get(h.hole)! : h.stroke_index, holes.length)
@@ -49,7 +54,7 @@ export function setupScoring(round: RoundRow, card: Card | null, me: string) {
   return { holes, tee, players, hasCard: Boolean(card) }
 }
 
-export type ScoringPlayer = ReturnType<typeof setupScoring>['players'][number]
+export type ScoringPlayer = ReturnType<typeof scoringFor>['players'][number]
 
 // Stableford points, gross and par for the holes each player has scored, best first.
 export function leaderboard(players: ScoringPlayer[], holes: Hole[], scores: Map<string, number>) {
