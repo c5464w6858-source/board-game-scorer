@@ -27,16 +27,23 @@ export function Actions() {
         <Icon name="flag" size={18} /> Host a round
       </Link>
       <Link
-        to="/free"
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-[14px] font-semibold text-white/90 no-underline backdrop-blur"
+        to="/groups"
+        className="col-span-2 flex min-h-16 items-center gap-3 rounded-[22px] border border-gold/50 bg-gradient-to-r from-navy to-navy-2 py-2.5 pr-4 pl-2.5 text-white no-underline shadow-[0_12px_26px_-14px_rgba(10,19,38,0.9)]"
       >
-        <Icon name="clock" size={16} className="text-flag" /> I'm free
+        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gold text-navy">
+          <Icon name="user" size={20} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-gold-soft">Societies & trips</span>
+          <span className="block truncate text-[13px] text-white/70">Run a society, trip or Ryder Cup</span>
+        </span>
+        <Icon name="back" size={18} className="shrink-0 rotate-180 text-gold" />
       </Link>
       <Link
-        to="/groups"
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-gold/40 bg-navy/70 text-[14px] font-semibold text-gold-soft no-underline backdrop-blur"
+        to="/free"
+        className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-[14px] font-semibold text-white/90 no-underline backdrop-blur"
       >
-        <Icon name="user" size={16} className="text-gold" /> Societies & trips
+        <Icon name="clock" size={16} className="text-flag" /> I'm free
       </Link>
     </div>
   )

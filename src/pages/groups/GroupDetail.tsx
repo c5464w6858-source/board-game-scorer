@@ -252,7 +252,9 @@ export function GroupDetail() {
                       <span className="mt-1 block text-[13px] font-semibold text-[#6B5A2E]">Ready to score</span>
                     ) : null}
                   </span>
-                  <Icon name="back" size={16} className="shrink-0 rotate-180 text-muted" />
+                  <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-gold py-1.5 pr-2 pl-3 text-[13px] font-semibold text-navy">
+                    Scorecard <Icon name="back" size={14} className="rotate-180" />
+                  </span>
                 </Link>
               )
             })}
