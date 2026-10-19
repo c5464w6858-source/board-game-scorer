@@ -1,8 +1,9 @@
 import type { Hole, Tee } from '../lib/scorecard'
+import { HoleOverhead } from './HoleOverhead'
 import { TeeDot } from './ScorecardTable'
 import { Icon } from './ui'
 
-// The hole you're on: number, yards off your tees, par and stroke index.
+// The hole you're on: an overhead drawing, number, yards off your tees, par and stroke index.
 // Slides in from the side you moved towards, so a new hole is obvious.
 export function HolePanel({
   hole,
@@ -11,6 +12,7 @@ export function HolePanel({
   tee,
   accent,
   back = false,
+  seed,
 }: {
   hole: Hole
   holeCount: number
@@ -18,36 +20,42 @@ export function HolePanel({
   tee: Tee | null
   accent: 'flag' | 'gold'
   back?: boolean
+  seed?: string
 }) {
   const accentText = accent === 'gold' ? 'text-gold' : 'text-flag'
 
   return (
-    <div key={hole.hole} className={`flex items-end justify-between gap-4 ${back ? 'animate-hole-back' : 'animate-hole-next'}`}>
-      <div>
-        <div className="text-[14px] text-white/70">
-          Hole <span className="font-mono">{hole.hole}</span> of <span className="font-mono">{holeCount}</span>
-        </div>
-        <div className="font-display text-[88px] leading-[0.85] font-extrabold tracking-[-0.04em]">{hole.hole}</div>
+    <div key={hole.hole} className={`flex flex-col gap-4 ${back ? 'animate-hole-back' : 'animate-hole-next'}`}>
+      <div className="overflow-hidden rounded-[22px] border border-white/10 shadow-[0_14px_30px_-16px_rgba(0,0,0,0.8)]">
+        <HoleOverhead hole={hole.hole} par={hole.par} yards={yards.value} seed={seed} />
       </div>
-      <div className="flex flex-col items-end gap-1.5 text-right">
-        {tee && (
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-white/70">
-            <TeeDot colour={tee.colour} /> {tee.name} tees
-          </span>
-        )}
-        <div className="leading-none">
-          <span className={`font-mono text-[40px] font-semibold ${accentText}`}>
-            {yards.value == null ? '–' : `${yards.approx ? '≈' : ''}${yards.value}`}
-          </span>
-          <span className="ml-1 text-[14px] text-white/70">yds</span>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <div className="text-[14px] text-white/70">
+            Hole <span className="font-mono">{hole.hole}</span> of <span className="font-mono">{holeCount}</span>
+          </div>
+          <div className="font-display text-[88px] leading-[0.85] font-extrabold tracking-[-0.04em]">{hole.hole}</div>
         </div>
-        <div className="flex gap-1.5">
-          <span className="rounded-full bg-white/12 px-2.5 py-1 text-[13px] font-semibold">
-            Par <span className="font-mono">{hole.par}</span>
-          </span>
-          <span className="rounded-full bg-white/12 px-2.5 py-1 text-[13px] font-semibold">
-            SI <span className="font-mono">{hole.stroke_index}</span>
-          </span>
+        <div className="flex flex-col items-end gap-1.5 text-right">
+          {tee && (
+            <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-white/70">
+              <TeeDot colour={tee.colour} /> {tee.name} tees
+            </span>
+          )}
+          <div className="leading-none">
+            <span className={`font-mono text-[40px] font-semibold ${accentText}`}>
+              {yards.value == null ? '–' : `${yards.approx ? '≈' : ''}${yards.value}`}
+            </span>
+            <span className="ml-1 text-[14px] text-white/70">yds</span>
+          </div>
+          <div className="flex gap-1.5">
+            <span className="rounded-full bg-white/12 px-2.5 py-1 text-[13px] font-semibold">
+              Par <span className="font-mono">{hole.par}</span>
+            </span>
+            <span className="rounded-full bg-white/12 px-2.5 py-1 text-[13px] font-semibold">
+              SI <span className="font-mono">{hole.stroke_index}</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>

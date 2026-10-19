@@ -154,7 +154,7 @@ export function GroupRound() {
           </span>
         </div>
 
-        <HolePanel hole={current} holeCount={holes.length} yards={view.yards(current)} tee={tee} accent="gold" back={back} />
+        <HolePanel hole={current} holeCount={holes.length} yards={view.yards(current)} tee={tee} accent="gold" back={back} seed={round.course_id ?? round.id} />
 
         <div className="flex gap-1" role="tablist" aria-label="Holes">
           {holes.map((h) => (

@@ -119,7 +119,7 @@ export function LiveScore() {
           <Link to={`/rounds/${round.id}/chat`} className="shrink-0 text-[14px] font-semibold text-flag no-underline">Round chat</Link>
         </div>
 
-        <HolePanel hole={current} holeCount={holes.length} yards={view.yards(current)} tee={tee} accent="flag" back={back} />
+        <HolePanel hole={current} holeCount={holes.length} yards={view.yards(current)} tee={tee} accent="flag" back={back} seed={round.course_id ?? round.id} />
 
         <div className="flex gap-1" role="tablist" aria-label="Holes">
           {holes.map((h) => (
