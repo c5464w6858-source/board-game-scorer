@@ -9,7 +9,8 @@ import { formatLabels, shortDate, upcomingDays } from '../../lib/format'
 import { useAsync } from '../../lib/useAsync'
 import { useMe } from '../../lib/useMe'
 import { useHost } from './hostContext'
-import { Choice, darkDisabled, field, HostBar, HostHeader, Switch } from './parts'
+import { ActionBar, Choice, darkDisabled, field, Switch } from '../../components/controls'
+import { HostHeader } from './parts'
 
 const formats = [
   { value: 'stableford', label: 'Stableford' },
@@ -163,14 +164,14 @@ export function HostRound() {
         </div>
       </Section>
 
-      <HostBar
+      <ActionBar
         title={`${shortDate(`${draft.day}T12:00:00Z`)} · ${formatLabels[draft.format]}`}
         note={draft.course?.name ?? 'Choose a course to continue'}
       >
         <button type="button" className={`${limeButton} ${darkDisabled}`} disabled={!canContinue} onClick={() => navigate('/host/time')}>
           Continue
         </button>
-      </HostBar>
+      </ActionBar>
     </PhotoPage>
   )
 }

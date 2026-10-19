@@ -1,7 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Avatar, Button, Card, Chip, ErrorNote, Loading, ScreenHeader, SectionLabel, ToggleRow } from '../components/ui'
+import type { ReactNode } from 'react'
 import { ClubPicker } from '../components/ClubPicker'
+import { ActionBar, darkDisabled, field as pill, Switch } from '../components/controls'
+import { PhotoPage } from '../components/PhotoPage'
+import { Section } from '../components/Section'
+import { glassCard, limeButton, roundButton } from '../components/surfaces'
+import { Avatar, ErrorNote, Icon, Loading } from '../components/ui'
 import { fetchCourse, type Course } from '../lib/courses'
 import { playStyles } from '../lib/format'
 import { fetchPreferences, playFrequencies, savePreferences, updateProfile, uploadAvatar } from '../lib/profiles'
@@ -14,7 +19,34 @@ const bagFields = [
   ['ball', 'Ball'],
 ] as const
 
-const field = 'min-h-12 w-full rounded-2xl border border-line bg-card px-4'
+const field = `${pill} w-full text-[16px]`
+
+function Field({ label, children }: { label: ReactNode; children: ReactNode }) {
+  return (
+    <label className="flex flex-col gap-1.5 px-4 py-3">
+      <span className="text-[13px] font-semibold text-muted">{label}</span>
+      {children}
+    </label>
+  )
+}
+
+function Pick({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`inline-flex min-h-10 items-center gap-1.5 rounded-full px-3.5 text-[14px] font-semibold ${
+        on
+          ? 'bg-fairway text-flag shadow-[0_8px_16px_-10px_rgba(14,31,22,0.8)]'
+          : 'border border-white/90 bg-white/80 text-fairway shadow-[0_4px_12px_-6px_rgba(14,31,22,0.3)] backdrop-blur'
+      }`}
+    >
+      {on && <Icon name="check" size={14} />}
+      {children}
+    </button>
+  )
+}
 
 export function ProfileEdit() {
   const { id, data, loading, error: loadError } = useMe()
@@ -97,79 +129,109 @@ export function ProfileEdit() {
     }
   }
 
+  const toggleStyle = (v: string) => setStyles((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]))
+
   return (
-    <form onSubmit={save} className="flex flex-col gap-5">
-      <ScreenHeader kind="close" center={<span className="block text-center">Edit profile</span>} right={<span className="size-11" />} />
+    <form onSubmit={save}>
+      <PhotoPage
+        header={
+          <div className="flex flex-col gap-5">
+            <div className="flex items-center justify-between">
+              <button type="button" aria-label="Close" onClick={() => navigate('/me')} className={roundButton}>
+                <Icon name="close" size={20} />
+              </button>
+              <span className="text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">Edit profile</span>
+              <span className="size-11" />
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="rounded-full p-[3px] ring-[3px] ring-flag">
+                <Avatar name={name || 'You'} src={avatar} size={78} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h1 className="m-0 truncate font-display text-[30px] leading-[1.02] font-extrabold tracking-[-0.035em]">{name || 'Your profile'}</h1>
+                <label className="mt-2.5 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full bg-white px-3.5 text-[14px] font-semibold text-fairway">
+                  <Icon name="user" size={16} />
+                  Change photo
+                  <input type="file" accept="image/*" className="sr-only" onChange={(e) => pickAvatar(e.target.files?.[0])} />
+                </label>
+              </div>
+            </div>
+          </div>
+        }
+      >
+        <Section title="About you" icon="user">
+          <div className={`${glassCard} divide-y divide-line-soft text-fairway`}>
+            <Field label="Name">
+              <input value={name} onChange={(e) => setName(e.target.value)} required className={field} />
+            </Field>
+            <Field label="Area">
+              <input value={area} onChange={(e) => setArea(e.target.value)} placeholder="e.g. Harlow" className={field} />
+            </Field>
+            <Field label="Handicap index (self-declared)">
+              <input value={handicap} onChange={(e) => setHandicap(e.target.value)} inputMode="decimal" className={`${field} font-mono`} />
+            </Field>
+            <Field label="About you">
+              <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} maxLength={300} placeholder="A line or two other golfers will see" className={`${field.replace('rounded-full', 'rounded-[18px]')} block py-3`} />
+            </Field>
+          </div>
+        </Section>
 
-      <div className="flex items-center gap-4">
-        <Avatar name={name || 'You'} src={avatar} size={76} />
-        <label className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line bg-card px-4 font-semibold">
-          Change photo
-          <input type="file" accept="image/*" className="sr-only" onChange={(e) => pickAvatar(e.target.files?.[0])} />
-        </label>
-      </div>
+        <Section title="Home club" icon="flag">
+          <div className="relative text-fairway">
+            <ClubPicker club={club} onChange={setClub} />
+          </div>
+          <div className={`${glassCard} divide-y divide-line-soft overflow-hidden text-fairway`}>
+            {club && <Switch label={`I’m a member at ${club.name}`} checked={member} onChange={setMember} />}
+            {!member && <Switch label="I’m looking for a club membership" checked={looking} onChange={setLooking} />}
+          </div>
+        </Section>
 
-      <label className="flex flex-col gap-1.5"><SectionLabel>Name</SectionLabel>
-        <input value={name} onChange={(e) => setName(e.target.value)} required className={field} /></label>
-      <label className="flex flex-col gap-1.5"><SectionLabel>Area</SectionLabel>
-        <input value={area} onChange={(e) => setArea(e.target.value)} placeholder="e.g. Harlow" className={field} /></label>
-      <label className="flex flex-col gap-1.5"><SectionLabel>Handicap index (self-declared)</SectionLabel>
-        <input value={handicap} onChange={(e) => setHandicap(e.target.value)} inputMode="decimal" className={`${field} font-mono`} /></label>
-      <label className="flex flex-col gap-1.5"><SectionLabel>About you</SectionLabel>
-        <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} maxLength={300} className="w-full rounded-2xl border border-line bg-card p-4" /></label>
+        <Section title="How I play" icon="tee">
+          <div className="relative flex flex-wrap gap-2">
+            {playStyles.map((p) => (
+              <Pick key={p.value} on={styles.includes(p.value)} onClick={() => toggleStyle(p.value)}>{p.label}</Pick>
+            ))}
+          </div>
+        </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Home club</SectionLabel>
-        <ClubPicker club={club} onChange={setClub} />
-        <Card className="divide-y divide-line-soft overflow-hidden">
-          {club && <ToggleRow label={`I’m a member at ${club.name}`} checked={member} onChange={setMember} />}
-          {!member && <ToggleRow label="I’m looking for a club membership" checked={looking} onChange={setLooking} />}
-        </Card>
-      </section>
+        <Section title="How often I play" icon="clock">
+          <div className="relative flex flex-wrap gap-2">
+            {playFrequencies.map((f) => (
+              <Pick key={f.value} on={frequency === f.value} onClick={() => setFrequency(f.value)}>{f.label}</Pick>
+            ))}
+          </div>
+        </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>How I play</SectionLabel>
-        <div className="flex flex-wrap gap-2">
-          {playStyles.map((p) => (
-            <Chip key={p.value} outline={!styles.includes(p.value)} active={styles.includes(p.value)} onClick={() => setStyles((s) => (s.includes(p.value) ? s.filter((x) => x !== p.value) : [...s, p.value]))}>
-              {p.label}
-            </Chip>
-          ))}
-        </div>
-      </section>
+        <Section title="In the bag" icon="bookmark">
+          <div className={`${glassCard} divide-y divide-line-soft text-fairway`}>
+            {bagFields.map(([k, label]) => (
+              <label key={k} className="flex items-center gap-3 px-4 py-2.5">
+                <span className="w-16 shrink-0 text-[14px] font-semibold text-muted">{label}</span>
+                <input value={bag[k] ?? ''} onChange={(e) => setBag((b) => ({ ...b, [k]: e.target.value }))} placeholder="Add" className={`${pill} min-w-0 flex-1 text-[16px]`} />
+              </label>
+            ))}
+          </div>
+        </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>How often I play</SectionLabel>
-        <div className="flex flex-wrap gap-2">
-          {playFrequencies.map((f) => (
-            <Chip key={f.value} outline={frequency !== f.value} active={frequency === f.value} onClick={() => setFrequency(f.value)}>
-              {f.label}
-            </Chip>
-          ))}
-        </div>
-      </section>
+        <Section title="Privacy" icon="lock">
+          <div className={`${glassCard} overflow-hidden text-fairway`}>
+            <Switch
+              label="Let golf clubs contact me"
+              hint="About membership and offers. Off unless you turn it on. We never sell your data."
+              checked={clubsCanContact}
+              onChange={setClubsCanContact}
+            />
+          </div>
+        </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Privacy</SectionLabel>
-        <Card className="overflow-hidden">
-          <ToggleRow
-            label="Let golf clubs contact me about membership and offers"
-            hint="Off unless you turn it on. We never sell your data."
-            checked={clubsCanContact}
-            onChange={setClubsCanContact}
-          />
-        </Card>
-      </section>
+        {error && <div className="relative"><ErrorNote message={error} /></div>}
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>In the bag</SectionLabel>
-        {bagFields.map(([k, label]) => (
-          <input key={k} aria-label={label} placeholder={label} value={bag[k] ?? ''} onChange={(e) => setBag((b) => ({ ...b, [k]: e.target.value }))} className={field} />
-        ))}
-      </section>
-
-      {error && <ErrorNote message={error} />}
-      <Button type="submit" size="lg" full disabled={busy}>{busy ? 'Saving…' : 'Save'}</Button>
+        <ActionBar title="Editing your profile" note="Changes show on your profile">
+          <button type="submit" className={`${limeButton} ${darkDisabled}`} disabled={busy}>
+            {busy ? 'Saving…' : 'Save'}
+          </button>
+        </ActionBar>
+      </PhotoPage>
     </form>
   )
 }

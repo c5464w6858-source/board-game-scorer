@@ -9,7 +9,8 @@ import { formatLabels, handicapRange, londonToIso, shortDate, weekdayName } from
 import { createRound } from '../../lib/rounds'
 import { useMe } from '../../lib/useMe'
 import { useHost } from './hostContext'
-import { darkDisabled, field, HostBar, HostHeader, Switch } from './parts'
+import { ActionBar, darkDisabled, field, Switch } from '../../components/controls'
+import { HostHeader } from './parts'
 
 const parseHcp = (v: string) => (v.trim() === '' || Number.isNaN(Number(v)) ? null : Number(v))
 
@@ -150,14 +151,14 @@ export function HostTime() {
       </div>
       {error && <div className="relative"><ErrorNote message={error} /></div>}
 
-      <HostBar
+      <ActionBar
         title={draft.time && !inPast ? `Tee off ${draft.time}` : 'Add your tee time'}
         note={fee ? `${fee} at the club · free to host` : 'Free to host'}
       >
         <button type="button" className={`${limeButton} ${darkDisabled}`} disabled={busy || !iso || inPast} onClick={post}>
           {busy ? 'Posting…' : 'Post round'}
         </button>
-      </HostBar>
+      </ActionBar>
     </PhotoPage>
   )
 }
