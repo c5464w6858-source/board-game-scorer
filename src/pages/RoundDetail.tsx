@@ -25,27 +25,30 @@ const lime =
 // How this round relates to you. Each state gets its own colour, used for the
 // header badge and the action bar, so they're easy to tell apart.
 type Mode = 'open' | 'pending' | 'in' | 'host' | 'other'
-const looks: Record<Mode, { badge: string; icon: IconName; bar: string; note: string }> = {
-  open: { badge: 'border border-white/25 bg-white/15 text-white backdrop-blur', icon: 'tee', bar: glassCard, note: 'text-muted' },
+const looks: Record<Mode, { badge: string; icon: IconName; bar: string; note: string; edge: string }> = {
+  open: { badge: 'border border-white/25 bg-white/15 text-white backdrop-blur', icon: 'tee', bar: glassCard, note: 'text-muted', edge: 'ring-2 ring-green/45' },
   pending: {
     badge: 'bg-amber text-fairway',
     icon: 'clock',
     bar: 'rounded-[22px] border border-amber/50 bg-[#FFF4E0] shadow-[0_12px_28px_-16px_rgba(14,31,22,0.4)]',
     note: 'text-[#7A5414]',
+    edge: 'ring-2 ring-amber/80',
   },
   in: {
     badge: 'bg-flag text-fairway',
     icon: 'check',
     bar: 'rounded-[22px] bg-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)]',
     note: 'text-muted-dark',
+    edge: 'ring-2 ring-[#9BCB3C]',
   },
   host: {
     badge: 'bg-white text-fairway',
     icon: 'flag',
     bar: 'rounded-[22px] bg-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)]',
     note: 'text-muted-dark',
+    edge: 'ring-2 ring-fairway/80',
   },
-  other: { badge: 'border border-white/20 bg-white/10 text-white/80', icon: 'close', bar: glassCard, note: 'text-muted' },
+  other: { badge: 'border border-white/20 bg-white/10 text-white/80', icon: 'close', bar: glassCard, note: 'text-muted', edge: 'ring-2 ring-line' },
 }
 
 function Seat({ to, children }: { to?: string; children: ReactNode }) {
@@ -196,7 +199,7 @@ export function RoundDetail() {
       )}
 
       <Section title="Who's playing" icon="user" action={<span className="text-sm text-muted">{players.length + 1} of {round.max_players}</span>}>
-        <div className={`${glassCard} grid gap-2 px-3 py-4`} style={{ gridTemplateColumns: `repeat(${round.max_players}, minmax(0, 1fr))` }}>
+        <div className={`${glassCard} grid gap-2 px-3 py-4 ${looks[mode].edge}`} style={{ gridTemplateColumns: `repeat(${round.max_players}, minmax(0, 1fr))` }}>
           {seats.map((i) => {
             if (i === 0)
               return (
@@ -236,7 +239,7 @@ export function RoundDetail() {
       </Section>
 
       <Section title="The round" icon="tee">
-        <div className={`${glassCard} overflow-hidden`}>
+        <div className={`${glassCard} overflow-hidden ${looks[mode].edge}`}>
           <HoleArt className="block h-[124px] w-full" />
           <div className="flex flex-col gap-3 p-4">
             <Scorecard round={round} />
@@ -270,7 +273,7 @@ export function RoundDetail() {
         icon="chat"
         action={member ? <Link to={`/rounds/${round.id}/chat`} className="text-sm font-semibold text-green no-underline">Open</Link> : undefined}
       >
-        <div className={`${glassCard} flex flex-col gap-2 p-4`}>
+        <div className={`${glassCard} flex flex-col gap-2 p-4 ${looks[mode].edge}`}>
           {!member ? (
             <p className="m-0 flex items-center gap-2 text-[14px] text-muted">
               <Icon name="lock" size={16} /> The chat opens once you're in.
@@ -288,7 +291,7 @@ export function RoundDetail() {
       {/* Pinned just above the tab bar so it's never hidden. */}
       <div className="h-24" aria-hidden="true" />
       <div className="fixed inset-x-0 bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] z-[900] mx-auto max-w-[480px] bg-gradient-to-t from-[#ECEAE3] via-[#ECEAE3]/90 to-transparent px-5 pt-6 pb-3">
-        <div className={`${looks[mode].bar} flex items-center justify-between gap-3 py-2.5 pr-2.5 pl-4`}>
+        <div className={`${looks[mode].bar} ${looks[mode].edge} flex items-center justify-between gap-3 py-2.5 pr-2.5 pl-4`}>
           <div className="min-w-0">
             <div className="truncate font-semibold">{status.title}</div>
             <div className={`truncate text-[13px] ${looks[mode].note}`}>{status.note}</div>
