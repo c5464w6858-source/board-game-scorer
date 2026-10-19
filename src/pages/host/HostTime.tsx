@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
@@ -7,6 +7,8 @@ import { Avatar, ErrorNote, Icon, OpenSpot } from '../../components/ui'
 import { teeTimesSearchUrl, teeTimesUrl } from '../../lib/courses'
 import { formatLabels, handicapRange, londonToIso, shortDate, weekdayName } from '../../lib/format'
 import { createRound } from '../../lib/rounds'
+import { defaultTee, fetchCard, type Card } from '../../lib/scorecard'
+import { TeePicker } from '../../components/ScorecardTable'
 import { useMe } from '../../lib/useMe'
 import { useHost } from './hostContext'
 import { ActionBar, darkDisabled, field, Switch } from '../../components/controls'
@@ -20,6 +22,23 @@ export function HostTime() {
   const me = useMe()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [card, setCard] = useState<Card | null>(null)
+  const courseId = draft.course?.id
+
+  // Load the course's tees so the host can say which ones the group plays off.
+  useEffect(() => {
+    if (!courseId) return
+    let live = true
+    fetchCard(courseId).then((c) => {
+      if (!live || !c) return
+      setCard(c)
+      if (!draft.teeId) update({ teeId: defaultTee(c)?.id ?? null })
+    }, () => {})
+    return () => {
+      live = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId])
 
   if (!draft.course) return <Navigate to="/host" replace />
   const course = draft.course
@@ -52,6 +71,7 @@ export function HostTime() {
         visibility: draft.buddiesOnly ? 'buddies' : 'public',
         auto_accept_buddies: draft.autoAccept,
         notes: draft.notes.trim() || null,
+        tee_id: card ? draft.teeId : null,
       })
       navigate(`/rounds/${id}`, { replace: true })
     } catch (e) {
@@ -95,6 +115,12 @@ export function HostTime() {
           {inPast && <p role="alert" className="m-0 text-sm font-semibold text-danger">That time has already passed.</p>}
         </div>
       </Section>
+
+      {card && card.tees.length > 1 && (
+        <Section title="Tees" icon="flag">
+          <TeePicker tees={card.tees} value={draft.teeId} onChange={(teeId) => update({ teeId })} />
+        </Section>
+      )}
 
       <Section title="Details" icon="pencil">
         <div className={`${glassCard} divide-y divide-line-soft overflow-hidden text-fairway`}>
