@@ -5,6 +5,7 @@ import { CourseDetail } from './pages/CourseDetail'
 import { Courses } from './pages/Courses'
 import { Chats } from './pages/Chats'
 import { Discover } from './pages/Discover'
+import { Buddies } from './pages/Buddies'
 import { LiveScore } from './pages/LiveScore'
 import { Recap } from './pages/Recap'
 import { HostFlow } from './pages/host/HostFlow'
@@ -72,6 +73,7 @@ function App() {
           <Route path="/chats" element={<Chats />} />
           <Route path="/me" element={<Profile />} />
           <Route path="/me/edit" element={<ProfileEdit />} />
+          <Route path="/buddies" element={<Buddies />} />
           <Route path="/golfers/:id" element={<Profile />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
