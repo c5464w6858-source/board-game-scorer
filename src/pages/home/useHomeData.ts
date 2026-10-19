@@ -1,5 +1,5 @@
 import { matchScore, roundDistanceMiles } from '../../lib/match'
-import { fetchUpcomingRounds, isMyRound, isOpenTo, pendingRequests } from '../../lib/rounds'
+import { fetchUpcomingRounds, fitsPreferences, isMyRound, isOpenTo, pendingRequests } from '../../lib/rounds'
 import { useAsync } from '../../lib/useAsync'
 import { useMe } from '../../lib/useMe'
 import { fetchForecast } from '../../lib/weather'
@@ -17,7 +17,7 @@ export function useHomeData() {
   const loading = me.loading || rounds.loading
   const error = me.error ?? rounds.error ?? (!loading && (!rounds.data || !me.data) ? 'Something went wrong' : null)
   const all = rounds.data?.all ?? []
-  const open = all.filter((r) => isOpenTo(r, me.id))
+  const open = all.filter((r) => isOpenTo(r, me.id) && fitsPreferences(r, me.data?.profile))
   const matchProfile = me.data?.match
   const picks = matchProfile
     ? open

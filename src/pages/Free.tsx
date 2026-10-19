@@ -9,7 +9,7 @@ import { roundSlot, saveAvailability, slotKey, type Slot } from '../lib/availabi
 import { firstName, teeTime, upcomingDays } from '../lib/format'
 import { matchScore, roundDistanceMiles } from '../lib/match'
 import { updateProfile } from '../lib/profiles'
-import { fetchUpcomingRounds, isOpenTo, roundTitle } from '../lib/rounds'
+import { fetchUpcomingRounds, fitsPreferences, isOpenTo, roundTitle } from '../lib/rounds'
 import { useAsync } from '../lib/useAsync'
 import { useMe } from '../lib/useMe'
 import { spotsText } from './home/helpers'
@@ -34,6 +34,7 @@ export function Free() {
   const [error, setError] = useState<string | null>(null)
 
   const match = me.data?.match
+  const prefs = me.data?.profile
   useEffect(() => {
     if (!match) return
     setFree(new Set(match.free))
@@ -45,7 +46,7 @@ export function Free() {
     if (!rounds.data || !match) return []
     const draft = { ...match, free, radius }
     return rounds.data
-      .filter((r) => isOpenTo(r, me.id))
+      .filter((r) => isOpenTo(r, me.id) && fitsPreferences(r, prefs))
       .filter((r) => {
         const { day, slot } = roundSlot(r.tee_time)
         const d = roundDistanceMiles(r, draft)
@@ -53,7 +54,7 @@ export function Free() {
       })
       .map((r) => ({ round: r, match: matchScore(r, draft) }))
       .sort((a, b) => b.match.percent - a.match.percent)
-  }, [rounds.data, match, free, radius, me.id])
+  }, [rounds.data, match, prefs, free, radius, me.id])
 
   if (me.loading) return <Loading />
   if (me.error) return <ErrorNote message={me.error} />

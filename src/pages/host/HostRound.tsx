@@ -162,6 +162,10 @@ export function HostRound() {
           )}
           <Choice label="Buddies only" hint="Golfers you've added as buddies" checked={draft.buddiesOnly} onSelect={() => update({ buddiesOnly: true })} />
           <Switch label="Auto-accept buddies" hint="Buddies join without waiting on you" checked={draft.autoAccept} onChange={(autoAccept) => update({ autoAccept })} />
+          <Switch label="Beginner friendly" hint="No pressure, any score welcome" checked={draft.beginnerFriendly} onChange={(beginnerFriendly) => update({ beginnerFriendly })} />
+          {me.data?.profile?.gender === 'woman' && (
+            <Switch label="Women only" hint="Only women can see and join it" checked={draft.womenOnly} onChange={(womenOnly) => update({ womenOnly })} />
+          )}
         </div>
       </Section>
 

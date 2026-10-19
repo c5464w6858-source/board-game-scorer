@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { HoleArt } from '../components/HoleArt'
 import { PhotoPage } from '../components/PhotoPage'
+import { RoundTags } from '../components/RoundTags'
 import { Section } from '../components/Section'
 import { glassCard, limeButton as lime, primaryButton as primary, roundButton, secondaryButton as secondary } from '../components/surfaces'
 import { Avatar, ErrorNote, Icon, Loading, OpenSpot, type IconName } from '../components/ui'
@@ -202,6 +203,7 @@ export function RoundDetail() {
             <p className="mt-1 mb-0 text-sm text-white/80">
               {[round.course_name, [round.course?.town, round.course?.postcode].filter(Boolean).join(' ')].filter(Boolean).join(' · ')}
             </p>
+            <div className="mt-2.5 empty:hidden"><RoundTags round={round} onDark /></div>
           </div>
         </div>
       }

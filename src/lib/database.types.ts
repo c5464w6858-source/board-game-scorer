@@ -43,6 +43,39 @@ export type Database = {
           },
         ]
       }
+      blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connections: {
         Row: {
           addressee_id: string
@@ -323,7 +356,9 @@ export type Database = {
           bag: Json
           bio: string | null
           created_at: string
+          beginner_friendly: boolean
           display_name: string | null
+          gender: string | null
           handicap: number | null
           handicap_source: string
           home_area: string | null
@@ -333,13 +368,16 @@ export type Database = {
           onboarded_at: string | null
           play_style: string[]
           search_radius_miles: number
+          women_only: boolean
         }
         Insert: {
           avatar_url?: string | null
           bag?: Json
           bio?: string | null
           created_at?: string
+          beginner_friendly?: boolean
           display_name?: string | null
+          gender?: string | null
           handicap?: number | null
           handicap_source?: string
           home_area?: string | null
@@ -349,13 +387,16 @@ export type Database = {
           onboarded_at?: string | null
           play_style?: string[]
           search_radius_miles?: number
+          women_only?: boolean
         }
         Update: {
           avatar_url?: string | null
           bag?: Json
           bio?: string | null
           created_at?: string
+          beginner_friendly?: boolean
           display_name?: string | null
+          gender?: string | null
           handicap?: number | null
           handicap_source?: string
           home_area?: string | null
@@ -365,6 +406,7 @@ export type Database = {
           onboarded_at?: string | null
           play_style?: string[]
           search_radius_miles?: number
+          women_only?: boolean
         }
         Relationships: [
           {
@@ -372,6 +414,58 @@ export type Database = {
             columns: ["home_club_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reported_id: string
+          reporter_id: string
+          round_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason: Database["public"]["Enums"]["report_reason"]
+          reported_id: string
+          reporter_id?: string
+          round_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason?: Database["public"]["Enums"]["report_reason"]
+          reported_id?: string
+          reporter_id?: string
+          round_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
             referencedColumns: ["id"]
           },
         ]
@@ -463,6 +557,7 @@ export type Database = {
       rounds: {
         Row: {
           auto_accept_buddies: boolean
+          beginner_friendly: boolean
           cancelled: boolean
           course_id: string | null
           course_name: string
@@ -484,9 +579,11 @@ export type Database = {
           urgent: boolean
           visibility: Database["public"]["Enums"]["round_visibility"]
           walking: boolean
+          women_only: boolean
         }
         Insert: {
           auto_accept_buddies?: boolean
+          beginner_friendly?: boolean
           cancelled?: boolean
           course_id?: string | null
           course_name: string
@@ -508,9 +605,11 @@ export type Database = {
           urgent?: boolean
           visibility?: Database["public"]["Enums"]["round_visibility"]
           walking?: boolean
+          women_only?: boolean
         }
         Update: {
           auto_accept_buddies?: boolean
+          beginner_friendly?: boolean
           cancelled?: boolean
           course_id?: string | null
           course_name?: string
@@ -532,6 +631,7 @@ export type Database = {
           urgent?: boolean
           visibility?: Database["public"]["Enums"]["round_visibility"]
           walking?: boolean
+          women_only?: boolean
         }
         Relationships: [
           {
@@ -619,6 +719,7 @@ export type Database = {
           shows_up_pct: number
         }[]
       }
+      is_blocked_between: { Args: { p_a: string; p_b: string }; Returns: boolean }
       is_buddy: { Args: { p_user_id: string }; Returns: boolean }
       is_round_host: { Args: { p_round_id: string }; Returns: boolean }
       is_round_member: { Args: { p_round_id: string }; Returns: boolean }
@@ -626,6 +727,7 @@ export type Database = {
         Args: { p_round_id: string; p_user_id: string }
         Returns: boolean
       }
+      is_woman: { Args: { p_user_id: string }; Returns: boolean }
       kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
     }
     Enums: {
@@ -635,6 +737,12 @@ export type Database = {
         | "kept_the_pace"
         | "clutch_putter"
         | "would_play_again"
+      report_reason:
+        | "no_show"
+        | "abusive"
+        | "unsafe"
+        | "fake_profile"
+        | "payment"
       request_status: "pending" | "accepted" | "declined" | "withdrawn"
       round_format: "stableford" | "stroke" | "match" | "scramble"
       round_visibility: "public" | "buddies"
@@ -663,6 +771,13 @@ export const Constants = {
         "kept_the_pace",
         "clutch_putter",
         "would_play_again",
+      ],
+      report_reason: [
+        "no_show",
+        "abusive",
+        "unsafe",
+        "fake_profile",
+        "payment",
       ],
       request_status: ["pending", "accepted", "declined", "withdrawn"],
       round_format: ["stableford", "stroke", "match", "scramble"],

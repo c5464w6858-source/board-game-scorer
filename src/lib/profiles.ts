@@ -15,6 +15,9 @@ export type ProfileUpdate = Pick<
   | 'avatar_url'
   | 'onboarded_at'
   | 'search_radius_miles'
+  | 'gender'
+  | 'women_only'
+  | 'beginner_friendly'
 >
 
 // Private to the golfer; clubs only ever see golfers with clubs_can_contact.

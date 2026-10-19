@@ -14,6 +14,8 @@ export interface HostDraft {
   fee: string
   notes: string
   teeId: string | null
+  womenOnly: boolean
+  beginnerFriendly: boolean
 }
 
 export type HostCtx = { draft: HostDraft; update: (patch: Partial<HostDraft>) => void }

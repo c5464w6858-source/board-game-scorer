@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { PhotoPage } from '../components/PhotoPage'
+import { ReportSheet } from '../components/ReportSheet'
 import { Section } from '../components/Section'
 import { glassCard, primaryButton, roundButton, secondaryButton } from '../components/surfaces'
 import { Avatar, ErrorNote, Icon, Loading, type IconName } from '../components/ui'
 import { handicapText, playStyleLabel, shortName } from '../lib/format'
 import { answerBuddyRequest, fetchBuddies, fetchProfile, fetchStats, removeConnection, sendBuddyRequest } from '../lib/profiles'
+import { blockGolfer, fetchBlocked, unblockGolfer } from '../lib/safety'
 import { supabase } from '../lib/supabase'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
@@ -43,15 +45,17 @@ export function Profile() {
   const own = id === me
   const navigate = useNavigate()
   const state = useAsync(async () => {
-    const [profile, stats, buddies] = await Promise.all([fetchProfile(id), fetchStats(id), fetchBuddies(me)])
-    return { profile, stats, buddies }
+    const [profile, stats, buddies, blocked] = await Promise.all([fetchProfile(id), fetchStats(id), fetchBuddies(me), fetchBlocked()])
+    return { profile, stats, buddies, blocked: blocked.some((b) => b.blocked_id === id) }
   }, [id, me])
   const [busy, setBusy] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [reporting, setReporting] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
 
   if (state.loading) return <Loading />
   if (state.error || !state.data) return <ErrorNote message={state.error ?? 'Something went wrong'} />
-  const { profile, stats, buddies } = state.data
+  const { profile, stats, buddies, blocked } = state.data
   if (!profile) return <p>Golfer not found.</p>
 
   // Where you stand with this golfer, for the buddy card on their profile.
@@ -203,6 +207,56 @@ export function Profile() {
             ))}
           </div>
         </Section>
+      )}
+
+      {!own && (
+        <div className="relative flex flex-col gap-2">
+          {notice && <p role="status" className="m-0 rounded-2xl bg-green-tint px-3.5 py-2.5 text-[14px] text-green-dark">{notice}</p>}
+          {blocked && (
+            <p className="m-0 rounded-2xl bg-[#F1EFE8] px-3.5 py-2.5 text-[14px] text-muted">
+              You’ve blocked {shortName(profile.display_name)}. You won’t see each other’s games.
+            </p>
+          )}
+          <div className="flex justify-center gap-6">
+            <button type="button" onClick={() => setReporting(true)} className="inline-flex min-h-11 items-center gap-1.5 text-[14px] font-semibold text-danger">
+              <Icon name="shield" size={16} /> Report
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                blocked
+                  ? act(() => unblockGolfer(id))
+                  : confirm(`Block ${shortName(profile.display_name)}? You won’t see each other’s games.`) && act(() => blockGolfer(id))
+              }
+              className="inline-flex min-h-11 items-center gap-1.5 text-[14px] font-semibold text-muted"
+            >
+              <Icon name="close" size={16} /> {blocked ? 'Unblock' : 'Block'}
+            </button>
+          </div>
+          <ReportSheet
+            open={reporting}
+            onClose={() => setReporting(false)}
+            golferId={id}
+            golferName={shortName(profile.display_name)}
+            onDone={(didBlock) => {
+              setReporting(false)
+              setNotice(`Thanks. We’ll review your report within 24 hours${didBlock ? ', and you’ve blocked them' : ''}.`)
+              state.reload()
+            }}
+          />
+        </div>
+      )}
+
+      {own && (
+        <Link to="/me/safety" className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway no-underline`}>
+          <span className="grid size-9 place-items-center rounded-full bg-green-tint text-green"><Icon name="shield" size={17} /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">Safety and games I’m shown</span>
+            <span className="block text-[13px] text-muted">Women-only and beginner-friendly games, blocked golfers</span>
+          </span>
+          <Icon name="back" size={16} className="rotate-180 text-muted" />
+        </Link>
       )}
 
       {own && (
