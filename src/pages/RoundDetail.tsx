@@ -269,12 +269,22 @@ export function RoundDetail() {
               Nothing to pay in the app.{fee ? ` ${fee} at the club on the day.` : ' Pay the club on the day.'}
             </p>
             {(isHost || mine?.status === 'accepted') && !round.cancelled && (
-              <Link to={`/rounds/${round.id}/score`} className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-green no-underline">
-                <Icon name="flag" size={16} /> Open the scorecard
+              <Link
+                to={`/rounds/${round.id}/score`}
+                className="flex min-h-14 items-center gap-3 rounded-2xl bg-fairway px-3.5 py-3 text-white no-underline shadow-[0_10px_22px_-12px_rgba(14,31,22,0.8)]"
+              >
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-flag text-fairway">
+                  <Icon name="flag" size={18} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">Open the scorecard</span>
+                  <span className="block text-[12px] text-white/70">{roundDay ? 'Live scores for the group, hole by hole' : 'Holes, yards and par. Scores go live on the day'}</span>
+                </span>
+                <Icon name="back" size={18} className="shrink-0 rotate-180 text-flag" />
               </Link>
             )}
             {(isHost || mine?.status === 'accepted') && closed && !round.cancelled && (
-              <Link to={`/rounds/${round.id}/recap`} className="-mt-2 inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-green no-underline">
+              <Link to={`/rounds/${round.id}/recap`} className="-mt-1 inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-green no-underline">
                 <Icon name="check" size={16} /> Recap and kudos
               </Link>
             )}
