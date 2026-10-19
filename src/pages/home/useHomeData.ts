@@ -25,6 +25,13 @@ export function useHomeData() {
         .sort((a, b) => b.match.percent - a.match.percent)
         .slice(0, 6)
     : []
+  // Urgent rounds you could fill and would travel to, soonest first.
+  const urgent = matchProfile
+    ? open.filter((r) => {
+        const d = roundDistanceMiles(r, matchProfile)
+        return r.urgent && (d == null || d <= matchProfile.radius)
+      })
+    : []
   const waiting = all
     .filter((r) => r.host_id === me.id)
     .flatMap((r) => pendingRequests(r).map((q) => ({ round: r, request: q })))
@@ -38,6 +45,7 @@ export function useHomeData() {
     forecast: rounds.data?.forecast ?? null,
     openCount: open.length,
     picks,
+    urgent,
     waiting,
   }
 }

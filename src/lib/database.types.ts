@@ -481,6 +481,7 @@ export type Database = {
           tee_id: string | null
           tee_time: string
           title: string | null
+          urgent: boolean
           visibility: Database["public"]["Enums"]["round_visibility"]
           walking: boolean
         }
@@ -504,6 +505,7 @@ export type Database = {
           tee_id?: string | null
           tee_time: string
           title?: string | null
+          urgent?: boolean
           visibility?: Database["public"]["Enums"]["round_visibility"]
           walking?: boolean
         }
@@ -527,6 +529,7 @@ export type Database = {
           tee_id?: string | null
           tee_time?: string
           title?: string | null
+          urgent?: boolean
           visibility?: Database["public"]["Enums"]["round_visibility"]
           walking?: boolean
         }

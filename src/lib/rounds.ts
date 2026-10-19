@@ -57,3 +57,9 @@ export async function cancelRound(id: string) {
   const { error } = await supabase.from('rounds').update({ cancelled: true }).eq('id', id)
   if (error) throw error
 }
+
+// Mark a round as needing a player: the first golfer to say yes gets the spot.
+export async function setUrgent(roundId: string, urgent: boolean) {
+  const { error } = await supabase.from('rounds').update({ urgent }).eq('id', roundId)
+  if (error) throw error
+}

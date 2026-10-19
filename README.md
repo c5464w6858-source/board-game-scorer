@@ -28,7 +28,7 @@ npm run dev
 - `availability`: the AM/PM slots a golfer is free over the next week ("I'm free"), readable by signed-in users so hosts can see who's free. `profiles.search_radius_miles` is how far they'll travel. Both feed the match score.
 - `scores`: strokes per player per hole, readable by the round's host and accepted players. Each player writes their own, and the host can write anyone's. Live via Supabase Realtime.
 
-Rounds also carry `format`, `walking`, `pace_note`, `green_fee_pence` (information only, never charged), `visibility` (public or buddies) and `auto_accept_buddies`. Profiles carry `home_club_id`, `home_club_member`, `play_style`, `bag`, `handicap_source` and `onboarded_at` (set once first-run setup at `/welcome` is finished or skipped) (self-declared until an official link exists). An `avatars` storage bucket holds profile photos, one folder per user.
+Rounds also carry `urgent` ("Need a player": the first golfer to ask is accepted automatically, by the same trigger that auto-accepts buddies), `format`, `walking`, `pace_note`, `green_fee_pence` (information only, never charged), `visibility` (public or buddies) and `auto_accept_buddies`. Profiles carry `home_club_id`, `home_club_member`, `play_style`, `bag`, `handicap_source` and `onboarded_at` (set once first-run setup at `/welcome` is finished or skipped) (self-declared until an official link exists). An `avatars` storage bucket holds profile photos, one folder per user.
 
 Your upcoming games are rounds you host plus rounds where your request was accepted, with `tee_time` in the future.
 

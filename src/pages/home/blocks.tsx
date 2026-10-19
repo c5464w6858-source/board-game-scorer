@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
 import { AvatarStack, Icon } from '../../components/ui'
-import { dayLabel, teeOffIn, teeTime } from '../../lib/format'
+import { dayLabel, firstName, teeOffIn, teeTime } from '../../lib/format'
 import { roundTitle } from '../../lib/rounds'
 import { lineup, spotsText } from './helpers'
 import { PickCard, WaitingCard } from './parts'
@@ -115,5 +115,30 @@ export function Picks({ d, card }: { d: HomeData; card: string }) {
         <div className={`${card} p-4 text-sm text-muted`}>No open games near you yet. Host one and golfers can join you.</div>
       )}
     </Section>
+  )
+}
+
+// A round near you that needs a player now. Tapping opens the alert.
+export function UrgentAlert({ d }: { d: HomeData }) {
+  const r = d.urgent[0]
+  if (!r) return null
+  return (
+    <Link
+      to={`/rounds/${r.id}`}
+      className="relative flex items-center gap-3 rounded-[22px] bg-fairway p-4 text-white no-underline shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)] ring-2 ring-flag"
+    >
+      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-flag text-fairway"><Icon name="bell" size={20} /></span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[12px] font-semibold tracking-[0.06em] text-flag uppercase">Need a player</span>
+        <span className="block truncate font-semibold">
+          {firstName(r.host?.display_name ?? null)} at {r.course?.name ?? r.course_name}
+        </span>
+        <span className="block text-[13px] text-white/70">
+          {teeOffIn(r.tee_time)}
+          {d.urgent.length > 1 ? ` · ${d.urgent.length - 1} more nearby` : ''}
+        </span>
+      </span>
+      <Icon name="back" size={18} className="shrink-0 rotate-180 text-white/70" />
+    </Link>
   )
 }
