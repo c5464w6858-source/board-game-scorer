@@ -28,9 +28,15 @@ export function Actions() {
       </Link>
       <Link
         to="/free"
-        className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-[14px] font-semibold text-white/90 no-underline backdrop-blur"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-[14px] font-semibold text-white/90 no-underline backdrop-blur"
       >
-        <Icon name="clock" size={16} className="text-flag" /> I'm free this week
+        <Icon name="clock" size={16} className="text-flag" /> I'm free
+      </Link>
+      <Link
+        to="/groups"
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-gold/40 bg-navy/70 text-[14px] font-semibold text-gold-soft no-underline backdrop-blur"
+      >
+        <Icon name="user" size={16} className="text-gold" /> Societies & trips
       </Link>
     </div>
   )

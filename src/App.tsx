@@ -7,6 +7,12 @@ import { Chats } from './pages/Chats'
 import { Discover } from './pages/Discover'
 import { Buddies } from './pages/Buddies'
 import { Free } from './pages/Free'
+import { GroupDetail } from './pages/groups/GroupDetail'
+import { GroupJoin } from './pages/groups/GroupJoin'
+import { GroupNew } from './pages/groups/GroupNew'
+import { GroupRound } from './pages/groups/GroupRound'
+import { GroupRoundNew } from './pages/groups/GroupRoundNew'
+import { Groups } from './pages/groups/Groups'
 import { LiveScore } from './pages/LiveScore'
 import { Recap } from './pages/Recap'
 import { Safety } from './pages/Safety'
@@ -78,6 +84,12 @@ function App() {
           <Route path="/me/safety" element={<Safety />} />
           <Route path="/buddies" element={<Buddies />} />
           <Route path="/free" element={<Free />} />
+          <Route path="/groups" element={<Groups />} />
+          <Route path="/groups/new" element={<GroupNew />} />
+          <Route path="/groups/join/:code" element={<GroupJoin />} />
+          <Route path="/groups/:id" element={<GroupDetail />} />
+          <Route path="/groups/:id/rounds/new" element={<GroupRoundNew />} />
+          <Route path="/groups/:id/rounds/:roundId" element={<GroupRound />} />
           <Route path="/golfers/:id" element={<Profile />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CourseDetail />} />

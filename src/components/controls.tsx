@@ -9,12 +9,24 @@ export const field =
 export const darkDisabled = 'disabled:bg-none disabled:bg-white/12 disabled:text-white/45 disabled:opacity-100 disabled:shadow-none'
 
 // Dark bar pinned just above the tab bar (the host's style on Round detail).
-export function ActionBar({ title, note, children, noTabBar }: { title: ReactNode; note: ReactNode; children: ReactNode; noTabBar?: boolean }) {
+export function ActionBar({
+  title,
+  note,
+  children,
+  noTabBar,
+  tone = 'green',
+}: {
+  title: ReactNode
+  note: ReactNode
+  children: ReactNode
+  noTabBar?: boolean
+  tone?: 'green' | 'navy'
+}) {
   return (
     <>
       <div className="h-24" aria-hidden="true" />
-      <div className={`fixed inset-x-0 ${noTabBar ? 'bottom-0 pb-[max(1rem,env(safe-area-inset-bottom))]' : 'bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] pb-3'} z-[900] mx-auto max-w-[480px] bg-gradient-to-t from-[#ECEAE3] via-[#ECEAE3]/90 to-transparent px-5 pt-6`}>
-        <div className="flex items-center justify-between gap-3 rounded-[22px] bg-fairway py-2.5 pr-2.5 pl-4 text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)]">
+      <div className={`fixed inset-x-0 ${noTabBar ? 'bottom-0 pb-[max(1rem,env(safe-area-inset-bottom))]' : 'bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] pb-3'} z-[900] mx-auto max-w-[480px] bg-gradient-to-t ${tone === 'navy' ? 'from-[#EFE9DC] via-[#EFE9DC]/90' : 'from-[#ECEAE3] via-[#ECEAE3]/90'} to-transparent px-5 pt-6`}>
+        <div className={`flex items-center justify-between gap-3 rounded-[22px] py-2.5 pr-2.5 pl-4 text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)] ${tone === 'navy' ? 'bg-navy' : 'bg-fairway'}`}>
           <div className="min-w-0">
             <div className="truncate font-semibold">{title}</div>
             <div className="truncate text-[13px] text-muted-dark">{note}</div>
