@@ -4,7 +4,7 @@ import { HoleArt } from '../components/HoleArt'
 import { PhotoPage } from '../components/PhotoPage'
 import { Section } from '../components/Section'
 import { glassCard } from '../components/surfaces'
-import { Avatar, ErrorNote, Icon, Loading, OpenSpot } from '../components/ui'
+import { Avatar, ErrorNote, Icon, Loading, OpenSpot, type IconName } from '../components/ui'
 import { fetchLastMessages } from '../lib/chat'
 import { firstName, handicapRange, handicapText, pounds, teeOffIn } from '../lib/format'
 import { requestToJoin, withdrawRequest } from '../lib/requests'
@@ -19,6 +19,34 @@ const roundButton = 'grid size-11 place-items-center rounded-full border border-
 const primary =
   'inline-flex min-h-12 items-center justify-center rounded-full bg-gradient-to-b from-[#1C8E47] to-green-dark px-5 font-semibold text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_10px_22px_-12px_rgba(19,122,58,0.8)] disabled:opacity-50'
 const secondary = 'inline-flex min-h-12 items-center justify-center rounded-full border border-[#D8D5CA] bg-white px-5 font-semibold text-fairway no-underline disabled:opacity-50'
+const lime =
+  'inline-flex min-h-12 items-center justify-center rounded-full bg-gradient-to-b from-[#DBF79A] to-flag px-5 font-semibold text-fairway no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_8px_20px_-8px_rgba(200,241,105,0.55)] disabled:opacity-50'
+
+// How this round relates to you. Each state gets its own colour, used for the
+// header badge and the action bar, so they're easy to tell apart.
+type Mode = 'open' | 'pending' | 'in' | 'host' | 'other'
+const looks: Record<Mode, { badge: string; icon: IconName; bar: string; note: string }> = {
+  open: { badge: 'border border-white/25 bg-white/15 text-white backdrop-blur', icon: 'tee', bar: glassCard, note: 'text-muted' },
+  pending: {
+    badge: 'bg-amber text-fairway',
+    icon: 'clock',
+    bar: 'rounded-[22px] border border-amber/50 bg-[#FFF4E0] shadow-[0_12px_28px_-16px_rgba(14,31,22,0.4)]',
+    note: 'text-[#7A5414]',
+  },
+  in: {
+    badge: 'bg-flag text-fairway',
+    icon: 'check',
+    bar: 'rounded-[22px] bg-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)]',
+    note: 'text-muted-dark',
+  },
+  host: {
+    badge: 'bg-white text-fairway',
+    icon: 'flag',
+    bar: 'rounded-[22px] bg-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)]',
+    note: 'text-muted-dark',
+  },
+  other: { badge: 'border border-white/20 bg-white/10 text-white/80', icon: 'close', bar: glassCard, note: 'text-muted' },
+}
 
 function Seat({ to, children }: { to?: string; children: ReactNode }) {
   const cls = 'flex flex-col items-center gap-1 text-center text-fairway no-underline'
@@ -83,14 +111,20 @@ export function RoundDetail() {
   // What the pinned action bar says and offers, depending on who you are.
   let status: { title: string; note: string }
   let actions: ReactNode
+  let mode: Mode
+  let badge: string
   if (isHost) {
+    mode = 'host'
+    badge = "You're hosting"
     status = { title: spots ? `${spots} spot${spots === 1 ? '' : 's'} open` : 'Round full', note: waiting ? `${waiting} waiting on you` : 'No requests yet' }
     actions = (
-      <Link to={`/rounds/${round.id}/requests`} className={primary}>
+      <Link to={`/rounds/${round.id}/requests`} className={lime}>
         Requests{waiting ? ` · ${waiting}` : ''}
       </Link>
     )
   } else if (mine?.status === 'pending') {
+    mode = 'pending'
+    badge = 'Request sent'
     status = { title: 'Request sent', note: fee ? `${fee} at the club if you're in` : 'Nothing to pay now' }
     actions = (
       <button type="button" className={secondary} disabled={busy} onClick={() => run(() => withdrawRequest(mine.id))}>
@@ -98,12 +132,18 @@ export function RoundDetail() {
       </button>
     )
   } else if (mine?.status === 'accepted') {
+    mode = 'in'
+    badge = "You're in"
     status = { title: "You're in", note: fee ? `${fee} at the club on the day` : 'Pay the club on the day' }
-    actions = <Link to={`/rounds/${round.id}/chat`} className={primary}>Open chat</Link>
+    actions = <Link to={`/rounds/${round.id}/chat`} className={lime}>Open chat</Link>
   } else if (mine) {
+    mode = 'other'
+    badge = mine.status === 'declined' ? 'Not this time' : 'Request withdrawn'
     status = { title: `Request ${mine.status}`, note: 'Plenty more games to join' }
     actions = <Link to="/discover" className={secondary}>Find a game</Link>
   } else {
+    mode = closed || !spots ? 'other' : 'open'
+    badge = closed ? 'Closed' : spots ? `Open game · ${spots} spot${spots === 1 ? '' : 's'}` : 'Full'
     status = {
       title: closed ? 'Round closed' : spots ? 'Free to request' : 'Round full',
       note: closed || !spots ? 'Try another game' : fee ? `${fee} at the club` : 'Pay the club on the day',
@@ -136,7 +176,13 @@ export function RoundDetail() {
             )}
           </div>
           <div>
-            <div className="text-[13px] font-semibold text-flag">{round.cancelled ? 'Cancelled' : teeOffIn(round.tee_time)}</div>
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-semibold ${looks[mode].badge}`}>
+                <Icon name={looks[mode].icon} size={15} />
+                {badge}
+              </span>
+              <span className="text-[13px] font-semibold text-flag">{round.cancelled ? 'Cancelled' : teeOffIn(round.tee_time)}</span>
+            </div>
             <h1 className="m-0 font-display text-[30px] leading-[1.02] font-extrabold tracking-[-0.035em]">{roundTitle(round)}</h1>
             <p className="mt-1 mb-0 text-sm text-white/80">
               {[round.course_name, [round.course?.town, round.course?.postcode].filter(Boolean).join(' ')].filter(Boolean).join(' · ')}
@@ -166,7 +212,9 @@ export function RoundDetail() {
             if (p)
               return (
                 <Seat key={p.id} to={`/golfers/${p.user_id}`}>
-                  <span className="p-[3px]"><Avatar name={p.profile?.display_name ?? 'Golfer'} src={p.profile?.avatar_url} size={50} /></span>
+                  <span className={`rounded-full p-[3px] ${p.user_id === me ? 'ring-[2.5px] ring-green' : ''}`}>
+                    <Avatar name={p.profile?.display_name ?? 'Golfer'} src={p.profile?.avatar_url} size={50} />
+                  </span>
                   <span className="text-[14px] font-semibold">{p.user_id === me ? 'You' : firstName(p.profile?.display_name ?? null)}</span>
                   <span className="text-[12px] text-muted">HCP <span className="font-mono">{handicapText(p.profile?.handicap ?? null)}</span></span>
                 </Seat>
@@ -174,9 +222,13 @@ export function RoundDetail() {
             const pendingMine = i === players.length + 1 && mine?.status === 'pending'
             return (
               <Seat key={`open${i}`}>
-                <span className="p-[3px]">{pendingMine ? <span className="block opacity-60"><Avatar name="You" size={50} /></span> : <OpenSpot size={50} />}</span>
+                {pendingMine ? (
+                  <span className="rounded-full p-[3px] ring-[2.5px] ring-amber"><span className="block opacity-70"><Avatar name={mine?.profile?.display_name ?? 'You'} src={mine?.profile?.avatar_url} size={50} /></span></span>
+                ) : (
+                  <span className="p-[3px]"><OpenSpot size={50} /></span>
+                )}
                 <span className="text-[14px] font-semibold">{pendingMine ? 'You' : 'Open'}</span>
-                <span className="text-[12px] text-muted">{pendingMine ? 'Requested' : handicapRange(round.min_handicap, round.max_handicap)}</span>
+                <span className={`text-[12px] ${pendingMine ? 'font-semibold text-[#7A5414]' : 'text-muted'}`}>{pendingMine ? 'Requested' : handicapRange(round.min_handicap, round.max_handicap)}</span>
               </Seat>
             )
           })}
@@ -236,10 +288,10 @@ export function RoundDetail() {
       {/* Pinned just above the tab bar so it's never hidden. */}
       <div className="h-24" aria-hidden="true" />
       <div className="fixed inset-x-0 bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] z-[900] mx-auto max-w-[480px] bg-gradient-to-t from-[#ECEAE3] via-[#ECEAE3]/90 to-transparent px-5 pt-6 pb-3">
-        <div className={`${glassCard} flex items-center justify-between gap-3 py-2.5 pr-2.5 pl-4`}>
+        <div className={`${looks[mode].bar} flex items-center justify-between gap-3 py-2.5 pr-2.5 pl-4`}>
           <div className="min-w-0">
             <div className="truncate font-semibold">{status.title}</div>
-            <div className="truncate text-[13px] text-muted">{status.note}</div>
+            <div className={`truncate text-[13px] ${looks[mode].note}`}>{status.note}</div>
           </div>
           <div className="flex shrink-0 gap-2">{actions}</div>
         </div>

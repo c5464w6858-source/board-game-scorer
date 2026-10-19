@@ -49,6 +49,12 @@ const paths = {
   shield: <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z" />,
   filter: <path d="M4 7h16M7 12h10M10 17h4" />,
   send: <path d="m22 2-11 11M22 2l-7 20-4-9-9-4z" />,
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
   lock: (
     <>
       <rect x="5" y="11" width="14" height="10" rx="2" />
