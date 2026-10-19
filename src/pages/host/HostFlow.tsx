@@ -18,6 +18,8 @@ export function HostFlow() {
     fee: '',
     notes: '',
     teeId: null,
+    womenOnly: false,
+    beginnerFriendly: false,
   }))
   const ctx: HostCtx = { draft, update: (patch) => setDraft((d) => ({ ...d, ...patch })) }
   return <Outlet context={ctx} />

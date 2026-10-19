@@ -42,10 +42,10 @@ export function Switch({ label, hint, checked, onChange }: { label: ReactNode; h
   )
 }
 
-export function Choice({ label, hint, checked, onSelect }: { label: ReactNode; hint?: ReactNode; checked: boolean; onSelect: () => void }) {
+export function Choice({ label, hint, checked, onSelect, name = 'who' }: { label: ReactNode; hint?: ReactNode; checked: boolean; onSelect: () => void; name?: string }) {
   return (
     <label className="flex min-h-14 cursor-pointer items-center gap-3 px-4 py-2.5">
-      <input type="radio" name="who" checked={checked} onChange={onSelect} className="peer sr-only" />
+      <input type="radio" name={name} checked={checked} onChange={onSelect} className="peer sr-only" />
       <span
         aria-hidden="true"
         className={`grid size-6 shrink-0 place-items-center rounded-full border-2 peer-focus-visible:outline-2 peer-focus-visible:outline-green ${checked ? 'border-green bg-green text-white' : 'border-[#CFCBBE] bg-white'}`}

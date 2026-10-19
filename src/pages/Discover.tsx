@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import { CourseMap } from '../components/CourseMap'
 import { HoleArt } from '../components/HoleArt'
 import { PhotoPage } from '../components/PhotoPage'
+import { RoundTags } from '../components/RoundTags'
 import { Section } from '../components/Section'
 import { glassCard } from '../components/surfaces'
 import { Avatar, AvatarStack, ErrorNote, Icon, Loading } from '../components/ui'
 import { handicapText, shortName, teeOffIn } from '../lib/format'
 import { DEFAULT_RADIUS_MILES, matchScore, roundDistanceMiles, type MatchProfile } from '../lib/match'
 import { requestToJoin } from '../lib/requests'
-import { fetchUpcomingRounds, isOpenTo, roundTitle, type RoundRow } from '../lib/rounds'
+import { fetchUpcomingRounds, fitsPreferences, isOpenTo, roundTitle, type RoundRow } from '../lib/rounds'
 import { useAsync } from '../lib/useAsync'
 import { useMe } from '../lib/useMe'
 import { TeeChip } from './home/blocks'
@@ -61,7 +62,7 @@ export function Discover() {
     if (!rounds.data || !me.data) return []
     const { match } = me.data
     return rounds.data
-      .filter((r) => isOpenTo(r, me.id) && !skipped.includes(r.id) && filters.every((f) => passes(f, r, match)))
+      .filter((r) => isOpenTo(r, me.id) && fitsPreferences(r, me.data?.profile) && !skipped.includes(r.id) && filters.every((f) => passes(f, r, match)))
       .map((r) => ({ round: r, match: matchScore(r, match), miles: roundDistanceMiles(r, match) }))
       .sort((a, b) => b.match.percent - a.match.percent)
   }, [rounds.data, me.data, me.id, skipped, filters])
@@ -194,6 +195,7 @@ export function Discover() {
                   <div className="mt-1 text-sm text-[#4A544E]">
                     {[distanceText(top.miles), top.round.course_name].filter(Boolean).join(' · ')}
                   </div>
+                  <div className="mt-2 empty:hidden"><RoundTags round={top.round} /></div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Avatar name={top.round.host?.display_name ?? 'Host'} src={top.round.host?.avatar_url} size={40} />

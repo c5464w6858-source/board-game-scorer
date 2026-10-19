@@ -38,6 +38,10 @@ export async function fetchUpcomingRounds(limit = 50): Promise<RoundRow[]> {
   return data
 }
 
+// The golfer's "games I'm shown" choices from the Safety page.
+export const fitsPreferences = (r: RoundRow, prefs: { women_only: boolean; beginner_friendly: boolean } | null | undefined) =>
+  (!prefs?.women_only || r.women_only) && (!prefs?.beginner_friendly || r.beginner_friendly)
+
 export const isOpenTo = (r: RoundRow, userId: string) =>
   r.host_id !== userId && spotsLeft(r) > 0 && !myRequest(r, userId)
 

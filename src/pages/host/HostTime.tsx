@@ -72,6 +72,8 @@ export function HostTime() {
         auto_accept_buddies: draft.autoAccept,
         notes: draft.notes.trim() || null,
         tee_id: card ? draft.teeId : null,
+        women_only: draft.womenOnly && me.data?.profile?.gender === 'woman',
+        beginner_friendly: draft.beginnerFriendly,
       })
       navigate(`/rounds/${id}`, { replace: true })
     } catch (e) {
@@ -162,7 +164,7 @@ export function HostTime() {
             <div key={i} className="flex flex-col items-center gap-1 text-center">
               <span className="p-[3px]"><OpenSpot size={50} /></span>
               <span className="text-[14px] font-semibold">Open</span>
-              <span className="text-[12px] text-muted">{draft.buddiesOnly ? 'Buddies' : handicapRange(min, max)}</span>
+              <span className="text-[12px] text-muted">{draft.womenOnly ? 'Women only' : draft.buddiesOnly ? 'Buddies' : handicapRange(min, max)}</span>
             </div>
           ))}
         </div>
