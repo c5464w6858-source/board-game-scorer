@@ -242,6 +242,52 @@ export type Database = {
           },
         ]
       }
+      kudos: {
+        Row: {
+          created_at: string
+          from_id: string
+          round_id: string
+          tag: Database["public"]["Enums"]["kudos_tag"]
+          to_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_id?: string
+          round_id: string
+          tag: Database["public"]["Enums"]["kudos_tag"]
+          to_id: string
+        }
+        Update: {
+          created_at?: string
+          from_id?: string
+          round_id?: string
+          tag?: Database["public"]["Enums"]["kudos_tag"]
+          to_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_from_id_fkey"
+            columns: ["from_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_to_id_fkey"
+            columns: ["to_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -545,8 +591,14 @@ export type Database = {
         Args: { p_round_id: string; p_user_id: string }
         Returns: boolean
       }
+      kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
     }
     Enums: {
+      kudos_tag:
+        | "great_company"
+        | "kept_the_pace"
+        | "clutch_putter"
+        | "would_play_again"
       request_status: "pending" | "accepted" | "declined" | "withdrawn"
       round_format: "stableford" | "stroke" | "match" | "scramble"
       round_visibility: "public" | "buddies"
@@ -569,6 +621,12 @@ export type Enums<T extends keyof PublicSchema["Enums"]> = PublicSchema["Enums"]
 export const Constants = {
   public: {
     Enums: {
+      kudos_tag: [
+        "great_company",
+        "kept_the_pace",
+        "clutch_putter",
+        "would_play_again",
+      ],
       request_status: ["pending", "accepted", "declined", "withdrawn"],
       round_format: ["stableford", "stroke", "match", "scramble"],
       round_visibility: ["public", "buddies"],

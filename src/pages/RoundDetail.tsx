@@ -260,6 +260,11 @@ export function RoundDetail() {
                 <Icon name="flag" size={16} /> Open the scorecard
               </Link>
             )}
+            {(isHost || mine?.status === 'accepted') && closed && !round.cancelled && (
+              <Link to={`/rounds/${round.id}/recap`} className="-mt-2 inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-green no-underline">
+                <Icon name="check" size={16} /> Recap and kudos
+              </Link>
+            )}
             {isHost && !closed && (
               <button
                 type="button"

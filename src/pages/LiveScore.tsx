@@ -3,52 +3,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import photo from '../assets/login-group.jpg'
 import { Avatar, ErrorNote, Icon, Loading } from '../components/ui'
 import { firstName, handicapText } from '../lib/format'
-import { acceptedPlayers, fetchRound, type RoundRow } from '../lib/rounds'
-import {
-  defaultTee,
-  fetchCard,
-  fetchScores,
-  playingHandicap,
-  saveScores,
-  shotsOnHole,
-  stablefordPoints,
-  subscribeToScores,
-  type Card,
-  type Hole,
-  type Score,
-} from '../lib/scorecard'
+import { leaderboard, scoreKey as key, setupScoring } from '../lib/roundScoring'
+import { fetchRound } from '../lib/rounds'
+import { fetchCard, fetchScores, saveScores, stablefordPoints, subscribeToScores, type Score } from '../lib/scorecard'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
-
-interface Player {
-  id: string
-  name: string
-  avatar: string | null
-  handicap: number | null
-}
-
-const key = (userId: string, hole: number) => `${userId}:${hole}`
-
-function playersOf(r: RoundRow): Player[] {
-  const host = { id: r.host_id, name: r.host?.display_name ?? 'Host', avatar: r.host?.avatar_url ?? null, handicap: r.host?.handicap ?? null }
-  return [
-    host,
-    ...acceptedPlayers(r).map((q) => ({
-      id: q.user_id,
-      name: q.profile?.display_name ?? 'Golfer',
-      avatar: q.profile?.avatar_url ?? null,
-      handicap: q.profile?.handicap ?? null,
-    })),
-  ]
-}
-
-// Without a card from the API, fall back to par 4s so scoring still works.
-function holesFor(r: RoundRow, card: Card | null): Hole[] {
-  const count = r.holes === 9 ? 9 : 18
-  const fromCard = card?.holes.filter((h) => h.hole <= count) ?? []
-  if (fromCard.length === count) return fromCard
-  return Array.from({ length: count }, (_, i) => ({ course_id: '', hole: i + 1, par: 4, stroke_index: i + 1, yards: null }))
-}
 
 export function LiveScore() {
   const { id = '' } = useParams()
@@ -82,23 +41,7 @@ export function LiveScore() {
     return subscribeToScores(id, (s: Score) => setScores((cur) => new Map(cur).set(key(s.user_id, s.hole), s.strokes)))
   }, [id])
 
-  const view = useMemo(() => {
-    if (!loaded) return null
-    const { round, card } = loaded
-    const holes = holesFor(round, card)
-    const tee = card ? (card.tees.find((t) => t.id === round.tee_id) ?? defaultTee(card)) : null
-    const nine = holes.length === 9
-    // On nine holes, play off half the handicap, using the stroke-index order of those nine.
-    const siRank = new Map([...holes].sort((a, b) => a.stroke_index - b.stroke_index).map((h, i) => [h.hole, i + 1]))
-    // Your own row first, then the rest of the group.
-    const players = [...playersOf(round)].sort((a, b) => Number(b.id === me) - Number(a.id === me)).map((p) => {
-      const full = playingHandicap(p.handicap, tee, card?.holes ?? holes)
-      const playing = nine ? Math.round(full / 2) : full
-      const shots = (h: Hole) => shotsOnHole(playing, nine ? siRank.get(h.hole)! : h.stroke_index, holes.length)
-      return { ...p, playing, shots }
-    })
-    return { round, holes, tee, players, hasCard: Boolean(card) }
-  }, [loaded, me])
+  const view = useMemo(() => (loaded ? { round: loaded.round, ...setupScoring(loaded.round, loaded.card, me) } : null), [loaded, me])
 
   if (state.loading || (loaded && hole == null)) return <Loading />
   if (state.error) return <ErrorNote message={state.error} />
@@ -115,21 +58,7 @@ export function LiveScore() {
   const step = (p: string, by: number) =>
     setDraft((d) => new Map(d).set(p, Math.min(20, Math.max(1, (value(p) ?? current.par) + by))))
 
-  const board = players
-    .map((p) => {
-      let points = 0
-      let gross = 0
-      let thru = 0
-      for (const h of holes) {
-        const s = scores.get(key(p.id, h.hole))
-        if (s == null) continue
-        points += stablefordPoints(s, h.par, p.shots(h))
-        gross += s
-        thru += 1
-      }
-      return { ...p, points, gross, thru }
-    })
-    .sort((a, b) => b.points - a.points || a.gross - b.gross)
+  const board = leaderboard(players, holes, scores)
   const doneHoles = new Set(holes.filter((h) => players.every((p) => scores.has(key(p.id, h.hole)))).map((h) => h.hole))
   const last = current.hole === holes.length
 
@@ -153,7 +82,7 @@ export function LiveScore() {
         for (const r of rows) next.set(key(r.user_id, r.hole), r.strokes)
         return next
       })
-      if (last) navigate(`/rounds/${round.id}`)
+      if (last) navigate(`/rounds/${round.id}/recap`)
       else go(current.hole + 1)
     } catch (e) {
       setError((e as Error).message)
