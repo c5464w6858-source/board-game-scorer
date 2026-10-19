@@ -99,3 +99,15 @@ export async function fetchOnboarded(userId: string): Promise<boolean> {
   if (error) throw error
   return Boolean(data?.onboarded_at)
 }
+
+// Your connection status with each golfer you've connected with or asked.
+export async function fetchConnectionStatus(userId: string): Promise<Map<string, 'pending' | 'accepted'>> {
+  const { data, error } = await supabase.from('connections').select('requester_id, addressee_id, status').in('status', ['pending', 'accepted'])
+  if (error) throw error
+  return new Map(data.map((c) => [c.requester_id === userId ? c.addressee_id : c.requester_id, c.status as 'pending' | 'accepted']))
+}
+
+export async function sendBuddyRequest(addresseeId: string) {
+  const { error } = await supabase.from('connections').insert({ addressee_id: addresseeId })
+  if (error) throw error
+}

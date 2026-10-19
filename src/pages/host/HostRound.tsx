@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
 import { glassCard, limeButton } from '../../components/surfaces'
@@ -29,12 +29,13 @@ export function HostRound() {
   const [results, setResults] = useState<Course[]>([])
   const [searchError, setSearchError] = useState<string | null>(null)
 
-  // Default to the golfer's home club.
-  const homeId = me.data?.profile?.home_club_id
+  // Start from ?course= (e.g. "Play here again" on a recap), else the golfer's home club.
+  const [params] = useSearchParams()
+  const startId = params.get('course') ?? me.data?.profile?.home_club_id
   useEffect(() => {
-    if (!draft.course && homeId) fetchCourse(homeId).then((c) => c && update({ course: c }), () => {})
+    if (startId && (!draft.course || params.has('course'))) fetchCourse(startId).then((c) => c && update({ course: c, teeId: null }), () => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeId])
+  }, [startId])
 
   const search = useAsync(async () => (query.trim().length > 1 ? searchCourses(query) : []), [query])
   useEffect(() => {
