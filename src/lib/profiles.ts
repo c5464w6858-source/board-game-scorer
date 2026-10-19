@@ -18,6 +18,7 @@ export type ProfileUpdate = Pick<
   | 'gender'
   | 'women_only'
   | 'beginner_friendly'
+  | 'push_off'
 >
 
 // Private to the golfer; clubs only ever see golfers with clubs_can_contact.

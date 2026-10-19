@@ -7,6 +7,7 @@ import { glassCard, primaryButton, roundButton, secondaryButton } from '../compo
 import { Avatar, ErrorNote, Icon, Loading, type IconName } from '../components/ui'
 import { handicapText, playStyleLabel, shortName } from '../lib/format'
 import { answerBuddyRequest, fetchBuddies, fetchProfile, fetchStats, removeConnection, sendBuddyRequest } from '../lib/profiles'
+import { turnOffPush } from '../lib/push'
 import { blockGolfer, fetchBlocked, unblockGolfer } from '../lib/safety'
 import { supabase } from '../lib/supabase'
 import { useAsync } from '../lib/useAsync'
@@ -72,6 +73,12 @@ export function Profile() {
     } finally {
       setBusy(false)
     }
+  }
+
+  // Stop this phone getting the next golfer's notifications.
+  async function signOut() {
+    await turnOffPush().catch(() => {})
+    await supabase.auth.signOut()
   }
 
   const bag = (profile.bag ?? {}) as Record<string, string>
@@ -249,6 +256,17 @@ export function Profile() {
       )}
 
       {own && (
+        <Link to="/me/notifications" className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway no-underline`}>
+          <span className="grid size-9 place-items-center rounded-full bg-green-tint text-green"><Icon name="bell" size={17} /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">Notifications</span>
+            <span className="block text-[13px] text-muted">Join requests, need a player, chat and buddies</span>
+          </span>
+          <Icon name="back" size={16} className="rotate-180 text-muted" />
+        </Link>
+      )}
+
+      {own && (
         <Link to="/me/safety" className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway no-underline`}>
           <span className="grid size-9 place-items-center rounded-full bg-green-tint text-green"><Icon name="shield" size={17} /></span>
           <span className="min-w-0 flex-1">
@@ -264,7 +282,7 @@ export function Profile() {
           <Link to="/me/edit" className={`${secondaryButton} flex-1 gap-2`}>
             <Icon name="pencil" size={17} /> Edit profile
           </Link>
-          <button type="button" onClick={() => supabase.auth.signOut()} className={`${secondaryButton.replace('text-fairway', 'text-danger')} flex-1`}>
+          <button type="button" onClick={signOut} className={`${secondaryButton.replace('text-fairway', 'text-danger')} flex-1`}>
             Sign out
           </button>
         </div>

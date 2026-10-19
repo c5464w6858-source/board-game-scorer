@@ -607,6 +607,7 @@ export type Database = {
           id: string
           onboarded_at: string | null
           play_style: string[]
+          push_off: string[]
           search_radius_miles: number
           women_only: boolean
         }
@@ -626,6 +627,7 @@ export type Database = {
           id: string
           onboarded_at?: string | null
           play_style?: string[]
+          push_off?: string[]
           search_radius_miles?: number
           women_only?: boolean
         }
@@ -645,6 +647,7 @@ export type Database = {
           id?: string
           onboarded_at?: string | null
           play_style?: string[]
+          push_off?: string[]
           search_radius_miles?: number
           women_only?: boolean
         }
@@ -654,6 +657,44 @@ export type Database = {
             columns: ["home_club_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -977,6 +1018,17 @@ export type Database = {
       is_woman: { Args: { p_user_id: string }; Returns: boolean }
       join_group: { Args: { p_code: string }; Returns: string }
       kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
+      push_config: { Args: never; Returns: Json }
+      save_push_subscription: {
+        Args: {
+          p_auth: string
+          p_endpoint: string
+          p_p256dh: string
+          p_user_agent?: string
+        }
+        Returns: undefined
+      }
+      send_test_push: { Args: never; Returns: undefined }
     }
     Enums: {
       day_slot: "am" | "pm"
