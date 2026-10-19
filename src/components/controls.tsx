@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useTone, type Tone } from './tones'
 import { Icon } from './ui'
 
 // Form controls and the pinned action bar shared by the PhotoPage screens.
@@ -14,19 +15,20 @@ export function ActionBar({
   note,
   children,
   noTabBar,
-  tone = 'green',
+  tone,
 }: {
   title: ReactNode
   note: ReactNode
   children: ReactNode
   noTabBar?: boolean
-  tone?: 'green' | 'navy'
+  tone?: Tone
 }) {
+  const t = useTone(tone)
   return (
     <>
       <div className="h-24" aria-hidden="true" />
-      <div className={`fixed inset-x-0 ${noTabBar ? 'bottom-0 pb-[max(1rem,env(safe-area-inset-bottom))]' : 'bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] pb-3'} z-[900] mx-auto max-w-[480px] bg-gradient-to-t ${tone === 'navy' ? 'from-[#EFE9DC] via-[#EFE9DC]/90' : 'from-[#ECEAE3] via-[#ECEAE3]/90'} to-transparent px-5 pt-6`}>
-        <div className={`flex items-center justify-between gap-3 rounded-[22px] py-2.5 pr-2.5 pl-4 text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)] ${tone === 'navy' ? 'bg-navy' : 'bg-fairway'}`}>
+      <div className={`fixed inset-x-0 ${noTabBar ? 'bottom-0 pb-[max(1rem,env(safe-area-inset-bottom))]' : 'bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] pb-3'} z-[900] mx-auto max-w-[480px] bg-gradient-to-t ${t.fade} to-transparent px-5 pt-6`}>
+        <div className={`flex items-center justify-between gap-3 rounded-[22px] py-2.5 pr-2.5 pl-4 text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.7)] ${t.bar}`}>
           <div className="min-w-0">
             <div className="truncate font-semibold">{title}</div>
             <div className="truncate text-[13px] text-muted-dark">{note}</div>

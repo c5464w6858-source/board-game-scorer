@@ -38,7 +38,7 @@ export function CourseDetail() {
   const bookingUrl = teeTimesUrl(course)
 
   return (
-    <PhotoPage
+    <PhotoPage tone="links"
       header={
         <div className="flex flex-col gap-5">
           <button type="button" aria-label="Back" onClick={() => navigate(-1)} className={roundButton}>

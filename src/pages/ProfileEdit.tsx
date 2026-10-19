@@ -105,7 +105,7 @@ export function ProfileEdit() {
 
   return (
     <form onSubmit={save}>
-      <PhotoPage
+      <PhotoPage tone="heather"
         header={
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">

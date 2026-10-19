@@ -52,7 +52,7 @@ export function Buddies() {
   }
 
   return (
-    <PhotoPage
+    <PhotoPage tone="heather"
       header={
         <div className="flex flex-col gap-2 pt-6">
           <span className="text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">Your people</span>

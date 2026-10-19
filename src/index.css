@@ -20,6 +20,13 @@
   --color-danger: #b83a1c;
   --color-amber: #e5a23b;
 
+  /* Section colours, so each tab reads as its own place. */
+  --color-links: #0b3a44;
+  --color-links-soft: #8fe0d3;
+  --color-lake: #123e6b;
+  --color-lake-soft: #9fd0ff;
+  --color-heather: #2f1d3b;
+  --color-heather-soft: #e3b5d6;
   /* Societies & trips: a clubhouse navy and gold, with Ryder Cup team colours. */
   --color-navy: #0f1c33;
   --color-navy-2: #172a4a;
