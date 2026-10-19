@@ -23,6 +23,8 @@ npm run dev
 - `round_messages`: round chat, readable and writable only by the host and accepted players (Supabase Realtime).
 - `golfer_preferences`: private to each golfer (membership interest, how often they play, and `clubs_can_contact`). Clubs only ever see golfers who opt in; the data is never sold.
 - `connections`: golfer-to-golfer requests (one per pair). Only the two golfers involved can see them.
+- `course_tees` and `course_holes`: a course's scorecard (tee sets with par, yards, course rating and slope; par, stroke index and yards per hole). Readable by signed-in users and written only by the `course-card` function. `rounds.tee_id` records the tees a round is played off.
+- `scores`: strokes per player per hole, readable by the round's host and accepted players. Each player writes their own, and the host can write anyone's. Live via Supabase Realtime.
 
 Rounds also carry `format`, `walking`, `pace_note`, `green_fee_pence` (information only, never charged), `visibility` (public or buddies) and `auto_accept_buddies`. Profiles carry `home_club_id`, `home_club_member`, `play_style`, `bag`, `handicap_source` and `onboarded_at` (set once first-run setup at `/welcome` is finished or skipped) (self-declared until an official link exists). An `avatars` storage bucket holds profile photos, one folder per user.
 
@@ -43,6 +45,12 @@ select net.http_post(
 ```
 
 There's no public tee-time API (most UK clubs use BRS/GolfNow, which don't offer one), so **Check live tee times** opens the club's own booking page: `booking_url` if set, else the club website. Courses with neither get a web search for "<course> tee times". OpenStreetMap's licence requires the "© OpenStreetMap contributors" credit shown in the app.
+
+## Scorecards
+
+`supabase/functions/course-card` fetches a course's scorecard from the [UK Golf Course API](https://rapidapi.com/raznut303/api/uk-golf-course-data-api) on RapidAPI the first time the app needs it, then saves it to `course_tees` and `course_holes` so later visits never call the API. It matches the OpenStreetMap course to the API's club by name and distance (within 3 km), tries each course at most once a week, and needs the `GOLF_API_KEY` secret (the RapidAPI key) set under Edge Functions → Secrets. The free plan allows only a few requests a minute, so the function returns `busy` when rate limited and the app retries next time.
+
+The live scorecard (`/rounds/:id/score`) works out each player's shots from their handicap index using the WHS course handicap (index × slope ÷ 113 + course rating − par), takes 95% for Stableford, and halves it for nine holes. Courses without a card score as par 4s.
 
 ## Demo data
 

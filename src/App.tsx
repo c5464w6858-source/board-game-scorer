@@ -5,6 +5,7 @@ import { CourseDetail } from './pages/CourseDetail'
 import { Courses } from './pages/Courses'
 import { Chats } from './pages/Chats'
 import { Discover } from './pages/Discover'
+import { LiveScore } from './pages/LiveScore'
 import { HostFlow } from './pages/host/HostFlow'
 import { HostRound } from './pages/host/HostRound'
 import { HostTime } from './pages/host/HostTime'
@@ -65,6 +66,7 @@ function App() {
           <Route path="/rounds/:id" element={<RoundDetail />} />
           <Route path="/rounds/:id/requests" element={<HostRequests />} />
           <Route path="/rounds/:id/chat" element={<RoundChat />} />
+          <Route path="/rounds/:id/score" element={<LiveScore />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/me" element={<Profile />} />
           <Route path="/me/edit" element={<ProfileEdit />} />

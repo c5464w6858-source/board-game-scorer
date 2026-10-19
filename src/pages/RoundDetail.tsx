@@ -77,6 +77,9 @@ export function RoundDetail() {
   const fee = round.green_fee_pence != null ? pounds(round.green_fee_pence) : null
   const players = acceptedPlayers(round)
   const closed = round.cancelled || new Date(round.tee_time) < new Date()
+  // Scoring opens two hours before tee off and stays open for a day.
+  const teeAt = new Date(round.tee_time).getTime()
+  const roundDay = !round.cancelled && Date.now() > teeAt - 2 * 3600_000 && Date.now() < teeAt + 24 * 3600_000
   const waiting = pendingRequests(round).length
 
   async function run(fn: () => Promise<void>) {
@@ -109,7 +112,12 @@ export function RoundDetail() {
   let actions: ReactNode
   let mode: Mode
   let badge: string
-  if (isHost) {
+  if (roundDay && (isHost || mine?.status === 'accepted')) {
+    mode = isHost ? 'host' : 'in'
+    badge = isHost ? "You're hosting" : "You're in"
+    status = { title: "It's round day", note: 'Scores update live for the group' }
+    actions = <Link to={`/rounds/${round.id}/score`} className={lime}>Scorecard</Link>
+  } else if (isHost) {
     mode = 'host'
     badge = "You're hosting"
     status = { title: spots ? `${spots} spot${spots === 1 ? '' : 's'} open` : 'Round full', note: waiting ? `${waiting} waiting on you` : 'No requests yet' }
@@ -247,6 +255,11 @@ export function RoundDetail() {
               <Icon name="shield" size={16} />
               Nothing to pay in the app.{fee ? ` ${fee} at the club on the day.` : ' Pay the club on the day.'}
             </p>
+            {(isHost || mine?.status === 'accepted') && !round.cancelled && (
+              <Link to={`/rounds/${round.id}/score`} className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-green no-underline">
+                <Icon name="flag" size={16} /> Open the scorecard
+              </Link>
+            )}
             {isHost && !closed && (
               <button
                 type="button"

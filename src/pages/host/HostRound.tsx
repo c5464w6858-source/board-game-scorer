@@ -88,7 +88,7 @@ export function HostRound() {
                     key={c.id}
                     type="button"
                     onClick={() => {
-                      update({ course: c })
+                      update({ course: c, teeId: null })
                       setQuery('')
                     }}
                     className="block min-h-11 w-full px-4 py-2.5 text-left"

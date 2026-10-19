@@ -56,6 +56,38 @@ export type Database = {
           },
         ]
       }
+      course_holes: {
+        Row: {
+          course_id: string
+          hole: number
+          par: number
+          stroke_index: number
+          yards: number | null
+        }
+        Insert: {
+          course_id: string
+          hole: number
+          par: number
+          stroke_index: number
+          yards?: number | null
+        }
+        Update: {
+          course_id?: string
+          hole?: number
+          par?: number
+          stroke_index?: number
+          yards?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_holes_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_imports: {
         Row: {
           course_count: number | null
@@ -80,9 +112,61 @@ export type Database = {
         }
         Relationships: []
       }
+      course_tees: {
+        Row: {
+          colour: string | null
+          course_id: string
+          course_rating: number | null
+          gender: string | null
+          id: string
+          is_default: boolean
+          name: string
+          par: number
+          slope: number | null
+          sort: number
+          yards: number | null
+        }
+        Insert: {
+          colour?: string | null
+          course_id: string
+          course_rating?: number | null
+          gender?: string | null
+          id: string
+          is_default?: boolean
+          name: string
+          par: number
+          slope?: number | null
+          sort?: number
+          yards?: number | null
+        }
+        Update: {
+          colour?: string | null
+          course_id?: string
+          course_rating?: number | null
+          gender?: string | null
+          id?: string
+          is_default?: boolean
+          name?: string
+          par?: number
+          slope?: number | null
+          sort?: number
+          yards?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_tees_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           booking_url: string | null
+          card_checked_at: string | null
+          golfapi_club_id: string | null
           holes: number | null
           id: string
           lat: number
@@ -96,6 +180,8 @@ export type Database = {
         }
         Insert: {
           booking_url?: string | null
+          card_checked_at?: string | null
+          golfapi_club_id?: string | null
           holes?: number | null
           id: string
           lat: number
@@ -109,6 +195,8 @@ export type Database = {
         }
         Update: {
           booking_url?: string | null
+          card_checked_at?: string | null
+          golfapi_club_id?: string | null
           holes?: number | null
           id?: string
           lat?: number
@@ -312,6 +400,7 @@ export type Database = {
           min_handicap: number | null
           notes: string | null
           pace_note: string | null
+          tee_id: string | null
           tee_time: string
           title: string | null
           visibility: Database["public"]["Enums"]["round_visibility"]
@@ -334,6 +423,7 @@ export type Database = {
           min_handicap?: number | null
           notes?: string | null
           pace_note?: string | null
+          tee_id?: string | null
           tee_time: string
           title?: string | null
           visibility?: Database["public"]["Enums"]["round_visibility"]
@@ -356,6 +446,7 @@ export type Database = {
           min_handicap?: number | null
           notes?: string | null
           pace_note?: string | null
+          tee_id?: string | null
           tee_time?: string
           title?: string | null
           visibility?: Database["public"]["Enums"]["round_visibility"]
@@ -372,6 +463,62 @@ export type Database = {
           {
             foreignKeyName: "rounds_host_id_fkey"
             columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rounds_tee_id_fkey"
+            columns: ["tee_id"]
+            isOneToOne: false
+            referencedRelation: "course_tees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scores: {
+        Row: {
+          hole: number
+          round_id: string
+          strokes: number
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          hole: number
+          round_id: string
+          strokes: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          hole?: number
+          round_id?: string
+          strokes?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scores_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scores_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scores_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -394,6 +541,10 @@ export type Database = {
       is_buddy: { Args: { p_user_id: string }; Returns: boolean }
       is_round_host: { Args: { p_round_id: string }; Returns: boolean }
       is_round_member: { Args: { p_round_id: string }; Returns: boolean }
+      is_round_player: {
+        Args: { p_round_id: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       request_status: "pending" | "accepted" | "declined" | "withdrawn"

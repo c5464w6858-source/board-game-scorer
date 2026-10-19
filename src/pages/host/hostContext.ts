@@ -13,6 +13,7 @@ export interface HostDraft {
   walking: boolean
   fee: string
   notes: string
+  teeId: string | null
 }
 
 export type HostCtx = { draft: HostDraft; update: (patch: Partial<HostDraft>) => void }

@@ -5,7 +5,9 @@ import { PhotoPage } from '../components/PhotoPage'
 import { Section } from '../components/Section'
 import { glassCard, primaryButton, roundButton, secondaryButton } from '../components/surfaces'
 import { ErrorNote, Icon, Loading } from '../components/ui'
+import { ScorecardTable, TeePicker } from '../components/ScorecardTable'
 import { fetchCourse, teeTimesSearchUrl, teeTimesUrl, type Course } from '../lib/courses'
+import { defaultTee, fetchCard, type Card } from '../lib/scorecard'
 
 export function CourseDetail() {
   const { id } = useParams()
@@ -13,8 +15,20 @@ export function CourseDetail() {
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
+  // undefined while loading, null when the course has no card yet.
+  const [card, setCard] = useState<Card | null | undefined>()
+  const [teeId, setTeeId] = useState<string | null>(null)
+
   useEffect(() => {
-    if (id) fetchCourse(id).then(setCourse, (e: Error) => setError(e.message))
+    if (!id) return
+    fetchCourse(id).then(setCourse, (e: Error) => setError(e.message))
+    fetchCard(id).then(
+      (c) => {
+        setCard(c)
+        if (c) setTeeId(defaultTee(c)?.id ?? null)
+      },
+      () => setCard(null),
+    )
   }, [id])
 
   if (error) return <ErrorNote message={error} />
@@ -48,6 +62,44 @@ export function CourseDetail() {
           <CourseMap pins={[course]} center={[course.lat, course.lon]} zoom={13} />
         </div>
       </div>
+
+      <Section title="Scorecard" icon="flag">
+        {card === undefined ? (
+          <div className={`${glassCard} px-4 py-5 text-center text-[14px] text-muted`}>Loading the scorecard…</div>
+        ) : card === null ? (
+          <div className={`${glassCard} px-4 py-5 text-center text-[14px] text-muted`}>
+            We don't have this course's scorecard yet. Scoring still works, using par 4 on every hole.
+          </div>
+        ) : (
+          <>
+            <TeePicker tees={card.tees} value={teeId} onChange={setTeeId} />
+            {(() => {
+              const tee = card.tees.find((t) => t.id === teeId)
+              if (!tee) return null
+              const stat = (label: string, value: string | number | null) => (
+                <div className="flex flex-col items-center">
+                  <span className="font-mono text-[17px] font-semibold">{value ?? '–'}</span>
+                  <span className="text-[11px] font-semibold text-muted">{label}</span>
+                </div>
+              )
+              return (
+                <div className={`${glassCard} grid grid-cols-4 px-2 py-3 text-fairway`}>
+                  {stat('Par', tee.par)}
+                  {stat('Yards', tee.yards?.toLocaleString() ?? null)}
+                  {stat('Rating', tee.course_rating)}
+                  {stat('Slope', tee.slope)}
+                </div>
+              )
+            })()}
+            <div className={`${glassCard} p-3 text-fairway`}>
+              <ScorecardTable holes={card.holes} />
+              {card.tees.find((t) => t.id === teeId && !t.is_default) && (
+                <p className="mt-2 mb-0 text-[12px] text-muted">Hole yardages are from the {defaultTee(card)?.name.toLowerCase()} tees.</p>
+              )}
+            </div>
+          </>
+        )}
+      </Section>
 
       <Section title="Play here" icon="tee">
         <div className={`${glassCard} flex flex-col gap-2.5 p-4 text-fairway`}>
