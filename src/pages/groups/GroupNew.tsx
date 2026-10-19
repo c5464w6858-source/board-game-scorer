@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ActionBar, Choice, Field, field as pill } from '../../components/controls'
+import { ActionBar, Choice, Field, field as pill, Switch } from '../../components/controls'
 import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
 import { glassCard, goldButton, roundButton } from '../../components/surfaces'
@@ -17,6 +17,7 @@ export function GroupNew() {
   const [startsOn, setStartsOn] = useState('')
   const [endsOn, setEndsOn] = useState('')
   const [description, setDescription] = useState('')
+  const [ryder, setRyder] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,6 +34,7 @@ export function GroupNew() {
         starts_on: startsOn || null,
         ends_on: endsOn || startsOn || null,
         description: description.trim() || null,
+        ryder_cup: ryder,
       })
       navigate(`/groups/${id}`, { replace: true })
     } catch (e) {
@@ -91,6 +93,12 @@ export function GroupNew() {
               className={`${field.replace('rounded-full', 'rounded-[18px]')} block py-3`}
             />
           </Field>
+        </div>
+      </Section>
+
+      <Section tone="navy" title="Ryder Cup" icon="user">
+        <div className={`${glassCard} overflow-hidden text-navy`}>
+          <Switch label="Run it as a Ryder Cup" hint="Two teams, fourballs, foursomes and singles. You can pick sides once everyone’s joined." checked={ryder} onChange={setRyder} />
         </div>
       </Section>
 

@@ -32,6 +32,32 @@
   --font-sans: "Geist", system-ui, sans-serif;
   --font-display: "Bricolage Grotesque", system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  /* Scorecards: the hole panel slides in when the hole changes. */
+  --animate-hole-next: hole-next 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-hole-back: hole-back 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-toast: toast 1.8s ease both;
+
+  @keyframes hole-next {
+    from { opacity: 0; transform: translateX(36px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes hole-back {
+    from { opacity: 0; transform: translateX(-36px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes toast {
+    0% { opacity: 0; transform: translateY(8px) scale(0.96); }
+    12%, 80% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translateY(-4px); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hole-next,
+  .animate-hole-back {
+    animation: none;
+  }
 }
 
 :root {

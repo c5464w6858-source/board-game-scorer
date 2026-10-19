@@ -51,7 +51,12 @@ export function scoringFor(round: { holes: number; tee_id: string | null }, card
     const shots = (h: Hole) => shotsOnHole(playing, nine ? siRank.get(h.hole)! : h.stroke_index, holes.length)
     return { ...p, playing, shots }
   })
-  return { holes, tee, players, hasCard: Boolean(card) }
+  // Hole yards are saved for the course's default tee. For other tees, scale
+  // them by the tee's total so they're close, and flag them as approximate.
+  const base = card ? defaultTee(card) : null
+  const scale = tee && base && tee.id !== base.id && tee.yards && base.yards ? tee.yards / base.yards : null
+  const yards = (h: Hole) => ({ value: h.yards == null ? null : Math.round(h.yards * (scale ?? 1)), approx: scale != null })
+  return { holes, tee, players, yards, hasCard: Boolean(card) }
 }
 
 export type ScoringPlayer = ReturnType<typeof scoringFor>['players'][number]

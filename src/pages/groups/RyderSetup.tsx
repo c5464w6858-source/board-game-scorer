@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ActionBar, Field, field as pill, Switch } from '../../components/controls'
+import { ActionBar, Field, field as pill } from '../../components/controls'
 import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
 import { glassCard, goldButton, roundButton } from '../../components/surfaces'
@@ -13,13 +13,12 @@ import { useUserId } from '../../lib/useMe'
 
 const field = `${pill} w-full text-[16px]`
 
-// Ryder Cup settings: switch it on, name the teams and pick sides.
+// Ryder Cup teams: name the two sides and pick who plays for each.
 export function RyderSetup() {
   const { id = '' } = useParams()
   const me = useUserId()
   const navigate = useNavigate()
   const state = useAsync(() => fetchGroup(id), [id])
-  const [on, setOn] = useState(true)
   const [nameA, setNameA] = useState('Europe')
   const [nameB, setNameB] = useState('USA')
   const [teams, setTeams] = useState<Map<string, 1 | 2 | null>>(new Map())
@@ -29,8 +28,6 @@ export function RyderSetup() {
   const g = state.data
   useEffect(() => {
     if (!g) return
-    // Opening the setup means you want it on; it can be switched off here.
-    setOn(true)
     setNameA(g.team_a_name)
     setNameB(g.team_b_name)
     setTeams(new Map(g.group_members.map((m) => [m.user_id, (m.team as 1 | 2 | null) ?? null])))
@@ -56,7 +53,7 @@ export function RyderSetup() {
     setBusy(true)
     setError(null)
     try {
-      await updateGroup(id, { ryder_cup: on, team_a_name: nameA.trim() || 'Europe', team_b_name: nameB.trim() || 'USA' })
+      await updateGroup(id, { team_a_name: nameA.trim() || 'Europe', team_b_name: nameB.trim() || 'USA' })
       await Promise.all(
         g!.group_members.filter((m) => (m.team ?? null) !== (teams.get(m.user_id) ?? null)).map((m) => setTeam(id, m.user_id, teams.get(m.user_id) ?? null)),
       )
@@ -87,12 +84,6 @@ export function RyderSetup() {
         </div>
       }
     >
-      <Section tone="navy" title="Ryder Cup" icon="flag">
-        <div className={`${glassCard} overflow-hidden text-navy`}>
-          <Switch label="Play it as a Ryder Cup" hint="Two teams, match play, a point for every match" checked={on} onChange={setOn} />
-        </div>
-      </Section>
-
       <Section tone="navy" title="Team names" icon="pencil">
         <div className={`${glassCard} grid grid-cols-2 divide-x divide-line-soft text-navy`}>
           <Field label={<span className="text-team-blue">Blue team</span>}>
@@ -152,7 +143,7 @@ export function RyderSetup() {
 
       {error && <div className="relative"><ErrorNote message={error} /></div>}
 
-      <ActionBar tone="navy" title={on ? `${nameA || 'Team A'} v ${nameB || 'Team B'}` : 'Ryder Cup off'} note={`${count(1)} v ${count(2)} picked`}>
+      <ActionBar tone="navy" title={`${nameA || 'Team A'} v ${nameB || 'Team B'}`} note={`${count(1)} v ${count(2)} picked`}>
         <button type="button" disabled={busy} onClick={save} className={goldButton}>
           {busy ? 'Saving…' : 'Save'}
         </button>

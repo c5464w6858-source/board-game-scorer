@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import photo from '../assets/login-group.jpg'
+import { HolePanel, SavedToast } from '../components/HolePanel'
 import { Avatar, ErrorNote, Icon, Loading } from '../components/ui'
 import { firstName, handicapText } from '../lib/format'
 import { leaderboard, scoreKey as key, setupScoring } from '../lib/roundScoring'
@@ -24,6 +25,9 @@ export function LiveScore() {
   const [draft, setDraft] = useState<Map<string, number>>(new Map())
   const [hole, setHole] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
+  // Which way the last hole change went, and the hole just saved, for the slide and the toast.
+  const [back, setBack] = useState(false)
+  const [saved, setSaved] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const loaded = state.data
@@ -65,6 +69,7 @@ export function LiveScore() {
   function go(h: number) {
     setDraft(new Map())
     setError(null)
+    setBack(h < current.hole)
     setHole(h)
   }
 
@@ -82,6 +87,7 @@ export function LiveScore() {
         for (const r of rows) next.set(key(r.user_id, r.hole), r.strokes)
         return next
       })
+      setSaved(current.hole)
       if (last) navigate(`/rounds/${round.id}/recap`)
       else go(current.hole + 1)
     } catch (e) {
@@ -113,24 +119,7 @@ export function LiveScore() {
           <Link to={`/rounds/${round.id}/chat`} className="shrink-0 text-[14px] font-semibold text-flag no-underline">Round chat</Link>
         </div>
 
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="text-[14px] text-white/70">Hole</div>
-            <div className="font-display text-[88px] leading-[0.85] font-extrabold tracking-[-0.04em]">{current.hole}</div>
-          </div>
-          <div className="flex gap-5 text-right">
-            {[
-              ['Par', current.par],
-              ['Yds', current.yards ?? '–'],
-              ['SI', current.stroke_index],
-            ].map(([label, v]) => (
-              <div key={label}>
-                <div className="text-[13px] text-white/60">{label}</div>
-                <div className="font-mono text-[28px] font-semibold">{v}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <HolePanel hole={current} holeCount={holes.length} yards={view.yards(current)} tee={tee} accent="flag" back={back} seed={round.course_id ?? round.id} />
 
         <div className="flex gap-1" role="tablist" aria-label="Holes">
           {holes.map((h) => (
@@ -207,6 +196,7 @@ export function LiveScore() {
         {error && <ErrorNote message={error} />}
       </div>
 
+      {saved != null && <SavedToast hole={saved} accent="flag" />}
       <div className="h-24" aria-hidden="true" />
       <div className="fixed inset-x-0 bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] z-[900] mx-auto flex max-w-[480px] gap-3 bg-gradient-to-t from-[#0B1A12] via-[#0B1A12]/90 to-transparent px-5 pt-6 pb-3">
         <button

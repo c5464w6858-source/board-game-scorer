@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Switch } from '../../components/controls'
 import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
 import { glassCard, goldButton, navyButton, roundButton } from '../../components/surfaces'
@@ -7,7 +8,7 @@ import { Avatar, AvatarStack, ErrorNote, Icon, Loading } from '../../components/
 import { firstName, handicapText, shortName, teeTime } from '../../lib/format'
 import { fetchGroup, fetchGroupScores, inviteLink, kindLabel, leaveGroup, setMemberRole, type GroupRow } from '../../lib/groups'
 import { leaderboard, scoreKey, scoringFor, type Player } from '../../lib/roundScoring'
-import { fetchMatches, matchState } from '../../lib/ryder'
+import { fetchMatches, matchState, updateGroup } from '../../lib/ryder'
 import { fetchCard, type Card } from '../../lib/scorecard'
 import { useAsync } from '../../lib/useAsync'
 import { useUserId } from '../../lib/useMe'
@@ -141,7 +142,26 @@ export function GroupDetail() {
     >
       {g.description && <p className={`${glassCard} relative m-0 px-4 py-3.5 text-[15px] text-navy`}>{g.description}</p>}
 
-      {g.ryder_cup ? (
+      {organiser && (
+        <div className={`${glassCard} relative overflow-hidden text-navy`}>
+          <Switch
+            label={
+              <span className="flex items-center gap-2.5">
+                <span className="flex shrink-0">
+                  <span className="size-5 rounded-full bg-team-blue ring-2 ring-white" />
+                  <span className="-ml-1.5 size-5 rounded-full bg-team-red ring-2 ring-white" />
+                </span>
+                Run it as a Ryder Cup
+              </span>
+            }
+            hint="Two teams, fourballs, foursomes and singles"
+            checked={g.ryder_cup}
+            onChange={(ryder_cup) => run(() => updateGroup(g.id, { ryder_cup }))}
+          />
+        </div>
+      )}
+
+      {g.ryder_cup && (
         <Section
           tone="navy"
           title="Ryder Cup"
@@ -155,6 +175,16 @@ export function GroupDetail() {
           }
         >
           <RyderScore g={g} matches={matches} />
+          {organiser && !g.group_members.some((m) => m.team) && (
+            <Link to={`/groups/${g.id}/ryder`} className={`${glassCard} relative flex items-center gap-3 px-4 py-3.5 text-navy no-underline ring-2 ring-gold/70`}>
+              <Icon name="user" size={18} className="shrink-0 text-[#6B5A2E]" />
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold">Name the teams and pick sides</span>
+                <span className="block text-[13px] text-muted">Then add matches to each round</span>
+              </span>
+              <Icon name="back" size={16} className="rotate-180 text-muted" />
+            </Link>
+          )}
           {g.group_rounds
             .filter((r) => matches.some((m) => m.group_round_id === r.id))
             .map((r) => (
@@ -171,20 +201,6 @@ export function GroupDetail() {
             </p>
           )}
         </Section>
-      ) : (
-        organiser && (
-          <Link to={`/groups/${g.id}/ryder`} className={`${glassCard} relative flex items-center gap-3 px-4 py-3.5 text-navy no-underline`}>
-            <span className="flex shrink-0">
-              <span className="size-7 rounded-full bg-team-blue ring-2 ring-white" />
-              <span className="-ml-2 size-7 rounded-full bg-team-red ring-2 ring-white" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block font-semibold">Run it as a Ryder Cup</span>
-              <span className="block text-[13px] text-muted">Two teams, fourballs, foursomes and singles</span>
-            </span>
-            <Icon name="back" size={16} className="rotate-180 text-muted" />
-          </Link>
-        )
       )}
 
       <Section tone="navy" title={g.kind === 'society' ? 'Order of merit' : 'Leaderboard'} icon="flag" action={<span className="text-[13px] text-muted">Stableford</span>}>
