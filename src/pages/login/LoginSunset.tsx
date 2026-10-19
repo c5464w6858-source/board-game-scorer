@@ -1,41 +1,20 @@
-import groupImg from '../../assets/login-group.jpg'
-import { Icon, Logo } from '../../components/ui'
+import { AuthShell } from './AuthShell'
 import { LoginForm } from './LoginForm'
 
-// The group photo fills the screen; the sign-in form sits on a frosted card over it.
 export function LoginSunset() {
   return (
-    <main className="relative mx-auto flex min-h-full max-w-[480px] flex-col overflow-hidden bg-fairway text-white">
-      <img src={groupImg} alt="" className="absolute inset-0 size-full object-cover object-[42%_center]" />
-      {/* Dark at the top for the logo, clear in the middle, a light wash at the bottom behind the card. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-fairway/60 via-fairway/30 via-45% to-fairway/60" />
-
-      <header className="relative flex items-center gap-2.5 px-5 pt-5">
-        <span className="rounded-[13px] shadow-[0_0_0_1.5px_rgba(255,255,255,0.9),0_4px_12px_rgba(0,0,0,0.35)]">
-          <Logo size={36} />
-        </span>
-        <span className="font-display text-[21px] font-extrabold tracking-[-0.02em] [text-shadow:0_1px_8px_rgba(0,0,0,0.45)]">
-          BuddyGolf
-        </span>
-      </header>
-
-      <div className="relative mt-auto flex flex-col gap-5 px-4 pt-32 pb-6">
-        <div className="px-1 [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">
-          <h1 className="m-0 font-display text-[38px] leading-[1] font-extrabold tracking-[-0.04em]">
-            Golf’s better
-            <br />
-            with buddies.
-          </h1>
-          <p className="mt-2 mb-0 text-[15px] font-medium text-white/90">Find a four near you, or fill your own.</p>
-        </div>
-        <section aria-label="Sign in" className="rounded-[28px] border border-white/40 bg-white/55 p-5 text-fairway shadow-[0_20px_40px_-20px_rgba(0,0,0,0.6)] backdrop-blur-xl backdrop-saturate-150">
-          <LoginForm />
-        </section>
-        <p className="m-0 flex items-center justify-center gap-2 text-center text-[13px] text-white/85">
-          <Icon name="shield" size={16} />
-          Free to join. Hosting is always free.
-        </p>
-      </div>
-    </main>
+    <AuthShell
+      label="Sign in"
+      title={
+        <>
+          Golf’s better
+          <br />
+          with buddies.
+        </>
+      }
+      subtitle="Find a four near you, or fill your own."
+    >
+      <LoginForm />
+    </AuthShell>
   )
 }
