@@ -20,7 +20,7 @@ export function RoundChat() {
   if (!round.data) return <p>Round not found.</p>
   const r = round.data
   return (
-    <PhotoPage tone="clay"
+    <PhotoPage tone="lake"
       header={
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">

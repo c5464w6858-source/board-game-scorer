@@ -4,8 +4,8 @@ import groupPhoto from '../assets/login-group.jpg'
 
 // Each part of the app has its own colour, so you can tell where you are:
 // green for home and rounds, links teal for finding games and courses,
-// clay for chats, heather for you and your people, navy for societies & trips.
-export type Tone = 'green' | 'navy' | 'links' | 'clay' | 'heather'
+// lake blue for chats, heather for you and your people, navy for societies & trips.
+export type Tone = 'green' | 'navy' | 'links' | 'lake' | 'heather'
 
 export const tones: Record<
   Tone,
@@ -47,17 +47,17 @@ export const tones: Record<
     bar: 'bg-links',
     fade: 'from-[#E5EDEB] via-[#E5EDEB]/90',
   },
-  clay: {
+  lake: {
     photo: groupPhoto,
-    tint: 'bg-[linear-gradient(180deg,rgba(40,26,15,0.92)_0%,rgba(59,40,25,0.8)_55%,rgba(86,58,34,0.72)_100%)]',
-    page: 'bg-[#EFE8DF]',
-    sheet: 'from-[#F7F2EB]/75 via-[#F3EDE4]/90 to-[#EFE8DF]',
-    blobs: ['bg-[#D4BC9C]/40', 'bg-sand/40', 'bg-[#DCCBB3]/40'],
-    badge: 'bg-clay text-sand',
-    title: 'text-clay',
-    rule: 'bg-clay/20',
-    bar: 'bg-clay',
-    fade: 'from-[#EFE8DF] via-[#EFE8DF]/90',
+    tint: 'bg-[linear-gradient(180deg,rgba(10,32,58,0.92)_0%,rgba(18,58,100,0.8)_55%,rgba(28,84,138,0.72)_100%)]',
+    page: 'bg-[#E6ECF3]',
+    sheet: 'from-[#F1F5FA]/75 via-[#EBF0F6]/90 to-[#E6ECF3]',
+    blobs: ['bg-[#9DB9DA]/40', 'bg-lake-soft/40', 'bg-[#BCD0E6]/40'],
+    badge: 'bg-lake text-lake-soft',
+    title: 'text-lake',
+    rule: 'bg-lake/20',
+    bar: 'bg-lake',
+    fade: 'from-[#E6ECF3] via-[#E6ECF3]/90',
   },
   heather: {
     photo: groupPhoto,

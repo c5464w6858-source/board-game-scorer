@@ -4,7 +4,7 @@ import { Icon, type IconName } from './Icon'
 // Each tab lights up in its section's colour (see components/tones.ts).
 const tab = (to: string, label: string, icon: IconName, pill: string, text: string, end = false) => ({ to, label, icon, pill, text, end })
 const left = [tab('/', 'Home', 'home', 'bg-fairway text-flag', 'text-fairway', true), tab('/discover', 'Discover', 'compass', 'bg-links text-links-soft', 'text-links')]
-const right = [tab('/chats', 'Chats', 'chat', 'bg-clay text-sand', 'text-clay'), tab('/me', 'You', 'user', 'bg-heather text-heather-soft', 'text-heather')]
+const right = [tab('/chats', 'Chats', 'chat', 'bg-lake text-lake-soft', 'text-lake'), tab('/me', 'You', 'user', 'bg-heather text-heather-soft', 'text-heather')]
 
 function TabLink({ to, label, icon, pill, text, end }: ReturnType<typeof tab>) {
   return (
