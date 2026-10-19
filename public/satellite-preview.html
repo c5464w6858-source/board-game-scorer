@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Satellite hole preview</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root { --bg: #0b1a12; --card: rgba(255,255,255,0.06); --line: rgba(255,255,255,0.12); --text: #fff; --muted: rgba(255,255,255,0.65); --flag: #c8f169; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, sans-serif; }
+  main { max-width: 480px; margin: 0 auto; padding: 24px 20px 48px; display: flex; flex-direction: column; gap: 28px; }
+  h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+  p { margin: 6px 0 0; color: var(--muted); }
+  .hole { display: flex; flex-direction: column; gap: 12px; }
+  .frame { position: relative; width: 100%; aspect-ratio: 360 / 170; overflow: hidden; border-radius: 22px; border: 1px solid var(--line); box-shadow: 0 14px 30px -16px rgba(0,0,0,0.8); background: #1c3a22; }
+  .spin { position: absolute; left: 50%; top: 50%; }
+  .spin .map { width: 100%; height: 100%; background: #1c3a22; }
+  .row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+  .num { font-size: 72px; line-height: 0.85; font-weight: 800; letter-spacing: -0.04em; }
+  .small { font-size: 14px; color: var(--muted); }
+  .yds { font: 600 36px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--flag); }
+  .credit { font-size: 11px; color: var(--muted); margin-top: -6px; }
+  .flag { width: 2px; height: 22px; background: #fff; position: relative; transform-origin: bottom center; }
+  .flag::after { content: ""; position: absolute; left: 2px; top: 0; border-left: 12px solid #e94b3c; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .note { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <h1>Satellite holes: preview</h1>
+    <p>Real hole lines from OpenStreetMap at Gillingham Golf Club, over Esri satellite imagery. Turned so you always play left to right, tee to flag. Not part of the app yet.</p>
+  </div>
+  <div id="holes"></div>
+  <div class="note">OpenStreetMap only has 4 of Gillingham’s holes as lines, without hole numbers, so they’re labelled A–D here. Canons Brook has no hole lines mapped at all.</div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // golf=hole ways at Gillingham Golf Club (OpenStreetMap, ODbL). First point is the tee, last is the green.
+  const holes = [
+    { label: 'A', path: [[51.372469, 0.560897], [51.37482, 0.565619]] },
+    { label: 'B', path: [[51.372052, 0.563364], [51.373764, 0.565283]] },
+    { label: 'C', path: [[51.374454, 0.565636], [51.372805, 0.563274]] },
+    { label: 'D', path: [[51.37235, 0.56329], [51.37264, 0.561639]] },
+  ]
+
+  const R = 6371000
+  const rad = (d) => (d * Math.PI) / 180
+  function metres(a, b) {
+    const dLat = rad(b[0] - a[0]), dLon = rad(b[1] - a[1])
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLon / 2) ** 2
+    return 2 * R * Math.asin(Math.sqrt(h))
+  }
+  function bearing(a, b) {
+    const y = Math.sin(rad(b[1] - a[1])) * Math.cos(rad(b[0]))
+    const x = Math.cos(rad(a[0])) * Math.sin(rad(b[0])) - Math.sin(rad(a[0])) * Math.cos(rad(b[0])) * Math.cos(rad(b[1] - a[1]))
+    return (Math.atan2(y, x) * 180) / Math.PI
+  }
+
+  const list = document.getElementById('holes')
+  list.style.cssText = 'display:flex;flex-direction:column;gap:32px'
+
+  for (const h of holes) {
+    const tee = h.path[0], green = h.path[h.path.length - 1]
+    let len = 0
+    for (let i = 1; i < h.path.length; i++) len += metres(h.path[i - 1], h.path[i])
+    const yards = Math.round(len * 1.09361)
+
+    const el = document.createElement('section')
+    el.className = 'hole'
+    el.innerHTML = `
+      <div class="frame"><div class="spin"><div class="map"></div></div></div>
+      <div class="credit">Imagery © Esri, Maxar, Earthstar Geographics · Hole data © OpenStreetMap contributors</div>
+      <div class="row">
+        <div><div class="small">Mapped hole</div><div class="num">${h.label}</div></div>
+        <div style="text-align:right"><div class="small">Tee to green</div><span class="yds">${yards}</span> <span class="small">yds</span></div>
+      </div>`
+    list.appendChild(el)
+
+    const frame = el.querySelector('.frame')
+    const spin = el.querySelector('.spin')
+    const W = frame.clientWidth, H = frame.clientHeight
+    const D = Math.ceil(Math.hypot(W, H)) + 4
+    // Rotate so the tee-to-green direction points right.
+    const turn = 90 - bearing(tee, green)
+    spin.style.cssText += `width:${D}px;height:${D}px;margin:${-D / 2}px 0 0 ${-D / 2}px;transform:rotate(${turn}deg)`
+
+    const mid = [(tee[0] + green[0]) / 2, (tee[1] + green[1]) / 2]
+    const mpp = len / (W * 0.72)
+    const zoom = Math.min(19, Math.log2((156543.03 * Math.cos(rad(mid[0]))) / mpp))
+    const map = L.map(el.querySelector('.map'), { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false, boxZoom: false, keyboard: false, zoomSnap: 0 })
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 18, maxZoom: 20 }).addTo(map)
+    map.setView(mid, zoom)
+
+    L.polyline(h.path, { color: '#fff', weight: 2, opacity: 0.85, dashArray: '2 7', lineCap: 'round' }).addTo(map)
+    L.circleMarker(tee, { radius: 6, color: '#fff', weight: 2, fillColor: '#c8f169', fillOpacity: 1 }).addTo(map)
+    L.circleMarker(green, { radius: 3, color: '#0b1a12', weight: 1, fillColor: '#0b1a12', fillOpacity: 1 }).addTo(map)
+    L.marker(green, { icon: L.divIcon({ className: '', html: `<div class="flag" style="transform:rotate(${-turn}deg)"></div>`, iconSize: [2, 22], iconAnchor: [1, 22] }) }).addTo(map)
+  }
+</script>
+</body>
+</html>
