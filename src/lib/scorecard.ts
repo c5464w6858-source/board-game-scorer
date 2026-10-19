@@ -9,6 +9,17 @@ export interface Card {
   holes: Hole[]
 }
 
+// Drop duplicate tees the API sometimes sends ("Yellow" and "yellow"), keeping the fuller one.
+function uniqueTees(tees: Tee[]) {
+  const keep = new Map<string, Tee>()
+  for (const t of tees) {
+    const key = `${t.name.trim().toLowerCase()}|${t.yards ?? ''}`
+    const seen = keep.get(key)
+    if (!seen || t.is_default || (!seen.is_default && ((!seen.gender && t.gender) || (seen.course_rating == null && t.course_rating != null)))) keep.set(key, t)
+  }
+  return tees.filter((t) => [...keep.values()].includes(t))
+}
+
 async function readCard(courseId: string): Promise<Card> {
   const [tees, holes] = await Promise.all([
     supabase.from('course_tees').select('*').eq('course_id', courseId).order('sort'),
@@ -16,7 +27,7 @@ async function readCard(courseId: string): Promise<Card> {
   ])
   if (tees.error) throw tees.error
   if (holes.error) throw holes.error
-  return { tees: tees.data, holes: holes.data }
+  return { tees: uniqueTees(tees.data), holes: holes.data }
 }
 
 // The course's scorecard. The first time a course is used, the course-card

@@ -19,8 +19,8 @@ const reply = (body: unknown, status = 200) => Response.json(body, { status, hea
 
 interface ApiClub { id: string; name: string; latitude: number | null; longitude: number | null }
 interface ApiTee {
-  id: string; name: string; colour: string | null; gender: string | null
-  total_yardage: number | null; par: number; course_rating: number | null; slope_rating: number | null
+  id: string; name: string | null; colour: string | null; gender: string | null
+  total_yardage: number | null; par: number | null; course_rating: number | null; slope_rating: number | null
 }
 interface ApiCourse { id: string; name: string; holes: number | null; par: number | null; tee_sets: ApiTee[] }
 interface ApiHole { hole_number: number; par: number; stroke_index: number; yardage: number | null }
@@ -107,16 +107,30 @@ Deno.serve(async (req) => {
     const holes = (card?.holes ?? []).filter((h) => h.hole_number >= 1 && h.hole_number <= 18 && h.par && h.stroke_index)
     if (!holes.length) return reply({ status: 'none' })
 
-    const defaultTee = card?.tee_set?.id ?? picked.tee_sets[0].id
-    const tees = [...picked.tee_sets]
+    let defaultTee = card?.tee_set?.id ?? picked.tee_sets[0].id
+    const cardPar = holes.reduce((n, h) => n + h.par, 0)
+    // Some clubs leave a tee's name or par blank; fall back to its colour and the card's par.
+    // The API sometimes lists a tee twice (e.g. "Yellow" and "yellow"); keep the fuller entry.
+    const unique = new Map<string, ApiTee>()
+    for (const t of picked.tee_sets) {
+      const key = `${(t.name ?? t.colour ?? '').trim().toLowerCase()}|${t.total_yardage ?? ''}`
+      const seen = unique.get(key)
+      if (!seen || (!seen.gender && t.gender) || (seen.course_rating == null && t.course_rating != null)) unique.set(key, t)
+    }
+    if (![...unique.values()].some((t) => t.id === defaultTee)) {
+      const dropped = picked.tee_sets.find((t) => t.id === defaultTee)
+      const twin = dropped && [...unique.values()].find((t) => (t.name ?? '').toLowerCase() === (dropped.name ?? '').toLowerCase())
+      if (twin) defaultTee = twin.id
+    }
+    const tees = [...unique.values()]
       .sort((a, b) => (b.total_yardage ?? 0) - (a.total_yardage ?? 0))
       .map((t, i) => ({
         id: t.id,
         course_id,
-        name: t.name,
+        name: t.name?.trim() || t.colour?.trim() || `Tee ${i + 1}`,
         colour: t.colour,
         gender: t.gender,
-        par: t.par,
+        par: t.par ?? picked.par ?? cardPar,
         yards: t.total_yardage,
         course_rating: t.course_rating,
         slope: t.slope_rating,
@@ -135,6 +149,8 @@ Deno.serve(async (req) => {
     // Give the next caller a go straight away if we were only rate limited or hit an error.
     await db.from('courses').update({ card_checked_at: null }).eq('id', course_id)
     if (e instanceof RateLimited) return reply({ status: 'busy' })
-    return reply({ error: e instanceof Error ? e.message : String(e) }, 500)
+    // Supabase errors are plain objects with a message, not Error instances.
+    const message = e instanceof Error ? e.message : ((e as { message?: string })?.message ?? JSON.stringify(e))
+    return reply({ error: message }, 500)
   }
 })
