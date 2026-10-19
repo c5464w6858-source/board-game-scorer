@@ -56,7 +56,7 @@ export function matchScore(round: RoundRow, me: MatchProfile): Match {
     const points = 25 * Math.max(0, 1 - dist / DEFAULT_RADIUS_MILES)
     possible += 25
     earned += points
-    if (points >= 12.5) scored.push({ points, reason: `${dist.toFixed(1)} miles from home` })
+    if (points >= 12.5) scored.push({ points, reason: dist < 0.5 ? 'At your home club' : `${dist.toFixed(1)} miles from home` })
   }
 
   possible += 15
