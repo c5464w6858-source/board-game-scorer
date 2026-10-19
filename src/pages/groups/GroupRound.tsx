@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import photo from '../../assets/login-group.jpg'
+import { HolePanel, SavedToast } from '../../components/HolePanel'
 import { Avatar, ErrorNote, Icon, Loading } from '../../components/ui'
 import { firstName, handicapText } from '../../lib/format'
 import { deleteGroupRound, fetchGroup, fetchGroupScores, saveGroupScores, subscribeToGroupScores, type GroupScore } from '../../lib/groups'
@@ -45,6 +46,9 @@ export function GroupRound() {
   const [picking, setPicking] = useState(false)
   const [hole, setHole] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
+  // Which way the last hole change went, and the hole just saved, for the slide and the toast.
+  const [back, setBack] = useState(false)
+  const [saved, setSaved] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const loaded = state.data
@@ -106,6 +110,7 @@ export function GroupRound() {
   function go(h: number) {
     setDraft(new Map())
     setError(null)
+    setBack(h < current.hole)
     setHole(h)
   }
 
@@ -123,6 +128,7 @@ export function GroupRound() {
         for (const r of rows) next.set(key(r.user_id, r.hole), r.strokes)
         return next
       })
+      setSaved(current.hole)
       if (last) navigate(`/groups/${id}`)
       else go(current.hole + 1)
     } catch (e) {
@@ -148,24 +154,7 @@ export function GroupRound() {
           </span>
         </div>
 
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="text-[14px] text-white/70">Hole</div>
-            <div className="font-display text-[88px] leading-[0.85] font-extrabold tracking-[-0.04em]">{current.hole}</div>
-          </div>
-          <div className="flex gap-5 text-right">
-            {[
-              ['Par', current.par],
-              ['Yds', current.yards ?? '–'],
-              ['SI', current.stroke_index],
-            ].map(([label, v]) => (
-              <div key={label}>
-                <div className="text-[13px] text-white/60">{label}</div>
-                <div className="font-mono text-[28px] font-semibold">{v}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <HolePanel hole={current} holeCount={holes.length} yards={view.yards(current)} tee={tee} accent="gold" back={back} />
 
         <div className="flex gap-1" role="tablist" aria-label="Holes">
           {holes.map((h) => (
@@ -306,6 +295,7 @@ export function GroupRound() {
         {error && <ErrorNote message={error} />}
       </div>
 
+      {saved != null && <SavedToast hole={saved} accent="gold" />}
       <div className="h-24" aria-hidden="true" />
       <div className="fixed inset-x-0 bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] z-[900] mx-auto flex max-w-[480px] gap-3 bg-gradient-to-t from-[#0A1428] via-[#0A1428]/90 to-transparent px-5 pt-6 pb-3">
         <button type="button" disabled={current.hole === 1} onClick={() => go(current.hole - 1)} className="min-h-14 rounded-full border border-white/25 px-6 font-semibold disabled:opacity-40">
