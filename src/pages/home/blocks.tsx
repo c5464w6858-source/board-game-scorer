@@ -26,6 +26,12 @@ export function Actions() {
       >
         <Icon name="flag" size={18} /> Host a round
       </Link>
+      <Link
+        to="/free"
+        className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-[14px] font-semibold text-white/90 no-underline backdrop-blur"
+      >
+        <Icon name="clock" size={16} className="text-flag" /> I'm free this week
+      </Link>
     </div>
   )
 }

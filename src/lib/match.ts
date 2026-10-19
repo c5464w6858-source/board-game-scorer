@@ -1,3 +1,4 @@
+import { roundSlot, slotKey } from './availability'
 import { distanceKm } from './courses'
 import { playStyleLabel } from './format'
 import { acceptedPlayers, type RoundRow } from './rounds'
@@ -7,6 +8,9 @@ export interface MatchProfile {
   playStyle: string[]
   home: { lat: number; lon: number } | null
   buddyIds: string[]
+  // Free slots as "2026-10-24:am" keys, and how far the golfer will travel.
+  free: Set<string>
+  radius: number
 }
 
 export interface Match {
@@ -15,7 +19,7 @@ export interface Match {
 }
 
 const MILES_PER_KM = 0.621371
-// profiles.search_radius_miles arrives in Phase 2; until then everyone gets this.
+// Used until a golfer sets profiles.search_radius_miles.
 export const DEFAULT_RADIUS_MILES = 15
 
 export const miles = (km: number) => km * MILES_PER_KM
@@ -36,7 +40,7 @@ function roundStyles(round: RoundRow) {
 // when we have the data to judge it, and the total is scaled to the parts we
 // can judge, so a golfer with no home club isn't punished.
 //   handicap closeness 35 | distance 25 | availability 15 | buddies 15 | style 10
-// Availability arrives in Phase 2, so it is left out for now.
+// Availability only counts once the golfer has marked some free slots.
 export function matchScore(round: RoundRow, me: MatchProfile): Match {
   let earned = 0
   let possible = 0
@@ -53,10 +57,19 @@ export function matchScore(round: RoundRow, me: MatchProfile): Match {
 
   const dist = roundDistanceMiles(round, me)
   if (dist != null) {
-    const points = 25 * Math.max(0, 1 - dist / DEFAULT_RADIUS_MILES)
+    const points = 25 * Math.max(0, 1 - dist / me.radius)
     possible += 25
     earned += points
     if (points >= 12.5) scored.push({ points, reason: dist < 0.5 ? 'At your home club' : `${dist.toFixed(1)} miles from home` })
+  }
+
+  if (me.free.size) {
+    possible += 15
+    const { day, slot } = roundSlot(round.tee_time)
+    if (me.free.has(slotKey(day, slot))) {
+      earned += 15
+      scored.push({ points: 15, reason: `You're free that ${slot === 'am' ? 'morning' : 'afternoon'}` })
+    }
   }
 
   possible += 15

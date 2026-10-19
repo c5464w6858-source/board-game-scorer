@@ -14,6 +14,7 @@ export type ProfileUpdate = Pick<
   | 'bag'
   | 'avatar_url'
   | 'onboarded_at'
+  | 'search_radius_miles'
 >
 
 // Private to the golfer; clubs only ever see golfers with clubs_can_contact.

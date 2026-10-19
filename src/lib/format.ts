@@ -69,7 +69,7 @@ export const playStyles = [
 
 export const playStyleLabel = (v: string) => playStyles.find((p) => p.value === v)?.label ?? v
 
-const ymd = (d: Date) => part(d, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-')
+export const ymd = (d: Date) => part(d, { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-')
 
 // The next `n` calendar days in UK time, for date chips.
 export function upcomingDays(n: number, now = new Date()) {

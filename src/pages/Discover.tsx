@@ -39,7 +39,7 @@ function passes(f: Filter, r: RoundRow, me: MatchProfile) {
   }
   if (f === 'near') {
     const d = roundDistanceMiles(r, me)
-    return d == null || d <= DEFAULT_RADIUS_MILES
+    return d == null || d <= me.radius
   }
   if (me.handicap == null) return true
   return (r.min_handicap == null || me.handicap >= r.min_handicap) && (r.max_handicap == null || me.handicap <= r.max_handicap)
@@ -144,7 +144,7 @@ export function Discover() {
             {(Object.keys(filterLabels) as Filter[]).map((f) => (
               <button key={f} type="button" aria-pressed={filters.includes(f)} onClick={() => toggleFilter(f)} className={filterPill(filters.includes(f))}>
                 {filters.includes(f) && <Icon name="check" size={15} />}
-                {filterLabels[f]}
+                {f === 'near' ? `Within ${me.data?.match.radius ?? DEFAULT_RADIUS_MILES} mi` : filterLabels[f]}
               </button>
             ))}
           </div>
