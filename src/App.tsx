@@ -13,6 +13,8 @@ import { GroupNew } from './pages/groups/GroupNew'
 import { GroupRound } from './pages/groups/GroupRound'
 import { GroupRoundNew } from './pages/groups/GroupRoundNew'
 import { Groups } from './pages/groups/Groups'
+import { MatchNew } from './pages/groups/MatchNew'
+import { RyderSetup } from './pages/groups/RyderSetup'
 import { LiveScore } from './pages/LiveScore'
 import { Recap } from './pages/Recap'
 import { Safety } from './pages/Safety'
@@ -90,6 +92,8 @@ function App() {
           <Route path="/groups/:id" element={<GroupDetail />} />
           <Route path="/groups/:id/rounds/new" element={<GroupRoundNew />} />
           <Route path="/groups/:id/rounds/:roundId" element={<GroupRound />} />
+          <Route path="/groups/:id/rounds/:roundId/matches/new" element={<MatchNew />} />
+          <Route path="/groups/:id/ryder" element={<RyderSetup />} />
           <Route path="/golfers/:id" element={<Profile />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CourseDetail />} />

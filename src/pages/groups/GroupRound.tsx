@@ -5,7 +5,9 @@ import { Avatar, ErrorNote, Icon, Loading } from '../../components/ui'
 import { firstName, handicapText } from '../../lib/format'
 import { deleteGroupRound, fetchGroup, fetchGroupScores, saveGroupScores, subscribeToGroupScores, type GroupScore } from '../../lib/groups'
 import { leaderboard, scoreKey as key, scoringFor } from '../../lib/roundScoring'
+import { ballsOf, deleteMatch, fetchMatches, matchState } from '../../lib/ryder'
 import { fetchCard, stablefordPoints } from '../../lib/scorecard'
+import { MatchRow } from './RyderBoard'
 import { useAsync } from '../../lib/useAsync'
 import { useUserId } from '../../lib/useMe'
 
@@ -29,8 +31,12 @@ export function GroupRound() {
     const group = await fetchGroup(id)
     const round = group?.group_rounds.find((r) => r.id === roundId)
     if (!group || !round) return null
-    const [card, scores] = await Promise.all([round.course_id ? fetchCard(round.course_id).catch(() => null) : null, fetchGroupScores([roundId])])
-    return { group, round, card, scores }
+    const [card, scores, matches] = await Promise.all([
+      round.course_id ? fetchCard(round.course_id).catch(() => null) : null,
+      fetchGroupScores([roundId]),
+      group.ryder_cup ? fetchMatches([roundId]) : Promise.resolve([]),
+    ])
+    return { group, round, card, scores, matches }
   }, [id, roundId])
 
   const [scores, setScores] = useState<Map<string, number>>(new Map())
@@ -87,6 +93,15 @@ export function GroupRound() {
   const board = leaderboard(players, holes, scores).filter((b) => b.thru > 0)
   const doneHoles = new Set(holes.filter((h) => card.length && card.every((p) => scores.has(key(p.id, h.hole)))).map((h) => h.hole))
   const last = current.hole === holes.length
+  const playing = new Map(players.map((p) => [p.id, p.playing]))
+  const matches = loaded.matches.map((m) => ({ ...m, state: matchState(m, holes, scores, playing) }))
+  // In foursomes the pair's one ball is scored under its first player.
+  const pairName = new Map(
+    matches
+      .filter((m) => m.format === 'foursomes')
+      .flatMap((m) => [m.side_a, m.side_b])
+      .map((side) => [side[0], side.map((id) => (id === me ? 'You' : firstName(players.find((p) => p.id === id)?.name ?? null))).join(' & ')]),
+  )
 
   function go(h: number) {
     setDraft(new Map())
@@ -196,7 +211,7 @@ export function GroupRound() {
               <div key={p.id} className={`flex items-center gap-3 rounded-[22px] border px-3.5 py-3 ${p.id === me ? 'border-gold/40 bg-white/[0.09]' : 'border-white/10 bg-white/[0.05]'}`}>
                 <Avatar name={p.name} src={p.avatar} size={44} />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-semibold">{p.id === me ? 'You' : firstName(p.name)}</div>
+                  <div className="truncate font-semibold">{pairName.get(p.id) ?? (p.id === me ? 'You' : firstName(p.name))}</div>
                   <div className="truncate text-[13px] text-white/60">
                     HCP <span className="font-mono">{handicapText(p.handicap)}</span> · {shots === 1 ? '1 shot' : `${shots} shots`}
                     {pts != null && <> · <span className="text-gold">{pts} pts</span></>}
@@ -216,6 +231,49 @@ export function GroupRound() {
         </div>
 
         {tee && <p className="m-0 -mt-2 text-[12px] text-white/50">Shots from the {tee.name.toLowerCase()} tees{tee.slope ? ` · slope ${tee.slope}` : ''}, 95% of course handicap.</p>}
+
+        {group.ryder_cup && (
+          <section className="flex flex-col gap-2 border-t border-white/10 pt-4">
+            <div className="flex justify-between text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">
+              <span>Matches</span>
+              {organiser && (
+                <Link to={`/groups/${id}/rounds/${round.id}/matches/new`} className="tracking-normal text-gold normal-case no-underline">
+                  + Add match
+                </Link>
+              )}
+            </div>
+            {matches.length ? (
+              matches.map((m) => (
+                <div key={m.id} className="overflow-hidden rounded-[18px] bg-cream">
+                  <MatchRow g={group} m={m} me={me} />
+                  <div className="flex justify-between border-t border-line-soft px-3 py-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMine([...ballsOf(m.side_a, m.format), ...ballsOf(m.side_b, m.format)])
+                        setPicking(false)
+                      }}
+                      className="min-h-9 text-[13px] font-semibold text-team-blue"
+                    >
+                      Score this match
+                    </button>
+                    {organiser && (
+                      <button
+                        type="button"
+                        onClick={() => confirm('Remove this match?') && deleteMatch(m.id).then(() => state.reload(), (e: Error) => setError(e.message))}
+                        className="min-h-9 text-[13px] font-semibold text-muted"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="m-0 text-[14px] text-white/60">{organiser ? 'Add the matches for this round.' : 'No matches set for this round yet.'}</p>
+            )}
+          </section>
+        )}
 
         <section className="flex flex-col gap-1 border-t border-white/10 pt-4">
           <div className="mb-1 flex justify-between text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">

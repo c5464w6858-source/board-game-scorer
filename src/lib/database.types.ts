@@ -304,23 +304,64 @@ export type Database = {
           },
         ]
       }
+      group_matches: {
+        Row: {
+          created_at: string
+          format: Database["public"]["Enums"]["match_format"]
+          group_round_id: string
+          id: string
+          side_a: string[]
+          side_b: string[]
+          sort: number
+        }
+        Insert: {
+          created_at?: string
+          format: Database["public"]["Enums"]["match_format"]
+          group_round_id: string
+          id?: string
+          side_a: string[]
+          side_b: string[]
+          sort?: number
+        }
+        Update: {
+          created_at?: string
+          format?: Database["public"]["Enums"]["match_format"]
+          group_round_id?: string
+          id?: string
+          side_a?: string[]
+          side_b?: string[]
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_matches_group_round_id_fkey"
+            columns: ["group_round_id"]
+            isOneToOne: false
+            referencedRelation: "group_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_members: {
         Row: {
           group_id: string
           joined_at: string
           role: Database["public"]["Enums"]["group_role"]
+          team: number | null
           user_id: string
         }
         Insert: {
           group_id: string
           joined_at?: string
           role?: Database["public"]["Enums"]["group_role"]
+          team?: number | null
           user_id: string
         }
         Update: {
           group_id?: string
           joined_at?: string
           role?: Database["public"]["Enums"]["group_role"]
+          team?: number | null
           user_id?: string
         }
         Relationships: [
@@ -458,7 +499,10 @@ export type Database = {
           location: string | null
           name: string
           owner_id: string
+          ryder_cup: boolean
           starts_on: string | null
+          team_a_name: string
+          team_b_name: string
         }
         Insert: {
           created_at?: string
@@ -470,7 +514,10 @@ export type Database = {
           location?: string | null
           name: string
           owner_id?: string
+          ryder_cup?: boolean
           starts_on?: string | null
+          team_a_name?: string
+          team_b_name?: string
         }
         Update: {
           created_at?: string
@@ -482,7 +529,10 @@ export type Database = {
           location?: string | null
           name?: string
           owner_id?: string
+          ryder_cup?: boolean
           starts_on?: string | null
+          team_a_name?: string
+          team_b_name?: string
         }
         Relationships: [
           {
@@ -937,6 +987,7 @@ export type Database = {
         | "kept_the_pace"
         | "clutch_putter"
         | "would_play_again"
+      match_format: "fourball" | "foursomes" | "singles"
       report_reason:
         | "no_show"
         | "abusive"
@@ -974,6 +1025,7 @@ export const Constants = {
         "clutch_putter",
         "would_play_again",
       ],
+      match_format: ["fourball", "foursomes", "singles"],
       report_reason: [
         "no_show",
         "abusive",

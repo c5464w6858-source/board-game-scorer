@@ -14,7 +14,7 @@ export const kindLabel = (k: GroupKind) => groupKinds.find((g) => g.value === k)
 
 const GROUP_SELECT = `
   *,
-  group_members(user_id, role, joined_at, profile:profiles(id, display_name, avatar_url, handicap)),
+  group_members(user_id, role, joined_at, team, profile:profiles(id, display_name, avatar_url, handicap)),
   group_rounds(*, course:courses(id, name, town, lat, lon))
 `
 const groupQuery = () => supabase.from('groups').select(GROUP_SELECT)

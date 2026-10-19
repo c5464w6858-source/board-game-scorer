@@ -7,10 +7,12 @@ import { Avatar, AvatarStack, ErrorNote, Icon, Loading } from '../../components/
 import { firstName, handicapText, shortName, teeTime } from '../../lib/format'
 import { fetchGroup, fetchGroupScores, inviteLink, kindLabel, leaveGroup, setMemberRole, type GroupRow } from '../../lib/groups'
 import { leaderboard, scoreKey, scoringFor, type Player } from '../../lib/roundScoring'
+import { fetchMatches, matchState } from '../../lib/ryder'
 import { fetchCard, type Card } from '../../lib/scorecard'
 import { useAsync } from '../../lib/useAsync'
 import { useUserId } from '../../lib/useMe'
 import { dateRange } from './helpers'
+import { MatchRow, RyderScore, type MatchView } from './RyderBoard'
 
 const roster = (g: GroupRow): Player[] =>
   g.group_members.map((m) => ({
@@ -51,12 +53,22 @@ export function GroupDetail() {
     const group = await fetchGroup(id)
     if (!group) return null
     const courseIds = [...new Set(group.group_rounds.map((r) => r.course_id).filter((c): c is string => Boolean(c)))]
-    const [cardList, scores] = await Promise.all([
+    const roundIds = group.group_rounds.map((r) => r.id)
+    const [cardList, scores, matches] = await Promise.all([
       Promise.all(courseIds.map((c) => fetchCard(c).catch(() => null))),
-      fetchGroupScores(group.group_rounds.map((r) => r.id)),
+      fetchGroupScores(roundIds),
+      group.ryder_cup ? fetchMatches(roundIds) : Promise.resolve([]),
     ])
     const cards = new Map(courseIds.map((c, i) => [c, cardList[i]]))
-    return { group, ...standings(group, cards, scores) }
+    // Each match's live state, from its round's card, handicaps and scores.
+    const scoreMap = new Map(scores.map((s) => [`${s.group_round_id}|${scoreKey(s.user_id, s.hole)}`, s.strokes]))
+    const matchViews: MatchView[] = matches.map((m) => {
+      const r = group.group_rounds.find((x) => x.id === m.group_round_id)!
+      const { holes, players } = scoringFor(r, cards.get(r.course_id ?? '') ?? null, roster(group))
+      const roundScores = new Map([...scoreMap].filter(([k]) => k.startsWith(`${r.id}|`)).map(([k, v]) => [k.slice(r.id.length + 1), v]))
+      return { ...m, state: matchState(m, holes, roundScores, new Map(players.map((p) => [p.id, p.playing]))) }
+    })
+    return { group, matches: matchViews, ...standings(group, cards, scores) }
   }, [id])
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -64,7 +76,7 @@ export function GroupDetail() {
   if (state.loading) return <Loading />
   if (state.error) return <ErrorNote message={state.error} />
   if (!state.data) return <p>Group not found. <Link to="/groups">Back to your groups</Link></p>
-  const { group: g, perRound, table } = state.data
+  const { group: g, perRound, table, matches } = state.data
   const organiser = g.group_members.some((m) => m.user_id === me && m.role === 'organiser')
   const now = Date.now()
   const link = inviteLink(g.invite_code)
@@ -128,6 +140,52 @@ export function GroupDetail() {
       }
     >
       {g.description && <p className={`${glassCard} relative m-0 px-4 py-3.5 text-[15px] text-navy`}>{g.description}</p>}
+
+      {g.ryder_cup ? (
+        <Section
+          tone="navy"
+          title="Ryder Cup"
+          icon="flag"
+          action={
+            organiser ? (
+              <Link to={`/groups/${g.id}/ryder`} className="text-[13px] font-semibold text-[#6B5A2E] no-underline">
+                Teams
+              </Link>
+            ) : undefined
+          }
+        >
+          <RyderScore g={g} matches={matches} />
+          {g.group_rounds
+            .filter((r) => matches.some((m) => m.group_round_id === r.id))
+            .map((r) => (
+              <div key={r.id} className={`${glassCard} divide-y divide-line-soft overflow-hidden text-navy`}>
+                <div className="px-4 pt-3 pb-2 text-[12px] font-semibold tracking-[0.06em] text-muted uppercase">{r.title || r.course_name}</div>
+                {matches
+                  .filter((m) => m.group_round_id === r.id)
+                  .map((m) => <MatchRow key={m.id} g={g} m={m} me={me} to={`/groups/${g.id}/rounds/${r.id}`} />)}
+              </div>
+            ))}
+          {!matches.length && (
+            <p className="relative m-0 text-[14px] text-muted">
+              {organiser ? 'Open a round in the schedule to set its matches.' : 'Your organiser will set the matches for each round.'}
+            </p>
+          )}
+        </Section>
+      ) : (
+        organiser && (
+          <Link to={`/groups/${g.id}/ryder`} className={`${glassCard} relative flex items-center gap-3 px-4 py-3.5 text-navy no-underline`}>
+            <span className="flex shrink-0">
+              <span className="size-7 rounded-full bg-team-blue ring-2 ring-white" />
+              <span className="-ml-2 size-7 rounded-full bg-team-red ring-2 ring-white" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">Run it as a Ryder Cup</span>
+              <span className="block text-[13px] text-muted">Two teams, fourballs, foursomes and singles</span>
+            </span>
+            <Icon name="back" size={16} className="rotate-180 text-muted" />
+          </Link>
+        )
+      )}
 
       <Section tone="navy" title={g.kind === 'society' ? 'Order of merit' : 'Leaderboard'} icon="flag" action={<span className="text-[13px] text-muted">Stableford</span>}>
         {table.length ? (
@@ -206,6 +264,9 @@ export function GroupDetail() {
                   <span className="block text-[12px] text-muted">HCP <span className="font-mono">{handicapText(m.profile?.handicap ?? null)}</span></span>
                 </span>
               </Link>
+              {g.ryder_cup && m.team && (
+                <span className={`size-3 shrink-0 rounded-full ${m.team === 1 ? 'bg-team-blue' : 'bg-team-red'}`} title={m.team === 1 ? g.team_a_name : g.team_b_name} />
+              )}
               {m.role === 'organiser' ? (
                 <span className="rounded-full bg-gold-soft px-2.5 py-1 text-[12px] font-semibold text-[#6B5A2E]">Organiser</span>
               ) : (
