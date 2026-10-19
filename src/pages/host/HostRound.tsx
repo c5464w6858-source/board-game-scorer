@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Card, Icon, ScreenHeader, SectionLabel, Segmented, ToggleRow } from '../../components/ui'
+import { PhotoPage } from '../../components/PhotoPage'
+import { Section } from '../../components/Section'
+import { glassCard, limeButton } from '../../components/surfaces'
+import { Icon } from '../../components/ui'
 import { fetchCourse, searchCourses, type Course } from '../../lib/courses'
-import { upcomingDays } from '../../lib/format'
+import { formatLabels, shortDate, upcomingDays } from '../../lib/format'
 import { useAsync } from '../../lib/useAsync'
 import { useMe } from '../../lib/useMe'
 import { useHost } from './hostContext'
+import { Choice, darkDisabled, field, HostBar, HostHeader, Switch } from './parts'
 
 const formats = [
   { value: 'stableford', label: 'Stableford' },
@@ -40,37 +44,44 @@ export function HostRound() {
   const canContinue = Boolean(draft.course)
 
   return (
-    <div className="flex min-h-[calc(100vh-8rem)] flex-col gap-6">
-      <ScreenHeader kind="close" onBack={() => navigate('/')} center={<span className="block text-center">Step 1 of 2</span>} right={<span className="size-11" />} />
-      <h1 className="m-0 font-display text-[30px] font-extrabold tracking-[-0.03em]">Host a round</h1>
-
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Course</SectionLabel>
+    <PhotoPage
+      header={
+        <HostHeader
+          step={1}
+          title="Host a round"
+          subtitle="Pick the course, day and who can join. Hosting is always free."
+          onBack={() => navigate('/')}
+        />
+      }
+    >
+      <Section title="Course" icon="flag">
         {draft.course && !query ? (
-          <button
-            type="button"
-            onClick={() => setQuery(' ')}
-            className="flex items-center gap-3 rounded-[20px] border-[1.5px] border-green bg-card p-3.5 text-left"
-          >
-            <span className="flex-1">
-              <span className="block font-semibold">{draft.course.name}</span>
-              <span className="block text-sm text-muted">{[draft.course.town, draft.course.postcode].filter(Boolean).join(' · ')}</span>
+          <button type="button" onClick={() => setQuery(' ')} className={`${glassCard} flex items-center gap-3 p-3.5 text-left text-fairway ring-2 ring-green/45`}>
+            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-fairway text-flag">
+              <Icon name="tee" size={20} />
             </span>
-            <span className="text-green"><Icon name="check" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate font-semibold">{draft.course.name}</span>
+              <span className="block truncate text-[13px] text-muted">{[draft.course.town, draft.course.postcode].filter(Boolean).join(' · ')}</span>
+            </span>
+            <span className="text-[13px] font-semibold text-green">Change</span>
           </button>
         ) : (
-          <>
-            <input
-              autoFocus={Boolean(draft.course)}
-              value={query.trim() ? query : ''}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search courses"
-              placeholder="Course, town or postcode"
-              className="min-h-12 rounded-full border border-line bg-card px-4"
-            />
+          <div className="flex flex-col gap-2">
+            <label className="relative block">
+              <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted"><Icon name="search" size={18} /></span>
+              <input
+                autoFocus={Boolean(draft.course)}
+                value={query.trim() ? query : ''}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="Search courses"
+                placeholder="Course, town or postcode"
+                className={`${field} w-full pl-11`}
+              />
+            </label>
             {searchError && <p role="alert" className="m-0 text-sm text-danger">{searchError}</p>}
             {results.length > 0 && (
-              <Card className="max-h-64 divide-y divide-line-soft overflow-y-auto">
+              <div className={`${glassCard} max-h-64 divide-y divide-line-soft overflow-y-auto text-fairway`}>
                 {results.map((c) => (
                   <button
                     key={c.id}
@@ -82,72 +93,84 @@ export function HostRound() {
                     className="block min-h-11 w-full px-4 py-2.5 text-left"
                   >
                     <span className="block font-semibold">{c.name}</span>
-                    {c.town && <span className="block text-sm text-muted">{c.town}</span>}
+                    {c.town && <span className="block text-[13px] text-muted">{c.town}</span>}
                   </button>
                 ))}
-              </Card>
+              </div>
             )}
             {query.trim().length > 1 && !search.loading && results.length === 0 && !searchError && (
               <p className="m-0 text-sm text-muted">No courses found.</p>
             )}
-          </>
+          </div>
         )}
-      </section>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>When</SectionLabel>
-        <div className="-mx-5 flex gap-2 overflow-x-auto px-5">
-          {days.map((d) => (
-            <button
-              key={d.key}
-              type="button"
-              aria-pressed={draft.day === d.key}
-              onClick={() => update({ day: d.key })}
-              className={`flex min-h-16 w-16 shrink-0 flex-col items-center justify-center rounded-[18px] border ${draft.day === d.key ? 'border-fairway bg-fairway text-white' : 'border-line bg-card'}`}
-            >
-              <span className="text-sm opacity-80">{d.dow}</span>
-              <span className="font-mono text-lg font-semibold">{d.day}</span>
-            </button>
-          ))}
+      <Section title="When" icon="clock">
+        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pt-1 pb-3">
+          {days.map((d) => {
+            const on = draft.day === d.key
+            return (
+              <button
+                key={d.key}
+                type="button"
+                aria-pressed={on}
+                onClick={() => update({ day: d.key })}
+                className={`flex min-h-[72px] w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-[18px] ${
+                  on ? 'bg-fairway text-white shadow-[0_12px_24px_-12px_rgba(14,31,22,0.8)] ring-2 ring-flag' : `${glassCard} text-fairway`
+                }`}
+              >
+                <span className={`text-[12px] font-semibold uppercase ${on ? 'text-white/70' : 'text-muted'}`}>{d.dow}</span>
+                <span className={`font-mono text-xl font-semibold ${on ? 'text-flag' : ''}`}>{d.day}</span>
+              </button>
+            )
+          })}
         </div>
-      </section>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Format</SectionLabel>
-        <Segmented label="Format" options={[...formats]} value={draft.format} onChange={(format) => update({ format })} />
-      </section>
+      <Section title="Format" icon="tee">
+        <div role="radiogroup" aria-label="Format" className={`${glassCard} grid grid-cols-[1.3fr_1fr_1fr_1.2fr] gap-1 p-1.5`}>
+          {formats.map((o) => {
+            const on = o.value === draft.format
+            return (
+              <button
+                key={o.value}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => update({ format: o.value })}
+                className={`min-h-11 rounded-[16px] px-1 text-[14px] font-semibold ${on ? 'bg-fairway text-flag shadow-[0_8px_16px_-10px_rgba(14,31,22,0.8)]' : 'text-muted'}`}
+              >
+                {o.label}
+              </button>
+            )
+          })}
+        </div>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Who can join</SectionLabel>
-        <Card className="divide-y divide-line-soft overflow-hidden">
-          <label className="flex min-h-14 cursor-pointer items-center gap-3 px-4 py-3">
-            <input type="radio" name="who" checked={!draft.buddiesOnly} onChange={() => update({ buddiesOnly: false })} className="size-5 accent-green" />
-            <span className="flex-1">
-              <span className="block">Anyone</span>
-              <span className="block text-sm text-muted">You approve each request</span>
-            </span>
-          </label>
+      <Section title="Who can join" icon="user">
+        <div className={`${glassCard} divide-y divide-line-soft overflow-hidden text-fairway`}>
+          <Choice label="Anyone" hint="You approve each request" checked={!draft.buddiesOnly} onSelect={() => update({ buddiesOnly: false })} />
           {!draft.buddiesOnly && (
-            <div className="flex items-center gap-2 px-4 py-3 text-sm">
-              <span className="text-muted">Handicap</span>
-              <input inputMode="decimal" aria-label="Minimum handicap" placeholder="Any" value={draft.minHandicap} onChange={(e) => update({ minHandicap: e.target.value })} className="min-h-11 w-20 rounded-full border border-line px-3 text-center font-mono" />
+            <div className="flex items-center gap-2 bg-[#F6F5F0]/70 px-4 py-3 text-sm">
+              <span className="flex-1 font-semibold">Handicap</span>
+              <input inputMode="decimal" aria-label="Minimum handicap" placeholder="Any" value={draft.minHandicap} onChange={(e) => update({ minHandicap: e.target.value })} className={`${field} w-20 px-3 text-center font-mono`} />
               <span className="text-muted">to</span>
-              <input inputMode="decimal" aria-label="Maximum handicap" placeholder="Any" value={draft.maxHandicap} onChange={(e) => update({ maxHandicap: e.target.value })} className="min-h-11 w-20 rounded-full border border-line px-3 text-center font-mono" />
+              <input inputMode="decimal" aria-label="Maximum handicap" placeholder="Any" value={draft.maxHandicap} onChange={(e) => update({ maxHandicap: e.target.value })} className={`${field} w-20 px-3 text-center font-mono`} />
             </div>
           )}
-          <label className="flex min-h-14 cursor-pointer items-center gap-3 px-4 py-3">
-            <input type="radio" name="who" checked={draft.buddiesOnly} onChange={() => update({ buddiesOnly: true })} className="size-5 accent-green" />
-            Buddies only
-          </label>
-          <ToggleRow label="Auto-accept buddies" checked={draft.autoAccept} onChange={(autoAccept) => update({ autoAccept })} />
-        </Card>
-      </section>
+          <Choice label="Buddies only" hint="Golfers you've added as buddies" checked={draft.buddiesOnly} onSelect={() => update({ buddiesOnly: true })} />
+          <Switch label="Auto-accept buddies" hint="Buddies join without waiting on you" checked={draft.autoAccept} onChange={(autoAccept) => update({ autoAccept })} />
+        </div>
+      </Section>
 
-      <div className="mt-auto">
-        <Button size="lg" full disabled={!canContinue} onClick={() => navigate('/host/time')}>
+      <HostBar
+        title={`${shortDate(`${draft.day}T12:00:00Z`)} · ${formatLabels[draft.format]}`}
+        note={draft.course?.name ?? 'Choose a course to continue'}
+      >
+        <button type="button" className={`${limeButton} ${darkDisabled}`} disabled={!canContinue} onClick={() => navigate('/host/time')}>
           Continue
-        </Button>
-      </div>
-    </div>
+        </button>
+      </HostBar>
+    </PhotoPage>
   )
 }

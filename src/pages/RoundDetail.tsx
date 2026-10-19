@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { HoleArt } from '../components/HoleArt'
 import { PhotoPage } from '../components/PhotoPage'
 import { Section } from '../components/Section'
-import { glassCard } from '../components/surfaces'
+import { glassCard, limeButton as lime, primaryButton as primary, roundButton, secondaryButton as secondary } from '../components/surfaces'
 import { Avatar, ErrorNote, Icon, Loading, OpenSpot, type IconName } from '../components/ui'
 import { fetchLastMessages } from '../lib/chat'
 import { firstName, handicapRange, handicapText, pounds, teeOffIn } from '../lib/format'
@@ -14,13 +14,6 @@ import { useUserId } from '../lib/useMe'
 import { fetchForecast } from '../lib/weather'
 import { TeeChip } from './home/blocks'
 import { Scorecard } from './home/Scorecard'
-
-const roundButton = 'grid size-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur'
-const primary =
-  'inline-flex min-h-12 items-center justify-center rounded-full bg-gradient-to-b from-[#1C8E47] to-green-dark px-5 font-semibold text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_10px_22px_-12px_rgba(19,122,58,0.8)] disabled:opacity-50'
-const secondary = 'inline-flex min-h-12 items-center justify-center rounded-full border border-[#D8D5CA] bg-white px-5 font-semibold text-fairway no-underline disabled:opacity-50'
-const lime =
-  'inline-flex min-h-12 items-center justify-center rounded-full bg-gradient-to-b from-[#DBF79A] to-flag px-5 font-semibold text-fairway no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_8px_20px_-8px_rgba(200,241,105,0.55)] disabled:opacity-50'
 
 // How this round relates to you. Each state gets its own colour, used for the
 // header badge and the action bar, so they're easy to tell apart.
