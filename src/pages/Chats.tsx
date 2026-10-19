@@ -31,7 +31,7 @@ export function Chats() {
   const { mine, last } = state.data
 
   return (
-    <PhotoPage
+    <PhotoPage tone="clay"
       header={
         <div className="flex flex-col gap-2 pt-6">
           <span className="text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">Your groups</span>

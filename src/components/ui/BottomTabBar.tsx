@@ -1,21 +1,22 @@
 import { NavLink } from 'react-router-dom'
 import { Icon, type IconName } from './Icon'
 
-const tab = (to: string, label: string, icon: IconName, end = false) => ({ to, label, icon, end })
-const left = [tab('/', 'Home', 'home', true), tab('/discover', 'Discover', 'compass')]
-const right = [tab('/chats', 'Chats', 'chat'), tab('/me', 'You', 'user')]
+// Each tab lights up in its section's colour (see components/tones.ts).
+const tab = (to: string, label: string, icon: IconName, pill: string, text: string, end = false) => ({ to, label, icon, pill, text, end })
+const left = [tab('/', 'Home', 'home', 'bg-fairway text-flag', 'text-fairway', true), tab('/discover', 'Discover', 'compass', 'bg-links text-links-soft', 'text-links')]
+const right = [tab('/chats', 'Chats', 'chat', 'bg-clay text-sand', 'text-clay'), tab('/me', 'You', 'user', 'bg-heather text-heather-soft', 'text-heather')]
 
-function TabLink({ to, label, icon, end }: ReturnType<typeof tab>) {
+function TabLink({ to, label, icon, pill, text, end }: ReturnType<typeof tab>) {
   return (
-    <NavLink
-      to={to}
-      end={end}
-      className={({ isActive }) =>
-        `flex min-h-11 flex-col items-center justify-center gap-0.5 text-[11px] ${isActive ? 'font-semibold text-green' : 'text-muted'}`
-      }
-    >
-      <Icon name={icon} />
-      {label}
+    <NavLink to={to} end={end} className="flex min-h-11 flex-col items-center justify-center gap-0.5 text-[11px] no-underline">
+      {({ isActive }) => (
+        <>
+          <span className={`grid h-7 w-12 place-items-center rounded-full transition-colors ${isActive ? pill : 'text-muted'}`}>
+            <Icon name={icon} size={20} />
+          </span>
+          <span className={isActive ? `font-semibold ${text}` : 'text-muted'}>{label}</span>
+        </>
+      )}
     </NavLink>
   )
 }

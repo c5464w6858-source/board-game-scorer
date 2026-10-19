@@ -115,7 +115,7 @@ export function Discover() {
     }`
 
   return (
-    <PhotoPage
+    <PhotoPage tone="links"
       header={
         <div className="flex flex-col gap-5">
           <header className="flex items-end justify-between gap-3">

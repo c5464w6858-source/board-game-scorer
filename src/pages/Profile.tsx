@@ -78,7 +78,7 @@ export function Profile() {
   const bagRows = bagLabels.filter(([k]) => bag[k])
 
   return (
-    <PhotoPage
+    <PhotoPage tone="heather"
       header={
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-between">

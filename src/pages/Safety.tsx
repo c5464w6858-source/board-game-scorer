@@ -48,7 +48,7 @@ export function Safety() {
   }
 
   return (
-    <PhotoPage
+    <PhotoPage tone="heather"
       header={
         <div className="flex flex-col gap-5">
           <button type="button" aria-label="Back" onClick={() => navigate(-1)} className={roundButton}>
