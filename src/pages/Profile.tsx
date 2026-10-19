@@ -1,11 +1,13 @@
-import { Link, useParams } from 'react-router-dom'
-import { Avatar, Card, ErrorNote, Icon, Loading, RoundIconButton, SectionLabel, StatTile, Chip } from '../components/ui'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { PhotoPage } from '../components/PhotoPage'
+import { Section } from '../components/Section'
+import { glassCard, roundButton, secondaryButton } from '../components/surfaces'
+import { Avatar, ErrorNote, Icon, Loading, type IconName } from '../components/ui'
 import { handicapText, playStyleLabel, shortName } from '../lib/format'
 import { fetchProfile, fetchStats } from '../lib/profiles'
 import { supabase } from '../lib/supabase'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
-import { useNavigate } from 'react-router-dom'
 
 const bagLabels: [string, string][] = [
   ['driver', 'Driver'],
@@ -13,6 +15,16 @@ const bagLabels: [string, string][] = [
   ['putter', 'Putter'],
   ['ball', 'Ball'],
 ]
+
+function Stat({ icon, value, label }: { icon: IconName; value: string | number; label: string }) {
+  return (
+    <div className={`${glassCard} flex flex-col items-center gap-1 px-2 py-3.5 text-center text-fairway`}>
+      <span className="grid size-8 place-items-center rounded-full bg-green-tint text-green"><Icon name={icon} size={16} /></span>
+      <span className="font-mono text-[22px] leading-tight font-semibold">{value}</span>
+      <span className="text-[12px] font-semibold text-muted">{label}</span>
+    </div>
+  )
+}
 
 export function Profile() {
   const params = useParams()
@@ -34,77 +46,100 @@ export function Profile() {
   const bagRows = bagLabels.filter(([k]) => bag[k])
 
   return (
-    <div className="flex flex-col gap-3.5">
-      <header className="flex items-center gap-3.5">
-        <Avatar name={profile.display_name ?? 'Golfer'} src={profile.avatar_url} size={76} ring />
-        <div className="flex-1">
-          <h1 className="m-0 font-display text-[26px] font-extrabold tracking-[-0.03em]">{shortName(profile.display_name)}</h1>
-          {profile.home_area && <div className="text-sm text-muted">{profile.home_area}</div>}
-          {profile.home_club && (
-            <div className="mt-0.5 text-[13px] font-semibold text-green">
-              {profile.home_club_member ? 'Member, ' : 'Plays at '}
-              {profile.home_club.name}
+    <PhotoPage
+      header={
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center justify-between">
+            {own ? (
+              <span className="text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">Your profile</span>
+            ) : (
+              <button type="button" aria-label="Back" onClick={() => navigate(-1)} className={roundButton}>
+                <Icon name="back" size={20} />
+              </button>
+            )}
+            {own && (
+              <button type="button" aria-label="Edit profile" onClick={() => navigate('/me/edit')} className={roundButton}>
+                <Icon name="pencil" size={18} />
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="rounded-full p-[3px] ring-[3px] ring-flag">
+              <Avatar name={profile.display_name ?? 'Golfer'} src={profile.avatar_url} size={78} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h1 className="m-0 truncate font-display text-[30px] leading-[1.02] font-extrabold tracking-[-0.035em]">{shortName(profile.display_name)}</h1>
+              {profile.home_area && <p className="mt-1 mb-0 text-sm text-white/80">{profile.home_area}</p>}
+              {profile.home_club && (
+                <span className="mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[13px] font-semibold text-fairway">
+                  <Icon name="flag" size={14} />
+                  <span className="truncate">{profile.home_club_member ? 'Member' : 'Plays'} · {profile.home_club.name}</span>
+                </span>
+              )}
             </div>
-          )}
+          </div>
+          <div className="flex items-end justify-between rounded-[20px] border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
+            <div>
+              <div className="text-[12px] font-semibold tracking-[0.06em] text-white/70 uppercase">Handicap index</div>
+              <div className="font-mono text-[36px] leading-none font-semibold text-flag">{handicapText(profile.handicap)}</div>
+            </div>
+            <span className="rounded-full bg-fairway/70 px-2.5 py-1 text-[12px] font-semibold text-white/85">
+              {profile.handicap_source === 'official' ? 'Official' : 'Self-declared'}
+            </span>
+          </div>
         </div>
-        {own ? (
-          <RoundIconButton label="Edit profile" icon="pencil" onClick={() => navigate('/me/edit')} />
-        ) : (
-          <RoundIconButton label="Back" icon="back" onClick={() => navigate(-1)} />
-        )}
-      </header>
-
-      {profile.bio && <p className="m-0">{profile.bio}</p>}
-
-      <section aria-label="Handicap" className="rounded-[22px] bg-fairway p-4 text-white">
-        <div className="text-xs text-muted-dark">Handicap index</div>
-        <div className="font-mono text-[38px] leading-[1.1] font-semibold">{handicapText(profile.handicap)}</div>
-        <div className="text-xs text-flag">
-          {profile.handicap_source === 'official' ? 'Official' : 'Self-declared'}
-        </div>
+      }
+    >
+      <section aria-label="Stats" className="relative grid grid-cols-3 gap-2.5">
+        <Stat icon="flag" value={stats.rounds} label="Rounds" />
+        <Stat icon="user" value={stats.buddies} label="Buddies" />
+        <Stat icon="check" value={stats.showsUpPct == null ? 'New' : `${Math.round(stats.showsUpPct)}%`} label="Shows up" />
       </section>
 
-      <section aria-label="Stats" className="grid grid-cols-3 gap-2">
-        <StatTile value={<span className="font-mono text-xl font-semibold">{stats.rounds}</span>} label="Rounds" />
-        <StatTile value={<span className="font-mono text-xl font-semibold">{stats.buddies}</span>} label="Buddies" />
-        <StatTile
-          value={<span className="font-mono text-xl font-semibold">{stats.showsUpPct == null ? 'New' : `${Math.round(stats.showsUpPct)}%`}</span>}
-          label="Shows up"
-        />
-      </section>
+      {profile.bio && (
+        <Section title="About" icon="chat">
+          <p className={`${glassCard} m-0 px-4 py-3.5 text-[15px] text-fairway`}>{profile.bio}</p>
+        </Section>
+      )}
 
-      <section className="flex flex-col gap-2">
-        <SectionLabel>How I play</SectionLabel>
+      <Section title="How I play" icon="tee">
         {profile.play_style.length ? (
           <div className="flex flex-wrap gap-2">
-            {profile.play_style.map((s) => <Chip key={s} outline>{playStyleLabel(s)}</Chip>)}
+            {profile.play_style.map((s) => (
+              <span key={s} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-white/90 bg-white/80 px-3.5 text-[14px] font-semibold text-fairway shadow-[0_4px_12px_-6px_rgba(14,31,22,0.3)] backdrop-blur">
+                <span className="size-1.5 rounded-full bg-green" />
+                {playStyleLabel(s)}
+              </span>
+            ))}
           </div>
         ) : (
-          <p className="m-0 text-sm text-muted">{own ? <Link to="/me/edit">Add how you like to play</Link> : 'Nothing added yet.'}</p>
+          <p className="relative m-0 text-sm text-muted">{own ? <Link to="/me/edit" className="font-semibold text-green">Add how you like to play</Link> : 'Nothing added yet.'}</p>
         )}
-      </section>
+      </Section>
 
       {bagRows.length > 0 && (
-        <Card className="px-3.5 py-1">
-          <div className="pt-3"><SectionLabel>In the bag</SectionLabel></div>
-          {bagRows.map(([k, label]) => (
-            <div key={k} className="flex justify-between border-b border-line-soft py-3 last:border-0">
-              <span className="text-muted">{label}</span>
-              <span className="font-medium">{bag[k]}</span>
-            </div>
-          ))}
-        </Card>
+        <Section title="In the bag" icon="bookmark">
+          <div className={`${glassCard} divide-y divide-line-soft px-4 text-fairway`}>
+            {bagRows.map(([k, label]) => (
+              <div key={k} className="flex items-center justify-between gap-3 py-3">
+                <span className="text-[14px] text-muted">{label}</span>
+                <span className="text-right font-semibold">{bag[k]}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
       )}
 
       {own && (
-        <button
-          type="button"
-          onClick={() => supabase.auth.signOut()}
-          className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-full border border-line bg-card px-4 font-semibold"
-        >
-          <Icon name="user" size={18} /> Sign out
-        </button>
+        <div className="relative flex gap-2.5">
+          <Link to="/me/edit" className={`${secondaryButton} flex-1 gap-2`}>
+            <Icon name="pencil" size={17} /> Edit profile
+          </Link>
+          <button type="button" onClick={() => supabase.auth.signOut()} className={`${secondaryButton.replace('text-fairway', 'text-danger')} flex-1`}>
+            Sign out
+          </button>
+        </div>
       )}
-    </div>
+    </PhotoPage>
   )
 }
