@@ -2,7 +2,7 @@ import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
 import { glassCard as card } from '../../components/surfaces'
 import { Logo } from '../../components/ui'
-import { Actions, NextRoundHole, Picks, Requests } from './blocks'
+import { Actions, NextRoundHole, Picks, Requests, UrgentAlert } from './blocks'
 import { Bell, Greeting } from './parts'
 import type { HomeData } from './useHomeData'
 
@@ -24,6 +24,7 @@ export function HomePhotoHeader({ d }: { d: HomeData }) {
         </>
       }
     >
+      <UrgentAlert d={d} />
       <Section title="Next on the tee" icon="tee"><NextRoundHole d={d} card={card} /></Section>
       <Requests d={d} card={card} />
       <Picks d={d} card={card} />

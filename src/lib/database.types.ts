@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability: {
+        Row: {
+          created_at: string
+          day: string
+          slot: Database["public"]["Enums"]["day_slot"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          slot: Database["public"]["Enums"]["day_slot"]
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          slot?: Database["public"]["Enums"]["day_slot"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connections: {
         Row: {
           addressee_id: string
@@ -303,6 +332,7 @@ export type Database = {
           id: string
           onboarded_at: string | null
           play_style: string[]
+          search_radius_miles: number
         }
         Insert: {
           avatar_url?: string | null
@@ -318,6 +348,7 @@ export type Database = {
           id: string
           onboarded_at?: string | null
           play_style?: string[]
+          search_radius_miles?: number
         }
         Update: {
           avatar_url?: string | null
@@ -333,6 +364,7 @@ export type Database = {
           id?: string
           onboarded_at?: string | null
           play_style?: string[]
+          search_radius_miles?: number
         }
         Relationships: [
           {
@@ -449,6 +481,7 @@ export type Database = {
           tee_id: string | null
           tee_time: string
           title: string | null
+          urgent: boolean
           visibility: Database["public"]["Enums"]["round_visibility"]
           walking: boolean
         }
@@ -472,6 +505,7 @@ export type Database = {
           tee_id?: string | null
           tee_time: string
           title?: string | null
+          urgent?: boolean
           visibility?: Database["public"]["Enums"]["round_visibility"]
           walking?: boolean
         }
@@ -495,6 +529,7 @@ export type Database = {
           tee_id?: string | null
           tee_time?: string
           title?: string | null
+          urgent?: boolean
           visibility?: Database["public"]["Enums"]["round_visibility"]
           walking?: boolean
         }
@@ -594,6 +629,7 @@ export type Database = {
       kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
     }
     Enums: {
+      day_slot: "am" | "pm"
       kudos_tag:
         | "great_company"
         | "kept_the_pace"
@@ -621,6 +657,7 @@ export type Enums<T extends keyof PublicSchema["Enums"]> = PublicSchema["Enums"]
 export const Constants = {
   public: {
     Enums: {
+      day_slot: ["am", "pm"],
       kudos_tag: [
         "great_company",
         "kept_the_pace",

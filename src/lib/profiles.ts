@@ -14,6 +14,7 @@ export type ProfileUpdate = Pick<
   | 'bag'
   | 'avatar_url'
   | 'onboarded_at'
+  | 'search_radius_miles'
 >
 
 // Private to the golfer; clubs only ever see golfers with clubs_can_contact.
@@ -109,5 +110,43 @@ export async function fetchConnectionStatus(userId: string): Promise<Map<string,
 
 export async function sendBuddyRequest(addresseeId: string) {
   const { error } = await supabase.from('connections').insert({ addressee_id: addresseeId })
+  if (error) throw error
+}
+
+const BUDDY_PROFILE = 'id, display_name, avatar_url, handicap, home_area'
+const connectionsQuery = () =>
+  supabase
+    .from('connections')
+    .select(
+      `id, status, created_at, requester_id, addressee_id,
+       requester:profiles!connections_requester_id_fkey(${BUDDY_PROFILE}),
+       addressee:profiles!connections_addressee_id_fkey(${BUDDY_PROFILE})`,
+    )
+    .in('status', ['pending', 'accepted'])
+    .order('created_at', { ascending: false })
+
+// Your buddies, requests waiting on you, and requests you've sent.
+export async function fetchBuddies(userId: string) {
+  const { data, error } = await connectionsQuery()
+  if (error) throw error
+  const rows = data.map((c) => {
+    const incoming = c.addressee_id === userId
+    return { id: c.id, status: c.status, incoming, golfer: incoming ? c.requester : c.addressee }
+  })
+  return {
+    buddies: rows.filter((r) => r.status === 'accepted'),
+    incoming: rows.filter((r) => r.status === 'pending' && r.incoming),
+    sent: rows.filter((r) => r.status === 'pending' && !r.incoming),
+  }
+}
+export type BuddyRow = Awaited<ReturnType<typeof fetchBuddies>>['buddies'][number]
+
+export async function answerBuddyRequest(connectionId: string, status: 'accepted' | 'declined') {
+  const { error } = await supabase.from('connections').update({ status, responded_at: new Date().toISOString() }).eq('id', connectionId)
+  if (error) throw error
+}
+
+export async function removeConnection(connectionId: string) {
+  const { error } = await supabase.from('connections').delete().eq('id', connectionId)
   if (error) throw error
 }

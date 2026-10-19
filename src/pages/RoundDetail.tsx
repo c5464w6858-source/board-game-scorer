@@ -8,12 +8,13 @@ import { Avatar, ErrorNote, Icon, Loading, OpenSpot, type IconName } from '../co
 import { fetchLastMessages } from '../lib/chat'
 import { firstName, handicapRange, handicapText, pounds, teeOffIn } from '../lib/format'
 import { requestToJoin, withdrawRequest } from '../lib/requests'
-import { acceptedPlayers, cancelRound, fetchRound, myRequest, pendingRequests, roundTitle, spotsLeft } from '../lib/rounds'
+import { acceptedPlayers, cancelRound, fetchRound, myRequest, pendingRequests, roundTitle, setUrgent, spotsLeft } from '../lib/rounds'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
 import { fetchForecast } from '../lib/weather'
 import { TeeChip } from './home/blocks'
 import { Scorecard } from './home/Scorecard'
+import { NeedPlayer } from './NeedPlayer'
 
 // How this round relates to you. Each state gets its own colour, used for the
 // header badge and the action bar, so they're easy to tell apart.
@@ -105,6 +106,11 @@ export function RoundDetail() {
     }
   }
 
+  // An urgent round you could fill opens as the "Need a player" alert.
+  if (round.urgent && !isHost && !mine && spots > 0 && !closed) {
+    return <NeedPlayer round={round} forecast={forecast} busy={busy} error={error} onJoin={() => run(() => requestToJoin(round.id))} />
+  }
+
   const seats = Array.from({ length: round.max_players }, (_, i) => i)
 
   // What the pinned action bar says and offers, depending on who you are.
@@ -185,6 +191,11 @@ export function RoundDetail() {
                 <Icon name={looks[mode].icon} size={15} />
                 {badge}
               </span>
+              {round.urgent && !closed && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-flag px-2.5 py-1 text-[12px] font-semibold text-fairway">
+                  <Icon name="bell" size={13} /> Need a player
+                </span>
+              )}
               <span className="text-[13px] font-semibold text-flag">{round.cancelled ? 'Cancelled' : teeOffIn(round.tee_time)}</span>
             </div>
             <h1 className="m-0 font-display text-[30px] leading-[1.02] font-extrabold tracking-[-0.035em]">{roundTitle(round)}</h1>
@@ -264,6 +275,25 @@ export function RoundDetail() {
               <Link to={`/rounds/${round.id}/recap`} className="-mt-2 inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-green no-underline">
                 <Icon name="check" size={16} /> Recap and kudos
               </Link>
+            )}
+            {isHost && !closed && (spots > 0 || round.urgent) && (
+              <div className={`flex items-center gap-3 rounded-2xl px-3.5 py-3 ${round.urgent ? 'bg-fairway text-white' : 'bg-[#F1EFE8]'}`}>
+                <Icon name="bell" size={18} className={round.urgent ? 'text-flag' : 'text-green'} />
+                <span className="min-w-0 flex-1 text-[14px]">
+                  <span className="block font-semibold">{round.urgent ? 'Need a player is on' : 'Short of a player?'}</span>
+                  <span className={`block text-[12px] ${round.urgent ? 'text-white/70' : 'text-muted'}`}>
+                    {round.urgent ? 'The first golfer to say yes gets the spot' : 'Mark it urgent and the first to say yes is in'}
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => run(() => setUrgent(round.id, !round.urgent))}
+                  className={`min-h-10 shrink-0 rounded-full px-3.5 text-[13px] font-semibold disabled:opacity-50 ${round.urgent ? 'border border-white/25' : 'bg-fairway text-flag'}`}
+                >
+                  {round.urgent ? 'Turn off' : 'Need a player'}
+                </button>
+              </div>
             )}
             {isHost && !closed && (
               <button

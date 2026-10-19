@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { PhotoPage } from '../components/PhotoPage'
 import { Section } from '../components/Section'
-import { glassCard, roundButton, secondaryButton } from '../components/surfaces'
+import { glassCard, primaryButton, roundButton, secondaryButton } from '../components/surfaces'
 import { Avatar, ErrorNote, Icon, Loading, type IconName } from '../components/ui'
 import { handicapText, playStyleLabel, shortName } from '../lib/format'
-import { fetchProfile, fetchStats } from '../lib/profiles'
+import { answerBuddyRequest, fetchBuddies, fetchProfile, fetchStats, removeConnection, sendBuddyRequest } from '../lib/profiles'
 import { supabase } from '../lib/supabase'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
@@ -16,9 +17,18 @@ const bagLabels: [string, string][] = [
   ['ball', 'Ball'],
 ]
 
-function Stat({ icon, value, label }: { icon: IconName; value: string | number; label: string }) {
+function Stat({ icon, value, label, to }: { icon: IconName; value: string | number; label: string; to?: string }) {
+  const cls = `${glassCard} flex flex-col items-center gap-1 px-2 py-3.5 text-center text-fairway no-underline`
+  if (to)
+    return (
+      <Link to={to} className={cls}>
+        <span className="grid size-8 place-items-center rounded-full bg-green-tint text-green"><Icon name={icon} size={16} /></span>
+        <span className="font-mono text-[22px] leading-tight font-semibold">{value}</span>
+        <span className="text-[12px] font-semibold text-green">{label} ›</span>
+      </Link>
+    )
   return (
-    <div className={`${glassCard} flex flex-col items-center gap-1 px-2 py-3.5 text-center text-fairway`}>
+    <div className={cls}>
       <span className="grid size-8 place-items-center rounded-full bg-green-tint text-green"><Icon name={icon} size={16} /></span>
       <span className="font-mono text-[22px] leading-tight font-semibold">{value}</span>
       <span className="text-[12px] font-semibold text-muted">{label}</span>
@@ -33,14 +43,32 @@ export function Profile() {
   const own = id === me
   const navigate = useNavigate()
   const state = useAsync(async () => {
-    const [profile, stats] = await Promise.all([fetchProfile(id), fetchStats(id)])
-    return { profile, stats }
-  }, [id])
+    const [profile, stats, buddies] = await Promise.all([fetchProfile(id), fetchStats(id), fetchBuddies(me)])
+    return { profile, stats, buddies }
+  }, [id, me])
+  const [busy, setBusy] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   if (state.loading) return <Loading />
   if (state.error || !state.data) return <ErrorNote message={state.error ?? 'Something went wrong'} />
-  const { profile, stats } = state.data
+  const { profile, stats, buddies } = state.data
   if (!profile) return <p>Golfer not found.</p>
+
+  // Where you stand with this golfer, for the buddy card on their profile.
+  const all = [...buddies.buddies, ...buddies.incoming, ...buddies.sent]
+  const link = all.find((r) => r.golfer.id === id)
+  async function act(fn: () => Promise<void>) {
+    setBusy(true)
+    setActionError(null)
+    try {
+      await fn()
+      state.reload()
+    } catch (e) {
+      setActionError((e as Error).message)
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const bag = (profile.bag ?? {}) as Record<string, string>
   const bagRows = bagLabels.filter(([k]) => bag[k])
@@ -92,9 +120,56 @@ export function Profile() {
     >
       <section aria-label="Stats" className="relative grid grid-cols-3 gap-2.5">
         <Stat icon="flag" value={stats.rounds} label="Rounds" />
-        <Stat icon="user" value={stats.buddies} label="Buddies" />
+        <Stat icon="user" value={stats.buddies} label="Buddies" to={own ? '/buddies' : undefined} />
         <Stat icon="check" value={stats.showsUpPct == null ? 'New' : `${Math.round(stats.showsUpPct)}%`} label="Shows up" />
       </section>
+
+      {own && buddies.incoming.length > 0 && (
+        <Link to="/buddies" className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway no-underline ring-2 ring-amber/80`}>
+          <span className="grid size-9 place-items-center rounded-full bg-amber text-fairway"><Icon name="user" size={17} /></span>
+          <span className="flex-1 font-semibold">
+            {buddies.incoming.length} buddy request{buddies.incoming.length === 1 ? '' : 's'}
+          </span>
+          <Icon name="back" size={16} className="rotate-180 text-muted" />
+        </Link>
+      )}
+
+      {!own && (
+        <div className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway ${link?.status === 'accepted' ? 'ring-2 ring-green/45' : ''}`}>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">
+              {link?.status === 'accepted'
+                ? 'You’re buddies'
+                : link?.incoming
+                  ? `${shortName(profile.display_name)} wants to be buddies`
+                  : link
+                    ? 'Buddy request sent'
+                    : 'Played together?'}
+            </span>
+            <span className="block text-[13px] text-muted">
+              {link?.status === 'accepted' ? 'You see each other’s buddies-only rounds' : 'Buddies can join each other’s buddies-only rounds'}
+            </span>
+          </span>
+          {link?.status === 'accepted' ? (
+            <button type="button" disabled={busy} onClick={() => confirm('Remove this buddy?') && act(() => removeConnection(link.id))} className="min-h-10 shrink-0 px-2 text-[13px] font-semibold text-muted">
+              Remove
+            </button>
+          ) : link?.incoming ? (
+            <button type="button" disabled={busy} onClick={() => act(() => answerBuddyRequest(link.id, 'accepted'))} className={`${primaryButton} min-h-10 shrink-0 gap-1.5 px-3.5 text-[14px]`}>
+              <Icon name="check" size={15} /> Accept
+            </button>
+          ) : link ? (
+            <button type="button" disabled={busy} onClick={() => act(() => removeConnection(link.id))} className="min-h-10 shrink-0 px-2 text-[13px] font-semibold text-muted">
+              Cancel
+            </button>
+          ) : (
+            <button type="button" disabled={busy} onClick={() => act(() => sendBuddyRequest(id))} className={`${primaryButton} min-h-10 shrink-0 gap-1.5 px-3.5 text-[14px]`}>
+              <Icon name="plus" size={15} /> Buddy
+            </button>
+          )}
+        </div>
+      )}
+      {actionError && <div className="relative"><ErrorNote message={actionError} /></div>}
 
       {profile.bio && (
         <Section title="About" icon="chat">

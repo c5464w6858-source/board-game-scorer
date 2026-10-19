@@ -5,7 +5,10 @@ import { Section } from '../components/Section'
 import { glassCard, primaryButton, roundButton, secondaryButton } from '../components/surfaces'
 import { Avatar, ErrorNote, Icon, Loading, OpenSpot } from '../components/ui'
 import { firstName, handicapText, shortName, teeOffIn } from '../lib/format'
-import { fetchStats } from '../lib/profiles'
+import { roundSlot, fetchFreeGolfers } from '../lib/availability'
+import { distanceKm } from '../lib/courses'
+import { miles } from '../lib/match'
+import { fetchBuddyIds, fetchStats } from '../lib/profiles'
 import { decideRequest } from '../lib/requests'
 import { acceptedPlayers, fetchRound, pendingRequests, roundTitle, spotsLeft } from '../lib/rounds'
 import { useAsync } from '../lib/useAsync'
@@ -24,15 +27,27 @@ export function HostRequests() {
     const stats = new Map(
       await Promise.all(pendingRequests(round).map(async (q) => [q.user_id, await fetchStats(q.user_id)] as const)),
     )
-    return { round, stats }
-  }, [id])
+    // Golfers who said they're free when this round tees off and would travel this far.
+    const { day, slot } = roundSlot(round.tee_time)
+    const [freeGolfers, buddyIds] = await Promise.all([fetchFreeGolfers(day, slot), fetchBuddyIds(me)])
+    const taken = new Set([round.host_id, ...round.round_requests.map((q) => q.user_id)])
+    const free = freeGolfers
+      .filter((g) => !taken.has(g.id))
+      .filter((g) => {
+        if (!round.course || !g.home_club) return true
+        return miles(distanceKm(g.home_club.lat, g.home_club.lon, round.course.lat, round.course.lon)) <= g.search_radius_miles
+      })
+      .map((g) => ({ ...g, buddy: buddyIds.includes(g.id) }))
+      .sort((a, b) => Number(b.buddy) - Number(a.buddy))
+    return { round, stats, free, slot }
+  }, [id, me])
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   if (state.loading) return <Loading />
   if (state.error) return <ErrorNote message={state.error} />
   if (!state.data) return <p>Round not found.</p>
-  const { round, stats } = state.data
+  const { round, stats, free, slot } = state.data
   if (round.host_id !== me) return <p>Only the host can see requests. <Link to={`/rounds/${id}`}>Back to the round</Link></p>
 
   const pending = pendingRequests(round)
@@ -160,6 +175,35 @@ export function HostRequests() {
       </Section>
 
       {error && <div className="relative"><ErrorNote message={error} /></div>}
+
+      {spots > 0 && (
+        <Section title="Free then" icon="clock" badge={free.length || undefined}>
+          {free.length ? (
+            <>
+              <p className="relative -mt-1 mb-0 text-[14px] text-muted">
+                Said they’re free that {slot === 'am' ? 'morning' : 'afternoon'} and within reach. Share the round with them.
+              </p>
+              <div className={`${glassCard} divide-y divide-line-soft overflow-hidden text-fairway`}>
+                {free.map((g) => (
+                  <Link key={g.id} to={`/golfers/${g.id}`} className="flex items-center gap-3 px-4 py-3 text-fairway no-underline">
+                    <Avatar name={g.display_name ?? 'Golfer'} src={g.avatar_url} size={40} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-semibold">{shortName(g.display_name)}</span>
+                      <span className="block text-[13px] text-muted">HCP <span className="font-mono">{handicapText(g.handicap)}</span></span>
+                    </span>
+                    {g.buddy && <span className="rounded-full bg-flag px-2.5 py-1 text-[12px] font-semibold">Buddy</span>}
+                    <Icon name="back" size={16} className="rotate-180 text-muted" />
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className={`${glassCard} px-4 py-4 text-[14px] text-muted`}>
+              Nobody has said they’re free that {slot === 'am' ? 'morning' : 'afternoon'} yet. Golfers mark free slots under “I’m free”.
+            </div>
+          )}
+        </Section>
+      )}
 
       <Section title="Your group" icon="user" action={<span className="text-[13px] text-muted">{players.length + 1} of {round.max_players}</span>}>
         <div className={`${glassCard} grid gap-2 px-3 py-4 text-fairway`} style={{ gridTemplateColumns: `repeat(${round.max_players}, minmax(0, 1fr))` }}>
