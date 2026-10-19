@@ -1,8 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { ReactNode } from 'react'
 import { ClubPicker } from '../components/ClubPicker'
-import { ActionBar, darkDisabled, field as pill, Switch } from '../components/controls'
+import { ActionBar, darkDisabled, Field, field as pill, Pick, Switch } from '../components/controls'
 import { PhotoPage } from '../components/PhotoPage'
 import { Section } from '../components/Section'
 import { glassCard, limeButton, roundButton } from '../components/surfaces'
@@ -20,33 +19,6 @@ const bagFields = [
 ] as const
 
 const field = `${pill} w-full text-[16px]`
-
-function Field({ label, children }: { label: ReactNode; children: ReactNode }) {
-  return (
-    <label className="flex flex-col gap-1.5 px-4 py-3">
-      <span className="text-[13px] font-semibold text-muted">{label}</span>
-      {children}
-    </label>
-  )
-}
-
-function Pick({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={`inline-flex min-h-10 items-center gap-1.5 rounded-full px-3.5 text-[14px] font-semibold ${
-        on
-          ? 'bg-fairway text-flag shadow-[0_8px_16px_-10px_rgba(14,31,22,0.8)]'
-          : 'border border-white/90 bg-white/80 text-fairway shadow-[0_4px_12px_-6px_rgba(14,31,22,0.3)] backdrop-blur'
-      }`}
-    >
-      {on && <Icon name="check" size={14} />}
-      {children}
-    </button>
-  )
-}
 
 export function ProfileEdit() {
   const { id, data, loading, error: loadError } = useMe()

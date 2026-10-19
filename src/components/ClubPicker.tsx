@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { searchCourses, type Course } from '../lib/courses'
-
-const field = 'min-h-12 w-full rounded-2xl border border-line bg-card px-4 text-[16px]'
+import { field } from './controls'
+import { glassCard } from './surfaces'
+import { Icon } from './ui'
 
 // Search the UK course list and pick one, e.g. a golfer's home club.
 export function ClubPicker({ club, onChange }: { club: Course | null; onChange: (c: Course | null) => void }) {
@@ -20,28 +21,36 @@ export function ClubPicker({ club, onChange }: { club: Course | null; onChange: 
     }
   }, [query])
 
+  if (club)
+    return (
+      <div className={`${glassCard} flex items-center gap-3 p-3.5 text-fairway ring-2 ring-green/45`}>
+        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-fairway text-flag">
+          <Icon name="tee" size={20} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-semibold">{club.name}</span>
+          {club.town && <span className="block truncate text-[13px] text-muted">{club.town}</span>}
+        </span>
+        <button type="button" onClick={() => onChange(null)} className="min-h-11 shrink-0 text-[13px] font-semibold text-green">
+          Change
+        </button>
+      </div>
+    )
+
   return (
     <div className="flex flex-col gap-2">
-      {club && (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border-[1.5px] border-green bg-card px-4 py-3">
-          <span>
-            <span className="block font-semibold">{club.name}</span>
-            {club.town && <span className="block text-sm text-muted">{club.town}</span>}
-          </span>
-          <button type="button" onClick={() => onChange(null)} className="min-h-11 shrink-0 text-sm text-muted underline">
-            Change
-          </button>
-        </div>
-      )}
-      {!club && (
-        <>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search for your home club"
-            placeholder="Club, town or postcode"
-            className={field}
-          />
+      <label className="relative block">
+        <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted"><Icon name="search" size={18} /></span>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search for your home club"
+          placeholder="Club, town or postcode"
+          className={`${field} w-full pl-11 text-[16px]`}
+        />
+      </label>
+      {results.length > 0 && (
+        <div className={`${glassCard} divide-y divide-line-soft overflow-hidden text-fairway`}>
           {results.slice(0, 8).map((c) => (
             <button
               key={c.id}
@@ -50,13 +59,13 @@ export function ClubPicker({ club, onChange }: { club: Course | null; onChange: 
                 onChange(c)
                 setQuery('')
               }}
-              className="min-h-11 rounded-2xl border border-line bg-card px-4 py-2 text-left"
+              className="block min-h-11 w-full px-4 py-2.5 text-left"
             >
               <span className="block font-semibold">{c.name}</span>
-              {c.town && <span className="block text-sm text-muted">{c.town}</span>}
+              {c.town && <span className="block text-[13px] text-muted">{c.town}</span>}
             </button>
           ))}
-        </>
+        </div>
       )}
     </div>
   )

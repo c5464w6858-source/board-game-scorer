@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ClubPicker } from '../components/ClubPicker'
-import { Avatar, Button, Card, Chip, ErrorNote, Loading, Logo, RoundIconButton, Segmented, SectionLabel, ToggleRow } from '../components/ui'
+import { ActionBar, darkDisabled, Field, field as pill, Pick, Switch } from '../components/controls'
+import { PhotoPage } from '../components/PhotoPage'
+import { Section } from '../components/Section'
+import { glassCard, limeButton, roundButton } from '../components/surfaces'
+import { Avatar, ErrorNote, Icon, Loading, Logo } from '../components/ui'
 import { fetchCourse, type Course } from '../lib/courses'
 import { playStyles } from '../lib/format'
 import { fetchPreferences, playFrequencies, savePreferences, updateProfile, uploadAvatar } from '../lib/profiles'
 import { useMe } from '../lib/useMe'
 
-const field = 'min-h-12 w-full rounded-2xl border border-line bg-card px-4 text-[16px]'
+const field = `${pill} w-full text-[16px]`
 
 const steps = [
   { title: 'About you', intro: 'So other golfers know who they’re playing with.' },
@@ -86,13 +90,13 @@ export function Welcome() {
   function missing(): string | null {
     if (step === 0) {
       if (!name.trim()) return 'Add your name'
-      if (!noHandicap && !handicap.trim()) return 'Add your handicap, or tick that you don’t have one'
+      if (!noHandicap && !handicap.trim()) return 'Add your handicap, or tick “no handicap”'
       if (!area.trim()) return 'Add where you’re based'
     } else if (step === 1) {
-      if (!club) return 'Choose your home club or the course you play most'
-      if (!member) return 'Say whether you’re a member there'
+      if (!club) return 'Choose your home club'
+      if (!member) return 'Say if you’re a member there'
     } else {
-      if (!styles.length) return 'Pick at least one way you like to play'
+      if (!styles.length) return 'Pick how you like to play'
       if (!frequency) return 'Choose how often you play'
     }
     return null
@@ -127,140 +131,138 @@ export function Welcome() {
   const todo = missing()
 
   return (
-    <main className="mx-auto flex min-h-full max-w-[480px] flex-col gap-6 bg-clubhouse px-5 pt-5 pb-8">
-      <header className="flex min-h-11 items-center justify-between">
-        {step > 0 ? (
-          <RoundIconButton label="Back" icon="back" onClick={() => setStep(step - 1)} />
-        ) : (
-          <Logo size={32} />
-        )}
-      </header>
-
-      <div className="flex gap-1.5" aria-label={`Step ${step + 1} of ${steps.length}`}>
-        {steps.map((_, i) => (
-          <span key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-green' : 'bg-line'}`} />
-        ))}
-      </div>
-
-      <div>
-        <div className="text-[13px] font-semibold text-green">Step {step + 1} of {steps.length}</div>
-        <h1 className="mt-1 mb-1 font-display text-[30px] font-extrabold tracking-[-0.03em]">{steps[step].title}</h1>
-        <p className="m-0 text-muted">{steps[step].intro}</p>
-      </div>
-
-      {step === 0 && (
-        <div className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Name</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="e.g. Paul Whitehouse" className={field} />
-            <span className="text-[13px] text-muted">Other golfers see your first name and last initial.</span>
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Handicap index</span>
-            <input
-              value={noHandicap ? '' : handicap}
-              onChange={(e) => setHandicap(e.target.value)}
-              disabled={noHandicap}
-              inputMode="decimal"
-              placeholder="e.g. 14.2"
-              className={`${field} font-mono disabled:opacity-50`}
-            />
-          </label>
-          <Card className="overflow-hidden">
-            <ToggleRow label="I don’t have a handicap yet" checked={noHandicap} onChange={setNoHandicap} />
-          </Card>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Where are you based?</span>
-            <input value={area} onChange={(e) => setArea(e.target.value)} placeholder="Town or area, e.g. Harlow" className={field} />
-          </label>
-        </div>
-      )}
-
-      {step === 1 && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Home club or the course you play most</span>
-            <ClubPicker club={club} onChange={setClub} />
+    <main className="mx-auto min-h-full max-w-[480px] px-5 pt-5">
+      <PhotoPage
+        header={
+          <div className="flex flex-col gap-5">
+            <div className="flex min-h-11 items-center gap-4">
+              {step > 0 ? (
+                <button type="button" aria-label="Back" onClick={() => setStep(step - 1)} className={roundButton}>
+                  <Icon name="back" size={20} />
+                </button>
+              ) : (
+                <Logo size={40} />
+              )}
+              <div className="flex flex-1 flex-col gap-1.5" aria-label={`Step ${step + 1} of ${steps.length}`}>
+                <span className="text-[12px] font-semibold tracking-[0.08em] text-white/70 uppercase">Step {step + 1} of {steps.length}</span>
+                <div className="flex gap-1.5" aria-hidden="true">
+                  {steps.map((_, i) => (
+                    <span key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-flag' : 'bg-white/20'}`} />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div>
+              {step === 0 && <span className="mb-2 block text-[13px] font-semibold text-flag">Welcome to BuddyGolf</span>}
+              <h1 className="m-0 font-display text-[30px] leading-[1.02] font-extrabold tracking-[-0.035em]">{steps[step].title}</h1>
+              <p className="mt-1 mb-0 text-sm text-white/80">{steps[step].intro}</p>
+            </div>
           </div>
-          {club && (
-            <div className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium">Are you a member at {club.name}?</span>
-              <Segmented
-                label="Member at your home club"
-                value={member}
-                onChange={setMember}
-                options={[
-                  { value: 'yes', label: 'Yes' },
-                  { value: 'no', label: 'No, I pay as I play' },
-                ]}
-              />
+        }
+      >
+        {step === 0 && (
+          <Section title="Your details" icon="user">
+            <div className={`${glassCard} divide-y divide-line-soft text-fairway`}>
+              <Field label="Name">
+                <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="e.g. Paul Whitehouse" className={field} />
+                <span className="text-[12px] text-muted">Other golfers see your first name and last initial.</span>
+              </Field>
+              <Field label="Handicap index">
+                <input
+                  value={noHandicap ? '' : handicap}
+                  onChange={(e) => setHandicap(e.target.value)}
+                  disabled={noHandicap}
+                  inputMode="decimal"
+                  placeholder="e.g. 14.2"
+                  className={`${field} font-mono disabled:opacity-50`}
+                />
+              </Field>
+              <Switch label="No handicap yet" checked={noHandicap} onChange={setNoHandicap} />
+              <Field label="Where are you based?">
+                <input value={area} onChange={(e) => setArea(e.target.value)} placeholder="Town or area, e.g. Harlow" className={field} />
+              </Field>
             </div>
-          )}
-          <Card className="divide-y divide-line-soft overflow-hidden">
-            {member === 'no' && (
-              <ToggleRow label="I’m looking for a club membership" checked={looking} onChange={setLooking} />
+          </Section>
+        )}
+
+        {step === 1 && (
+          <>
+            <Section title="Home club" icon="flag">
+              <div className="relative text-fairway">
+                <ClubPicker club={club} onChange={setClub} />
+              </div>
+            </Section>
+            {club && (
+              <Section title="Membership" icon="check">
+                <p className="relative -mt-1 mb-0 text-[14px] text-muted">Are you a member at {club.name}?</p>
+                <div className="relative flex flex-wrap gap-2">
+                  <Pick on={member === 'yes'} onClick={() => setMember('yes')}>Yes, I’m a member</Pick>
+                  <Pick on={member === 'no'} onClick={() => setMember('no')}>No, I pay as I play</Pick>
+                </div>
+              </Section>
             )}
-            <ToggleRow
-              label="Let golf clubs contact me about membership and offers"
-              hint="Off unless you turn it on. We never sell your data."
-              checked={clubsCanContact}
-              onChange={setClubsCanContact}
-            />
-          </Card>
-        </div>
-      )}
+            <Section title="Clubs and offers" icon="lock">
+              <div className={`${glassCard} divide-y divide-line-soft overflow-hidden text-fairway`}>
+                {member === 'no' && <Switch label="I’m looking for a club membership" checked={looking} onChange={setLooking} />}
+                <Switch
+                  label="Let golf clubs contact me"
+                  hint="About membership and offers. Off unless you turn it on. We never sell your data."
+                  checked={clubsCanContact}
+                  onChange={setClubsCanContact}
+                />
+              </div>
+            </Section>
+          </>
+        )}
 
-      {step === 2 && (
-        <div className="flex flex-col gap-5">
-          <section className="flex flex-col gap-2">
-            <SectionLabel>How I play</SectionLabel>
-            <div className="flex flex-wrap gap-2">
-              {playStyles.map((p) => (
-                <Chip
-                  key={p.value}
-                  outline={!styles.includes(p.value)}
-                  active={styles.includes(p.value)}
-                  onClick={() => setStyles((s) => (s.includes(p.value) ? s.filter((x) => x !== p.value) : [...s, p.value]))}
-                >
-                  {p.label}
-                </Chip>
-              ))}
-            </div>
-          </section>
-          <section className="flex flex-col gap-2">
-            <SectionLabel>How often do you play?</SectionLabel>
-            <div className="flex flex-wrap gap-2">
-              {playFrequencies.map((f) => (
-                <Chip key={f.value} outline={frequency !== f.value} active={frequency === f.value} onClick={() => setFrequency(f.value)}>
-                  {f.label}
-                </Chip>
-              ))}
-            </div>
-          </section>
-          <section className="flex flex-col gap-2">
-            <SectionLabel>Profile photo</SectionLabel>
-            <div className="flex items-center gap-4">
-              <Avatar name={name || 'You'} src={avatar} size={64} />
-              <label className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line bg-card px-4 font-semibold">
-                {avatar ? 'Change photo' : 'Add a photo'}
-                <input type="file" accept="image/*" className="sr-only" onChange={(e) => pickAvatar(e.target.files?.[0])} />
-              </label>
-            </div>
-            <p className="m-0 text-[13px] text-muted">Golfers are more likely to accept a request with a face to it.</p>
-          </section>
-        </div>
-      )}
+        {step === 2 && (
+          <>
+            <Section title="How I play" icon="tee">
+              <div className="relative flex flex-wrap gap-2">
+                {playStyles.map((p) => (
+                  <Pick
+                    key={p.value}
+                    on={styles.includes(p.value)}
+                    onClick={() => setStyles((s) => (s.includes(p.value) ? s.filter((x) => x !== p.value) : [...s, p.value]))}
+                  >
+                    {p.label}
+                  </Pick>
+                ))}
+              </div>
+            </Section>
+            <Section title="How often" icon="clock">
+              <div className="relative flex flex-wrap gap-2">
+                {playFrequencies.map((f) => (
+                  <Pick key={f.value} on={frequency === f.value} onClick={() => setFrequency(f.value)}>{f.label}</Pick>
+                ))}
+              </div>
+            </Section>
+            <Section title="Profile photo" icon="user">
+              <div className={`${glassCard} flex items-center gap-4 p-4 text-fairway`}>
+                <span className="rounded-full p-[3px] ring-[3px] ring-flag">
+                  <Avatar name={name || 'You'} src={avatar} size={60} />
+                </span>
+                <div className="flex flex-1 flex-col gap-2">
+                  <p className="m-0 text-[13px] text-muted">Golfers are more likely to accept a request with a face to it.</p>
+                  <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 self-start rounded-full bg-fairway px-3.5 text-[14px] font-semibold text-white">
+                    <Icon name="user" size={16} />
+                    {avatar ? 'Change photo' : 'Add a photo'}
+                    <input type="file" accept="image/*" className="sr-only" onChange={(e) => pickAvatar(e.target.files?.[0])} />
+                  </label>
+                </div>
+              </div>
+            </Section>
+          </>
+        )}
 
-      {error && <ErrorNote message={error} />}
+        {error && <div className="relative"><ErrorNote message={error} /></div>}
 
-      <div className="mt-auto flex flex-col gap-2 pt-2">
-        <Button size="lg" full disabled={busy || Boolean(todo)} onClick={next}>
-          {busy ? 'Saving…' : last ? 'Finish' : 'Continue'}
-        </Button>
-        <p aria-live="polite" className="m-0 min-h-5 text-center text-sm text-muted">
-          {todo}
-        </p>
-      </div>
+        <ActionBar noTabBar title={todo ? 'Nearly there' : last ? 'All set' : 'Looks good'} note={todo ?? 'You can change it any time'}>
+          <button type="button" className={`${limeButton} ${darkDisabled}`} disabled={busy || Boolean(todo)} onClick={next}>
+            {busy ? 'Saving…' : last ? 'Finish' : 'Continue'}
+          </button>
+        </ActionBar>
+      </PhotoPage>
     </main>
   )
 }

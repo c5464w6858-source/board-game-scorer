@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthField } from '../components/AuthField'
-import { Button, ErrorNote, Loading, Logo } from '../components/ui'
+import { Button, ErrorNote, Loading } from '../components/ui'
+import { AuthShell } from './login/AuthShell'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 
@@ -24,20 +25,19 @@ export function ResetPassword() {
   }
 
   return (
-    <main className="mx-auto flex min-h-full max-w-[480px] flex-col gap-6 bg-clubhouse px-5 pt-10 pb-8">
-      <Logo size={40} />
-      <h1 className="m-0 font-display text-[30px] font-extrabold tracking-[-0.03em]">Choose a new password</h1>
+    <AuthShell label="Choose a new password" title="New password" subtitle="Pick one you’ll remember, then get back to your golf.">
       {loading ? (
         <Loading />
       ) : !session ? (
-        <p className="m-0 text-muted">
-          This reset link has expired or was already used. <Link to="/login" className="font-semibold text-green">Request a new one</Link>.
+        <p className="m-0 text-[15px]">
+          This reset link has expired or was already used. <Link to="/login" className="font-semibold text-green-dark">Request a new one</Link>.
         </p>
       ) : (
         <form onSubmit={submit} className="flex flex-col gap-4">
           <AuthField
             label="New password"
             type="password"
+            tone="glass"
             required
             minLength={6}
             autoComplete="new-password"
@@ -51,6 +51,6 @@ export function ResetPassword() {
           </Button>
         </form>
       )}
-    </main>
+    </AuthShell>
   )
 }
