@@ -84,7 +84,7 @@ export function HostTime() {
               step={60}
               value={draft.time}
               onChange={(e) => update({ time: e.target.value })}
-              className={`${field} w-[140px] text-center font-mono text-lg font-semibold`}
+              className={`${field} w-[164px] text-center font-mono text-lg font-semibold`}
             />
           </label>
           <a href={bookUrl} target="_blank" rel="noreferrer" className={`${secondaryButton} gap-2`}>
