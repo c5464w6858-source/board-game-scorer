@@ -13,19 +13,24 @@ import type { HomeData } from './useHomeData'
 // Building blocks shared by the Home layouts.
 
 // The four ways in: compact solid tiles that stand off the dark photo.
-// Find a game is the lime one; the rest are cream with a coloured icon.
+// Find a game is lime, Societies keeps its navy and gold, the rest are green.
 const tile = 'flex min-h-14 items-center gap-2.5 rounded-[18px] py-2 pr-2.5 pl-2 no-underline shadow-[0_8px_18px_-10px_rgba(0,0,0,0.55)]'
 const tileIcon = 'grid size-9 shrink-0 place-items-center rounded-full'
 
-function ActionTile({ to, icon, label, hint, tone }: { to: string; icon: IconName; label: string; hint: string; tone: 'lime' | 'green' | 'navy' | 'clock' }) {
-  const lime = tone === 'lime'
-  const iconClass = { lime: 'bg-fairway text-flag', green: 'bg-fairway text-flag', navy: 'bg-navy text-gold', clock: 'bg-green-tint text-green' }[tone]
+const tileTones = {
+  lime: { tile: 'bg-gradient-to-b from-[#DBF79A] to-flag text-fairway', icon: 'bg-fairway text-flag', hint: 'text-fairway/70' },
+  green: { tile: 'border border-white/15 bg-gradient-to-b from-[#1C8E47] to-green-dark text-white', icon: 'bg-white/15 text-flag', hint: 'text-white/75' },
+  navy: { tile: 'border border-gold/45 bg-gradient-to-b from-navy-2 to-navy text-gold-soft', icon: 'bg-gold text-navy', hint: 'text-white/70' },
+}
+
+function ActionTile({ to, icon, label, hint, tone }: { to: string; icon: IconName; label: string; hint: string; tone: keyof typeof tileTones }) {
+  const t = tileTones[tone]
   return (
-    <Link to={to} className={`${tile} ${lime ? 'bg-gradient-to-b from-[#DBF79A] to-flag' : 'bg-[#F7F5EF]'} text-fairway`}>
-      <span className={`${tileIcon} ${iconClass}`}><Icon name={icon} size={17} /></span>
+    <Link to={to} className={`${tile} ${t.tile}`}>
+      <span className={`${tileIcon} ${t.icon}`}><Icon name={icon} size={17} /></span>
       <span className="min-w-0">
         <span className="block truncate text-[15px] leading-tight font-semibold">{label}</span>
-        <span className={`block truncate text-[12px] ${lime ? 'text-fairway/70' : 'text-muted'}`}>{hint}</span>
+        <span className={`block truncate text-[12px] ${t.hint}`}>{hint}</span>
       </span>
     </Link>
   )
@@ -37,7 +42,7 @@ export function Actions({ d }: { d: HomeData }) {
       <ActionTile to="/discover" icon="search" label="Find a game" hint={d.openCount ? `${d.openCount} open near you` : 'Open games near you'} tone="lime" />
       <ActionTile to="/host" icon="flag" label="Host a round" hint="Always free" tone="green" />
       <ActionTile to="/groups" icon="user" label="Societies" hint="Trips & Ryder Cups" tone="navy" />
-      <ActionTile to="/free" icon="clock" label="I’m free" hint="Let hosts find you" tone="clock" />
+      <ActionTile to="/free" icon="clock" label="I’m free" hint="Let hosts find you" tone="green" />
     </div>
   )
 }
