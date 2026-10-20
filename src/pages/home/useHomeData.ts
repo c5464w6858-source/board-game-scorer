@@ -1,5 +1,5 @@
 import { matchScore, roundDistanceMiles } from '../../lib/match'
-import { fetchUpcomingRounds, fitsPreferences, isMyRound, isOpenTo, pendingRequests } from '../../lib/rounds'
+import { fetchMyRounds, fetchUpcomingRounds, fitsPreferences, isMyRound, isOpenTo, pendingRequests } from '../../lib/rounds'
 import { useAsync } from '../../lib/useAsync'
 import { useMe } from '../../lib/useMe'
 import { fetchForecast } from '../../lib/weather'
@@ -8,9 +8,8 @@ import { fetchForecast } from '../../lib/weather'
 export function useHomeData() {
   const me = useMe()
   const rounds = useAsync(async () => {
-    const all = await fetchUpcomingRounds()
     // Rounds you're hosting or playing in, plus ones you've asked to join, soonest first.
-    const mine = all.filter((r) => isMyRound(r, me.id) || r.round_requests.some((q) => q.user_id === me.id && q.status === 'pending'))
+    const [all, mine] = await Promise.all([fetchUpcomingRounds(), fetchMyRounds(me.id)])
     const next = mine.find((r) => isMyRound(r, me.id)) ?? null
     const forecast = next?.course ? await fetchForecast(next.course.lat, next.course.lon, next.tee_time) : null
     return { all, mine, next, forecast }

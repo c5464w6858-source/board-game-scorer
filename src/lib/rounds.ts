@@ -39,6 +39,25 @@ export async function fetchUpcomingRounds(limit = 50): Promise<RoundRow[]> {
 }
 
 // The golfer's "games I'm shown" choices from the Safety page.
+// Rounds you host or have asked to join (pending or accepted) from a date on,
+// soonest first. Not limited to the open-games feed, so none go missing.
+export async function fetchMyRounds(userId: string, from: Date = new Date()): Promise<RoundRow[]> {
+  const { data: asked, error: askError } = await supabase
+    .from('round_requests')
+    .select('round_id')
+    .eq('user_id', userId)
+    .in('status', ['pending', 'accepted'])
+  if (askError) throw askError
+  const ids = asked.map((q) => q.round_id)
+  const { data, error } = await roundsQuery()
+    .eq('cancelled', false)
+    .gte('tee_time', from.toISOString())
+    .or(ids.length ? `host_id.eq.${userId},id.in.(${ids.join(',')})` : `host_id.eq.${userId}`)
+    .order('tee_time')
+  if (error) throw error
+  return data
+}
+
 export const fitsPreferences = (r: RoundRow, prefs: { women_only: boolean; beginner_friendly: boolean } | null | undefined) =>
   (!prefs?.women_only || r.women_only) && (!prefs?.beginner_friendly || r.beginner_friendly)
 
