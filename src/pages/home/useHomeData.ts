@@ -9,9 +9,11 @@ export function useHomeData() {
   const me = useMe()
   const rounds = useAsync(async () => {
     const all = await fetchUpcomingRounds()
-    const next = all.find((r) => isMyRound(r, me.id)) ?? null
+    // Rounds you're hosting or playing in, plus ones you've asked to join, soonest first.
+    const mine = all.filter((r) => isMyRound(r, me.id) || r.round_requests.some((q) => q.user_id === me.id && q.status === 'pending'))
+    const next = mine.find((r) => isMyRound(r, me.id)) ?? null
     const forecast = next?.course ? await fetchForecast(next.course.lat, next.course.lon, next.tee_time) : null
-    return { all, next, forecast }
+    return { all, mine, next, forecast }
   }, [me.id])
 
   const loading = me.loading || rounds.loading
@@ -40,7 +42,9 @@ export function useHomeData() {
     reload: rounds.reload,
     loading,
     error,
+    me: me.id,
     name: me.data?.profile?.display_name ?? null,
+    mine: rounds.data?.mine ?? [],
     next: rounds.data?.next ?? null,
     forecast: rounds.data?.forecast ?? null,
     openCount: open.length,

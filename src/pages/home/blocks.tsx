@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Pick } from '../../components/controls'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
 import { AvatarStack, Icon } from '../../components/ui'
 import { dayLabel, firstName, teeOffIn, teeTime } from '../../lib/format'
-import { roundTitle } from '../../lib/rounds'
+import { roundTitle, type RoundRow } from '../../lib/rounds'
 import { lineup, spotsText } from './helpers'
 import { PickCard, WaitingCard } from './parts'
 import { Scorecard } from './Scorecard'
@@ -68,43 +70,86 @@ export function TeeChip({ iso }: { iso: string }) {
 }
 
 // Next round with the drawn golf hole on top.
-export function NextRoundHole({ d, card }: { d: HomeData; card: string }) {
-  const next = d.next
+// How you're part of a round, shown as a chip on its card.
+const roles = {
+  hosting: { label: 'Hosting', icon: 'flag', chip: 'bg-fairway text-flag', edge: 'ring-2 ring-fairway/80' },
+  playing: { label: 'You’re in', icon: 'check', chip: 'bg-flag text-fairway', edge: '' },
+  requested: { label: 'Requested', icon: 'clock', chip: 'bg-white text-[#8A5A12]', edge: 'opacity-95' },
+} as const
+
+function roleIn(r: RoundRow, me: string): keyof typeof roles {
+  if (r.host_id === me) return 'hosting'
+  return r.round_requests.some((q) => q.user_id === me && q.status === 'accepted') ? 'playing' : 'requested'
+}
+
+function MyRoundCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; card: string; wide: boolean }) {
+  const role = roles[roleIn(round, d.me)]
+  const forecast = round.id === d.next?.id ? d.forecast : null
   return (
-    <div className={`${card} overflow-hidden`}>
+    <Link
+      to={`/rounds/${round.id}`}
+      className={`${card} ${role.edge} flex shrink-0 snap-start flex-col overflow-hidden text-fairway no-underline ${wide ? 'w-full' : 'w-[86%]'}`}
+    >
       <div className="relative h-[124px]">
         <HoleArt className="size-full" />
-        {next && (
-          <>
-            <span className="absolute top-3 left-3"><TeeChip iso={next.tee_time} /></span>
-            {d.forecast && (
-              <span className="absolute right-3 bottom-3 rounded-full bg-white/90 px-2.5 py-1 text-xs">
-                <span className="font-mono">{d.forecast.temp}°</span> · {d.forecast.label}
-              </span>
-            )}
-          </>
+        <span className="absolute top-3 left-3"><TeeChip iso={round.tee_time} /></span>
+        <span className={`absolute top-3 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${role.chip}`}>
+          <Icon name={role.icon} size={13} /> {role.label}
+        </span>
+        {forecast && (
+          <span className="absolute right-3 bottom-3 rounded-full bg-white/90 px-2.5 py-1 text-xs">
+            <span className="font-mono">{forecast.temp}°</span> · {forecast.label}
+          </span>
         )}
       </div>
-      {next ? (
-        <Link to={`/rounds/${next.id}`} className="flex flex-col gap-3 p-4 text-fairway no-underline">
-          <div>
-            <div className="text-xs font-semibold text-green">{teeOffIn(next.tee_time)}</div>
-            <div className="font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(next)}</div>
-            <div className="mt-1 text-sm text-[#4A544E]">{next.course_name}</div>
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <div>
+          <div className="text-xs font-semibold text-green">{teeOffIn(round.tee_time)}</div>
+          <div className="truncate font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(round)}</div>
+          <div className="mt-1 truncate text-sm text-[#4A544E]">
+            {round.host_id === d.me ? `You’re hosting · ${round.course_name}` : `${firstName(round.host?.display_name ?? null)}’s game · ${round.course_name}`}
           </div>
-          <Scorecard round={next} />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <AvatarStack players={lineup(next)} total={next.max_players} />
-              <span className="text-[13px] text-muted">{spotsText(next)}</span>
-            </div>
-            <Icon name="back" size={18} className="rotate-180 text-muted" />
+        </div>
+        <Scorecard round={round} />
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <AvatarStack players={lineup(round)} total={round.max_players} />
+            <span className="text-[13px] text-muted">{spotsText(round)}</span>
           </div>
-        </Link>
-      ) : (
-        <NothingBooked />
+          <Icon name="back" size={18} className="rotate-180 text-muted" />
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// Every round you're in, hosting or waiting on, swiped sideways.
+// Chips narrow it to the rounds you host or the ones you've joined.
+export function MyRounds({ d, card }: { d: HomeData; card: string }) {
+  const [show, setShow] = useState<'all' | 'hosting' | 'joined'>('all')
+  const hosting = d.mine.filter((r) => r.host_id === d.me)
+  const joined = d.mine.filter((r) => r.host_id !== d.me)
+  const rounds = show === 'hosting' ? hosting : show === 'joined' ? joined : d.mine
+  return (
+    <Section title="Your rounds" icon="tee">
+      {hosting.length > 0 && joined.length > 0 && (
+        <div className="relative flex gap-2">
+          <Pick on={show === 'all'} onClick={() => setShow('all')}>All <span className="font-mono">{d.mine.length}</span></Pick>
+          <Pick on={show === 'hosting'} onClick={() => setShow('hosting')}>Hosting <span className="font-mono">{hosting.length}</span></Pick>
+          <Pick on={show === 'joined'} onClick={() => setShow('joined')}>Joined <span className="font-mono">{joined.length}</span></Pick>
+        </div>
       )}
-    </div>
+      {rounds.length ? (
+        <div className={rounds.length > 1 ? '-mx-5 -my-3 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 py-3 pb-5' : 'flex'}>
+          {rounds.map((r) => <MyRoundCard key={r.id} round={r} d={d} card={card} wide={rounds.length === 1} />)}
+        </div>
+      ) : (
+        <div className={`${card} overflow-hidden`}>
+          <div className="h-[124px]"><HoleArt className="size-full" /></div>
+          <NothingBooked />
+        </div>
+      )}
+    </Section>
   )
 }
 
