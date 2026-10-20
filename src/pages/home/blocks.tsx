@@ -19,7 +19,7 @@ const tileIcon = 'grid size-9 shrink-0 place-items-center rounded-full'
 
 const tileTones = {
   lime: { tile: 'bg-gradient-to-b from-[#DBF79A] to-flag text-fairway', icon: 'bg-fairway text-flag', hint: 'text-fairway/70' },
-  green: { tile: 'border border-white/15 bg-gradient-to-b from-[#1C8E47] to-green-dark text-white', icon: 'bg-white/15 text-flag', hint: 'text-white/75' },
+  green: { tile: 'border border-white/15 bg-gradient-to-b from-[#157538] to-[#0A4722] text-white', icon: 'bg-white/15 text-flag', hint: 'text-white/75' },
   navy: { tile: 'border border-gold/45 bg-gradient-to-b from-navy-2 to-navy text-gold-soft', icon: 'bg-gold text-navy', hint: 'text-white/70' },
 }
 
