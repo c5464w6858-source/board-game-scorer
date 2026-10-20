@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
@@ -73,23 +73,45 @@ const roles = {
   requested: { label: 'Requested', icon: 'clock', chip: 'bg-white text-[#8A5A12]' },
 } as const
 
-// Tees off within 36 hours: the card pulses, red if you're still not accepted.
+// Tees off within 36 hours: a pulsing banner with a live countdown sits on
+// top of the card, green if you're in or hosting, red if you're not accepted yet.
 const SOON_HOURS = 36
 const isSoon = (r: RoundRow) => {
   const h = (new Date(r.tee_time).getTime() - Date.now()) / 3_600_000
   return h > 0 && h <= SOON_HOURS
 }
 
-function SoonFlag({ warn }: { warn: boolean }) {
+function Countdown({ iso }: { iso: string }) {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [])
+  const left = Math.max(0, Math.floor((new Date(iso).getTime() - now) / 1000))
+  const pad = (n: number) => String(n).padStart(2, '0')
   return (
-    <span
-      className={`absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${
-        warn ? 'bg-alert text-white' : 'bg-fairway text-flag'
+    <span className="font-mono text-[15px] font-semibold tabular-nums">
+      {pad(Math.floor(left / 3600))}:{pad(Math.floor((left % 3600) / 60))}:{pad(left % 60)}
+    </span>
+  )
+}
+
+function SoonBanner({ iso, warn }: { iso: string; warn: boolean }) {
+  return (
+    <div
+      className={`flex animate-glow items-center justify-between gap-2 px-4 py-2 text-white ${
+        warn ? 'bg-gradient-to-r from-[#D9452A] to-alert' : 'bg-gradient-to-r from-[#157538] to-[#1C8E47]'
       }`}
     >
-      <span className={`size-2 animate-blink rounded-full ${warn ? 'bg-white' : 'bg-flag'}`} />
-      {warn ? 'Soon · not confirmed' : 'Soon'}
-    </span>
+      <span className="inline-flex min-w-0 items-center gap-2 text-[13px] font-semibold tracking-[0.04em] uppercase">
+        <span className="size-2 shrink-0 animate-blink rounded-full bg-white" />
+        <span className="truncate">{warn ? 'Not confirmed' : 'Soon'}</span>
+      </span>
+      <span className="inline-flex shrink-0 items-center gap-1.5" aria-label="Time until tee off">
+        <Icon name="clock" size={15} className="text-white/85" />
+        <Countdown iso={iso} />
+      </span>
+    </div>
   )
 }
 
@@ -99,7 +121,6 @@ function roleIn(r: RoundRow, me: string): keyof typeof roles {
 }
 
 function CardArt({ round, role, forecast, dark, faded }: { round: RoundRow; role: keyof typeof roles; forecast: HomeData['forecast']; dark?: boolean; faded?: boolean }) {
-  const soon = isSoon(round)
   const r = roles[role]
   return (
     <div className="relative h-[124px]">
@@ -108,7 +129,6 @@ function CardArt({ round, role, forecast, dark, faded }: { round: RoundRow; role
       <span className={`absolute top-3 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${r.chip}`}>
         <Icon name={r.icon} size={13} /> {r.label}
       </span>
-      {soon && <SoonFlag warn={role === 'requested'} />}
       {forecast && (
         <span className="absolute right-3 bottom-3 rounded-full bg-white/90 px-2.5 py-1 text-xs text-fairway">
           <span className="font-mono">{forecast.temp}°</span> · {forecast.label}
@@ -128,8 +148,9 @@ function HostedCard({ round, d, wide }: { round: RoundRow; d: HomeData; wide: bo
   return (
     <Link
       to={waiting ? `/rounds/${round.id}/requests` : `/rounds/${round.id}`}
-      className={`${cardSize(wide)} rounded-[24px] bg-gradient-to-b from-fairway-2 to-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)] ${isSoon(round) ? 'animate-soon [--soon:#C8F169]' : ''}`}
+      className={`${cardSize(wide)} rounded-[24px] bg-gradient-to-b from-fairway-2 to-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)] ${isSoon(round) ? 'ring-2 ring-[#1C8E47]' : ''}`}
     >
+      {isSoon(round) && <SoonBanner iso={round.tee_time} warn={false} />}
       <CardArt round={round} role="hosting" forecast={round.id === d.next?.id ? d.forecast : null} dark />
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
@@ -169,8 +190,9 @@ function JoinedCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; ca
       to={`/rounds/${round.id}`}
       className={`${card} ${cardSize(wide)} text-fairway ${
         pending ? `!border-2 border-dashed !bg-white/45 !shadow-none ${soon ? '!border-alert' : '!border-[#C9B98F]'}` : ''
-      } ${soon ? `animate-soon ${pending ? '[--soon:#E5532D]' : '[--soon:#137A3A]'}` : ''}`}
+      } ${soon ? `ring-2 ${pending ? 'ring-alert' : 'ring-[#1C8E47]'}` : ''}`}
     >
+      {soon && <SoonBanner iso={round.tee_time} warn={pending} />}
       <CardArt round={round} role={role} forecast={round.id === d.next?.id ? d.forecast : null} faded={pending} />
       <div className={`flex flex-1 flex-col gap-3 p-4 ${pending ? (soon ? 'opacity-85' : 'opacity-60') : ''}`}>
         <div>
