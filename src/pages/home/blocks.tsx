@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
-import { Avatar, AvatarStack, Icon } from '../../components/ui'
+import { Avatar, AvatarStack, Icon, type IconName } from '../../components/ui'
 import { dayLabel, firstName, formatLabels, pounds, teeOffIn, teeTime } from '../../lib/format'
 import { pendingRequests, roundTitle, type RoundRow } from '../../lib/rounds'
 import { lineup, spotsText } from './helpers'
@@ -12,41 +12,32 @@ import type { HomeData } from './useHomeData'
 
 // Building blocks shared by the Home layouts.
 
-// The four ways in, as matching tiles on one frosted panel so they read as a set.
-const tile = 'flex min-h-[92px] flex-col justify-between gap-2 rounded-[20px] p-3 no-underline'
-const tileIcon = 'grid size-8 place-items-center rounded-full'
+// The four ways in: compact solid tiles that stand off the dark photo.
+// Find a game is the lime one; the rest are cream with a coloured icon.
+const tile = 'flex min-h-14 items-center gap-2.5 rounded-[18px] py-2 pr-2.5 pl-2 no-underline shadow-[0_8px_18px_-10px_rgba(0,0,0,0.55)]'
+const tileIcon = 'grid size-9 shrink-0 place-items-center rounded-full'
+
+function ActionTile({ to, icon, label, hint, tone }: { to: string; icon: IconName; label: string; hint: string; tone: 'lime' | 'green' | 'navy' | 'clock' }) {
+  const lime = tone === 'lime'
+  const iconClass = { lime: 'bg-fairway text-flag', green: 'bg-fairway text-flag', navy: 'bg-navy text-gold', clock: 'bg-green-tint text-green' }[tone]
+  return (
+    <Link to={to} className={`${tile} ${lime ? 'bg-gradient-to-b from-[#DBF79A] to-flag' : 'bg-[#F7F5EF]'} text-fairway`}>
+      <span className={`${tileIcon} ${iconClass}`}><Icon name={icon} size={17} /></span>
+      <span className="min-w-0">
+        <span className="block truncate text-[15px] leading-tight font-semibold">{label}</span>
+        <span className={`block truncate text-[12px] ${lime ? 'text-fairway/70' : 'text-muted'}`}>{hint}</span>
+      </span>
+    </Link>
+  )
+}
 
 export function Actions({ d }: { d: HomeData }) {
   return (
-    <div className="relative grid grid-cols-2 gap-2 rounded-[28px] border border-white/15 bg-[#0B1A12]/35 p-2 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md">
-      <Link to="/discover" className={`${tile} bg-gradient-to-b from-[#DBF79A] to-flag text-fairway shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]`}>
-        <span className={`${tileIcon} bg-fairway text-flag`}><Icon name="search" size={18} /></span>
-        <span>
-          <span className="block font-semibold">Find a game</span>
-          <span className="block text-[12px] text-fairway/70">{d.openCount ? `${d.openCount} open near you` : 'Open games near you'}</span>
-        </span>
-      </Link>
-      <Link to="/host" className={`${tile} border border-white/15 bg-white/[0.1] text-white`}>
-        <span className={`${tileIcon} bg-white/15 text-flag`}><Icon name="flag" size={18} /></span>
-        <span>
-          <span className="block font-semibold">Host a round</span>
-          <span className="block text-[12px] text-white/65">Always free to host</span>
-        </span>
-      </Link>
-      <Link to="/groups" className={`${tile} border border-gold/40 bg-gradient-to-b from-navy-2 to-navy text-white`}>
-        <span className={`${tileIcon} bg-gold text-navy`}><Icon name="user" size={18} /></span>
-        <span>
-          <span className="block font-semibold text-gold-soft">Societies & trips</span>
-          <span className="block text-[12px] text-white/65">Trips and Ryder Cups</span>
-        </span>
-      </Link>
-      <Link to="/free" className={`${tile} border border-white/15 bg-white/[0.1] text-white`}>
-        <span className={`${tileIcon} bg-white/15 text-flag`}><Icon name="clock" size={18} /></span>
-        <span>
-          <span className="block font-semibold">I’m free</span>
-          <span className="block text-[12px] text-white/65">Let hosts find you</span>
-        </span>
-      </Link>
+    <div className="relative grid grid-cols-2 gap-2">
+      <ActionTile to="/discover" icon="search" label="Find a game" hint={d.openCount ? `${d.openCount} open near you` : 'Open games near you'} tone="lime" />
+      <ActionTile to="/host" icon="flag" label="Host a round" hint="Always free" tone="green" />
+      <ActionTile to="/groups" icon="user" label="Societies" hint="Trips & Ryder Cups" tone="navy" />
+      <ActionTile to="/free" icon="clock" label="I’m free" hint="Let hosts find you" tone="clock" />
     </div>
   )
 }
