@@ -19,7 +19,7 @@ export function HomePhotoHeader({ d }: { d: HomeData }) {
             </div>
             <Bell waiting={d.waiting} className="border border-white/15 bg-white/10 text-white backdrop-blur" />
           </header>
-          <div className="mt-6"><Actions /></div>
+          <div className="mt-5"><Actions d={d} /></div>
         </>
       }
     >

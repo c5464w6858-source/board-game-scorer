@@ -12,39 +12,40 @@ import type { HomeData } from './useHomeData'
 
 // Building blocks shared by the Home layouts.
 
-export function Actions() {
+// The four ways in, as matching tiles on one frosted panel so they read as a set.
+const tile = 'flex min-h-[92px] flex-col justify-between gap-2 rounded-[20px] p-3 no-underline'
+const tileIcon = 'grid size-8 place-items-center rounded-full'
+
+export function Actions({ d }: { d: HomeData }) {
   return (
-    <div className="relative grid grid-cols-2 gap-2.5">
-      <Link
-        to="/discover"
-        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#DBF79A] to-flag font-semibold text-fairway no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_8px_20px_-8px_rgba(200,241,105,0.55)]"
-      >
-        <Icon name="search" size={18} /> Find a game
-      </Link>
-      <Link
-        to="/host"
-        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.08] font-semibold text-white no-underline shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur"
-      >
-        <Icon name="flag" size={18} /> Host a round
-      </Link>
-      <Link
-        to="/groups"
-        className="col-span-2 flex min-h-16 items-center gap-3 rounded-[22px] border border-gold/50 bg-gradient-to-r from-navy to-navy-2 py-2.5 pr-4 pl-2.5 text-white no-underline shadow-[0_12px_26px_-14px_rgba(10,19,38,0.9)]"
-      >
-        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gold text-navy">
-          <Icon name="user" size={20} />
+    <div className="relative grid grid-cols-2 gap-2 rounded-[28px] border border-white/15 bg-[#0B1A12]/35 p-2 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md">
+      <Link to="/discover" className={`${tile} bg-gradient-to-b from-[#DBF79A] to-flag text-fairway shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]`}>
+        <span className={`${tileIcon} bg-fairway text-flag`}><Icon name="search" size={18} /></span>
+        <span>
+          <span className="block font-semibold">Find a game</span>
+          <span className="block text-[12px] text-fairway/70">{d.openCount ? `${d.openCount} open near you` : 'Open games near you'}</span>
         </span>
-        <span className="min-w-0 flex-1">
+      </Link>
+      <Link to="/host" className={`${tile} border border-white/15 bg-white/[0.1] text-white`}>
+        <span className={`${tileIcon} bg-white/15 text-flag`}><Icon name="flag" size={18} /></span>
+        <span>
+          <span className="block font-semibold">Host a round</span>
+          <span className="block text-[12px] text-white/65">Always free to host</span>
+        </span>
+      </Link>
+      <Link to="/groups" className={`${tile} border border-gold/40 bg-gradient-to-b from-navy-2 to-navy text-white`}>
+        <span className={`${tileIcon} bg-gold text-navy`}><Icon name="user" size={18} /></span>
+        <span>
           <span className="block font-semibold text-gold-soft">Societies & trips</span>
-          <span className="block truncate text-[13px] text-white/70">Run a society, trip or Ryder Cup</span>
+          <span className="block text-[12px] text-white/65">Trips and Ryder Cups</span>
         </span>
-        <Icon name="back" size={18} className="shrink-0 rotate-180 text-gold" />
       </Link>
-      <Link
-        to="/free"
-        className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] text-[14px] font-semibold text-white/90 no-underline backdrop-blur"
-      >
-        <Icon name="clock" size={16} className="text-flag" /> I'm free
+      <Link to="/free" className={`${tile} border border-white/15 bg-white/[0.1] text-white`}>
+        <span className={`${tileIcon} bg-white/15 text-flag`}><Icon name="clock" size={18} /></span>
+        <span>
+          <span className="block font-semibold">I’m free</span>
+          <span className="block text-[12px] text-white/65">Let hosts find you</span>
+        </span>
       </Link>
     </div>
   )
