@@ -73,12 +73,33 @@ const roles = {
   requested: { label: 'Requested', icon: 'clock', chip: 'bg-white text-[#8A5A12]' },
 } as const
 
+// Tees off within 36 hours: the card pulses, red if you're still not accepted.
+const SOON_HOURS = 36
+const isSoon = (r: RoundRow) => {
+  const h = (new Date(r.tee_time).getTime() - Date.now()) / 3_600_000
+  return h > 0 && h <= SOON_HOURS
+}
+
+function SoonFlag({ warn }: { warn: boolean }) {
+  return (
+    <span
+      className={`absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${
+        warn ? 'bg-alert text-white' : 'bg-fairway text-flag'
+      }`}
+    >
+      <span className={`size-2 animate-blink rounded-full ${warn ? 'bg-white' : 'bg-flag'}`} />
+      {warn ? 'Soon · not confirmed' : 'Soon'}
+    </span>
+  )
+}
+
 function roleIn(r: RoundRow, me: string): keyof typeof roles {
   if (r.host_id === me) return 'hosting'
   return r.round_requests.some((q) => q.user_id === me && q.status === 'accepted') ? 'playing' : 'requested'
 }
 
 function CardArt({ round, role, forecast, dark, faded }: { round: RoundRow; role: keyof typeof roles; forecast: HomeData['forecast']; dark?: boolean; faded?: boolean }) {
+  const soon = isSoon(round)
   const r = roles[role]
   return (
     <div className="relative h-[124px]">
@@ -87,6 +108,7 @@ function CardArt({ round, role, forecast, dark, faded }: { round: RoundRow; role
       <span className={`absolute top-3 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${r.chip}`}>
         <Icon name={r.icon} size={13} /> {r.label}
       </span>
+      {soon && <SoonFlag warn={role === 'requested'} />}
       {forecast && (
         <span className="absolute right-3 bottom-3 rounded-full bg-white/90 px-2.5 py-1 text-xs text-fairway">
           <span className="font-mono">{forecast.temp}°</span> · {forecast.label}
@@ -106,7 +128,7 @@ function HostedCard({ round, d, wide }: { round: RoundRow; d: HomeData; wide: bo
   return (
     <Link
       to={waiting ? `/rounds/${round.id}/requests` : `/rounds/${round.id}`}
-      className={`${cardSize(wide)} rounded-[24px] bg-gradient-to-b from-fairway-2 to-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)]`}
+      className={`${cardSize(wide)} rounded-[24px] bg-gradient-to-b from-fairway-2 to-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)] ${isSoon(round) ? 'animate-soon [--soon:#C8F169]' : ''}`}
     >
       <CardArt round={round} role="hosting" forecast={round.id === d.next?.id ? d.forecast : null} dark />
       <div className="flex flex-1 flex-col gap-3 p-4">
@@ -140,16 +162,19 @@ function HostedCard({ round, d, wide }: { round: RoundRow; d: HomeData; wide: bo
 function JoinedCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; card: string; wide: boolean }) {
   const role = roleIn(round, d.me)
   const pending = role === 'requested'
+  const soon = isSoon(round)
   const host = round.host?.display_name ?? null
   return (
     <Link
       to={`/rounds/${round.id}`}
-      className={`${card} ${cardSize(wide)} text-fairway ${pending ? '!border-2 border-dashed !border-[#C9B98F] !bg-white/45 !shadow-none' : ''}`}
+      className={`${card} ${cardSize(wide)} text-fairway ${
+        pending ? `!border-2 border-dashed !bg-white/45 !shadow-none ${soon ? '!border-alert' : '!border-[#C9B98F]'}` : ''
+      } ${soon ? `animate-soon ${pending ? '[--soon:#E5532D]' : '[--soon:#137A3A]'}` : ''}`}
     >
       <CardArt round={round} role={role} forecast={round.id === d.next?.id ? d.forecast : null} faded={pending} />
-      <div className={`flex flex-1 flex-col gap-3 p-4 ${pending ? 'opacity-60' : ''}`}>
+      <div className={`flex flex-1 flex-col gap-3 p-4 ${pending ? (soon ? 'opacity-85' : 'opacity-60') : ''}`}>
         <div>
-          <div className="text-xs font-semibold text-green">{pending ? 'Not confirmed yet · waiting on the host' : teeOffIn(round.tee_time)}</div>
+          <div className={`text-xs font-semibold ${pending && soon ? 'text-danger' : 'text-green'}`}>{pending ? (soon ? `${teeOffIn(round.tee_time)} · still waiting on the host` : 'Not confirmed yet · waiting on the host') : teeOffIn(round.tee_time)}</div>
           <div className="truncate font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(round)}</div>
           <div className="mt-1.5 flex items-center gap-2 text-sm text-[#4A544E]">
             <Avatar name={host ?? 'Host'} src={round.host?.avatar_url} size={22} />
