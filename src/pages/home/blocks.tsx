@@ -12,15 +12,15 @@ import type { HomeData } from './useHomeData'
 
 // Building blocks shared by the Home layouts.
 
-// The four ways in: compact solid tiles that stand off the dark photo.
-// Find a game is lime, Societies keeps its navy and gold, the rest are green.
-const tile = 'flex min-h-14 items-center gap-2.5 rounded-[18px] py-2 pr-2.5 pl-2 no-underline shadow-[0_8px_18px_-10px_rgba(0,0,0,0.55)]'
+// The four ways in: compact frosted tiles over the photo. Find a game is
+// the brightest glass; Societies is tinted navy with its gold.
+const tile = 'flex min-h-14 items-center gap-2.5 rounded-[18px] py-2 pr-2.5 pl-2 no-underline backdrop-blur-md shadow-[0_8px_18px_-10px_rgba(0,0,0,0.55)]'
 const tileIcon = 'grid size-9 shrink-0 place-items-center rounded-full'
 
 const tileTones = {
-  lime: { tile: 'bg-gradient-to-b from-[#DBF79A] to-flag text-fairway', icon: 'bg-fairway text-flag', hint: 'text-fairway/70' },
-  green: { tile: 'border border-white/15 bg-gradient-to-b from-[#157538] to-[#0A4722] text-white', icon: 'bg-white/15 text-flag', hint: 'text-white/75' },
-  navy: { tile: 'border border-gold/45 bg-gradient-to-b from-navy-2 to-navy text-gold-soft', icon: 'bg-gold text-navy', hint: 'text-white/70' },
+  lime: { tile: 'border border-white/45 bg-white/25 text-white', icon: 'bg-flag text-fairway', hint: 'text-white/80' },
+  green: { tile: 'border border-white/25 bg-white/[0.12] text-white', icon: 'bg-white/20 text-flag', hint: 'text-white/75' },
+  navy: { tile: 'border border-gold/55 bg-[#1F3A6B]/55 text-gold-soft', icon: 'bg-gold text-navy', hint: 'text-white/75' },
 }
 
 function ActionTile({ to, icon, label, hint, tone }: { to: string; icon: IconName; label: string; hint: string; tone: keyof typeof tileTones }) {
