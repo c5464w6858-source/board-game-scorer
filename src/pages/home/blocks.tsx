@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { Pick } from '../../components/controls'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
-import { AvatarStack, Icon } from '../../components/ui'
-import { dayLabel, firstName, teeOffIn, teeTime } from '../../lib/format'
-import { roundTitle, type RoundRow } from '../../lib/rounds'
+import { Avatar, AvatarStack, Icon } from '../../components/ui'
+import { dayLabel, firstName, formatLabels, pounds, teeOffIn, teeTime } from '../../lib/format'
+import { pendingRequests, roundTitle, type RoundRow } from '../../lib/rounds'
 import { lineup, spotsText } from './helpers'
 import { PickCard, WaitingCard } from './parts'
 import { Scorecard } from './Scorecard'
@@ -72,9 +72,9 @@ export function TeeChip({ iso }: { iso: string }) {
 // Next round with the drawn golf hole on top.
 // How you're part of a round, shown as a chip on its card.
 const roles = {
-  hosting: { label: 'Hosting', icon: 'flag', chip: 'bg-fairway text-flag', edge: 'ring-2 ring-fairway/80' },
-  playing: { label: 'You’re in', icon: 'check', chip: 'bg-flag text-fairway', edge: '' },
-  requested: { label: 'Requested', icon: 'clock', chip: 'bg-white text-[#8A5A12]', edge: 'opacity-95' },
+  hosting: { label: 'Hosting', icon: 'flag', chip: 'bg-flag text-fairway' },
+  playing: { label: 'You’re in', icon: 'check', chip: 'bg-flag text-fairway' },
+  requested: { label: 'Requested', icon: 'clock', chip: 'bg-white text-[#8A5A12]' },
 } as const
 
 function roleIn(r: RoundRow, me: string): keyof typeof roles {
@@ -82,32 +82,81 @@ function roleIn(r: RoundRow, me: string): keyof typeof roles {
   return r.round_requests.some((q) => q.user_id === me && q.status === 'accepted') ? 'playing' : 'requested'
 }
 
-function MyRoundCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; card: string; wide: boolean }) {
-  const role = roles[roleIn(round, d.me)]
-  const forecast = round.id === d.next?.id ? d.forecast : null
+function CardArt({ round, role, forecast, dark }: { round: RoundRow; role: keyof typeof roles; forecast: HomeData['forecast']; dark?: boolean }) {
+  const r = roles[role]
+  return (
+    <div className="relative h-[124px]">
+      <HoleArt className={`size-full ${dark ? 'opacity-40' : ''}`} />
+      <span className="absolute top-3 left-3"><TeeChip iso={round.tee_time} /></span>
+      <span className={`absolute top-3 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${r.chip}`}>
+        <Icon name={r.icon} size={13} /> {r.label}
+      </span>
+      {forecast && (
+        <span className="absolute right-3 bottom-3 rounded-full bg-white/90 px-2.5 py-1 text-xs text-fairway">
+          <span className="font-mono">{forecast.temp}°</span> · {forecast.label}
+        </span>
+      )}
+    </div>
+  )
+}
+
+const cardSize = (wide: boolean) => `flex shrink-0 snap-start flex-col overflow-hidden no-underline ${wide ? 'w-full' : 'w-[86%]'}`
+
+// A round you host: a dark card about your game's state, with Manage.
+function HostedCard({ round, d, wide }: { round: RoundRow; d: HomeData; wide: boolean }) {
+  const waiting = pendingRequests(round).length
+  const open = Math.max(0, round.max_players - lineup(round).length)
+  const facts = [formatLabels[round.format], `${round.holes} holes`, round.green_fee_pence == null ? null : pounds(round.green_fee_pence)].filter(Boolean).join(' · ')
+  return (
+    <Link
+      to={waiting ? `/rounds/${round.id}/requests` : `/rounds/${round.id}`}
+      className={`${cardSize(wide)} rounded-[24px] bg-gradient-to-b from-fairway-2 to-fairway text-white shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)]`}
+    >
+      <CardArt round={round} role="hosting" forecast={round.id === d.next?.id ? d.forecast : null} dark />
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <div>
+          <div className="text-xs font-semibold tracking-[0.06em] text-flag uppercase">You’re hosting · {teeOffIn(round.tee_time)}</div>
+          <div className="truncate font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(round)}</div>
+          <div className="mt-1 truncate text-sm text-white/65">{round.course_name}</div>
+          <div className="mt-0.5 truncate text-[13px] text-white/50">{facts}</div>
+        </div>
+        {waiting > 0 ? (
+          <div className="flex items-center gap-2.5 rounded-2xl bg-white/10 px-3 py-2.5">
+            <span className="grid min-w-6 place-items-center rounded-full bg-alert px-1.5 font-mono text-[12px] leading-6 font-semibold">{waiting}</span>
+            <span className="text-[14px] font-semibold">{waiting === 1 ? 'Request waiting on you' : 'Requests waiting on you'}</span>
+          </div>
+        ) : null}
+        <div className="mt-auto flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <AvatarStack players={lineup(round)} total={round.max_players} onDark />
+            <span className="truncate text-[13px] text-white/65">{open ? `${open} open` : 'Full'}</span>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-flag py-1.5 pr-2 pl-3 text-[13px] font-semibold text-fairway">
+            {waiting ? 'Review' : 'Manage'} <Icon name="back" size={14} className="rotate-180" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// A round you've joined or asked to join: a light card about the host's game.
+function JoinedCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; card: string; wide: boolean }) {
+  const role = roleIn(round, d.me)
+  const host = round.host?.display_name ?? null
   return (
     <Link
       to={`/rounds/${round.id}`}
-      className={`${card} ${role.edge} flex shrink-0 snap-start flex-col overflow-hidden text-fairway no-underline ${wide ? 'w-full' : 'w-[86%]'}`}
+      className={`${card} ${cardSize(wide)} text-fairway ${role === 'requested' ? 'border-dashed !border-[#C9B98F]' : ''}`}
     >
-      <div className="relative h-[124px]">
-        <HoleArt className="size-full" />
-        <span className="absolute top-3 left-3"><TeeChip iso={round.tee_time} /></span>
-        <span className={`absolute top-3 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${role.chip}`}>
-          <Icon name={role.icon} size={13} /> {role.label}
-        </span>
-        {forecast && (
-          <span className="absolute right-3 bottom-3 rounded-full bg-white/90 px-2.5 py-1 text-xs">
-            <span className="font-mono">{forecast.temp}°</span> · {forecast.label}
-          </span>
-        )}
-      </div>
+      <CardArt round={round} role={role} forecast={round.id === d.next?.id ? d.forecast : null} />
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <div className="text-xs font-semibold text-green">{teeOffIn(round.tee_time)}</div>
+          <div className="text-xs font-semibold text-green">{role === 'requested' ? 'Waiting on the host' : teeOffIn(round.tee_time)}</div>
           <div className="truncate font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(round)}</div>
-          <div className="mt-1 truncate text-sm text-[#4A544E]">
-            {round.host_id === d.me ? `You’re hosting · ${round.course_name}` : `${firstName(round.host?.display_name ?? null)}’s game · ${round.course_name}`}
+          <div className="mt-1.5 flex items-center gap-2 text-sm text-[#4A544E]">
+            <Avatar name={host ?? 'Host'} src={round.host?.avatar_url} size={22} />
+            <span className="truncate">{firstName(host)} hosts · {round.course_name}</span>
           </div>
         </div>
         <Scorecard round={round} />
@@ -121,6 +170,10 @@ function MyRoundCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; c
       </div>
     </Link>
   )
+}
+
+function MyRoundCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; card: string; wide: boolean }) {
+  return round.host_id === d.me ? <HostedCard round={round} d={d} wide={wide} /> : <JoinedCard round={round} d={d} card={card} wide={wide} />
 }
 
 // Every round you're in, hosting or waiting on, swiped sideways.
