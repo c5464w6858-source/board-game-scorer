@@ -15,6 +15,7 @@ import { GroupRoundNew } from './pages/groups/GroupRoundNew'
 import { Groups } from './pages/groups/Groups'
 import { MatchNew } from './pages/groups/MatchNew'
 import { RyderSetup } from './pages/groups/RyderSetup'
+import { Calendar } from './pages/Calendar'
 import { LiveScore } from './pages/LiveScore'
 import { Notifications } from './pages/Notifications'
 import { Recap } from './pages/Recap'
@@ -82,6 +83,7 @@ function App() {
           <Route path="/rounds/:id/score" element={<LiveScore />} />
           <Route path="/rounds/:id/recap" element={<Recap />} />
           <Route path="/chats" element={<Chats />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="/me" element={<Profile />} />
           <Route path="/me/edit" element={<ProfileEdit />} />
           <Route path="/me/safety" element={<Safety />} />

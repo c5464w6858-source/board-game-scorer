@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Pick } from '../../components/controls'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
 import { Avatar, AvatarStack, Icon } from '../../components/ui'
@@ -82,11 +81,11 @@ function roleIn(r: RoundRow, me: string): keyof typeof roles {
   return r.round_requests.some((q) => q.user_id === me && q.status === 'accepted') ? 'playing' : 'requested'
 }
 
-function CardArt({ round, role, forecast, dark }: { round: RoundRow; role: keyof typeof roles; forecast: HomeData['forecast']; dark?: boolean }) {
+function CardArt({ round, role, forecast, dark, faded }: { round: RoundRow; role: keyof typeof roles; forecast: HomeData['forecast']; dark?: boolean; faded?: boolean }) {
   const r = roles[role]
   return (
     <div className="relative h-[124px]">
-      <HoleArt className={`size-full ${dark ? 'opacity-40' : ''}`} />
+      <HoleArt className={`size-full ${dark ? 'opacity-40' : faded ? 'opacity-50 grayscale' : ''}`} />
       <span className="absolute top-3 left-3"><TeeChip iso={round.tee_time} /></span>
       <span className={`absolute top-3 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold shadow-sm ${r.chip}`}>
         <Icon name={r.icon} size={13} /> {r.label}
@@ -143,16 +142,17 @@ function HostedCard({ round, d, wide }: { round: RoundRow; d: HomeData; wide: bo
 // A round you've joined or asked to join: a light card about the host's game.
 function JoinedCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; card: string; wide: boolean }) {
   const role = roleIn(round, d.me)
+  const pending = role === 'requested'
   const host = round.host?.display_name ?? null
   return (
     <Link
       to={`/rounds/${round.id}`}
-      className={`${card} ${cardSize(wide)} text-fairway ${role === 'requested' ? 'border-dashed !border-[#C9B98F]' : ''}`}
+      className={`${card} ${cardSize(wide)} text-fairway ${pending ? '!border-2 border-dashed !border-[#C9B98F] !bg-white/45 !shadow-none' : ''}`}
     >
-      <CardArt round={round} role={role} forecast={round.id === d.next?.id ? d.forecast : null} />
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <CardArt round={round} role={role} forecast={round.id === d.next?.id ? d.forecast : null} faded={pending} />
+      <div className={`flex flex-1 flex-col gap-3 p-4 ${pending ? 'opacity-60' : ''}`}>
         <div>
-          <div className="text-xs font-semibold text-green">{role === 'requested' ? 'Waiting on the host' : teeOffIn(round.tee_time)}</div>
+          <div className="text-xs font-semibold text-green">{pending ? 'Not confirmed yet · waiting on the host' : teeOffIn(round.tee_time)}</div>
           <div className="truncate font-display text-[24px] leading-[1.05] font-extrabold tracking-[-0.03em]">{roundTitle(round)}</div>
           <div className="mt-1.5 flex items-center gap-2 text-sm text-[#4A544E]">
             <Avatar name={host ?? 'Host'} src={round.host?.avatar_url} size={22} />
@@ -178,18 +178,47 @@ function MyRoundCard({ round, d, card, wide }: { round: RoundRow; d: HomeData; c
 
 // Every round you're in, hosting or waiting on, swiped sideways.
 // Chips narrow it to the rounds you host or the ones you've joined.
-export function MyRounds({ d, card }: { d: HomeData; card: string }) {
-  const [show, setShow] = useState<'all' | 'hosting' | 'joined'>('all')
-  const hosting = d.mine.filter((r) => r.host_id === d.me)
-  const joined = d.mine.filter((r) => r.host_id !== d.me)
-  const rounds = show === 'hosting' ? hosting : show === 'joined' ? joined : d.mine
+function FilterChip({ on, onClick, label, count }: { on: boolean; onClick: () => void; label: string; count: number }) {
   return (
-    <Section title="Your rounds" icon="tee">
-      {hosting.length > 0 && joined.length > 0 && (
-        <div className="relative flex gap-2">
-          <Pick on={show === 'all'} onClick={() => setShow('all')}>All <span className="font-mono">{d.mine.length}</span></Pick>
-          <Pick on={show === 'hosting'} onClick={() => setShow('hosting')}>Hosting <span className="font-mono">{hosting.length}</span></Pick>
-          <Pick on={show === 'joined'} onClick={() => setShow('joined')}>Joined <span className="font-mono">{joined.length}</span></Pick>
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold ${
+        on ? 'bg-fairway text-flag' : 'border border-white/90 bg-white/80 text-fairway shadow-[0_4px_12px_-6px_rgba(14,31,22,0.3)]'
+      }`}
+    >
+      {label} <span className={`font-mono ${on ? '' : 'text-muted'}`}>{count}</span>
+    </button>
+  )
+}
+
+export function MyRounds({ d, card }: { d: HomeData; card: string }) {
+  const [show, setShow] = useState<'all' | keyof typeof roles>('all')
+  const by = (role: keyof typeof roles) => d.mine.filter((r) => roleIn(r, d.me) === role)
+  const groups = [
+    { key: 'hosting', label: 'Hosting', rounds: by('hosting') },
+    { key: 'playing', label: 'Joined', rounds: by('playing') },
+    { key: 'requested', label: 'Requested', rounds: by('requested') },
+  ] as const
+  const kinds = groups.filter((g) => g.rounds.length)
+  const rounds = show === 'all' ? d.mine : (groups.find((g) => g.key === show)?.rounds ?? [])
+  return (
+    <Section
+      title="Your rounds"
+      icon="tee"
+      action={
+        <Link to="/calendar" className="inline-flex items-center gap-1 text-sm font-semibold text-green no-underline">
+          <Icon name="calendar" size={16} /> Calendar
+        </Link>
+      }
+    >
+      {kinds.length > 1 && (
+        <div className="relative -mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1">
+          <FilterChip on={show === 'all'} onClick={() => setShow('all')} label="All" count={d.mine.length} />
+          {kinds.map((g) => (
+            <FilterChip key={g.key} on={show === g.key} onClick={() => setShow(g.key)} label={g.label} count={g.rounds.length} />
+          ))}
         </div>
       )}
       {rounds.length ? (
