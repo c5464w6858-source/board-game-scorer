@@ -10,6 +10,7 @@ import { distanceKm } from '../lib/courses'
 import { miles } from '../lib/match'
 import { fetchBuddyIds, fetchStats } from '../lib/profiles'
 import { decideRequest } from '../lib/requests'
+import { fetchPlusGolfers } from '../lib/plus'
 import { acceptedPlayers, fetchRound, pendingRequests, roundTitle, spotsLeft } from '../lib/rounds'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
@@ -39,7 +40,8 @@ export function HostRequests() {
       })
       .map((g) => ({ ...g, buddy: buddyIds.includes(g.id) }))
       .sort((a, b) => Number(b.buddy) - Number(a.buddy))
-    return { round, stats, free, slot }
+    const plus = await fetchPlusGolfers(pendingRequests(round).map((q) => q.user_id))
+    return { round, stats, free, slot, plus }
   }, [id, me])
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -47,10 +49,11 @@ export function HostRequests() {
   if (state.loading) return <Loading />
   if (state.error) return <ErrorNote message={state.error} />
   if (!state.data) return <p>Round not found.</p>
-  const { round, stats, free, slot } = state.data
+  const { round, stats, free, slot, plus } = state.data
   if (round.host_id !== me) return <p>Only the host can see requests. <Link to={`/rounds/${id}`}>Back to the round</Link></p>
 
-  const pending = pendingRequests(round)
+  // Plus golfers' requests come first, then oldest first.
+  const pending = [...pendingRequests(round)].sort((a, b) => Number(plus.has(b.user_id)) - Number(plus.has(a.user_id)))
   const players = acceptedPlayers(round)
   const spots = spotsLeft(round)
   const seats = Array.from({ length: round.max_players }, (_, i) => i)
@@ -139,7 +142,10 @@ export function HostRequests() {
                       <Avatar name={q.profile?.display_name ?? 'Golfer'} src={q.profile?.avatar_url} size={50} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate font-display text-[18px] font-bold tracking-[-0.01em]">{shortName(q.profile?.display_name ?? null)}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="truncate font-display text-[18px] font-bold tracking-[-0.01em]">{shortName(q.profile?.display_name ?? null)}</span>
+                        {plus.has(q.user_id) && <span className="shrink-0 rounded-full bg-fairway px-2 py-0.5 text-[10px] font-bold tracking-[0.06em] text-flag">PLUS</span>}
+                      </div>
                       <div className="mt-1 flex flex-wrap gap-1.5">
                         <span className={statChip}>HCP <span className="font-mono">{handicapText(q.profile?.handicap ?? null)}</span></span>
                         {!s?.rounds ? (

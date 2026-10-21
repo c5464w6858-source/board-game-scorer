@@ -43,6 +43,12 @@ export type Database = {
           },
         ]
       }
+      app_settings: {
+        Row: { key: string; value: Json }
+        Insert: { key: string; value: Json }
+        Update: { key?: string; value?: Json }
+        Relationships: []
+      }
       blocks: {
         Row: {
           blocked_id: string
@@ -1066,6 +1072,8 @@ export type Database = {
       join_group: { Args: { p_code: string }; Returns: string }
       kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
       has_plus: { Args: { p_user_id: string }; Returns: boolean }
+      plus_golfers: { Args: { p_ids: string[] }; Returns: string[] }
+      plus_usage: { Args: never; Returns: Json }
       push_config: { Args: never; Returns: Json }
       save_push_subscription: {
         Args: {

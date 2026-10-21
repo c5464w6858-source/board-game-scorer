@@ -9,6 +9,7 @@ import { glassCard } from '../components/surfaces'
 import { Avatar, AvatarStack, ErrorNote, Icon, Loading } from '../components/ui'
 import { handicapText, shortName, teeOffIn } from '../lib/format'
 import { DEFAULT_RADIUS_MILES, matchScore, roundDistanceMiles, type MatchProfile } from '../lib/match'
+import { FREE_JOINS_PER_MONTH, fetchUsage, isPlusLimit } from '../lib/plus'
 import { requestToJoin } from '../lib/requests'
 import { fetchUpcomingRounds, fitsPreferences, isOpenTo, roundTitle, type RoundRow } from '../lib/rounds'
 import { useAsync } from '../lib/useAsync'
@@ -49,6 +50,8 @@ function passes(f: Filter, r: RoundRow, me: MatchProfile) {
 export function Discover() {
   const me = useMe()
   const rounds = useAsync(() => fetchUpcomingRounds(), [])
+  // Free golfers see how many joins they have left this month.
+  const usage = useAsync(() => fetchUsage(), [])
   const [view, setView] = useState<'cards' | 'map'>('cards')
   const [filters, setFilters] = useState<Filter[]>([])
   const [skipped, setSkipped] = useState<string[]>([])
@@ -94,6 +97,7 @@ export function Discover() {
       setMessage(`Request sent to ${shortName(top.round.host?.display_name ?? null)}. Nothing to pay in the app.`)
       skip()
       rounds.reload()
+      usage.reload()
     } catch (e) {
       setMessage((e as Error).message)
     } finally {
@@ -152,11 +156,14 @@ export function Discover() {
         </div>
       }
     >
-      {message && (
-        <p role="status" className="relative m-0 rounded-2xl border border-green/20 bg-green-tint px-4 py-3 text-sm text-green-dark">
-          {message}
-        </p>
-      )}
+      {message &&
+        (isPlusLimit(message) ? (
+          <div className="relative"><ErrorNote message={message} /></div>
+        ) : (
+          <p role="status" className="relative m-0 rounded-2xl border border-green/20 bg-green-tint px-4 py-3 text-sm text-green-dark">
+            {message}
+          </p>
+        ))}
 
       {view === 'map' ? (
         <Section title="On the map" icon="compass">
@@ -229,8 +236,17 @@ export function Discover() {
           </article>
 
           {/* Pinned just above the tab bar so the main action is always in reach. */}
-          <div className="h-20" aria-hidden="true" />
-          <div className="fixed inset-x-0 bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] z-[900] mx-auto flex max-w-[480px] items-center gap-3 bg-gradient-to-t from-[#ECEAE3] via-[#ECEAE3]/90 to-transparent px-5 pt-6 pb-3">
+          <div className="h-28" aria-hidden="true" />
+          <div className="fixed inset-x-0 bottom-[calc(76px+max(1rem,env(safe-area-inset-bottom)))] z-[900] mx-auto flex max-w-[480px] flex-col bg-gradient-to-t from-[#ECEAE3] via-[#ECEAE3]/90 to-transparent px-5 pt-6 pb-3">
+            {usage.data && usage.data.limits_on && !usage.data.plus && (
+              <Link to="/plus" className="mb-2 self-center rounded-full border border-white bg-white/95 px-3.5 py-1.5 text-[13px] text-[#3F4A44] no-underline shadow-[0_6px_16px_-8px_rgba(14,31,22,0.4)]">
+                <span className="font-mono font-semibold text-green-dark">
+                  {Math.max(0, FREE_JOINS_PER_MONTH - usage.data.joined_this_month)} of {FREE_JOINS_PER_MONTH}
+                </span>{' '}
+                free rounds left this month · <span className="font-semibold text-green-dark underline">Go unlimited</span>
+              </Link>
+            )}
+            <div className="flex items-center gap-3">
             <button
               type="button"
               aria-label="Skip"
@@ -258,6 +274,7 @@ export function Discover() {
             >
               <Icon name="bookmark" />
             </button>
+            </div>
           </div>
         </Section>
       ) : (

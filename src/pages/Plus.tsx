@@ -4,18 +4,37 @@ import { PhotoPage } from '../components/PhotoPage'
 import { Section } from '../components/Section'
 import { glassCard, roundButton } from '../components/surfaces'
 import { ErrorNote, Icon, Loading } from '../components/ui'
-import { daysLeft, fetchMyPlan, PLUS_PRICES, startPlusTrial, TRIAL_DAYS } from '../lib/plus'
+import { daysLeft, FREE_JOINS_PER_MONTH, fetchMyPlan, fetchUsage, PLUS_PRICES, startPlusTrial, TRIAL_DAYS, WAITING_LIMIT } from '../lib/plus'
 import { useAsync } from '../lib/useAsync'
 import { useUserId } from '../lib/useMe'
 
-// What Plus adds today. Hosting and joining stay free for everyone.
+// What Plus adds today. Hosting stays free and unlimited for everyone.
 const rows: { label: string; free: string; plus: string }[] = [
-  { label: 'Host rounds', free: 'Unlimited', plus: 'Unlimited' },
-  { label: 'Join rounds', free: 'Yes', plus: 'Yes' },
-  { label: 'Join a society or trip', free: 'Yes', plus: 'Yes' },
+  { label: 'Rounds you join', free: '2 a month', plus: 'Unlimited' },
+  { label: 'Join requests waiting at once', free: '1', plus: '5' },
+  { label: 'Shown first on the host’s request list', free: '–', plus: 'Yes' },
   { label: 'Start and run a society or trip', free: '–', plus: 'Yes' },
   { label: 'Ryder Cup mode and leaderboards', free: '–', plus: 'Yes' },
+  { label: 'Host rounds', free: 'Unlimited', plus: 'Unlimited' },
+  { label: 'Join a society or trip', free: 'Yes', plus: 'Yes' },
 ]
+
+function Meter({ label, used, limit }: { label: string; used: number; limit: number }) {
+  const full = used >= limit
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-baseline justify-between text-[14px]">
+        <span className="font-semibold">{label}</span>
+        <span className={`font-mono font-semibold ${full ? 'text-danger' : ''}`}>
+          {Math.min(used, limit)} of {limit}
+        </span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-[#E3E1D8]">
+        <div className={`h-full rounded-full ${full ? 'bg-alert' : 'bg-green'}`} style={{ width: `${Math.min(100, (used / limit) * 100)}%` }} />
+      </div>
+    </div>
+  )
+}
 
 // BuddyGolf Plus: the only thing the app charges for (design 23).
 export function Plus() {
@@ -23,7 +42,10 @@ export function Plus() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const next = params.get('next')
-  const plan = useAsync(() => fetchMyPlan(me), [me])
+  const plan = useAsync(async () => {
+    const [p, usage] = await Promise.all([fetchMyPlan(me), fetchUsage()])
+    return { ...p, usage }
+  }, [me])
   const [billing, setBilling] = useState<'yearly' | 'monthly'>('yearly')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +84,7 @@ export function Plus() {
                 ? p.trial
                   ? `Your free trial · ${daysLeft(p.endsAt)} day${daysLeft(p.endsAt) === 1 ? '' : 's'} left`
                   : 'You’re on Plus. Thanks for backing BuddyGolf.'
-                : 'Run your society or golf trip. Hosting and joining stay free for everyone.'}
+                : 'Join as many rounds as you like and run your society or golf trip. Hosting is always free.'}
             </p>
           </div>
         </div>
@@ -75,6 +97,16 @@ export function Plus() {
             <span className="font-semibold text-gold-soft">Starting a society or trip needs Plus.</span> Your golfers join free with your invite code.
           </p>
         </div>
+      )}
+
+      {!p.active && p.usage.limits_on && (
+        <Section title={`Your free plan this month`} icon="clock">
+          <div className={`${glassCard} flex flex-col gap-4 p-4 text-fairway`}>
+            <Meter label="Rounds joined" used={p.usage.joined_this_month} limit={FREE_JOINS_PER_MONTH} />
+            <Meter label="Join requests waiting" used={p.usage.waiting} limit={WAITING_LIMIT.free} />
+            <p className="m-0 text-[13px] text-muted">Rounds you host never count. The joining limit resets on the 1st.</p>
+          </div>
+        </Section>
       )}
 
       <Section title="Free and Plus" icon="check">
@@ -99,7 +131,7 @@ export function Plus() {
             </tbody>
           </table>
         </div>
-        <p className="relative m-0 text-[13px] text-muted">More Plus features are on the way. Nothing to pay between golfers, ever: green fees are paid at the club.</p>
+        <p className="relative m-0 text-[13px] text-muted">Nothing to pay between golfers, ever: green fees are paid at the club.</p>
       </Section>
 
       <Section title="Plans" icon="flag">
