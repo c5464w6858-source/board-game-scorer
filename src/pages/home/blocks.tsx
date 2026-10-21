@@ -23,10 +23,13 @@ const tileTones = {
   navy: { tile: 'border border-gold/55 bg-[#1F3A6B]/55 text-gold-soft', icon: 'bg-gold text-navy', hint: 'text-white/75' },
 }
 
-function ActionTile({ to, icon, label, hint, tone }: { to: string; icon: IconName; label: string; hint: string; tone: keyof typeof tileTones }) {
+function ActionTile({ to, icon, label, hint, tone, plus }: { to: string; icon: IconName; label: string; hint: string; tone: keyof typeof tileTones; plus?: boolean }) {
   const t = tileTones[tone]
   return (
-    <Link to={to} className={`${tile} ${t.tile}`}>
+    <Link to={to} className={`${tile} ${t.tile} relative`}>
+      {plus && (
+        <span className="absolute -top-2 right-2 rounded-full bg-flag px-2 py-0.5 text-[10px] font-bold tracking-[0.06em] text-fairway shadow-sm">PLUS</span>
+      )}
       <span className={`${tileIcon} ${t.icon}`}><Icon name={icon} size={17} /></span>
       <span className="min-w-0">
         <span className="block truncate text-[15px] leading-tight font-semibold">{label}</span>
@@ -41,7 +44,7 @@ export function Actions({ d }: { d: HomeData }) {
     <div className="relative grid grid-cols-2 gap-2">
       <ActionTile to="/discover" icon="search" label="Find a game" hint={d.openCount ? `${d.openCount} open near you` : 'Open games near you'} tone="lime" />
       <ActionTile to="/host" icon="flag" label="Host a round" hint="Always free" tone="green" />
-      <ActionTile to="/groups" icon="user" label="Societies" hint="Trips & Ryder Cups" tone="navy" />
+      <ActionTile to="/groups" icon="user" label="Societies" hint="Trips & Ryder Cups" tone="navy" plus />
       <ActionTile to="/free" icon="clock" label="I’m free" hint="Let hosts find you" tone="green" />
     </div>
   )

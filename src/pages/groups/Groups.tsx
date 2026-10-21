@@ -7,7 +7,7 @@ import { glassCard, goldButton } from '../../components/surfaces'
 import { AvatarStack, ErrorNote, Icon, Loading } from '../../components/ui'
 import { dateAndTime } from '../../lib/format'
 import { fetchMyGroups, joinGroup, kindLabel, type GroupRow } from '../../lib/groups'
-import { daysLeft, fetchMyPlan } from '../../lib/plus'
+import { daysLeft, fetchMyPlan, PLUS_PRICES, TRIAL_DAYS } from '../../lib/plus'
 import { useAsync } from '../../lib/useAsync'
 import { useUserId } from '../../lib/useMe'
 import { dateRange } from './helpers'
@@ -89,20 +89,44 @@ export function Groups() {
             <h1 className="m-0 font-display text-[34px] leading-[1.02] font-extrabold tracking-[-0.035em]">Societies & trips</h1>
             <p className="mt-1 mb-0 text-sm text-white/80">Organise your society, golf trip or big day out. Every score in one place.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Link to={plus ? '/groups/new' : '/plus?from=groups&next=/groups/new'} className={`${goldButton} gap-2`}>
-              <Icon name="plus" size={18} /> Start a group
-            </Link>
-            {!plan.loading && (
-              <Link to="/plus" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gold-soft no-underline">
-                <span className="rounded-full bg-flag px-2 py-0.5 text-[11px] font-bold text-fairway">PLUS</span>
-                {plus ? (plan.data?.trial ? `Trial · ${daysLeft(plan.data.endsAt)} days left` : 'Plus member') : 'Organisers need Plus · joining is free'}
-              </Link>
-            )}
-          </div>
+          <Link to={plus ? '/groups/new' : '/plus?from=groups&next=/groups/new'} className={`${goldButton} gap-2 self-start`}>
+            <Icon name={plus ? 'plus' : 'lock'} size={18} /> Start a group
+            {!plus && <span className="ml-1 rounded-full bg-navy px-2 py-0.5 text-[11px] font-bold tracking-[0.06em] text-flag">PLUS</span>}
+          </Link>
         </div>
       }
     >
+      {!plan.loading &&
+        (plus ? (
+          <Link to="/plus" className="relative flex items-center gap-2 self-start rounded-full bg-[#0B1A12] py-1.5 pr-3 pl-1.5 text-[13px] font-semibold text-white no-underline">
+            <span className="rounded-full bg-flag px-2 py-0.5 text-[11px] font-bold text-fairway">PLUS</span>
+            {plan.data?.trial ? `Free trial · ${daysLeft(plan.data.endsAt)} days left` : 'You can start and run groups'}
+          </Link>
+        ) : (
+          <div className="relative flex flex-col gap-3 overflow-hidden rounded-[22px] bg-[#0B1A12] p-4 text-white shadow-[0_16px_32px_-16px_rgba(10,19,38,0.8)]">
+            <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-10 size-44 rounded-full bg-flag/20 blur-2xl" />
+            <div className="relative flex items-start gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-flag text-fairway"><Icon name="lock" size={18} /></span>
+              <div>
+                <div className="flex items-center gap-2 font-semibold">
+                  Organising is a Plus feature
+                </div>
+                <p className="m-0 mt-0.5 text-[14px] text-white/70">
+                  Start a society or trip, run a Ryder Cup and keep the leaderboard. Golfers you invite join free.
+                </p>
+              </div>
+            </div>
+            <div className="relative flex items-center justify-between gap-3">
+              <span className="text-[13px] text-white/60">
+                <span className="font-mono font-semibold text-white">{PLUS_PRICES.monthly}</span> a month or <span className="font-mono font-semibold text-white">{PLUS_PRICES.yearly}</span> a year
+              </span>
+              <Link to="/plus?from=groups&next=/groups/new" className="shrink-0 rounded-full bg-flag px-4 py-2 text-[14px] font-semibold text-fairway no-underline">
+                Try free for {TRIAL_DAYS} days
+              </Link>
+            </div>
+          </div>
+        ))}
+
       <Section tone="navy" title="Your groups" icon="user" badge={groups.data?.length || undefined}>
         {groups.loading ? (
           <Loading />
