@@ -29,3 +29,31 @@ export async function startPlusTrial() {
 }
 
 export const daysLeft = (iso: string | null) => (iso ? Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 86_400_000)) : 0)
+
+// The free plan's joining limits (enforced in the database). Hosting is never limited.
+export const FREE_JOINS_PER_MONTH = 2
+export const WAITING_LIMIT = { free: 1, plus: 5 }
+
+export interface Usage {
+  plus: boolean
+  limits_on: boolean
+  waiting: number
+  joined_this_month: number
+}
+
+export async function fetchUsage(): Promise<Usage> {
+  const { data, error } = await supabase.rpc('plus_usage')
+  if (error) throw error
+  return data as unknown as Usage
+}
+
+// Which of these golfers have Plus, so hosts can see their requests first.
+export async function fetchPlusGolfers(ids: string[]): Promise<Set<string>> {
+  if (!ids.length) return new Set()
+  const { data, error } = await supabase.rpc('plus_golfers', { p_ids: ids })
+  if (error) throw error
+  return new Set(data)
+}
+
+// The database's free-limit messages, which get a link to Plus.
+export const isPlusLimit = (message: string) => /Go Plus|Plus allows/.test(message)
