@@ -66,6 +66,8 @@ export function RoundDetail() {
     return { round, member, last, forecast }
   }, [id, me])
   const [busy, setBusy] = useState(false)
+  // Leaving a round you're in is two taps: Leave this round, then confirm.
+  const [leaving, setLeaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (state.loading) return <Loading />
@@ -307,6 +309,34 @@ export function RoundDetail() {
                 </button>
               </div>
             )}
+            {mine?.status === 'accepted' && !closed &&
+              (leaving ? (
+                <div className="flex flex-col gap-3 rounded-2xl border border-danger/30 bg-white px-3.5 py-3">
+                  <div>
+                    <div className="font-semibold">Leave {roundTitle(round)}?</div>
+                    <p className="m-0 mt-0.5 text-[13px] text-muted">
+                      {firstName(round.host?.display_name ?? null)} will be told a spot has opened.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" disabled={busy} onClick={() => setLeaving(false)} className="min-h-11 flex-1 rounded-full border border-line bg-white font-semibold text-fairway">
+                      Stay in
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => run(() => withdrawRequest(mine.id)).then(() => setLeaving(false))}
+                      className="min-h-11 flex-1 rounded-full bg-danger font-semibold text-white disabled:opacity-60"
+                    >
+                      {busy ? 'Leaving…' : 'Leave round'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" onClick={() => setLeaving(true)} className="min-h-11 self-start text-sm font-semibold text-danger">
+                  Can’t make it? Leave this round
+                </button>
+              ))}
             {isHost && !closed && (
               <button
                 type="button"
