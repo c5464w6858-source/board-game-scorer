@@ -6,7 +6,7 @@ import { Section } from '../../components/Section'
 import { glassCard, goldButton, navyButton, roundButton } from '../../components/surfaces'
 import { Avatar, AvatarStack, ErrorNote, Icon, Loading } from '../../components/ui'
 import { firstName, handicapText, shortName, teeTime } from '../../lib/format'
-import { fetchGroup, fetchGroupScores, inviteLink, kindLabel, leaveGroup, setMemberRole, type GroupRow } from '../../lib/groups'
+import { deleteGroup, fetchGroup, fetchGroupScores, inviteLink, kindLabel, leaveGroup, setMemberRole, type GroupRow } from '../../lib/groups'
 import { leaderboard, scoreKey, scoringFor, type Player } from '../../lib/roundScoring'
 import { fetchMatches, matchState, updateGroup } from '../../lib/ryder'
 import { fetchCard, type Card } from '../../lib/scorecard'
@@ -73,6 +73,9 @@ export function GroupDetail() {
   }, [id])
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Deleting is two taps: Delete group, then confirm on the card that opens.
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   if (state.loading) return <Loading />
   if (state.error) return <ErrorNote message={state.error} />
@@ -310,6 +313,45 @@ export function GroupDetail() {
       </Section>
 
       {error && <div className="relative"><ErrorNote message={error} /></div>}
+
+      {g.owner_id === me &&
+        (confirmDelete ? (
+          <div className="relative flex flex-col gap-3 rounded-[20px] border border-danger/30 bg-white/90 p-4 text-navy">
+            <div>
+              <div className="font-semibold">Delete {g.name}?</div>
+              <p className="m-0 mt-1 text-[14px] text-muted">
+                This removes the group for all {g.group_members.length} golfer{g.group_members.length === 1 ? '' : 's'}, with its rounds, scores and matches. It can’t be undone.
+              </p>
+            </div>
+            <div className="flex gap-2.5">
+              <button type="button" disabled={deleting} onClick={() => setConfirmDelete(false)} className="min-h-11 flex-1 rounded-full border border-line bg-white font-semibold text-navy">
+                Keep it
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => {
+                  setDeleting(true)
+                  setError(null)
+                  deleteGroup(g.id).then(
+                    () => navigate('/groups', { replace: true }),
+                    (e: Error) => {
+                      setError(e.message)
+                      setDeleting(false)
+                    },
+                  )
+                }}
+                className="min-h-11 flex-1 rounded-full bg-danger font-semibold text-white disabled:opacity-60"
+              >
+                {deleting ? 'Deleting…' : 'Delete for good'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setConfirmDelete(true)} className="relative min-h-11 self-center text-[14px] font-semibold text-danger">
+            Delete group
+          </button>
+        ))}
 
       {g.owner_id !== me && (
         <button

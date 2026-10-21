@@ -54,6 +54,12 @@ export async function leaveGroup(groupId: string, userId: string) {
   if (error) throw error
 }
 
+// Owner only (row-level security). Members, rounds, scores and matches go with it.
+export async function deleteGroup(groupId: string) {
+  const { error } = await supabase.from('groups').delete().eq('id', groupId)
+  if (error) throw error
+}
+
 export async function setMemberRole(groupId: string, userId: string, role: Enums<'group_role'>) {
   const { error } = await supabase.from('group_members').update({ role }).match({ group_id: groupId, user_id: userId })
   if (error) throw error
