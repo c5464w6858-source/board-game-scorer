@@ -18,6 +18,7 @@ import { RyderSetup } from './pages/groups/RyderSetup'
 import { Calendar } from './pages/Calendar'
 import { LiveScore } from './pages/LiveScore'
 import { Notifications } from './pages/Notifications'
+import { Plus } from './pages/Plus'
 import { Recap } from './pages/Recap'
 import { Safety } from './pages/Safety'
 import { HostFlow } from './pages/host/HostFlow'
@@ -88,6 +89,7 @@ function App() {
           <Route path="/me/edit" element={<ProfileEdit />} />
           <Route path="/me/safety" element={<Safety />} />
           <Route path="/me/notifications" element={<Notifications />} />
+          <Route path="/plus" element={<Plus />} />
           <Route path="/buddies" element={<Buddies />} />
           <Route path="/free" element={<Free />} />
           <Route path="/groups" element={<Groups />} />

@@ -1,16 +1,21 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { ActionBar, Choice, Field, field as pill, Switch } from '../../components/controls'
 import { PhotoPage } from '../../components/PhotoPage'
 import { Section } from '../../components/Section'
 import { glassCard, goldButton, roundButton } from '../../components/surfaces'
-import { ErrorNote, Icon } from '../../components/ui'
+import { ErrorNote, Icon, Loading } from '../../components/ui'
 import { createGroup, groupKinds, type GroupKind } from '../../lib/groups'
+import { fetchMyPlan } from '../../lib/plus'
+import { useAsync } from '../../lib/useAsync'
+import { useUserId } from '../../lib/useMe'
 
 const field = `${pill} w-full text-[16px]`
 
 export function GroupNew() {
   const navigate = useNavigate()
+  const me = useUserId()
+  const plan = useAsync(() => fetchMyPlan(me), [me])
   const [name, setName] = useState('')
   const [kind, setKind] = useState<GroupKind>('trip')
   const [location, setLocation] = useState('')
@@ -20,6 +25,9 @@ export function GroupNew() {
   const [ryder, setRyder] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  if (plan.loading) return <Loading />
+  if (!plan.data?.active) return <Navigate to="/plus?from=groups&next=/groups/new" replace />
 
   const ok = name.trim().length >= 2 && (!endsOn || !startsOn || endsOn >= startsOn)
 

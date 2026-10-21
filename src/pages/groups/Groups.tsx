@@ -7,7 +7,9 @@ import { glassCard, goldButton } from '../../components/surfaces'
 import { AvatarStack, ErrorNote, Icon, Loading } from '../../components/ui'
 import { dateAndTime } from '../../lib/format'
 import { fetchMyGroups, joinGroup, kindLabel, type GroupRow } from '../../lib/groups'
+import { daysLeft, fetchMyPlan } from '../../lib/plus'
 import { useAsync } from '../../lib/useAsync'
+import { useUserId } from '../../lib/useMe'
 import { dateRange } from './helpers'
 
 function GroupCard({ g }: { g: GroupRow }) {
@@ -55,7 +57,11 @@ function GroupCard({ g }: { g: GroupRow }) {
 // Societies & trips: groups that play together, organise rounds and keep score.
 export function Groups() {
   const navigate = useNavigate()
+  const me = useUserId()
   const groups = useAsync(() => fetchMyGroups(), [])
+  // Starting a group needs Plus; joining with a code is free.
+  const plan = useAsync(() => fetchMyPlan(me), [me])
+  const plus = plan.data?.active ?? false
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -83,9 +89,17 @@ export function Groups() {
             <h1 className="m-0 font-display text-[34px] leading-[1.02] font-extrabold tracking-[-0.035em]">Societies & trips</h1>
             <p className="mt-1 mb-0 text-sm text-white/80">Organise your society, golf trip or big day out. Every score in one place.</p>
           </div>
-          <Link to="/groups/new" className={`${goldButton} gap-2 self-start`}>
-            <Icon name="plus" size={18} /> Start a group
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link to={plus ? '/groups/new' : '/plus?from=groups&next=/groups/new'} className={`${goldButton} gap-2`}>
+              <Icon name="plus" size={18} /> Start a group
+            </Link>
+            {!plan.loading && (
+              <Link to="/plus" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-gold-soft no-underline">
+                <span className="rounded-full bg-flag px-2 py-0.5 text-[11px] font-bold text-fairway">PLUS</span>
+                {plus ? (plan.data?.trial ? `Trial · ${daysLeft(plan.data.endsAt)} days left` : 'Plus member') : 'Organisers need Plus · joining is free'}
+              </Link>
+            )}
+          </div>
         </div>
       }
     >
