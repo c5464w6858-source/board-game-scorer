@@ -256,6 +256,17 @@ export function Profile() {
       )}
 
       {own && (
+        <Link to="/plus" className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway no-underline`}>
+          <span className="grid size-9 place-items-center rounded-full bg-fairway text-[11px] font-bold text-flag">PLUS</span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">BuddyGolf Plus</span>
+            <span className="block text-[13px] text-muted">Start and run societies and golf trips</span>
+          </span>
+          <Icon name="back" size={16} className="rotate-180 text-muted" />
+        </Link>
+      )}
+
+      {own && (
         <Link to="/me/notifications" className={`${glassCard} relative flex items-center gap-3 px-4 py-3 text-fairway no-underline`}>
           <span className="grid size-9 place-items-center rounded-full bg-green-tint text-green"><Icon name="bell" size={17} /></span>
           <span className="min-w-0 flex-1">

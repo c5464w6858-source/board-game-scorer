@@ -699,6 +699,53 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          plan: string
+          provider: string | null
+          provider_customer_id: string | null
+          provider_subscription_id: string | null
+          status: Database["public"]["Enums"]["plus_status"]
+          trial_ends_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          plan?: string
+          provider?: string | null
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status: Database["public"]["Enums"]["plus_status"]
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          plan?: string
+          provider?: string | null
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["plus_status"]
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reports: {
         Row: {
           created_at: string
@@ -1018,6 +1065,7 @@ export type Database = {
       is_woman: { Args: { p_user_id: string }; Returns: boolean }
       join_group: { Args: { p_code: string }; Returns: string }
       kudos_revealed: { Args: { p_round_id: string }; Returns: boolean }
+      has_plus: { Args: { p_user_id: string }; Returns: boolean }
       push_config: { Args: never; Returns: Json }
       save_push_subscription: {
         Args: {
@@ -1029,6 +1077,7 @@ export type Database = {
         Returns: undefined
       }
       send_test_push: { Args: never; Returns: undefined }
+      start_plus_trial: { Args: never; Returns: string }
     }
     Enums: {
       day_slot: "am" | "pm"
@@ -1040,6 +1089,7 @@ export type Database = {
         | "clutch_putter"
         | "would_play_again"
       match_format: "fourball" | "foursomes" | "singles"
+      plus_status: "trialing" | "active" | "past_due" | "canceled"
       report_reason:
         | "no_show"
         | "abusive"
@@ -1078,6 +1128,7 @@ export const Constants = {
         "would_play_again",
       ],
       match_format: ["fourball", "foursomes", "singles"],
+      plus_status: ["trialing", "active", "past_due", "canceled"],
       report_reason: [
         "no_show",
         "abusive",
