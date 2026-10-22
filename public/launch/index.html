@@ -151,6 +151,30 @@ footer a{text-decoration:none;color:#fff}footer a:hover{text-decoration:underlin
 #privacy .wrap{max-width:760px;border-top:1px solid var(--fairway-line);padding-top:34px}
 #privacy h2{font-size:24px;color:#fff;margin-bottom:12px}#privacy p{margin-bottom:10px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.dot{animation:none}*{transition:none!important}}
+
+/* Societies and trips */
+.kinds{margin-top:88px}
+.kinds-title{font-size:clamp(26px,3vw,34px);font-weight:800;margin-bottom:26px;max-width:18em}
+.kinds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.kind{background:var(--fairway-2);border:1px solid var(--fairway-line);border-radius:24px;padding:28px}
+.kind .tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--fairway);background:var(--gold);border-radius:999px;padding:5px 12px}
+.kind h4{font:800 22px/1.15 var(--display);letter-spacing:-.02em;margin:16px 0 10px;color:#fff}
+.kind p{color:var(--muted-dark);font-size:16px}
+@media(max-width:900px){.kinds-grid{grid-template-columns:1fr}}
+.split.rev{grid-template-columns:1.1fr .9fr}
+@media(max-width:900px){.split.rev{grid-template-columns:1fr}.split.rev .stage-c{order:2}}
+.formats{display:grid;gap:12px;margin:28px 0 20px}
+.formats div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 20px;display:flex;flex-direction:column;gap:2px}
+.formats b{font:800 19px var(--display);letter-spacing:-.02em}
+.formats span{color:var(--muted);font-size:16px}
+.aside{color:var(--muted);font-size:16px}
+.how-trip{list-style:none;padding:0;counter-reset:s;display:grid;gap:18px;margin:28px 0 30px}
+.how-trip li{counter-increment:s;position:relative;padding-left:56px;font-size:18px;color:var(--muted)}
+.how-trip li b{color:var(--fairway);font-weight:600}
+.how-trip li::before{content:counter(s);position:absolute;left:0;top:-2px;width:38px;height:38px;border-radius:50%;background:var(--fairway);color:var(--flag);display:grid;place-items:center;font:600 16px var(--mono)}
+.plus-note{background:var(--tint);border-radius:20px;padding:20px 22px;display:flex;flex-direction:column;gap:6px;color:var(--green-dark)}
+.plus-note b{font-weight:600;color:var(--fairway)}.plus-note span{font-size:15px}
+.phone.invite img{aspect-ratio:780/960}
 </style>
 </head>
 <body>
@@ -243,22 +267,100 @@ footer a{text-decoration:none;color:#fff}footer a:hover{text-decoration:underlin
 </section>
 
 <section class="pad dark" id="societies">
+  <div class="wrap">
+    <div class="split">
+      <div class="stage-c">
+        <div class="phone"><img src="/launch/img/society-sm.webp" srcset="/launch/img/society-sm.webp 390w, /launch/img/society.webp 780w" sizes="320px" width="780" height="1688" alt="A golf trip with a Ryder Cup scoreboard between two teams" loading="lazy"></div>
+      </div>
+      <div>
+        <div class="sec-head" style="margin-bottom:0">
+          <span class="eyebrow">Societies and trips</span>
+          <h2>Run the whole weekend from one place.</h2>
+          <p>Whether it is a Thursday society or a trip to the Algarve, everyone sees the same schedule, the same teams and the same scoreboard. No spreadsheets, no chasing scores on WhatsApp.</p>
+        </div>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>One schedule.</b> Add each round with its course and tee time. Everyone sees it and can open the scorecard.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Live leaderboard.</b> Stableford points for every round and a running total for each golfer.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Ryder Cup mode.</b> Two teams, fourballs, foursomes and singles, with a live scoreboard.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Invite with a code.</b> Share a link and golfers join in seconds. Members join free.</span></li>
+        </ul>
+        <a class="btn btn-flag" href="#join">Get early access</a>
+      </div>
+    </div>
+
+    <div class="kinds">
+      <h3 class="kinds-title">Built for every kind of get-together</h3>
+      <div class="kinds-grid">
+        <article class="kind"><span class="tag">Society</span><h4>Regular fixtures and an order of merit</h4><p>Set your season dates, add each fixture and let the order of merit build itself from every Stableford score.</p></article>
+        <article class="kind"><span class="tag">Golf trip</span><h4>A few rounds away with the lads or lasses</h4><p>Add the dates and location, line up each day's round, and run it as a Ryder Cup if you want some rivalry.</p></article>
+        <article class="kind"><span class="tag">One-off event</span><h4>A day out, charity day or stag do</h4><p>One schedule, one leaderboard and one invite link, so everyone knows where to be and who is winning.</p></article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="ryder">
+  <div class="wrap split rev">
+    <div>
+      <div class="sec-head" style="margin-bottom:0">
+        <span class="eyebrow">Ryder Cup mode</span>
+        <h2>Settle it like the professionals.</h2>
+        <p>Name your two teams, pick the sides and set the matches for each round. Every match is scored as it is played, and the scoreboard shows the points won and how many each side needs to win.</p>
+      </div>
+      <div class="formats">
+        <div><b>Fourballs</b><span>Pairs, everyone plays their own ball, best score counts.</span></div>
+        <div><b>Foursomes</b><span>Pairs share one ball and take alternate shots.</span></div>
+        <div><b>Singles</b><span>One on one.</span></div>
+      </div>
+      <p class="aside">Teams are colour-coded across the trip, and each match shows who is up and by how many.</p>
+    </div>
+    <div class="stage-c">
+      <div class="phone"><img src="/launch/img/grounda-sm.webp" srcset="/launch/img/grounda-sm.webp 390w, /launch/img/grounda.webp 780w" sizes="320px" width="780" height="1688" alt="Scoring the last hole of a trip round, with a singles match showing one up" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad dark" id="board">
   <div class="wrap split">
     <div class="stage-c">
-      <div class="phone"><img src="/launch/img/society-sm.webp" srcset="/launch/img/society-sm.webp 390w, /launch/img/society.webp 780w" sizes="320px" width="780" height="1688" alt="A golf trip with a Ryder Cup scoreboard between two teams" loading="lazy"></div>
+      <div class="phone"><img src="/launch/img/society2-sm.webp" srcset="/launch/img/society2-sm.webp 390w, /launch/img/society2.webp 780w" sizes="320px" width="780" height="1688" alt="A Stableford leaderboard and a two-day schedule, each round showing who leads" loading="lazy"></div>
     </div>
     <div>
       <div class="sec-head" style="margin-bottom:0">
-        <span class="eyebrow">Societies and trips</span>
-        <h2>Run the whole weekend from one place.</h2>
-        <p>Whether it is a Thursday society or a trip to the Algarve, everyone sees the same schedule, the same teams and the same scoreboard.</p>
+        <span class="eyebrow">Order of merit and leaderboards</span>
+        <h2>The table writes itself.</h2>
+        <p>As scores go in, Stableford points are worked out for you, with each golfer's handicap shots taken into account.</p>
       </div>
       <ul class="ticks">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Ryder Cup mode.</b> Two teams, fourballs, foursomes and singles, with a live scoreboard.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Leaderboards.</b> Stableford and stroke play across every round of the trip.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Join with a code.</b> Members join free. Only the organiser needs BuddyGolf Plus.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Season or trip table.</b> A running total for each golfer, with rounds played and their best score.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Who leads, round by round.</b> Each round in the schedule shows the current leader and their points.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Everyone scores on their phone.</b> Hole by hole, with yardage, par and stroke index on the screen.</span></li>
       </ul>
-      <a class="btn btn-flag" href="#join">Get early access</a>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="organise">
+  <div class="wrap split rev">
+    <div>
+      <div class="sec-head" style="margin-bottom:0">
+        <span class="eyebrow">Getting started</span>
+        <h2>From “we should do a trip” to a full squad.</h2>
+      </div>
+      <ol class="how-trip">
+        <li><b>Set it up.</b> Choose a society, trip or one-off event, add the dates and where you are going.</li>
+        <li><b>Share the code.</b> Send the invite link to your group chat. Anyone with it can join.</li>
+        <li><b>Build the schedule.</b> Add each round and, if you are running a Ryder Cup, pick the teams.</li>
+        <li><b>Play and score.</b> Everyone scores on their phone and the leaderboard updates itself.</li>
+      </ol>
+      <div class="plus-note">
+        <b>The organiser needs BuddyGolf Plus. Everyone you invite joins free.</b>
+        <span>Plus is £3.99 a month or £29.99 a year, with a 14-day free trial, and also gives unlimited joins and puts you at the top of a host's request list. Hosting a round is always free.</span>
+      </div>
+      <a class="btn btn-green" href="#join" style="margin-top:26px">Join the launch list</a>
+    </div>
+    <div class="stage-c">
+      <div class="phone invite"><img src="/launch/img/invite-sm.webp" srcset="/launch/img/invite-sm.webp 390w, /launch/img/invite.webp 780w" sizes="320px" width="780" height="960" alt="The invite screen with a six-character code and a share link button" loading="lazy"></div>
     </div>
   </div>
 </section>
