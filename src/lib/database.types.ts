@@ -494,6 +494,12 @@ export type Database = {
           },
         ]
       }
+      launch_signups: {
+        Row: { id: string; email: string; source: string; created_at: string }
+        Insert: { id?: string; email: string; source?: string; created_at?: string }
+        Update: { id?: string; email?: string; source?: string; created_at?: string }
+        Relationships: []
+      }
       groups: {
         Row: {
           created_at: string
@@ -1062,6 +1068,7 @@ export type Database = {
         Args: { p_group_id: string; p_user_id: string }
         Returns: boolean
       }
+      join_launch_list: { Args: { p_email: string; p_source?: string }; Returns: undefined }
       is_round_host: { Args: { p_round_id: string }; Returns: boolean }
       is_round_member: { Args: { p_round_id: string }; Returns: boolean }
       is_round_player: {

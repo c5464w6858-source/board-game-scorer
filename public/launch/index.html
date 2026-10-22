@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BuddyGolf: find a four near you. Launching March 2027</title>
+<meta name="description" content="BuddyGolf matches golfers with open spots in rounds near them, runs society trips and scores your Ryder Cup. Free to host, nothing to pay in the app. Join the launch list.">
+<meta name="theme-color" content="#0E1F16">
+<link rel="icon" href="/launch/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BuddyGolf: golf's better with buddies">
+<meta property="og:description" content="Find a four near you, or fill your own. Launching March 2027. Join the launch list.">
+<meta property="og:image" content="https://buddygolf.netlify.app/launch/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap">
+<style>
+/* Tokens from design/BUILD_SPEC.md */
+:root{--fairway:#0E1F16;--fairway-2:#17301F;--fairway-line:#2A4033;--green:#137A3A;--green-dark:#0E5C2B;--tint:#E4F3E8;--flag:#C8F169;--bg:#F5F4EF;--card:#fff;--line:#E3E1D8;--muted:#5B6660;--muted-dark:#B9C7BE;--gold:#D9B45A;
+--display:'Bricolage Grotesque',system-ui,sans-serif;--body:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'Geist Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--fairway);font:400 17px/1.55 var(--body);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.03em;line-height:1.04;text-wrap:balance}
+:focus-visible{outline:3px solid var(--flag);outline-offset:3px;border-radius:6px}
+.wrap{width:min(1160px,100% - 40px);margin-inline:auto}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:0 28px;border-radius:999px;border:0;font:600 17px var(--body);cursor:pointer;text-decoration:none;transition:transform .15s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn-flag{background:var(--flag);color:var(--fairway)}.btn-flag:hover{background:#d6f78a}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green-dark)}
+.btn-ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--flag)}
+
+/* Header */
+header.top{position:sticky;top:0;z-index:20;background:rgba(14,31,22,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font:800 22px var(--display);letter-spacing:-.04em}
+.brand svg{width:34px;height:34px}.brand b{color:var(--flag);font-weight:800}
+nav.links{display:flex;align-items:center;gap:26px}
+nav.links a{color:var(--muted-dark);text-decoration:none;font-size:15px;font-weight:500}nav.links a:hover{color:#fff}
+nav.links .btn{min-height:42px;padding:0 20px;font-size:15px;color:var(--fairway)}nav.links .btn:hover{color:var(--fairway)}
+@media(max-width:820px){nav.links a:not(.btn){display:none}}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;background:var(--fairway);color:#fff;padding:72px 0 0;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto auto;width:70%;aspect-ratio:1;background:radial-gradient(closest-side,rgba(200,241,105,.20),transparent);z-index:-1}
+.hero::after{content:"";position:absolute;inset:auto auto -30% -15%;width:60%;aspect-ratio:1;background:radial-gradient(closest-side,rgba(19,122,58,.45),transparent);z-index:-1}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+.hero .eyebrow{color:var(--flag);display:inline-flex;align-items:center;gap:10px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--flag);box-shadow:0 0 0 0 rgba(200,241,105,.7);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(200,241,105,0)}100%{box-shadow:0 0 0 0 rgba(200,241,105,0)}}
+.hero h1{font-size:clamp(46px,7vw,86px);font-weight:800;margin:18px 0 20px}
+.hero h1 em{font-style:normal;color:var(--flag)}
+.hero p.lede{font-size:clamp(18px,2vw,21px);color:var(--muted-dark);max-width:34em}
+.count{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:34px 0 8px;max-width:520px}
+.tile{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:16px 8px 12px;text-align:center}
+.tile b{display:block;font:600 clamp(32px,5vw,50px)/1 var(--mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile span{display:block;margin-top:8px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-dark)}
+.count-note{font-size:14px;color:var(--muted-dark);margin-bottom:26px}
+form.join{display:flex;gap:10px;max-width:520px;flex-wrap:wrap}
+form.join input[type=email]{flex:1 1 240px;min-height:54px;border-radius:999px;border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;padding:0 22px;font:400 17px var(--body)}
+form.join input::placeholder{color:#9db1a5}
+form.join input:focus{outline:none;border-color:var(--flag);background:rgba(255,255,255,.12)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.msg{flex-basis:100%;min-height:24px;font-size:15px;color:var(--muted-dark)}
+.msg.ok{color:var(--flag);font-weight:500}.msg.err{color:#ffb4a2}
+.fine{font-size:13px;color:#8ea296;max-width:520px;margin-top:6px}
+.fine a{color:var(--muted-dark)}
+.stage{position:relative;height:640px;display:flex;justify-content:center;align-items:flex-end}
+.phone{position:absolute;bottom:-40px;width:min(290px,48%);border-radius:44px;padding:8px;background:#0B1610;box-shadow:0 0 0 2px #1c3326,0 40px 80px rgba(0,0,0,.55)}
+.phone img{border-radius:36px;width:100%;height:auto;aspect-ratio:780/1688;object-fit:cover}
+.phone.c{z-index:3;width:min(318px,54%);bottom:-20px}
+.phone.l{left:0;transform:rotate(-6deg) translateY(-30px);z-index:1}
+.phone.r{right:0;transform:rotate(6deg) translateY(-30px);z-index:2}
+@media(max-width:900px){.hero .wrap{grid-template-columns:1fr}.stage{height:520px;margin-top:14px}.phone.l,.phone.r{width:44%}}
+@media(max-width:560px){.stage{height:430px}.phone.l{left:-4%}.phone.r{right:-4%}}
+
+/* Strip */
+.strip{background:var(--fairway-2);color:#fff;border-top:1px solid var(--fairway-line)}
+.strip ul{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;list-style:none;padding:22px 0}
+.strip li{display:flex;align-items:center;gap:12px;font-weight:500;font-size:15px;color:var(--muted-dark)}
+.strip li svg{flex:none;width:26px;height:26px;color:var(--flag)}
+.strip li b{color:#fff;font-weight:600}
+@media(max-width:820px){.strip ul{grid-template-columns:1fr 1fr}}@media(max-width:460px){.strip ul{grid-template-columns:1fr}}
+
+/* Sections */
+section.pad{padding:104px 0}
+.sec-head{max-width:760px;margin-bottom:56px}
+.sec-head .eyebrow{color:var(--green)}
+.sec-head h2{font-size:clamp(36px,5vw,58px);font-weight:800;margin:12px 0 16px}
+.sec-head p{color:var(--muted);font-size:19px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:30px 30px 0;display:flex;flex-direction:column;overflow:hidden}
+.step .n{font:600 14px var(--mono);color:var(--green);letter-spacing:.08em}
+.step h3{font-size:30px;font-weight:800;margin:10px 0 10px}
+.step p{color:var(--muted);font-size:16px;margin-bottom:28px}
+.step .shot{margin-top:auto;margin-inline:auto;width:min(250px,86%);border-radius:30px 30px 0 0;padding:8px 8px 0;background:#0B1610;box-shadow:0 -6px 30px rgba(14,31,22,.15)}
+.step .shot img{border-radius:24px 24px 0 0;height:340px;width:100%;object-fit:cover;object-position:top}
+@media(max-width:900px){.steps{grid-template-columns:1fr;max-width:520px;margin-inline:auto}}
+
+.dark{background:var(--fairway);color:#fff}
+.dark .sec-head .eyebrow{color:var(--flag)}.dark .sec-head p{color:var(--muted-dark)}
+.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:72px;align-items:center}
+.split .phone{position:relative;bottom:auto;margin-inline:auto;width:min(320px,100%)}
+.ticks{list-style:none;padding:0;display:grid;gap:18px;margin:28px 0 34px}
+.ticks li{display:flex;gap:14px;color:var(--muted-dark);font-size:18px}
+.ticks li b{color:#fff;font-weight:600}
+.ticks svg{flex:none;width:26px;height:26px;margin-top:2px;color:var(--flag)}
+@media(max-width:900px){.split{grid-template-columns:1fr;gap:40px}.split .stage-c{order:2}}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px}
+.card .ic{width:46px;height:46px;border-radius:14px;background:var(--tint);color:var(--green-dark);display:grid;place-items:center;margin-bottom:18px}
+.card .ic svg{width:24px;height:24px}
+.card h3{font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
+.card p{color:var(--muted);font-size:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.grid{grid-template-columns:1fr}}
+
+.clubs{background:linear-gradient(135deg,#0E1F16,#17301F);color:#fff;border-radius:36px;padding:64px;display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;position:relative;overflow:hidden}
+.clubs::after{content:"";position:absolute;right:-10%;top:-30%;width:50%;aspect-ratio:1;background:radial-gradient(closest-side,rgba(217,180,90,.25),transparent)}
+.clubs .eyebrow{color:var(--gold)}.clubs h2{font-size:clamp(34px,4.5vw,52px);font-weight:800;margin:12px 0 16px}
+.clubs p{color:var(--muted-dark);font-size:18px;max-width:34em}
+.clubs .acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.price{position:relative;z-index:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:28px;padding:30px}
+.price small{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.price b{display:block;font:600 52px/1.1 var(--mono);margin:10px 0 4px}
+.price span{color:var(--muted-dark);font-size:15px}
+.price hr{border:0;border-top:1px solid rgba(255,255,255,.14);margin:18px 0}
+@media(max-width:900px){.clubs{grid-template-columns:1fr;padding:36px 26px;border-radius:28px}}
+
+.faq{max-width:820px}
+.faq details{border-bottom:1px solid var(--line);padding:22px 0}
+.faq summary{font:700 21px var(--display);letter-spacing:-.02em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 28px/1 var(--body);color:var(--green);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{color:var(--muted);margin-top:12px;max-width:42em}
+
+.final{text-align:center;padding:104px 0}
+.final h2{font-size:clamp(38px,6vw,72px);font-weight:800;max-width:14em;margin:12px auto 18px}
+.final p.lede{color:var(--muted-dark);font-size:19px;margin-bottom:34px}
+.final form.join{margin-inline:auto;justify-content:center}
+.final .msg{text-align:center}.final .fine{margin-inline:auto}
+footer{background:#0A1610;color:var(--muted-dark);padding:44px 0;font-size:15px}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+footer a{text-decoration:none;color:#fff}footer a:hover{text-decoration:underline}
+#privacy{background:#0A1610;color:var(--muted-dark);padding:0 0 56px;font-size:15px}
+#privacy .wrap{max-width:760px;border-top:1px solid var(--fairway-line);padding-top:34px}
+#privacy h2{font-size:24px;color:#fff;margin-bottom:12px}#privacy p{margin-bottom:10px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.dot{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="BuddyGolf home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#137A3A"/><g fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><path d="M9 7v18"/><circle cx="15.5" cy="21" r="6.5"/><circle cx="24.5" cy="21" r="6.5"/><path d="M31 21v7a6 6 0 0 1-6 6h-3"/></g></svg>
+      <span>buddy<b>golf</b></span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#societies">Societies</a>
+      <a href="#clubs">For clubs</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-flag" href="#join">Join the list</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><i class="dot"></i> Launching March 2027</span>
+      <h1>Golf's better with <em>buddies.</em></h1>
+      <p class="lede">Find a four near you, or fill your own. BuddyGolf matches you with open spots in rounds nearby, runs your society trips and scores the Ryder Cup. Hosting is always free.</p>
+
+      <div class="count" role="timer" aria-label="Time until launch" id="countdown">
+        <div class="tile"><b id="cd-d">--</b><span>Days</span></div>
+        <div class="tile"><b id="cd-h">--</b><span>Hours</span></div>
+        <div class="tile"><b id="cd-m">--</b><span>Minutes</span></div>
+        <div class="tile"><b id="cd-s">--</b><span>Seconds</span></div>
+      </div>
+      <p class="count-note" id="cd-note">Until we open the first tee.</p>
+
+      <form class="join" id="join" data-source="hero" novalidate>
+        <label class="hp" aria-hidden="true">Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        <input type="email" name="email" placeholder="Your email address" autocomplete="email" inputmode="email" required aria-label="Email address">
+        <button class="btn btn-flag" type="submit">Join the launch list</button>
+        <p class="msg" role="status" aria-live="polite"></p>
+      </form>
+      <p class="fine">One email on launch day and the odd update before. Never shared or sold. <a href="#privacy">Privacy</a></p>
+    </div>
+
+    <div class="stage" aria-label="BuddyGolf app screens">
+      <div class="phone l"><img src="/launch/img/find-sm.webp" srcset="/launch/img/find-sm.webp 390w, /launch/img/find.webp 780w" sizes="290px" width="780" height="1688" alt="Find a game: an open round ranked by how well it matches your handicap and playing style"></div>
+      <div class="phone r"><img src="/launch/img/score-sm.webp" srcset="/launch/img/score-sm.webp 390w, /launch/img/score.webp 780w" sizes="290px" width="780" height="1688" alt="Live scoring: hole 7, yardage, par, stroke index and Stableford points for the group"></div>
+      <div class="phone c"><img src="/launch/img/home-sm.webp" srcset="/launch/img/home-sm.webp 390w, /launch/img/home.webp 780w" sizes="318px" width="780" height="1688" alt="The BuddyGolf home screen showing your upcoming rounds" fetchpriority="high"></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg><span><b>Hosting is free</b><br>Always, with no limits</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg><span><b>Nothing to pay in the app</b><br>Green fees go to the club</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span><b>You choose who plays</b><br>Hosts approve every request</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>Built for real tee times</b><br>Alerts when a spot opens</span></li>
+    </ul>
+  </div>
+</div>
+
+<section class="pad" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From “anyone free Sunday?” to a full four.</h2>
+      <p>No more group chats and spreadsheets. Three steps from finding a game to settling the score.</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <span class="n">01</span><h3>Find a game</h3>
+        <p>Open rounds near you, ranked by how well they match your handicap, distance and pace. See who is hosting, then ask to join.</p>
+        <div class="shot"><img src="/launch/img/find-sm.webp" srcset="/launch/img/find-sm.webp 390w, /launch/img/find.webp 780w" sizes="250px" width="780" height="1688" alt="Find a game screen" loading="lazy"></div>
+      </article>
+      <article class="step">
+        <span class="n">02</span><h3>Play together</h3>
+        <p>See who is in, chat with the group, check the forecast and meet at the pro shop. Hosts approve every request, so you always know your four.</p>
+        <div class="shot"><img src="/launch/img/round-sm.webp" srcset="/launch/img/round-sm.webp 390w, /launch/img/round.webp 780w" sizes="250px" width="780" height="1688" alt="A round with players, tee time and weather" loading="lazy"></div>
+      </article>
+      <article class="step">
+        <span class="n">03</span><h3>Score as you go</h3>
+        <p>Hole by hole, with handicap shots, par, stroke index and yardage worked out for you. Stableford points update for the whole group.</p>
+        <div class="shot"><img src="/launch/img/score-sm.webp" srcset="/launch/img/score-sm.webp 390w, /launch/img/score.webp 780w" sizes="250px" width="780" height="1688" alt="Live scorecard on hole 7" loading="lazy"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="pad dark" id="societies">
+  <div class="wrap split">
+    <div class="stage-c">
+      <div class="phone"><img src="/launch/img/society-sm.webp" srcset="/launch/img/society-sm.webp 390w, /launch/img/society.webp 780w" sizes="320px" width="780" height="1688" alt="A golf trip with a Ryder Cup scoreboard between two teams" loading="lazy"></div>
+    </div>
+    <div>
+      <div class="sec-head" style="margin-bottom:0">
+        <span class="eyebrow">Societies and trips</span>
+        <h2>Run the whole weekend from one place.</h2>
+        <p>Whether it is a Thursday society or a trip to the Algarve, everyone sees the same schedule, the same teams and the same scoreboard.</p>
+      </div>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Ryder Cup mode.</b> Two teams, fourballs, foursomes and singles, with a live scoreboard.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Leaderboards.</b> Stableford and stroke play across every round of the trip.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span><b>Join with a code.</b> Members join free. Only the organiser needs BuddyGolf Plus.</span></li>
+      </ul>
+      <a class="btn btn-flag" href="#join">Get early access</a>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Made for golfers</span>
+      <h2>Everything a good round needs.</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><h3>A match score</h3><p>Every open round shows how well it fits your handicap, distance and playing style.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div><h3>Need a player alerts</h3><p>One short in the morning? Hosts send an alert and the first golfer to say yes gets the spot.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>I'm free</h3><p>Tell hosts when you can play and let them find you, instead of scrolling for a game.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div><h3>Round chat</h3><p>Everyone in the round in one place, so plans stop getting lost in a group chat.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Safe by design</h3><p>Block and report golfers, hosts approve requests, and you only share what you choose.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg></div><h3>No money between golfers</h3><p>Prices are shown for information. You pay at the club on the day, never in the app.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="clubs" style="padding-top:0">
+  <div class="wrap">
+    <div class="clubs">
+      <div style="position:relative;z-index:1">
+        <span class="eyebrow">For golf clubs</span>
+        <h2>Fill your tee sheet before the season starts.</h2>
+        <p>Founding places are open to clubs near Woking and across Surrey, Berkshire and Hampshire. Show first to golfers within 15 miles, and promote your visitor rate, twilight golf, new members or society days.</p>
+        <div class="acts">
+          <a class="btn btn-flag" href="/packs/buddygolf-advertising-pack-clubs-m4v8d2.pdf">Download the club pack</a>
+          <a class="btn btn-ghost" href="mailto:hello@buddygolf.uk?subject=Founding%20places%20for%20our%20club">Email us</a>
+        </div>
+      </div>
+      <div class="price">
+        <small>Founding Club Listing</small>
+        <b>£120</b>
+        <span>a year, plus VAT</span>
+        <hr>
+        <span>10 free Plus memberships for your members. 50 founding places. Your 12 months start at launch.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Questions</span><h2>Good to know.</h2></div>
+    <div class="faq">
+      <details><summary>When does BuddyGolf launch?</summary><p>In March 2027, ahead of the spring season. Join the launch list and you will get an email on launch day, plus early access.</p></details>
+      <details><summary>Is it free?</summary><p>Yes. Finding games, joining rounds within the free allowance and hosting are free, and hosting is always free and unlimited. BuddyGolf Plus is an optional subscription for unlimited joins, societies and trips, Ryder Cup mode and leaderboards.</p></details>
+      <details><summary>Do I pay other golfers through the app?</summary><p>Never. There are no payments between golfers. Green fees and event fees are shown for information and paid at the club on the day.</p></details>
+      <details><summary>Where will it work first?</summary><p>We are starting around Woking and across Surrey and the surrounding counties, growing club by club and society by society.</p></details>
+      <details><summary>Do I need to be a member of a club?</summary><p>No. BuddyGolf is for club members, golfers without a home club and anyone who wants to find a game.</p></details>
+      <details><summary>What do you do with my email?</summary><p>We use it only to tell you about BuddyGolf: launch day and the odd update before it. We never share or sell it, and you can ask us to remove it at any time.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="dark final" id="join-bottom">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--flag)">Be first on the tee</span>
+    <h2>Get your four sorted before March.</h2>
+    <p class="lede">Join the launch list for early access and a note the day we open.</p>
+    <form class="join" data-source="footer" novalidate>
+      <label class="hp" aria-hidden="true">Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <input type="email" name="email" placeholder="Your email address" autocomplete="email" inputmode="email" required aria-label="Email address">
+      <button class="btn btn-flag" type="submit">Join the launch list</button>
+      <p class="msg" role="status" aria-live="polite"></p>
+    </form>
+    <p class="fine">Never shared or sold. <a href="#privacy">Privacy</a></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 BuddyGolf. Founded by Paul Whitehouse and Steve Brett in Woking.</span>
+    <span><a href="mailto:hello@buddygolf.uk">hello@buddygolf.uk</a> &nbsp;·&nbsp; <a href="#privacy">Privacy</a></span>
+  </div>
+</footer>
+
+<section id="privacy">
+  <div class="wrap">
+    <h2>Privacy</h2>
+    <p>When you join the launch list we store your email address and the date you joined. We use it only to email you about BuddyGolf, such as launch day and early access. We do not share it, sell it or use it for anything else.</p>
+    <p>To be removed, or to see what we hold about you, email <a href="mailto:hello@buddygolf.uk" style="color:#fff">hello@buddygolf.uk</a> and we will do it.</p>
+  </div>
+</section>
+
+<script>
+(function () {
+  // Launch moment: 1 March 2027, 00:00 UK time (GMT).
+  var LAUNCH = Date.parse('2027-03-01T00:00:00Z');
+  var els = { d: document.getElementById('cd-d'), h: document.getElementById('cd-h'), m: document.getElementById('cd-m'), s: document.getElementById('cd-s') };
+  var note = document.getElementById('cd-note');
+  var pad = function (n) { return String(n).padStart(2, '0'); };
+  function tick() {
+    var ms = LAUNCH - Date.now();
+    if (ms <= 0) {
+      els.d.textContent = els.h.textContent = els.m.textContent = els.s.textContent = '00';
+      note.textContent = 'We are live. Open the app and find your four.';
+      return false;
+    }
+    var s = Math.floor(ms / 1000);
+    els.d.textContent = String(Math.floor(s / 86400));
+    els.h.textContent = pad(Math.floor(s % 86400 / 3600));
+    els.m.textContent = pad(Math.floor(s % 3600 / 60));
+    els.s.textContent = pad(s % 60);
+    return true;
+  }
+  if (tick()) { var t = setInterval(function () { if (!tick()) clearInterval(t); }, 1000); }
+
+  // Launch list: add the email through a database function. It ignores repeats
+  // and shows nothing about who is on the list, so no one can read it back.
+  var API = 'https://ygclzzgqnsxpwcmfsrkw.supabase.co/rest/v1/rpc/join_launch_list';
+  var KEY = 'sb_publishable_0aFpd5OaSfww9RRgcbutcQ_w4L98cQL';
+  var EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+  document.querySelectorAll('form.join').forEach(function (form) {
+    var msg = form.querySelector('.msg'), btn = form.querySelector('button'), input = form.querySelector('input[type=email]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = input.value.trim().toLowerCase();
+      msg.className = 'msg';
+      if (form.website && form.website.value) { msg.textContent = 'Thanks, you are on the list.'; msg.classList.add('ok'); return; }
+      if (!EMAIL.test(email) || email.length > 254) { msg.textContent = 'Please enter a valid email address.'; msg.classList.add('err'); input.focus(); return; }
+      btn.disabled = true; btn.textContent = 'Joining…';
+      fetch(API, {
+        method: 'POST',
+        headers: { apikey: KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_email: email, p_source: form.dataset.source || 'launch-page' })
+      }).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        msg.textContent = 'You are on the list. We will email you on launch day.'; msg.classList.add('ok');
+        input.value = ''; btn.textContent = 'You are in';
+        try { localStorage.setItem('bg-launch-joined', '1'); } catch (_) {}
+      }).catch(function () {
+        msg.textContent = 'Something went wrong. Please try again, or email hello@buddygolf.uk.'; msg.classList.add('err');
+        btn.disabled = false; btn.textContent = 'Join the launch list';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
