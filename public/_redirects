@@ -1,1 +1,7 @@
+# The root of buddygolf.uk shows the pre-launch page. The app stays at its own
+# address (buddygolf.netlify.app). These come first because the first match wins,
+# and the "!" makes them apply even though a root index.html exists.
+https://buddygolf.uk/      /launch/index.html  200!
+https://www.buddygolf.uk/  /launch/index.html  200!
+
 /*  /index.html  200
