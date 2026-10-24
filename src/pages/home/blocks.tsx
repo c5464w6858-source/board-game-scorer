@@ -306,27 +306,22 @@ export function Picks({ d, card }: { d: HomeData; card: string }) {
   )
 }
 
-// A slim Plus strip under the four tiles, for golfers who don't have Plus.
-// During a trial it only appears for the last few days, as a reminder.
+// A small PLUS pill beside the bell for golfers who don't have Plus. During a
+// trial it only appears for the last few days, as a reminder.
 const TRIAL_REMINDER_DAYS = 3
 
-export function PlusCard({ d }: { d: HomeData }) {
+export function PlusPill({ d }: { d: HomeData }) {
   const p = d.plan
   if (!p || (p.active && (!p.trial || daysLeft(p.endsAt) > TRIAL_REMINDER_DAYS))) return null
   const left = daysLeft(p.endsAt)
-  const text = p.active
+  const label = p.active
     ? `Plus trial ends in ${left} day${left === 1 ? '' : 's'}`
     : p.trialUsed
-      ? `Get Plus · from ${PLUS_PRICES.monthly} a month`
-      : `Try Plus free for ${TRIAL_DAYS} days`
+      ? `Get BuddyGolf Plus, from ${PLUS_PRICES.monthly} a month`
+      : `Try BuddyGolf Plus free for ${TRIAL_DAYS} days`
   return (
-    <Link
-      to="/plus"
-      className="relative mt-2 flex min-h-11 items-center gap-2.5 rounded-full border border-white/25 bg-fairway/70 py-1.5 pr-3 pl-1.5 text-white no-underline backdrop-blur-md"
-    >
-      <span className="grid h-7 place-items-center rounded-full bg-flag px-2.5 text-[11px] font-bold tracking-[0.06em] text-fairway">PLUS</span>
-      <span className="min-w-0 flex-1 truncate text-[14px] font-semibold">{text}</span>
-      <Icon name="back" size={15} className="shrink-0 rotate-180 text-white/70" />
+    <Link to="/plus" aria-label={label} className="grid h-8 shrink-0 place-items-center rounded-full bg-flag px-3 text-[12px] font-bold tracking-[0.06em] text-fairway no-underline shadow-sm">
+      PLUS
     </Link>
   )
 }
