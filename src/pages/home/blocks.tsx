@@ -306,31 +306,27 @@ export function Picks({ d, card }: { d: HomeData; card: string }) {
   )
 }
 
-// Plus, in the open on Home for anyone who doesn't have it yet. A trial in
-// progress shows how long is left; a paid plan shows nothing.
+// A slim Plus strip under the four tiles, for golfers who don't have Plus.
+// During a trial it only appears for the last few days, as a reminder.
+const TRIAL_REMINDER_DAYS = 3
+
 export function PlusCard({ d }: { d: HomeData }) {
   const p = d.plan
-  if (!p || (p.active && !p.trial)) return null
-  const body = p.active
-    ? `Free trial · ${daysLeft(p.endsAt)} day${daysLeft(p.endsAt) === 1 ? '' : 's'} left`
+  if (!p || (p.active && (!p.trial || daysLeft(p.endsAt) > TRIAL_REMINDER_DAYS))) return null
+  const left = daysLeft(p.endsAt)
+  const text = p.active
+    ? `Plus trial ends in ${left} day${left === 1 ? '' : 's'}`
     : p.trialUsed
-      ? `Join unlimited rounds and start societies and trips · from ${PLUS_PRICES.monthly} a month`
-      : `Start societies and golf trips, join unlimited rounds. ${TRIAL_DAYS} days free.`
+      ? `Get Plus · from ${PLUS_PRICES.monthly} a month`
+      : `Try Plus free for ${TRIAL_DAYS} days`
   return (
     <Link
       to="/plus"
-      className="relative flex items-center gap-3 rounded-[22px] bg-gradient-to-br from-[#12301F] to-[#0B1A12] p-4 text-white no-underline shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)] ring-1 ring-flag/50"
+      className="relative mt-2 flex min-h-11 items-center gap-2.5 rounded-full border border-white/25 bg-fairway/70 py-1.5 pr-3 pl-1.5 text-white no-underline backdrop-blur-md"
     >
-      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-flag text-[11px] font-bold text-fairway">PLUS</span>
-      <span className="min-w-0 flex-1">
-        <span className="block font-display text-[19px] leading-tight font-extrabold tracking-[-0.02em]">
-          buddy<span className="text-flag">golf</span> plus
-        </span>
-        <span className="block text-[13px] text-white/75">{body}</span>
-      </span>
-      <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-flag py-1.5 pr-2 pl-3 text-[13px] font-semibold text-fairway">
-        {p.active ? 'See' : p.trialUsed ? 'Get Plus' : 'Try free'} <Icon name="back" size={14} className="rotate-180" />
-      </span>
+      <span className="grid h-7 place-items-center rounded-full bg-flag px-2.5 text-[11px] font-bold tracking-[0.06em] text-fairway">PLUS</span>
+      <span className="min-w-0 flex-1 truncate text-[14px] font-semibold">{text}</span>
+      <Icon name="back" size={15} className="shrink-0 rotate-180 text-white/70" />
     </Link>
   )
 }
