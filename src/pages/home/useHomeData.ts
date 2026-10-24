@@ -1,4 +1,5 @@
 import { matchScore, roundDistanceMiles } from '../../lib/match'
+import { fetchMyPlan } from '../../lib/plus'
 import { fetchMyRounds, fetchUpcomingRounds, fitsPreferences, isMyRound, isOpenTo, pendingRequests } from '../../lib/rounds'
 import { useAsync } from '../../lib/useAsync'
 import { useMe } from '../../lib/useMe'
@@ -14,6 +15,9 @@ export function useHomeData() {
     const forecast = next?.course ? await fetchForecast(next.course.lat, next.course.lon, next.tee_time) : null
     return { all, mine, next, forecast }
   }, [me.id])
+
+  // Only used for the Plus card, so a failure here leaves Home as it was.
+  const plan = useAsync(() => fetchMyPlan(me.id).catch(() => null), [me.id])
 
   const loading = me.loading || rounds.loading
   const error = me.error ?? rounds.error ?? (!loading && (!rounds.data || !me.data) ? 'Something went wrong' : null)
@@ -47,6 +51,7 @@ export function useHomeData() {
     next: rounds.data?.next ?? null,
     forecast: rounds.data?.forecast ?? null,
     openCount: open.length,
+    plan: plan.data ?? null,
     picks,
     urgent,
     waiting,
