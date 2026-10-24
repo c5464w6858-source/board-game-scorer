@@ -1,7 +1,7 @@
 import { PhotoPage } from '../../components/PhotoPage'
 import { glassCard as card } from '../../components/surfaces'
 import { Logo } from '../../components/ui'
-import { Actions, MyRounds, Picks, Requests, UrgentAlert } from './blocks'
+import { Actions, MyRounds, Picks, PlusCard, Requests, UrgentAlert } from './blocks'
 import { Bell, Greeting } from './parts'
 import type { HomeData } from './useHomeData'
 
@@ -26,6 +26,7 @@ export function HomePhotoHeader({ d }: { d: HomeData }) {
       <UrgentAlert d={d} />
       <MyRounds d={d} card={card} />
       <Requests d={d} card={card} />
+      <PlusCard d={d} />
       <Picks d={d} card={card} />
     </PhotoPage>
   )

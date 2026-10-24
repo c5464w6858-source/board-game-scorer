@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { HoleArt } from '../../components/HoleArt'
 import { Section } from '../../components/Section'
 import { Avatar, AvatarStack, Icon, type IconName } from '../../components/ui'
+import { TRIAL_DAYS, PLUS_PRICES, daysLeft } from '../../lib/plus'
 import { dayLabel, firstName, formatLabels, pounds, teeOffIn, teeTime } from '../../lib/format'
 import { pendingRequests, roundTitle, type RoundRow } from '../../lib/rounds'
 import { lineup, spotsText } from './helpers'
@@ -302,6 +303,35 @@ export function Picks({ d, card }: { d: HomeData; card: string }) {
         <div className={`${card} p-4 text-sm text-muted`}>No open games near you yet. Host one and golfers can join you.</div>
       )}
     </Section>
+  )
+}
+
+// Plus, in the open on Home for anyone who doesn't have it yet. A trial in
+// progress shows how long is left; a paid plan shows nothing.
+export function PlusCard({ d }: { d: HomeData }) {
+  const p = d.plan
+  if (!p || (p.active && !p.trial)) return null
+  const body = p.active
+    ? `Free trial · ${daysLeft(p.endsAt)} day${daysLeft(p.endsAt) === 1 ? '' : 's'} left`
+    : p.trialUsed
+      ? `Join unlimited rounds and start societies and trips · from ${PLUS_PRICES.monthly} a month`
+      : `Start societies and golf trips, join unlimited rounds. ${TRIAL_DAYS} days free.`
+  return (
+    <Link
+      to="/plus"
+      className="relative flex items-center gap-3 rounded-[22px] bg-gradient-to-br from-[#12301F] to-[#0B1A12] p-4 text-white no-underline shadow-[0_16px_32px_-16px_rgba(14,31,22,0.8)] ring-1 ring-flag/50"
+    >
+      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-flag text-[11px] font-bold text-fairway">PLUS</span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-display text-[19px] leading-tight font-extrabold tracking-[-0.02em]">
+          buddy<span className="text-flag">golf</span> plus
+        </span>
+        <span className="block text-[13px] text-white/75">{body}</span>
+      </span>
+      <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-flag py-1.5 pr-2 pl-3 text-[13px] font-semibold text-fairway">
+        {p.active ? 'See' : p.trialUsed ? 'Get Plus' : 'Try free'} <Icon name="back" size={14} className="rotate-180" />
+      </span>
+    </Link>
   )
 }
 
