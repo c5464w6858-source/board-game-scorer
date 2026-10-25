@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advocate – EHCP deadline tracker | IncludeMe</title>
+<meta name="description" content="Advocate keeps every EHCP deadline, piece of evidence and contact in one place, with plain-English guidance at each stage of the 20-week process. Coming soon from IncludeMe.">
+<link rel="canonical" href="https://info.includeme.uk/advocate/">
+<meta property="og:title" content="Advocate – EHCP deadline tracker | IncludeMe">
+<meta property="og:description" content="Know exactly where your child’s EHCP stands. Coming soon.">
+<meta property="og:url" content="https://info.includeme.uk/advocate/">
+<link rel="icon" href="../assets/logo-advocate.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FAF8F4; --surface: #fff; --ink: #14211C; --muted: #566660; --line: #E7E3DA;
+  --teal: #0F6B5C; --teal-soft: #E4F1EC;
+  --navy: #17214D; --navy-2: #1F2C66; --navy-soft: #ECEEF8; --gold: #E3B94E; --gold-dk: #8A6A12;
+  --green: #1E9D6E;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.65 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.12; letter-spacing: -.02em; }
+h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); }
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+h3 { font-size: 1.25rem; }
+section { padding: 88px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dk); margin-bottom: 14px; }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 58ch; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 Inter, sans-serif; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1.5px solid transparent; transition: background .15s, transform .15s; white-space: nowrap; }
+.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-gold:hover { background: #EDC864; transform: translateY(-1px); }
+.btn-line { border-color: rgba(255,255,255,.4); color: #fff; }
+.btn-line:hover { border-color: #fff; }
+
+.topbar { background: #0E1636; color: #fff; font-size: 14px; }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 52px; }
+.topbar a { text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; }
+.topbar img { width: 28px; height: 28px; }
+.topbar .back { color: var(--gold); font-weight: 500; }
+
+.hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; padding: 0; background: linear-gradient(160deg, #101A45 0%, #17214D 55%, #1F2C66 100%); border-bottom: 4px solid var(--gold); }
+.hero::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(227,185,78,.22), transparent); z-index: -1; }
+.hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: end; }
+.hero-copy { padding: 80px 0; }
+.pill { display: inline-block; background: var(--gold); color: var(--navy); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.hero .lead { color: rgba(255,255,255,.82); margin: 22px 0 32px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.stage { position: relative; height: 520px; display: flex; justify-content: center; align-items: flex-end; }
+.phone { width: min(290px, 70%); position: relative; bottom: -40px; background: #0A0F25; padding: 7px; border-radius: 38px; box-shadow: 0 0 0 3px var(--gold), 0 0 60px rgba(227,185,78,.25), 0 40px 80px rgba(0,0,0,.5); }
+.phone img { border-radius: 31px; width: 100%; height: auto; }
+
+/* clock */
+.section-head { max-width: 660px; margin-bottom: 48px; }
+.clock { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.milestone { background: var(--navy); color: #fff; border-radius: 22px; padding: 30px; border-top: 4px solid var(--gold); }
+.milestone b { font: 700 3.6rem/1 Fraunces, serif; color: var(--gold); }
+.milestone small { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.7); margin: 6px 0 14px; }
+.milestone h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.milestone p { font-size: 15px; color: rgba(255,255,255,.78); }
+.note { margin-top: 22px; font-size: 14.5px; color: var(--muted); max-width: 70ch; }
+
+/* features */
+.alt { background: var(--surface); border-block: 1px solid var(--line); }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat { background: var(--bg); border: 1px solid var(--line); border-radius: 18px; padding: 28px; border-top: 3px solid var(--gold); }
+.feat h3 { font: 700 1.05rem Inter, sans-serif; letter-spacing: 0; color: var(--navy); margin-bottom: 6px; }
+.feat p { color: var(--muted); font-size: 15px; }
+
+/* pricing */
+.price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 860px; }
+.price { border-radius: 22px; padding: 34px; border: 1px solid var(--line); background: var(--surface); }
+.price.adv { background: var(--navy); color: #fff; border: 0; border-top: 4px solid var(--gold); }
+.price h3 { margin-bottom: 6px; }
+.price .amt { font: 700 2.2rem/1.1 Fraunces, serif; margin: 14px 0; color: var(--teal); }
+.price.adv .amt { color: var(--gold); }
+.price p, .price li { font-size: 15px; color: var(--muted); }
+.price.adv p, .price.adv li { color: rgba(255,255,255,.78); }
+.price ul { list-style: none; margin-top: 16px; display: grid; gap: 8px; }
+.price li::before { content: "✓"; font-weight: 700; margin-right: 8px; color: var(--green); }
+.price.adv li::before { color: var(--gold); }
+
+/* faq */
+.faq { max-width: 760px; }
+details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; color: var(--navy); }
+details p { margin-top: 10px; color: var(--muted); }
+
+footer { padding: 48px 0 36px; font-size: 14.5px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 24px; }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--navy); }
+
+@media (max-width: 900px) {
+  section { padding: 64px 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .hero-copy { padding: 56px 0 32px; }
+  .stage { height: clamp(330px, 92vw, 520px); }
+  .clock, .feat-grid, .price-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="../"><img src="../assets/logo-includeme.svg" alt="">IncludeMe</a>
+    <a class="back" href="../">← Back to IncludeMe</a>
+  </div>
+</div>
+
+<main>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="pill">Coming soon</span>
+      <h1>Know exactly where your child’s EHCP <em>stands.</em></h1>
+      <p class="lead">Advocate keeps every deadline, piece of evidence and contact in one place, with plain-English guidance at each stage of the 20-week EHCP process.</p>
+      <div class="hero-btns">
+        <a class="btn btn-gold" href="#pricing">See pricing</a>
+        <a class="btn btn-line" href="#clock">How the 20 weeks work</a>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="phone"><img src="../assets/advocate-screen.jpg" width="1262" height="2152" alt="Advocate: the 20-week clock with statutory deadlines and the next step to record"></div>
+    </div>
+  </div>
+</section>
+
+<section id="clock">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">The 20-week clock</p>
+      <h2>Three deadlines the local authority must meet.</h2>
+      <p class="lead">Once an EHC needs assessment is requested, the clock starts. Advocate counts down to each deadline for you.</p>
+    </div>
+    <div class="clock">
+      <div class="milestone"><b>6</b><small>weeks</small><h3>Decision to assess</h3><p>The local authority must tell you whether it will carry out an EHC needs assessment.</p></div>
+      <div class="milestone"><b>16</b><small>weeks</small><h3>Draft plan</h3><p>If an assessment goes ahead, a draft EHC plan should be issued for you to review.</p></div>
+      <div class="milestone"><b>20</b><small>weeks</small><h3>Final plan</h3><p>The final EHC plan should be issued, setting out the support your child will receive.</p></div>
+    </div>
+    <p class="note">Weeks 6, 16 and 20 are statutory deadlines under the SEND Regulations 2014. Advocate helps you organise and understand the process. It is not legal advice.</p>
+  </div>
+</section>
+
+<section class="alt" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">What’s inside</p>
+      <h2>Everything for the process, in one place.</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><h3>Deadlines</h3><p>Each step is marked done or upcoming, with the due date and how many days are left.</p></div>
+      <div class="feat"><h3>Evidence</h3><p>Keep reports, letters and notes together with the case they belong to.</p></div>
+      <div class="feat"><h3>Provision</h3><p>Track the support your child is meant to receive.</p></div>
+      <div class="feat"><h3>Contacts</h3><p>Keep the names and details of everyone involved in one list.</p></div>
+      <div class="feat"><h3>Documents</h3><p>Store the paperwork you need, so you can find it when a deadline arrives.</p></div>
+      <div class="feat"><h3>Plain-English guidance</h3><p>Each stage explains what it means and what to do next, so you are not working it out alone.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Pricing</p>
+      <h2>Clear costs, before you commit.</h2>
+      <p class="lead">We will publish Advocate’s price here before it launches.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price adv">
+        <h3>Advocate</h3>
+        <div class="amt">Pricing to be announced</div>
+        <p>Coming soon.</p>
+        <ul>
+          <li>The 20-week clock and deadlines</li>
+          <li>Evidence, contacts and documents</li>
+          <li>Plain-English guidance at each stage</li>
+        </ul>
+      </div>
+      <div class="price">
+        <h3>IncludeMe Activity Finder</h3>
+        <div class="amt">Free for families</div>
+        <p>Find inclusive activities, therapies and charities near you.</p>
+        <ul>
+          <li>No ads, no tracking</li>
+          <li>Map and list views</li>
+        </ul>
+        <p style="margin-top:20px"><a href="https://includeme.uk" target="_blank" rel="noopener" style="font-weight:600;color:var(--teal)">Open the Activity Finder ↗</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Questions</p><h2>Good to know.</h2></div>
+    <div class="faq">
+      <details><summary>Is Advocate available yet?</summary><p>Not yet. It is coming soon. We will publish how to get it on this page, and it may launch as a website first.</p></details>
+      <details><summary>Who is it for?</summary><p>Parents and carers going through the EHC needs assessment process in England, who want to keep track of deadlines and paperwork.</p></details>
+      <details><summary>How much will it cost?</summary><p>Pricing is still to be announced. It will be published on this page before launch.</p></details>
+      <details><summary>Is this legal advice?</summary><p>No. Advocate helps you organise your case and understand each stage. It is not legal advice.</p></details>
+      <details><summary>Is the IncludeMe Activity Finder affected?</summary><p>No. The Activity Finder is a separate app and stays free for families.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 IncludeMe. Built in Surrey, UK.</span>
+    <a href="../">← Back to IncludeMe</a>
+  </div>
+</footer>
+
+</body>
+</html>

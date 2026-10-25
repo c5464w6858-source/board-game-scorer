@@ -55,6 +55,12 @@ section { padding: 96px 0; }
 .btn-ghost:hover { border-color: var(--ink); }
 .btn-outline-gold { border-color: rgba(227,185,78,.55); color: var(--gold); cursor: default; }
 
+/* top banner */
+.topbar { display: block; background: var(--navy); color: #fff; text-align: center; font-size: 14px; font-weight: 500; padding: 11px 20px; text-decoration: none; border-bottom: 2px solid var(--gold); }
+.topbar b { background: var(--gold); color: var(--navy); font-size: 11px; letter-spacing: .1em; padding: 3px 8px; border-radius: 999px; margin-right: 10px; }
+.topbar u { color: var(--gold); text-underline-offset: 3px; font-weight: 600; margin-left: 6px; white-space: nowrap; }
+.topbar:hover u { color: #fff; }
+
 /* hero */
 .hero { padding: 40px 0 72px; text-align: center; background: linear-gradient(180deg, #F1E7D3 0%, #EADDC2 100%); }
 .brandrow { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; margin-bottom: 56px; }
@@ -97,11 +103,24 @@ section { padding: 96px 0; }
 .band-adv .pill { background: rgba(227,185,78,.14); color: var(--gold); }
 .band-adv .band-points li { border-color: rgba(227,185,78,.6); }
 .band-adv .stage { order: -1; }
+.band-adv { background: linear-gradient(160deg, #101A45 0%, #17214D 55%, #1F2C66 100%); border-top: 4px solid var(--gold); }
+.band-adv h2 { font-size: clamp(2.2rem, 4.4vw, 3.3rem); }
+.band-adv h2 em { font-style: normal; color: var(--gold); }
+.band-adv .pill { background: var(--gold); color: var(--navy); font-weight: 700; }
+.band-adv .band-points b { color: var(--gold); font-size: 16.5px; }
+.band-adv .band-points li { border-left-width: 4px; border-color: var(--gold); }
+.adv-nums { display: flex; gap: 14px; margin: 30px 0 4px; }
+.adv-nums div { flex: 1; background: rgba(227,185,78,.12); border: 1px solid rgba(227,185,78,.45); border-radius: 16px; padding: 14px 10px; text-align: center; }
+.adv-nums b { display: block; font: 700 2.4rem/1 Fraunces, serif; color: var(--gold); }
+.adv-nums span { font-size: 12.5px; color: rgba(255,255,255,.8); }
+.adv-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-gold:hover { background: #EDC864; transform: translateY(-1px); }
 
 /* phones */
 .phone { background: #0B1610; padding: 7px; border-radius: 38px; box-shadow: 0 0 0 2px #1c3326, 0 40px 80px rgba(0,0,0,.45); }
 .phone img { border-radius: 31px; width: 100%; height: auto; }
-.band-adv .phone { background: #0A0F25; box-shadow: 0 0 0 2px #2b3a7a, 0 40px 80px rgba(0,0,0,.5); }
+.band-adv .phone { background: #0A0F25; box-shadow: 0 0 0 3px var(--gold), 0 0 60px rgba(227,185,78,.25), 0 40px 80px rgba(0,0,0,.5); }
 .stage { position: relative; height: 560px; display: flex; justify-content: center; align-items: flex-end; align-self: end; }
 .stage .phone { position: absolute; bottom: -40px; width: min(232px, 46%); }
 .stage .phone.l { left: 8%; transform: rotate(-5deg) translateY(-24px); z-index: 1; }
@@ -161,6 +180,8 @@ footer { padding: 64px 0 36px; font-size: 15px; }
 </head>
 <body>
 
+<a class="topbar" href="advocate/"><b>NEW</b>Advocate: your EHCP deadline tracker is coming soon.<u>Details &amp; pricing →</u></a>
+
 <main id="top">
 
 <!-- HERO -->
@@ -219,15 +240,20 @@ footer { padding: 64px 0 36px; font-size: 15px; }
 <section class="band band-adv" id="advocate">
   <div class="wrap band-grid">
     <div class="band-copy">
-      <span class="pill"><img src="assets/logo-advocate.svg" alt="">Advocate · Coming to app stores</span>
-      <h2>Know exactly where your child’s EHCP stands.</h2>
+      <span class="pill"><img src="assets/logo-advocate.svg" alt="">Advocate · Coming soon</span>
+      <h2>Know exactly where your child’s EHCP <em>stands.</em></h2>
       <p class="lead">The EHCP process runs to a 20-week statutory timetable of decisions, documents and deadlines. Advocate keeps every thread organised, with plain-English guidance at each stage.</p>
+      <div class="adv-nums" aria-label="Statutory deadlines at weeks 6, 16 and 20">
+        <div><b>6</b><span>weeks: decision to assess</span></div>
+        <div><b>16</b><span>weeks: draft plan</span></div>
+        <div><b>20</b><span>weeks: final plan</span></div>
+      </div>
       <ul class="band-points">
-        <li><b>The 20-week clock</b><span>See the statutory deadlines at weeks 6, 16 and 20, and how many days are left.</span></li>
-        <li><b>Step-by-step deadlines</b><span>Every stage is marked done or upcoming, with what it means and what to do next.</span></li>
+        <li><b>The 20-week clock</b><span>See each statutory deadline and how many days are left.</span></li>
+        <li><b>Step-by-step guidance</b><span>Every stage is marked done or upcoming, with what it means and what to do next.</span></li>
         <li><b>Evidence, contacts and documents</b><span>Keep reports, letters and key contacts with the case they belong to.</span></li>
       </ul>
-      <span class="btn btn-outline-gold">Coming to app stores</span>
+      <div class="adv-cta"><a class="btn btn-gold" href="advocate/">Details &amp; pricing →</a><span style="font-size:14px;color:rgba(255,255,255,.7)">Coming soon</span></div>
     </div>
     <div class="stage" aria-label="A screen from Advocate">
       <div class="phone solo"><img src="assets/advocate-screen.jpg" width="1262" height="2152" alt="Advocate: the 20-week clock with statutory deadlines and the next step to record" loading="lazy"></div>
@@ -289,7 +315,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
         <p>Help for every family. Made by a family, with love, in Surrey.</p>
       </div>
       <div class="foot-col"><h4>Activity Finder</h4><a href="https://includeme.uk" target="_blank" rel="noopener">Open app ↗</a><a href="#includeme">About</a></div>
-      <div class="foot-col"><h4>Advocate</h4><a href="#advocate">About</a></div>
+      <div class="foot-col"><h4>Advocate</h4><a href="advocate/">Details &amp; pricing</a></div>
       <div class="foot-col"><h4>Info</h4><a href="#how">How it works</a></div>
     </div>
     <div class="foot-bottom"><span>© 2026 IncludeMe. Built in Surrey, UK.</span><span>No ads · No tracking</span></div>
