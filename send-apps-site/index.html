@@ -75,6 +75,13 @@ header { position: sticky; top: 0; z-index: 10; background: rgba(250,248,244,.9)
 .hero-visual::before { content: ""; position: absolute; inset: 6% 4%; background: var(--teal-soft); border-radius: 48% 52% 44% 56%; z-index: -1; }
 .hero-visual { z-index: 0; isolation: isolate; }
 
+.duo { display: flex; align-items: center; justify-content: center; }
+.duo .phone { width: 52%; flex: none; position: relative; z-index: 2; }
+.duo .adv { width: 48%; margin: 0 0 0 -6%; position: relative; z-index: 1; padding: 16px 12px 16px; transform: translateY(8%) rotate(3deg); font-size: 12px; }
+.duo-tag { position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: #fff; padding: 6px 14px; border-radius: 999px; white-space: nowrap; box-shadow: var(--shadow); }
+.duo-teal { background: var(--teal); } .duo-indigo { background: var(--indigo); }
+.hero-visual::before { background: linear-gradient(120deg, var(--teal-soft), var(--indigo-soft)) !important; }
+
 /* stats */
 .stats { background: var(--surface); border-block: 1px solid var(--line); }
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
@@ -222,7 +229,21 @@ footer { padding: 64px 0 36px; font-size: 15px; }
       </ul>
     </div>
     <div class="hero-visual">
-      <div class="phone"><img src="assets/includeme-screen-1.jpg" width="780" height="1690" alt="IncludeMe on a phone: a map of SEND activities across the south east with a Forest School listing open" fetchpriority="high"></div>
+      <div class="duo">
+        <div class="phone"><img src="assets/includeme-screen-1.jpg" width="780" height="1690" alt="IncludeMe on a phone: a map of SEND activities with a Forest School listing open" fetchpriority="high"><span class="duo-tag duo-teal">IncludeMe</span></div>
+        <div class="adv" role="img" aria-label="Preview of the Advocate app showing a case at week 12 of 20 with a timeline of EHCP stages">
+          <div class="adv-bar"><img src="assets/logo-advocate.svg" alt="">Advocate</div>
+          <div class="adv-case"><b>James — EHCP 2025</b><div class="bar"><i></i></div><small><span>Week 12 of 20</span><span>62%</span></small></div>
+          <h4>Timeline</h4>
+          <ul class="tl">
+            <li><i class="dot ok"></i><div><b>Referral accepted</b><span>✓ 14 Jun 2025</span></div></li>
+            <li><i class="dot ok"></i><div><b>Needs assessment agreed</b><span>✓ 28 Jun 2025</span></div></li>
+            <li><i class="dot warn"></i><div><b>EP report due</b><span>⚠ 15 Jul 2025</span></div></li>
+          </ul>
+          <div class="adv-stats"><div><b>42</b><span>Days left</span></div><div><b>9</b><span>Docs</span></div><div><b>3</b><span>Alerts</span></div></div>
+          <span class="duo-tag duo-indigo">Advocate</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
