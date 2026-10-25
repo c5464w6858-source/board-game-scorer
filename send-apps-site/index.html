@@ -59,6 +59,7 @@ section { padding: 96px 0; }
 
 /* top bar (sits inside the hero) */
 .bar { position: relative; z-index: 2; }
+.bar:not(.on-dark) { background: rgba(255,255,255,.62); border-bottom: 1px solid #DCCFB0; box-shadow: 0 2px 12px rgba(80,60,20,.06); }
 .bar-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 80px; }
 .home { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 21px; letter-spacing: -.02em; color: var(--ink); text-decoration: none; }
 .home img { width: 40px; height: 40px; }
@@ -70,6 +71,8 @@ section { padding: 96px 0; }
 .app .short { display: none; }
 .app em { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: #E3B94E; color: #17214D; padding: 2px 8px; border-radius: 999px; margin-left: 2px; }
 .app[aria-current] { background: var(--ink); color: #fff; }
+.bar:not(.on-dark) .app:not([aria-current]) { background: rgba(214,196,152,.38); }
+.bar:not(.on-dark) .app:not([aria-current]):hover { background: rgba(214,196,152,.65); }
 .bar.on-dark .home { color: #fff; }
 .bar.on-dark .app { background: rgba(255,255,255,.13); color: #fff; }
 .bar.on-dark .app:hover { background: rgba(255,255,255,.24); }
