@@ -3,8 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IncludeMe &amp; Advocate – Free apps for UK SEND families</title>
-<meta name="description" content="IncludeMe helps you find inclusive activities, therapies and clubs for children with SEND. Advocate keeps every EHCP deadline, meeting and document in one place. Both free, built by a SEND family.">
+<title>IncludeMe &amp; Advocate – Apps for UK SEND families</title>
+<meta name="description" content="IncludeMe helps you find inclusive activities, therapies and clubs for children with SEND. Advocate keeps every EHCP deadline, meeting and document in one place. Built by a SEND family.">
+<link rel="canonical" href="https://includeme.uk/info/">
+<meta property="og:title" content="IncludeMe &amp; Advocate – Apps for UK SEND families">
+<meta property="og:description" content="Find inclusive activities with IncludeMe. Stay on top of every EHCP deadline with Advocate.">
+<meta property="og:url" content="https://includeme.uk/info/">
 <link rel="icon" href="assets/logo-includeme.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,15 +22,13 @@
   --line: #E7E3DA;
   --teal: #0F6B5C;
   --teal-dk: #0A5246;
+  --teal-band: #0A3F36;
   --teal-soft: #E4F1EC;
-  --indigo: #3B4D9B;
-  --indigo-dk: #2E3D80;
-  --indigo-soft: #E9ECF8;
-  --amber: #F5C842;
+  --navy: #17214D;
+  --gold: #E3B94E;
+  --gold-dk: #C99A2E;
   --green: #1E9D6E;
-  --warn: #C27803;
   --radius: 18px;
-  --shadow: 0 1px 2px rgba(20,33,28,.05), 0 12px 32px -12px rgba(20,33,28,.14);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -36,57 +38,32 @@ a { color: inherit; }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.12; letter-spacing: -.02em; }
 h1 { font-size: clamp(2.4rem, 5.4vw, 4rem); }
-h2 { font-size: clamp(1.9rem, 3.6vw, 2.75rem); }
-h3 { font-size: 1.35rem; }
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+h3 { font-size: 1.3rem; }
 .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
 .lead { font-size: 1.15rem; color: var(--muted); max-width: 58ch; }
 section { padding: 96px 0; }
-:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; border-radius: 6px; }
+:focus-visible { outline: 3px solid var(--gold-dk); outline-offset: 3px; border-radius: 6px; }
 
-/* nav */
-header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 2px 14px rgba(20,33,28,.06); }
-.nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; letter-spacing: -.01em; }
-.brand img { width: 32px; height: 32px; }
-.nav-links { display: flex; gap: 30px; }
-.nav-links a { text-decoration: none; font-size: 15px; font-weight: 500; color: var(--muted); }
-.nav-links a:hover { color: var(--ink); }
-.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 Inter, sans-serif; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1.5px solid transparent; transition: background .15s, transform .15s; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 Inter, sans-serif; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1.5px solid transparent; transition: background .15s, transform .15s; white-space: nowrap; }
 .btn-teal { background: var(--teal); color: #fff; }
 .btn-teal:hover { background: var(--teal-dk); transform: translateY(-1px); }
-.btn-indigo { background: var(--indigo); color: #fff; }
-.btn-indigo:hover { background: var(--indigo-dk); transform: translateY(-1px); }
+.btn-light { background: #fff; color: var(--teal-band); }
+.btn-light:hover { background: var(--teal-soft); transform: translateY(-1px); }
 .btn-ghost { border-color: var(--line); background: var(--surface); }
 .btn-ghost:hover { border-color: var(--ink); }
-.btn-sm { padding: 10px 18px; font-size: 14px; white-space: nowrap; }
-.brand span { white-space: nowrap; }
-.btn[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+.btn-outline-gold { border-color: rgba(227,185,78,.55); color: var(--gold); cursor: default; }
 
 /* hero */
-.hero { padding: 84px 0 64px; text-align: center; }
-.hero h1 { margin: 0 auto; }
+.hero { padding: 40px 0 72px; text-align: center; }
+.brandrow { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; margin-bottom: 56px; }
+.brandrow img { width: 36px; height: 36px; }
+.brandrow img + img { margin-left: -16px; }
 .hero h1 em { font-style: normal; color: var(--teal); }
 .hero .lead { margin: 24px auto 34px; }
 .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .ticks { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; margin-top: 28px; list-style: none; font-size: 14px; font-weight: 500; color: var(--muted); }
 .ticks li::before { content: "✓"; color: var(--green); font-weight: 700; margin-right: 7px; }
-
-/* phone stage */
-.band { position: relative; overflow: hidden; isolation: isolate; background: #0A3F36; color: #fff; padding: 36px 0 0; }
-.band::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(123,144,240,.34), transparent); z-index: -1; }
-.band::after { content: ""; position: absolute; inset: auto auto -40% -15%; width: 60%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(32,200,142,.30), transparent); z-index: -1; }
-.band-apps { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; font-weight: 600; font-size: 15px; }
-.band-apps span { display: inline-flex; align-items: center; gap: 10px; }
-.band-apps img { width: 28px; height: 28px; }
-.stage { position: relative; height: 640px; display: flex; justify-content: center; align-items: flex-end; margin-top: 28px; }
-.stage .phone { position: absolute; bottom: -40px; width: min(290px, 44%); }
-.stage .phone img { aspect-ratio: auto; }
-.stage .phone.c { z-index: 3; width: min(372px, 58%); bottom: -20px; }
-.stage .phone.l { left: 4%; transform: rotate(-6deg) translateY(-30px); z-index: 1; }
-.stage .phone.r { right: 4%; transform: rotate(6deg) translateY(-30px); z-index: 2; }
-.phone { background: #0B1610; padding: 8px; border-radius: 44px; box-shadow: 0 0 0 2px #1c3326, 0 40px 80px rgba(0,0,0,.45); }
-.phone img { border-radius: 36px; width: 100%; height: auto; }
-.row-visual .phone { width: min(300px, 100%); margin: 0 auto; box-shadow: 0 0 0 2px #1c3326, 0 24px 50px -12px rgba(10,40,34,.45); }
 
 /* stats */
 .stats { background: var(--surface); border-block: 1px solid var(--line); }
@@ -96,40 +73,42 @@ header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom:
 .stat b { display: block; font: 700 2.2rem/1.1 Fraunces, serif; color: var(--teal); }
 .stat span { font-size: 14px; color: var(--muted); }
 
-/* apps */
-.section-head { max-width: 640px; margin-bottom: 52px; }
-.section-head .lead { margin-top: 16px; }
-.app-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
-.card-top { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
-.card-top img { width: 56px; height: 56px; }
-.status { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
-.status-live { background: var(--teal-soft); color: var(--teal); }
-.status-soon { background: var(--indigo-soft); color: var(--indigo); }
-.card p { color: var(--muted); }
-.card ul { list-style: none; margin: 22px 0 28px; display: grid; gap: 10px; font-size: 15px; }
-.card li { display: flex; gap: 10px; }
-.card li::before { content: "✓"; font-weight: 700; flex: none; }
-.card-teal li::before { color: var(--teal); }
-.card-indigo li::before { color: var(--indigo); }
-.card .btn { margin-top: auto; align-self: flex-start; }
+/* app bands */
+.band { position: relative; overflow: hidden; isolation: isolate; padding: 0; color: #fff; }
+.band-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.band-copy { padding: 88px 0; }
+.band .lead { color: rgba(255,255,255,.78); margin-top: 18px; }
+.band h2 { color: #fff; }
+.pill { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; padding: 6px 14px 6px 8px; border-radius: 999px; margin-bottom: 20px; }
+.pill img { width: 26px; height: 26px; }
+.band-points { list-style: none; margin: 28px 0 34px; display: grid; gap: 16px; }
+.band-points li { padding-left: 18px; border-left: 3px solid; }
+.band-points b { display: block; font-size: 15.5px; }
+.band-points span { font-size: 14.5px; color: rgba(255,255,255,.72); }
 
-/* showcase rows */
-.showcase { background: var(--surface); border-block: 1px solid var(--line); }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
-.row + .row { margin-top: 96px; }
-.row.flip .row-visual { order: -1; }
-.row h2 { margin-bottom: 18px; }
-.row .lead { font-size: 1.05rem; }
-.points { margin-top: 26px; display: grid; gap: 14px; list-style: none; }
-.points li { padding-left: 20px; border-left: 3px solid var(--teal-soft); }
-.points b { display: block; font-size: 15px; }
-.points span { font-size: 14.5px; color: var(--muted); }
-.row-visual { background: var(--teal-soft); border-radius: 28px; padding: 40px 24px; }
-.row-visual.indigo { background: var(--indigo-soft); }
-.caption { text-align: center; font-size: 12.5px; color: var(--muted); margin-top: 16px; }
+.band-im { background: var(--teal-band); }
+.band-im::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(32,200,142,.30), transparent); z-index: -1; }
+.band-im .pill { background: rgba(255,255,255,.1); }
+.band-im .band-points li { border-color: rgba(32,200,142,.55); }
+
+.band-adv { background: var(--navy); }
+.band-adv::before { content: ""; position: absolute; inset: -30% auto auto -10%; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(227,185,78,.20), transparent); z-index: -1; }
+.band-adv .pill { background: rgba(227,185,78,.14); color: var(--gold); }
+.band-adv .band-points li { border-color: rgba(227,185,78,.6); }
+.band-adv .stage { order: -1; }
+
+/* phones */
+.phone { background: #0B1610; padding: 7px; border-radius: 38px; box-shadow: 0 0 0 2px #1c3326, 0 40px 80px rgba(0,0,0,.45); }
+.phone img { border-radius: 31px; width: 100%; height: auto; }
+.band-adv .phone { background: #0A0F25; box-shadow: 0 0 0 2px #2b3a7a, 0 40px 80px rgba(0,0,0,.5); }
+.stage { position: relative; height: 560px; display: flex; justify-content: center; align-items: flex-end; align-self: end; }
+.stage .phone { position: absolute; bottom: -40px; width: min(232px, 46%); }
+.stage .phone.l { left: 8%; transform: rotate(-5deg) translateY(-24px); z-index: 1; }
+.stage .phone.r { right: 8%; transform: rotate(5deg) translateY(-8px); z-index: 2; }
+.stage .phone.solo { position: relative; width: min(290px, 70%); }
 
 /* how */
+.section-head { max-width: 640px; margin-bottom: 52px; }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; counter-reset: s; }
 .step { counter-increment: s; padding-top: 22px; border-top: 2px solid var(--ink); }
 .step::before { content: "0" counter(s); font: 700 .95rem Inter, sans-serif; color: var(--teal); }
@@ -148,11 +127,11 @@ header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom:
 .cta { background: var(--teal); color: #fff; border-radius: 28px; padding: 64px 40px; text-align: center; }
 .cta h2 { max-width: 20ch; margin: 0 auto 14px; }
 .cta p { color: #CFE7DF; max-width: 52ch; margin: 0 auto 30px; }
-.cta .btn { background: #fff; color: var(--teal-dk); }
-.cta .btn:hover { background: var(--teal-soft); }
 
 /* footer */
 footer { padding: 64px 0 36px; font-size: 15px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
+.brand img { width: 32px; height: 32px; }
 .foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; }
 .foot-grid p { color: var(--muted); max-width: 34ch; margin-top: 12px; }
 .foot-col h4 { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
@@ -162,179 +141,95 @@ footer { padding: 64px 0 36px; font-size: 15px; }
 
 @media (max-width: 900px) {
   section { padding: 72px 0; }
-  .row, .app-cards { grid-template-columns: 1fr; gap: 40px; }
-  .row.flip .row-visual { order: 0; }
+  .band-grid { grid-template-columns: 1fr; gap: 0; }
+  .band-copy { padding: 64px 0 36px; }
+  .band-adv .stage { order: 0; }
+  .stage { height: clamp(330px, 92vw, 520px); }
+  .stage .phone { width: min(232px, 44%); }
+  .stage .phone.solo { width: min(250px, 66%); }
   .steps, .feat-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .stat:nth-child(3) { border-left: 0; }
   .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
   .foot-grid { grid-template-columns: 1fr 1fr; }
-  .nav-links { display: none; }
-  .brand span { font-size: 14px; }
-  .brand img + img { margin-left: -12px !important; }
-  .brand img { width: 28px; height: 28px; }
-  .hide-sm { display: none; }
-  .stage { height: clamp(300px, 92vw, 640px); margin-top: 20px; }
-  .stage .phone.c { width: 64%; }
-  .band-apps { gap: 10px 22px; font-size: 14px; }
-  .stage .phone.l { left: -3%; } .stage .phone.r { right: -3%; }
-  .hero { padding: 56px 0 44px; }
-  .card { padding: 28px; }
-  .row + .row { margin-top: 72px; }
+  .hero { padding: 28px 0 56px; }
+  .brandrow { margin-bottom: 36px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap nav">
-    <a class="brand" href="#top">
-      <img src="assets/logo-includeme.svg" alt=""><img src="assets/logo-advocate.svg" alt="" style="margin-left:-14px">
-      <span>IncludeMe &amp; Advocate</span>
-    </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="#apps">The apps</a>
-      <a href="#includeme">IncludeMe</a>
-      <a href="#advocate">Advocate</a>
-      <a href="#how">How it works</a>
-    </nav>
-    <a class="btn btn-teal btn-sm" href="https://includeme.netlify.app/" target="_blank" rel="noopener">Open <span class="hide-sm">IncludeMe </span>↗</a>
-  </div>
-</header>
-
 <main id="top">
 
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
-    <p class="eyebrow">Free apps for UK SEND families</p>
+    <div class="brandrow"><img src="assets/logo-includeme.svg" alt=""><img src="assets/logo-advocate.svg" alt=""><span>IncludeMe &amp; Advocate</span></div>
+    <p class="eyebrow">Apps for UK SEND families</p>
     <h1>Find activities.<br>Fight for your child.<br><em>We’ve got you.</em></h1>
-    <p class="lead">Two free tools built by a SEND family, for SEND families. Find inclusive activities near you, then stay on top of every EHCP deadline, meeting and document.</p>
+    <p class="lead">Two tools built by a SEND family, for SEND families. Find inclusive activities near you with IncludeMe, then stay on top of every EHCP deadline with Advocate.</p>
     <div class="hero-btns">
-      <a class="btn btn-teal" href="https://includeme.netlify.app/" target="_blank" rel="noopener">Find activities near you</a>
-      <a class="btn btn-ghost" href="#apps">Learn about both apps</a>
+      <a class="btn btn-teal" href="https://includeme.uk" target="_blank" rel="noopener">Open IncludeMe ↗</a>
+      <a class="btn btn-ghost" href="#advocate">See Advocate</a>
     </div>
     <ul class="ticks">
-      <li>Completely free</li>
+      <li>Made by a SEND family</li>
       <li>No ads, no tracking</li>
       <li>Works on any device</li>
     </ul>
   </div>
 </section>
 
-<div class="band">
-  <div class="wrap">
-    <div class="band-apps"><span><img src="assets/logo-includeme.svg" alt="">IncludeMe: find activities</span><span><img src="assets/logo-advocate.svg" alt="">Advocate: track your EHCP</span></div>
-    <div class="stage" aria-label="Screens from IncludeMe and Advocate">
-      <div class="phone l"><img src="assets/includeme-screen-3.jpg" width="1290" height="2796" alt="IncludeMe: the Therapies tab listing aquatic and speech and language therapies" fetchpriority="high"></div>
-      <div class="phone r"><img src="assets/includeme-screen-1.jpg" width="780" height="1690" alt="IncludeMe: a map of SEND activities with a Forest School listing open" fetchpriority="high"></div>
-      <div class="phone c"><img src="assets/advocate-screen.jpg" width="1262" height="2152" alt="Advocate: the 20-week EHCP clock with statutory deadlines and upcoming steps" fetchpriority="high"></div>
-    </div>
-  </div>
-</div>
-
 <!-- STATS -->
 <div class="stats">
   <div class="wrap stats-grid">
     <div class="stat"><b>378+</b><span>Activities &amp; services</span></div>
-    <div class="stat"><b>Free</b><span>No cost, no ads</span></div>
+    <div class="stat"><b>187</b><span>Therapies listed</span></div>
     <div class="stat"><b>2</b><span>Complementary apps</span></div>
     <div class="stat"><b>UK</b><span>Nationwide coverage</span></div>
   </div>
 </div>
 
-<!-- APPS -->
-<section id="apps">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">Two apps, one mission</p>
-      <h2>Everything a SEND family actually needs.</h2>
-      <p class="lead">Finding the right support is hard enough. One tool helps you discover activities; the other helps you navigate the EHCP process. Both are free and built from lived experience.</p>
+<!-- INCLUDEME -->
+<section class="band band-im" id="includeme">
+  <div class="wrap band-grid">
+    <div class="band-copy">
+      <span class="pill"><img src="assets/logo-includeme.svg" alt="">IncludeMe · Live now · Free for families</span>
+      <h2>Every inclusive activity near you, in one place.</h2>
+      <p class="lead">A searchable UK-wide directory of activities, therapies and charities for children with SEND. Enter a town or postcode, then browse on a map or in a list.</p>
+      <ul class="band-points">
+        <li><b>Activities, therapies and charities</b><span>Everything in one app, with a tab for each.</span></li>
+        <li><b>Filter quickly</b><span>Chip filters for Holiday Clubs, Swimming, Arts &amp; Crafts, Conductive Ed and more.</span></li>
+        <li><b>Judge fit at a glance</b><span>Each listing shows its location, age range and price information before you tap through.</span></li>
+        <li><b>Save your shortlist</b><span>Create a free account to keep the activities you like.</span></li>
+      </ul>
+      <a class="btn btn-light" href="https://includeme.uk" target="_blank" rel="noopener">Open IncludeMe ↗</a>
     </div>
-    <div class="app-cards">
-      <article class="card card-teal">
-        <div class="card-top">
-          <img src="assets/logo-includeme.svg" alt="IncludeMe logo">
-          <div><h3>IncludeMe</h3><span class="status status-live">Live now</span></div>
-        </div>
-        <p>A searchable UK-wide directory of activities, therapies, holiday clubs and support groups for children with SEND. Browse on a map or in a list, filter by age and need, and connect with providers.</p>
-        <ul>
-          <li>Activities, therapies and charities in one place</li>
-          <li>Map and list views, searchable by town or postcode</li>
-          <li>Filter by category, age (0–25) and need</li>
-        </ul>
-        <a class="btn btn-teal" href="https://includeme.netlify.app/" target="_blank" rel="noopener">Open IncludeMe ↗</a>
-      </article>
-      <article class="card card-indigo">
-        <div class="card-top">
-          <img src="assets/logo-advocate.svg" alt="Advocate logo">
-          <div><h3>Advocate</h3><span class="status status-soon">Coming to app stores</span></div>
-        </div>
-        <p>The EHCP process runs to a 20-week statutory timetable of decisions, documents and deadlines. Advocate keeps every thread organised, with rights guidance at each stage of the assessment.</p>
-        <ul>
-          <li>Full case timeline with a deadline countdown</li>
-          <li>Document log for reports, letters and evidence</li>
-          <li>Private by design, with guidance at every stage</li>
-        </ul>
-        <a class="btn btn-indigo" href="#advocate">See how it works</a>
-      </article>
+    <div class="stage" aria-label="Screens from IncludeMe">
+      <div class="phone l"><img src="assets/includeme-screen-3.jpg" width="1290" height="2796" alt="IncludeMe: the Therapies tab listing aquatic and speech and language therapies" loading="lazy"></div>
+      <div class="phone r"><img src="assets/includeme-screen-1.jpg" width="780" height="1690" alt="IncludeMe: a map of SEND activities with a Forest School listing open" loading="lazy"></div>
     </div>
   </div>
 </section>
 
-<!-- SHOWCASE -->
-<section class="showcase">
-  <div class="wrap">
-
-    <div class="row" id="includeme">
-      <div>
-        <p class="eyebrow">IncludeMe</p>
-        <h2>Every inclusive activity near you, on one map.</h2>
-        <p class="lead">Enter a town or postcode and see what is within reach. Tap any pin for the provider, the age range and what it offers.</p>
-        <ul class="points">
-          <li><b>Search by place</b><span>Enter your town or postcode to see distances on the map.</span></li>
-          <li><b>Filter quickly</b><span>Chip filters for Holiday Clubs, Swimming, Arts &amp; Crafts and more.</span></li>
-          <li><b>Judge fit at a glance</b><span>Each listing shows its category and age range before you tap through.</span></li>
-        </ul>
-      </div>
-      <div class="row-visual">
-        <div class="phone"><img src="assets/includeme-screen-1.jpg" width="780" height="1690" alt="IncludeMe map view with category pins and an activity card" loading="lazy"></div>
-      </div>
+<!-- ADVOCATE -->
+<section class="band band-adv" id="advocate">
+  <div class="wrap band-grid">
+    <div class="band-copy">
+      <span class="pill"><img src="assets/logo-advocate.svg" alt="">Advocate · Coming to app stores</span>
+      <h2>Know exactly where your child’s EHCP stands.</h2>
+      <p class="lead">The EHCP process runs to a 20-week statutory timetable of decisions, documents and deadlines. Advocate keeps every thread organised, with plain-English guidance at each stage.</p>
+      <ul class="band-points">
+        <li><b>The 20-week clock</b><span>See the statutory deadlines at weeks 6, 16 and 20, and how many days are left.</span></li>
+        <li><b>Step-by-step deadlines</b><span>Every stage is marked done or upcoming, with what it means and what to do next.</span></li>
+        <li><b>Evidence, contacts and documents</b><span>Keep reports, letters and key contacts with the case they belong to.</span></li>
+      </ul>
+      <span class="btn btn-outline-gold">Coming to app stores</span>
     </div>
-
-    <div class="row flip">
-      <div>
-        <p class="eyebrow">Save what matters</p>
-        <h2>A free account keeps your shortlist.</h2>
-        <p class="lead">Create a free IncludeMe account to save favourite activities and come back to them. It costs nothing and there are no ads.</p>
-        <ul class="points">
-          <li><b>Free to use</b><span>No fees for families, ever.</span></li>
-          <li><b>Built with care</b><span>Made by a SEND family in Surrey, not an advertising business.</span></li>
-        </ul>
-      </div>
-      <div class="row-visual">
-        <div class="phone"><img src="assets/includeme-screen-2.jpg" width="780" height="1690" alt="IncludeMe sign in screen: SEND and Disability Activity Finder" loading="lazy"></div>
-      </div>
+    <div class="stage" aria-label="A screen from Advocate">
+      <div class="phone solo"><img src="assets/advocate-screen.jpg" width="1262" height="2152" alt="Advocate: the 20-week clock with statutory deadlines and the next step to record" loading="lazy"></div>
     </div>
-
-    <div class="row" id="advocate">
-      <div>
-        <p class="eyebrow" style="color:var(--indigo)">Advocate</p>
-        <h2>Know exactly where your child’s EHCP stands.</h2>
-        <p class="lead">From referral to final plan, Advocate tracks every deadline, meeting and document, so nothing slips through the cracks.</p>
-        <ul class="points">
-          <li style="border-color:var(--indigo-soft)"><b>The 20-week clock</b><span>See the statutory deadlines at weeks 6, 16 and 20, and how many days are left.</span></li>
-          <li style="border-color:var(--indigo-soft)"><b>Step-by-step deadlines</b><span>Each stage is marked done or upcoming, with plain-English guidance on what it means.</span></li>
-          <li style="border-color:var(--indigo-soft)"><b>Evidence, contacts and documents</b><span>Keep reports, letters and key contacts with the case they belong to.</span></li>
-        </ul>
-      </div>
-      <div class="row-visual indigo">
-        <div class="phone"><img src="assets/advocate-screen.jpg" width="1262" height="2152" alt="Advocate showing the 20-week clock, statutory deadlines and the next step to record" loading="lazy"></div>
-        
-      </div>
-    </div>
-
   </div>
 </section>
 
@@ -348,7 +243,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
     <div class="steps">
       <div class="step"><h3>Search your area</h3><p>Open IncludeMe and enter your town or postcode. See every activity, therapy and support group within reach on a map or as a list.</p></div>
       <div class="step"><h3>Filter by age, need and category</h3><p>Use the chip filters to show only what is relevant. Each listing shows its age range and tags so you can judge fit quickly.</p></div>
-      <div class="step"><h3>Track your EHCP with Advocate</h3><p>Stay on top of the statutory process with a deadline countdown, a case timeline and a document log from referral to final plan.</p></div>
+      <div class="step"><h3>Track your EHCP with Advocate</h3><p>Stay on top of the statutory process with the 20-week clock, step-by-step deadlines and a place for your evidence and documents.</p></div>
     </div>
   </div>
 </section>
@@ -366,7 +261,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
       <div class="feat"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><h3>Trusted listings</h3><p>Providers are reviewed so you know what you are looking at.</p></div>
       <div class="feat"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><h3>EHCP deadlines tracked</h3><p>Advocate counts down each statutory deadline for you.</p></div>
       <div class="feat"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m8 21 4-4 4 4"/></svg><h3>Works on any device</h3><p>Phone, tablet or desktop.</p></div>
-      <div class="feat"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><h3>Lived experience</h3><p>Built by a SEND family in Surrey. Free, with no ads and no data harvesting.</p></div>
+      <div class="feat"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><h3>Lived experience</h3><p>Built by a SEND family in Surrey. No ads and no data harvesting.</p></div>
     </div>
   </div>
 </section>
@@ -376,8 +271,8 @@ footer { padding: 64px 0 36px; font-size: 15px; }
   <div class="wrap">
     <div class="cta">
       <h2>Ready to find something that fits?</h2>
-      <p>Search hundreds of inclusive activities, therapies and clubs across the UK. It’s free.</p>
-      <a class="btn" href="https://includeme.netlify.app/" target="_blank" rel="noopener">Open IncludeMe ↗</a>
+      <p>Search hundreds of inclusive activities, therapies and clubs across the UK. IncludeMe is free to use.</p>
+      <a class="btn btn-light" href="https://includeme.uk" target="_blank" rel="noopener">Open IncludeMe ↗</a>
     </div>
   </div>
 </section>
@@ -389,13 +284,13 @@ footer { padding: 64px 0 36px; font-size: 15px; }
     <div class="foot-grid">
       <div>
         <a class="brand" href="#top"><img src="assets/logo-includeme.svg" alt=""><span>IncludeMe &amp; Advocate</span></a>
-        <p>Free apps for UK SEND families. Made by a SEND family, with love, in Surrey.</p>
+        <p>Apps for UK SEND families. Made by a SEND family, with love, in Surrey.</p>
       </div>
-      <div class="foot-col"><h4>IncludeMe</h4><a href="https://includeme.netlify.app/" target="_blank" rel="noopener">Open app ↗</a><a href="#includeme">About</a></div>
-      <div class="foot-col"><h4>Advocate</h4><a href="#advocate">About</a><a href="#advocate">Coming soon</a></div>
-      <div class="foot-col"><h4>Info</h4><a href="#how">How it works</a><a href="#apps">The apps</a></div>
+      <div class="foot-col"><h4>IncludeMe</h4><a href="https://includeme.uk" target="_blank" rel="noopener">Open app ↗</a><a href="#includeme">About</a></div>
+      <div class="foot-col"><h4>Advocate</h4><a href="#advocate">About</a></div>
+      <div class="foot-col"><h4>Info</h4><a href="#how">How it works</a></div>
     </div>
-    <div class="foot-bottom"><span>© 2026 IncludeMe. Built in Surrey, UK.</span><span>Free to use · No ads · No tracking</span></div>
+    <div class="foot-bottom"><span>© 2026 IncludeMe. Built in Surrey, UK.</span><span>No ads · No tracking</span></div>
   </div>
 </footer>
 
