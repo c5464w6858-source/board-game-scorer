@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IncludeMe – Help for every family</title>
-<meta name="description" content="IncludeMe is a growing suite of apps and web pages that offer practical help to every family. Find inclusive activities with the Activity Finder and stay on top of every EHCP deadline with Advocate. Built by a family who has been there.">
+<meta name="description" content="IncludeMe is a growing suite of apps and web pages that offer practical help to every family. Find inclusive activities with the Activity &amp; Therapy Finder and stay on top of every EHCP deadline with Advocate. Built by a family who has been there.">
 <link rel="canonical" href="https://info.includeme.uk/">
 <meta property="og:title" content="IncludeMe – Help for every family">
 <meta property="og:description" content="Whatever your family needs, we’ve got you. Apps and web pages that work as hard as you do.">
@@ -53,13 +53,24 @@ section { padding: 96px 0; }
 .btn-light:hover { background: var(--teal-soft); transform: translateY(-1px); }
 .btn-ghost { border-color: var(--line); background: var(--surface); }
 .btn-ghost:hover { border-color: var(--ink); }
+.btn-ghost-light { border-color: rgba(255,255,255,.4); color: #fff; margin-left: 6px; }
+.btn-ghost-light:hover { border-color: #fff; }
 .btn-outline-gold { border-color: rgba(227,185,78,.55); color: var(--gold); cursor: default; }
 
-/* top banner */
-.topbar { display: block; background: var(--navy); color: #fff; text-align: center; font-size: 14px; font-weight: 500; padding: 11px 20px; text-decoration: none; border-bottom: 2px solid var(--gold); }
-.topbar b { background: var(--gold); color: var(--navy); font-size: 11px; letter-spacing: .1em; padding: 3px 8px; border-radius: 999px; margin-right: 10px; }
-.topbar u { color: var(--gold); text-underline-offset: 3px; font-weight: 600; margin-left: 6px; white-space: nowrap; }
-.topbar:hover u { color: #fff; }
+/* top chooser */
+.choose { display: grid; grid-template-columns: 1fr 1fr; }
+.choose a { display: flex; align-items: center; gap: 14px; padding: 14px 24px; color: #fff; text-decoration: none; transition: filter .15s; }
+.choose a:hover { filter: brightness(1.15); }
+.choose img { width: 38px; height: 38px; flex: none; }
+.choose .t { display: block; font-weight: 700; font-size: 15px; line-height: 1.25; }
+.choose .s { display: block; font-size: 13px; color: rgba(255,255,255,.75); }
+.choose .go { margin-left: auto; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+.choose .c-im { background: var(--teal-band); justify-content: flex-end; border-bottom: 3px solid #4FD1A1; }
+.choose .c-im .go { color: #4FD1A1; }
+.choose .c-adv { background: var(--navy); border-bottom: 3px solid var(--gold); }
+.choose .c-adv .go { color: var(--gold); }
+.choose .c-adv .s { color: rgba(227,185,78,.9); }
+.choose-in { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 560px; }
 
 /* hero */
 .hero { padding: 40px 0 72px; text-align: center; background: linear-gradient(180deg, #F1E7D3 0%, #EADDC2 100%); }
@@ -159,6 +170,11 @@ footer { padding: 64px 0 36px; font-size: 15px; }
 .foot-col a:hover { color: var(--teal); }
 .foot-bottom { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 13.5px; }
 
+@media (min-width: 901px) {
+  .band-adv .stage { height: auto; align-self: center; padding: 56px 0; }
+  .band-adv .stage .phone.solo { bottom: 0; width: min(330px, 84%); }
+  .band-adv .band-copy { padding: 72px 0; }
+}
 @media (max-width: 900px) {
   section { padding: 72px 0; }
   .band-grid { grid-template-columns: 1fr; gap: 0; }
@@ -175,12 +191,16 @@ footer { padding: 64px 0 36px; font-size: 15px; }
   .hero { padding: 28px 0 56px; }
   .brandrow { margin-bottom: 36px; }
 }
+@media (max-width: 720px) { .choose { grid-template-columns: 1fr; } .choose a { padding: 12px 20px; } .choose .c-im { justify-content: flex-start; } .choose-in { max-width: none; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
 </style>
 </head>
 <body>
 
-<a class="topbar" href="advocate/"><b>NEW</b>Advocate: your EHCP deadline tracker is coming soon.<u>Details &amp; pricing →</u></a>
+<nav class="choose" aria-label="Our apps">
+  <a class="c-im" href="finder/"><span class="choose-in"><img src="assets/logo-includeme.svg" alt=""><span><span class="t">IncludeMe Activity &amp; Therapy Finder</span><span class="s">Live now · Free for families</span></span><span class="go">Details →</span></span></a>
+  <a class="c-adv" href="advocate/"><span class="choose-in"><img src="assets/logo-advocate.svg" alt=""><span><span class="t">Advocate EHCP app</span><span class="s">Coming soon</span></span><span class="go">Details &amp; pricing →</span></span></a>
+</nav>
 
 <main id="top">
 
@@ -193,7 +213,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
     <p class="tagline">Support that works as hard as you do.</p>
     <p class="lead">IncludeMe is a growing suite of apps and web pages offering practical help to families. Find inclusive activities near you, stay on top of every EHCP deadline and stand up for your child, all built by a family who has been there.</p>
     <div class="hero-btns">
-      <a class="btn btn-teal" href="https://includeme.uk" target="_blank" rel="noopener">Find activities ↗</a>
+      <a class="btn btn-teal" href="https://includeme.uk" target="_blank" rel="noopener">Find activities &amp; therapies ↗</a>
       <a class="btn btn-ghost" href="#advocate">See Advocate</a>
     </div>
     <ul class="ticks">
@@ -218,7 +238,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
 <section class="band band-im" id="includeme">
   <div class="wrap band-grid">
     <div class="band-copy">
-      <span class="pill"><img src="assets/logo-includeme.svg" alt="">IncludeMe Activity Finder · Live now · Free for families</span>
+      <span class="pill"><img src="assets/logo-includeme.svg" alt="">IncludeMe Activity &amp; Therapy Finder · Live now · Free for families</span>
       <h2>Every inclusive activity near you, in one place.</h2>
       <p class="lead">A searchable UK-wide directory of activities, therapies and charities for children with SEND. Enter a town or postcode, then browse on a map or in a list.</p>
       <ul class="band-points">
@@ -227,9 +247,9 @@ footer { padding: 64px 0 36px; font-size: 15px; }
         <li><b>Judge fit at a glance</b><span>Each listing shows its location, age range and price information before you tap through.</span></li>
         <li><b>Save your shortlist</b><span>Create a free account to keep the activities you like.</span></li>
       </ul>
-      <a class="btn btn-light" href="https://includeme.uk" target="_blank" rel="noopener">Open the Activity Finder ↗</a>
+      <a class="btn btn-light" href="https://includeme.uk" target="_blank" rel="noopener">Open the Activity &amp; Therapy Finder ↗</a> <a class="btn btn-ghost-light" href="finder/">Details</a>
     </div>
-    <div class="stage" aria-label="Screens from the IncludeMe Activity Finder">
+    <div class="stage" aria-label="Screens from the IncludeMe Activity &amp; Therapy Finder">
       <div class="phone l"><img src="assets/includeme-screen-3.jpg" width="1290" height="2796" alt="IncludeMe: the Therapies tab listing aquatic and speech and language therapies" loading="lazy"></div>
       <div class="phone r"><img src="assets/includeme-screen-1.jpg" width="780" height="1690" alt="IncludeMe: a map of SEND activities with a Forest School listing open" loading="lazy"></div>
     </div>
@@ -269,7 +289,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
       <h2>From searching to sorted, in minutes.</h2>
     </div>
     <div class="steps">
-      <div class="step"><h3>Search your area</h3><p>Open the Activity Finder and enter your town or postcode. See every activity, therapy and support group within reach on a map or as a list.</p></div>
+      <div class="step"><h3>Search your area</h3><p>Open the Activity &amp; Therapy Finder and enter your town or postcode. See every activity, therapy and support group within reach on a map or as a list.</p></div>
       <div class="step"><h3>Filter by age, need and category</h3><p>Use the chip filters to show only what is relevant. Each listing shows its age range and tags so you can judge fit quickly.</p></div>
       <div class="step"><h3>Track your EHCP with Advocate</h3><p>Stay on top of the statutory process with the 20-week clock, step-by-step deadlines and a place for your evidence and documents.</p></div>
     </div>
@@ -299,8 +319,8 @@ footer { padding: 64px 0 36px; font-size: 15px; }
   <div class="wrap">
     <div class="cta">
       <h2>Ready to find something that fits?</h2>
-      <p>Search hundreds of inclusive activities, therapies and clubs across the UK. The IncludeMe Activity Finder is free to use.</p>
-      <a class="btn btn-light" href="https://includeme.uk" target="_blank" rel="noopener">Open the Activity Finder ↗</a>
+      <p>Search hundreds of inclusive activities, therapies and clubs across the UK. The IncludeMe Activity &amp; Therapy Finder is free to use.</p>
+      <a class="btn btn-light" href="https://includeme.uk" target="_blank" rel="noopener">Open the Activity &amp; Therapy Finder ↗</a>
     </div>
   </div>
 </section>
@@ -314,7 +334,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
         <a class="brand" href="#top"><img src="assets/logo-includeme.svg" alt=""><span>IncludeMe</span></a>
         <p>Help for every family. Made by a family, with love, in Surrey.</p>
       </div>
-      <div class="foot-col"><h4>Activity Finder</h4><a href="https://includeme.uk" target="_blank" rel="noopener">Open app ↗</a><a href="#includeme">About</a></div>
+      <div class="foot-col"><h4>Activity &amp; Therapy Finder</h4><a href="https://includeme.uk" target="_blank" rel="noopener">Open app ↗</a><a href="finder/">Details</a></div>
       <div class="foot-col"><h4>Advocate</h4><a href="advocate/">Details &amp; pricing</a></div>
       <div class="foot-col"><h4>Info</h4><a href="#how">How it works</a></div>
     </div>

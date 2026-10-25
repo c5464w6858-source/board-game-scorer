@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IncludeMe Activity &amp; Therapy Finder – inclusive activities near you</title>
+<meta name="description" content="Search inclusive activities, therapies and charities for children with SEND across the UK. Map and list views, filters by category, age and price information. Free for families.">
+<link rel="canonical" href="https://info.includeme.uk/finder/">
+<meta property="og:title" content="IncludeMe Activity &amp; Therapy Finder">
+<meta property="og:description" content="Every inclusive activity, therapy and charity near you, in one place. Free for families.">
+<meta property="og:url" content="https://info.includeme.uk/finder/">
+<link rel="icon" href="../assets/logo-includeme.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FAF8F4; --surface: #fff; --ink: #14211C; --muted: #566660; --line: #E7E3DA;
+  --teal: #0F6B5C; --teal-band: #0A3F36; --teal-soft: #E4F1EC; --mint: #4FD1A1; --green: #1E9D6E;
+  --navy: #17214D; --gold: #E3B94E;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.65 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.12; letter-spacing: -.02em; }
+h1 { font-size: clamp(2.3rem, 5vw, 3.7rem); }
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+h3 { font-size: 1.25rem; }
+section { padding: 88px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 58ch; }
+:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; border-radius: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 Inter, sans-serif; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1.5px solid transparent; transition: background .15s, transform .15s; white-space: nowrap; }
+.btn-mint { background: #fff; color: var(--teal-band); }
+.btn-mint:hover { background: var(--teal-soft); transform: translateY(-1px); }
+.btn-teal { background: var(--teal); color: #fff; }
+.btn-line { border-color: rgba(255,255,255,.4); color: #fff; }
+.btn-line:hover { border-color: #fff; }
+
+.topbar { background: #072B25; color: #fff; font-size: 14px; }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 52px; }
+.topbar a { text-decoration: none; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; }
+.topbar img { width: 28px; height: 28px; }
+.topbar .back { color: var(--mint); font-weight: 500; }
+
+.hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; padding: 0; background: var(--teal-band); border-bottom: 4px solid var(--mint); }
+.hero::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(32,200,142,.30), transparent); z-index: -1; }
+.hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: end; }
+.hero-copy { padding: 80px 0; }
+.pill { display: inline-block; background: var(--mint); color: var(--teal-band); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+.hero h1 em { font-style: normal; color: var(--mint); }
+.hero .lead { color: rgba(255,255,255,.82); margin: 22px 0 32px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.stage { position: relative; height: 540px; display: flex; justify-content: center; align-items: flex-end; }
+.phone { position: absolute; bottom: -40px; width: min(232px, 46%); background: #0B1610; padding: 7px; border-radius: 38px; box-shadow: 0 0 0 2px #1c3326, 0 40px 80px rgba(0,0,0,.45); }
+.phone img { border-radius: 31px; width: 100%; height: auto; }
+.phone.l { left: 6%; transform: rotate(-5deg) translateY(-24px); z-index: 1; }
+.phone.r { right: 6%; transform: rotate(5deg) translateY(-8px); z-index: 2; }
+
+.section-head { max-width: 660px; margin-bottom: 48px; }
+.counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.count { background: var(--teal-band); color: #fff; border-radius: 22px; padding: 30px; border-top: 4px solid var(--mint); }
+.count b { font: 700 3.4rem/1 Fraunces, serif; color: var(--mint); }
+.count h3 { margin: 10px 0 8px; font-size: 1.2rem; }
+.count p { font-size: 15px; color: rgba(255,255,255,.78); }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.chips span { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; font-size: 14px; font-weight: 500; }
+
+.alt { background: var(--surface); border-block: 1px solid var(--line); }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat { background: var(--bg); border: 1px solid var(--line); border-radius: 18px; padding: 28px; border-top: 3px solid var(--teal); }
+.feat h3 { font: 700 1.05rem Inter, sans-serif; letter-spacing: 0; color: var(--teal); margin-bottom: 6px; }
+.feat p { color: var(--muted); font-size: 15px; }
+
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; counter-reset: s; }
+.step { counter-increment: s; padding-top: 22px; border-top: 2px solid var(--ink); }
+.step::before { content: "0" counter(s); font: 700 .95rem Inter, sans-serif; color: var(--teal); }
+.step h3 { margin: 10px 0 10px; }
+.step p { color: var(--muted); font-size: 15.5px; }
+
+.price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 860px; }
+.price { border-radius: 22px; padding: 34px; border: 1px solid var(--line); background: var(--surface); }
+.price.im { background: var(--teal-band); color: #fff; border: 0; border-top: 4px solid var(--mint); }
+.price .amt { font: 700 2.2rem/1.1 Fraunces, serif; margin: 14px 0; color: var(--navy); }
+.price.im .amt { color: var(--mint); }
+.price p, .price li { font-size: 15px; color: var(--muted); }
+.price.im p, .price.im li { color: rgba(255,255,255,.8); }
+.price ul { list-style: none; margin-top: 16px; display: grid; gap: 8px; }
+.price li::before { content: "✓"; font-weight: 700; margin-right: 8px; color: var(--green); }
+.price.im li::before { color: var(--mint); }
+
+.faq { max-width: 760px; }
+details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; color: var(--teal-band); }
+details p { margin-top: 10px; color: var(--muted); }
+
+footer { padding: 48px 0 36px; font-size: 14.5px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 24px; }
+footer a { text-decoration: none; }
+
+@media (max-width: 900px) {
+  section { padding: 64px 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .hero-copy { padding: 56px 0 32px; }
+  .stage { height: clamp(330px, 92vw, 520px); }
+  .phone { width: min(232px, 44%); }
+  .counts, .feat-grid, .steps, .price-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="../"><img src="../assets/logo-includeme.svg" alt="">IncludeMe</a>
+    <a class="back" href="../">← Back to IncludeMe</a>
+  </div>
+</div>
+
+<main>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="pill">Live now · Free for families</span>
+      <h1>Every inclusive activity near you, <em>in one place.</em></h1>
+      <p class="lead">The IncludeMe Activity &amp; Therapy Finder is a searchable UK-wide directory of activities, therapies and charities for children with SEND. Enter a town or postcode, then browse on a map or in a list.</p>
+      <div class="hero-btns">
+        <a class="btn btn-mint" href="https://includeme.uk" target="_blank" rel="noopener">Open the Finder ↗</a>
+        <a class="btn btn-line" href="#pricing">Costs</a>
+      </div>
+    </div>
+    <div class="stage" aria-label="Screens from the Finder">
+      <div class="phone l"><img src="../assets/includeme-screen-3.jpg" width="1290" height="2796" alt="The Therapies tab listing aquatic and speech and language therapies"></div>
+      <div class="phone r"><img src="../assets/includeme-screen-1.jpg" width="780" height="1690" alt="A map of SEND activities with a Forest School listing open"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">What you can find</p>
+      <h2>Three tabs, hundreds of listings.</h2>
+      <p class="lead">Switch between activities, therapies and charities without leaving the app.</p>
+    </div>
+    <div class="counts">
+      <div class="count"><b>378+</b><h3>Activities</h3><p>Clubs, sports, arts and holiday clubs for children and young people with SEND.</p></div>
+      <div class="count"><b>187</b><h3>Therapies</h3><p>From aquatic therapy to speech and language therapy, with the provider and location shown.</p></div>
+      <div class="count"><b>UK</b><h3>Charities &amp; support</h3><p>Charities and support groups, searchable the same way as everything else.</p></div>
+    </div>
+    <div class="chips" aria-label="Example filters"><span>Holiday Clubs</span><span>Swimming</span><span>Arts &amp; Crafts</span><span>Conductive Ed</span><span>Neuro / Physio</span><span>OT &amp; Sensory</span></div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Built for busy families</p>
+      <h2>Judge fit before you tap through.</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><h3>Search by place</h3><p>Enter your town or postcode to see what is near you and how far away it is.</p></div>
+      <div class="feat"><h3>Map and list views</h3><p>Switch between an interactive map and a scrollable list, whichever suits you.</p></div>
+      <div class="feat"><h3>Quick filters</h3><p>Chip filters for categories like Holiday Clubs, Swimming and Arts &amp; Crafts, plus more detailed filters.</p></div>
+      <div class="feat"><h3>Ages and prices up front</h3><p>Each listing shows its age range and price information, such as free, NHS or contact for pricing.</p></div>
+      <div class="feat"><h3>Accessibility tags</h3><p>Listings can carry tags such as Changing Places, so you can see what a venue offers.</p></div>
+      <div class="feat"><h3>Save your favourites</h3><p>Create a free account to keep a shortlist of the activities you like.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How it works</p>
+      <h2>From searching to sorted, in minutes.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Search your area</h3><p>Enter your town or postcode and see every activity, therapy and support group within reach.</p></div>
+      <div class="step"><h3>Filter</h3><p>Use the chip filters to show only what is relevant, then check the age range and price on each listing.</p></div>
+      <div class="step"><h3>Get in touch</h3><p>Open a listing for the details and contact the provider directly.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Costs</p>
+      <h2>Free for families.</h2>
+      <p class="lead">The Finder costs families nothing. Listings show price information where the provider gives it.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price im">
+        <h3>Activity &amp; Therapy Finder</h3>
+        <div class="amt">Free for families</div>
+        <p>Live now.</p>
+        <ul><li>No ads, no tracking</li><li>Map and list views</li><li>Free account to save favourites</li></ul>
+      </div>
+      <div class="price">
+        <h3>Advocate EHCP app</h3>
+        <div class="amt">Pricing to be announced</div>
+        <p>Coming soon. A separate app for tracking EHCP deadlines.</p>
+        <p style="margin-top:20px"><a href="../advocate/" style="font-weight:600;color:var(--navy)">Advocate details &amp; pricing →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Questions</p><h2>Good to know.</h2></div>
+    <div class="faq">
+      <details><summary>How much does it cost?</summary><p>The Finder is free for families. Prices of individual activities and therapies are set by their providers and shown on each listing where available.</p></details>
+      <details><summary>Does it cover the whole UK?</summary><p>Yes, it is a UK-wide directory, so enter any town or postcode to see what is near you.</p></details>
+      <details><summary>Are the listings checked?</summary><p>Providers are reviewed, so you know what you are looking at.</p></details>
+      <details><summary>Do I need an account?</summary><p>A free account lets you save favourites and come back to them.</p></details>
+      <details><summary>Does it work on my phone?</summary><p>Yes. It works on phones, tablets and computers.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 IncludeMe. Built in Surrey, UK.</span>
+    <a href="../">← Back to IncludeMe</a>
+  </div>
+</footer>
+
+</body>
+</html>
