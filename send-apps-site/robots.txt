@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://info.includeme.uk/sitemap.xml

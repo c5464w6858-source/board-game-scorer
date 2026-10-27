@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EHCP deadline calculator: the 6, 16 and 20 week dates | IncludeMe</title>
+<meta name="description" content="Free EHCP deadline calculator. Enter the date your council received your request for an EHC needs assessment and see the 6-week, 16-week and 20-week dates, how long you have to reply to a draft plan, your appeal deadline and annual review date. No sign-up. Nothing is stored or sent.">
+<link rel="canonical" href="https://info.includeme.uk/ehcp-deadline-calculator/">
+<meta property="og:title" content="EHCP deadline calculator: the 6, 16 and 20 week dates">
+<meta property="og:description" content="See every EHCP deadline from the date your request was received. Free, no sign-up, nothing stored.">
+<meta property="og:url" content="https://info.includeme.uk/ehcp-deadline-calculator/">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/logo-advocate.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FAF8F4; --surface: #fff; --ink: #14211C; --muted: #566660; --line: #E7E3DA;
+  --navy: #17214D; --navy-2: #1F2C66; --navy-soft: #ECEEF8; --gold: #E3B94E; --gold-dk: #7A5B0E;
+  --green: #1B6E4C; --green-soft: #E4F1EC; --amber: #8A4B07; --amber-soft: #FCEEDD; --red: #A3241C; --red-soft: #FBE9E7;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.65 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.15; letter-spacing: -.02em; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 10px; }
+h3 { font-size: 1.15rem; }
+section { padding: 64px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dk); margin-bottom: 12px; }
+.lead { font-size: 1.12rem; color: var(--muted); max-width: 62ch; }
+:focus-visible { outline: 3px solid #2557D6; outline-offset: 3px; border-radius: 6px; }
+.skip { position: absolute; left: 12px; top: -80px; background: #fff; color: var(--navy); padding: 10px 16px; border: 2px solid var(--navy); border-radius: 8px; font-weight: 700; z-index: 50; text-decoration: none; }
+.skip:focus { top: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 Inter, sans-serif; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1.5px solid transparent; cursor: pointer; transition: background .15s, transform .15s; }
+.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-gold:hover { background: #EDC864; transform: translateY(-1px); }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy-2); }
+.btn-line { border-color: rgba(255,255,255,.45); color: #fff; }
+.btn-ghost { border-color: var(--line); background: #fff; color: var(--navy); }
+.btn-ghost:hover { border-color: var(--navy); }
+
+/* top bar */
+.bar { position: relative; z-index: 2; }
+.bar-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 80px; }
+.home { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 21px; letter-spacing: -.02em; color: #fff; text-decoration: none; }
+.home img { width: 40px; height: 40px; }
+.apps { display: flex; gap: 6px; align-items: center; }
+.app { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 8px; border-radius: 999px; background: rgba(255,255,255,.13); color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
+.app img { width: 28px; height: 28px; }
+.app-home { padding: 10px 18px; }
+.app:hover { background: rgba(255,255,255,.24); }
+.app .short { display: none; }
+@media (max-width: 720px) {
+  .bar-in { height: 64px; }
+  .home { font-size: 19px; } .home img { width: 34px; height: 34px; }
+  .apps { gap: 4px; }
+  .app { padding: 5px 11px 5px 6px; font-size: 13px; gap: 6px; }
+  .app-home { padding: 8px 12px; }
+  .app img { width: 22px; height: 22px; }
+  .app .long { display: none; } .app .short { display: inline; }
+}
+@media (max-width: 480px) { .home span { display: none; } }
+
+.hero { color: #fff; background: linear-gradient(160deg, #101A45 0%, #17214D 55%, #1F2C66 100%); border-bottom: 4px solid var(--gold); }
+.hero-copy { padding: 48px 0 64px; }
+.pill { display: inline-block; background: var(--gold); color: var(--navy); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 18px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.hero .lead { color: rgba(255,255,255,.85); margin-top: 18px; }
+.trust { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 22px; font-size: 14px; color: rgba(255,255,255,.85); list-style: none; }
+.trust li::before { content: "✓"; color: var(--gold); font-weight: 700; margin-right: 8px; }
+
+/* calculator cards */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
+.card.pop { margin-top: -36px; position: relative; box-shadow: 0 18px 50px -24px rgba(23,33,77,.35); border-top: 4px solid var(--gold); }
+label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--navy); }
+.hint { font-size: 14px; color: var(--muted); margin-top: 6px; }
+input[type=date] { font: 500 17px Inter, sans-serif; padding: 13px 14px; border: 1.5px solid #B9B4A6; border-radius: 12px; background: #fff; color: var(--ink); min-width: 220px; max-width: 100%; }
+input[type=date]:focus { border-color: var(--navy); }
+.row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
+.msg { margin-top: 12px; font-size: 14.5px; font-weight: 600; color: var(--red); }
+.msg:empty { display: none; }
+.note { font-size: 14.5px; color: var(--muted); max-width: 72ch; }
+
+/* results */
+#results[hidden] { display: none; }
+.res-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; margin: 6px 0 18px; }
+.tl { list-style: none; display: grid; gap: 14px; }
+.tl li { display: grid; grid-template-columns: 92px 1fr; gap: 18px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--navy); border-radius: 16px; padding: 18px 20px; }
+.tl li.key { border-left-color: var(--gold); }
+.tl .wk { font: 700 2.3rem/1 Fraunces, serif; color: var(--navy); }
+.tl .wk small { display: block; font: 600 11px Inter, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.tl .date { font-weight: 700; font-size: 1.1rem; color: var(--navy); }
+.tl h3 { margin: 2px 0 4px; }
+.tl p { color: var(--muted); font-size: 15px; }
+.tl .law { font-size: 13px; margin-top: 6px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-left: 8px; vertical-align: 2px; }
+.tag.up { background: var(--navy-soft); color: var(--navy); }
+.tag.soon { background: var(--amber-soft); color: var(--amber); }
+.tag.late { background: var(--red-soft); color: var(--red); }
+.tag.today { background: var(--green-soft); color: var(--green); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.status { font-size: 14px; color: var(--green); font-weight: 600; margin-top: 10px; min-height: 1.4em; }
+
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.mini h3 { margin-bottom: 6px; }
+.mini .out { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: var(--navy-soft); color: var(--navy); font-size: 15px; }
+.mini .out:empty { display: none; }
+.mini .out b { display: block; font: 700 1.2rem Fraunces, serif; margin-bottom: 4px; }
+.mini .out p { color: #2B3768; font-size: 14px; }
+.mini .field { margin-top: 12px; }
+.mini .btn { margin-top: 14px; padding: 12px 20px; }
+
+.alt { background: var(--surface); border-block: 1px solid var(--line); }
+.steps { counter-reset: s; list-style: none; display: grid; gap: 14px; max-width: 760px; margin-top: 18px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 38px 1fr; gap: 14px; }
+.steps li::before { content: counter(s); width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+.steps b { color: var(--navy); }
+
+.cta { background: var(--navy); color: #fff; border-radius: 24px; padding: 40px; border-top: 4px solid var(--gold); display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; align-items: center; }
+.cta h2 { color: #fff; }
+.cta p { color: rgba(255,255,255,.82); }
+.cta ul { list-style: none; margin: 14px 0 0; display: grid; gap: 6px; font-size: 15px; color: rgba(255,255,255,.88); }
+.cta li::before { content: "✓"; color: var(--gold); font-weight: 700; margin-right: 8px; }
+
+details { border-bottom: 1px solid var(--line); padding: 16px 0; max-width: 760px; }
+summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; color: var(--navy); }
+details p { margin-top: 10px; color: var(--muted); }
+.faq a { text-decoration: underline; }
+footer { padding: 40px 0 34px; font-size: 14.5px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 22px; }
+footer a { text-decoration: none; margin-right: 12px; }
+footer a:hover { color: var(--navy); }
+
+@media (max-width: 900px) {
+  section { padding: 48px 0; }
+  .grid3, .cta { grid-template-columns: 1fr; }
+  .tl li { grid-template-columns: 1fr; gap: 6px; }
+  .tl .wk { font-size: 1.8rem; }
+  .tl .wk small { display: inline; margin: 0 0 0 8px; }
+  .card { padding: 22px; }
+}
+@media print {
+  .bar, .hero .trust, .no-print, .cta, footer, .alt, .grid3, #other { display: none !important; }
+  body { background: #fff; }
+  .hero { background: none; color: #000; border: 0; }
+  .hero h1, .hero .lead, .hero h1 em { color: #000; }
+  .card.pop { box-shadow: none; margin-top: 0; }
+  section { padding: 12px 0; }
+  .tl li { break-inside: avoid; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#calc">Skip to the calculator</a>
+
+<header class="hero">
+  <div class="bar">
+    <div class="wrap bar-in">
+      <a class="home" href="../" aria-label="IncludeMe home"><img src="../assets/logo-includeme.svg" alt=""><span>IncludeMe</span></a>
+      <nav class="apps" aria-label="Main">
+        <a class="app app-home" href="../">Home</a>
+        <a class="app" href="../finder/"><img src="../assets/logo-includeme.svg" alt=""><span class="long">Activity &amp; Therapy Finder</span><span class="short">Finder</span></a>
+        <a class="app" href="../advocate/"><img src="../assets/logo-advocate.svg" alt=""><span class="long">Advocate EHCP app</span><span class="short">Advocate</span></a>
+      </nav>
+    </div>
+  </div>
+  <div class="wrap hero-copy">
+    <span class="pill">Free tool</span>
+    <h1>EHCP deadline <em>calculator</em></h1>
+    <p class="lead">Enter the date your local authority received your request for an EHC needs assessment. See the 6, 16 and 20 week dates, and what to do when one is missed.</p>
+    <ul class="trust">
+      <li>No sign-up</li>
+      <li>Nothing is stored or sent anywhere</li>
+      <li>Based on the SEND Regulations 2014</li>
+    </ul>
+  </div>
+</header>
+
+<main>
+<section id="calc" style="padding-top:0">
+  <div class="wrap">
+    <div class="card pop">
+      <form id="f1" novalidate>
+        <div class="row">
+          <div>
+            <label for="req">Date the council received your request</label>
+            <input type="date" id="req" name="req" autocomplete="off" aria-describedby="req-hint req-msg">
+          </div>
+          <button class="btn btn-navy" type="submit">Show my dates</button>
+        </div>
+        <p class="hint" id="req-hint">If you emailed or posted it, use the date it arrived. Keep proof of when you sent it.</p>
+        <p class="msg" id="req-msg" role="alert"></p>
+      </form>
+    </div>
+
+    <div id="results" hidden aria-live="polite" style="margin-top:34px">
+      <div class="res-head">
+        <h2 id="res-title">Your dates</h2>
+        <p class="note" id="res-sub"></p>
+      </div>
+      <ol class="tl" id="tl"></ol>
+      <div class="actions no-print">
+        <button class="btn btn-gold" type="button" id="ics">Add these dates to my calendar</button>
+        <button class="btn btn-ghost" type="button" id="print">Print or save as PDF</button>
+        <button class="btn btn-ghost" type="button" id="copy">Copy a link to these dates</button>
+      </div>
+      <p class="status" id="status" role="status"></p>
+      <p class="note" style="margin-top:18px">We count 7-day weeks from the day the request was received, the way most councils and charities do. Your council may count slightly differently, so treat these as the latest dates and chase early. The limits can be set aside in a few specific situations, covered below.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="other">
+  <div class="wrap">
+    <p class="eyebrow">Other dates that matter</p>
+    <h2>Got a letter or a draft plan?</h2>
+    <p class="lead" style="margin-bottom:28px">These three work on their own. You do not need the box above.</p>
+    <div class="grid3">
+      <form class="card mini" id="f2" novalidate>
+        <h3>Draft plan received</h3>
+        <p class="note">You must be given at least 15 days to comment, ask for changes, ask for a meeting and name the school you want.</p>
+        <div class="field"><label for="draft">Date you received the draft</label><input type="date" id="draft"></div>
+        <button class="btn btn-navy" type="submit">Work it out</button>
+        <div class="out" id="out2" aria-live="polite"></div>
+      </form>
+      <form class="card mini" id="f3" novalidate>
+        <h3>Decision letter: appeal deadline</h3>
+        <p class="note">For a refusal to assess, a refusal to issue a plan, or a plan you disagree with.</p>
+        <div class="field"><label for="decision">Date on the decision letter</label><input type="date" id="decision"></div>
+        <div class="field"><label for="cert">Date of your mediation certificate (if you have one)</label><input type="date" id="cert"></div>
+        <button class="btn btn-navy" type="submit">Work it out</button>
+        <div class="out" id="out3" aria-live="polite"></div>
+      </form>
+      <form class="card mini" id="f4" novalidate>
+        <h3>Plan issued: annual review</h3>
+        <p class="note">An EHC plan must be reviewed at least every 12 months.</p>
+        <div class="field"><label for="plan">Date the plan was issued, or the last review meeting</label><input type="date" id="plan"></div>
+        <div class="field"><label for="meeting">Date of a review meeting you have been given (optional)</label><input type="date" id="meeting"></div>
+        <button class="btn btn-navy" type="submit">Work it out</button>
+        <div class="out" id="out4" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="missed">
+  <div class="wrap">
+    <p class="eyebrow">If a date is missed</p>
+    <h2>What to do when the council runs late</h2>
+    <p class="lead">A missed date does not make the problem go away, and chasing early works better than waiting. A sensible order:</p>
+    <ol class="steps">
+      <li><div><b>Write to the SEN team and say which date has passed.</b> Name the rule and the date, ask for a decision by a set date, and keep a copy. Email is fine. It also starts a written record.</div></li>
+      <li><div><b>Get free advice.</b> <a href="https://www.ipsea.org.uk" target="_blank" rel="noopener">IPSEA</a> and your local SENDIASS service give free, independent advice on EHCPs. Search for SENDIASS and the name of your council.</div></li>
+      <li><div><b>Use the council's complaints procedure</b> if the date stays missed. Say what you have asked for and what has not happened.</div></li>
+      <li><div><b>Go to the Ombudsman</b> if the complaint does not fix it. The Local Government and Social Care Ombudsman normally expects you to have complained to the council first.</div></li>
+      <li><div><b>If the council refuses</b> to assess or to issue a plan, or you disagree with the plan, you can appeal to the SEND Tribunal. You first contact a mediation adviser to get a certificate, but you do not have to attend mediation.</div></li>
+    </ol>
+    <h3 style="margin-top:34px">When the limits can be set aside</h3>
+    <p class="note" style="margin-top:8px">The regulations allow the 6, 16 and 20 week limits to be set aside when keeping to them is impractical. Examples they give include a school or early years setting being closed for at least 4 weeks around the time advice was requested, exceptional personal circumstances affecting the child or family, and the child or family being away from the council's area for at least 4 weeks in a row. If you think none of these applies, say so in your letter. If the council says one does, ask it which, and why.</p>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="cta">
+      <div>
+        <p class="eyebrow" style="color:var(--gold)">Advocate · coming soon</p>
+        <h2>Have these dates watched for you</h2>
+        <p>Advocate tracks every deadline for your child, reminds you on your phone before each one, and writes the chase letter citing the law when one is missed. Your child's details stay on your own device.</p>
+        <ul>
+          <li>Reminders a week, three days and a day before each date</li>
+          <li>Model letters, ready to edit and send</li>
+          <li>A printable case pack for advisers and tribunals</li>
+        </ul>
+      </div>
+      <div>
+        <a class="btn btn-gold" href="../advocate/">See Advocate and pricing →</a>
+        <p style="font-size:14px;margin-top:12px">From £8.99, one-off. No subscription. A 3-day free trial.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap faq">
+    <p class="eyebrow">Questions</p>
+    <h2>Good to know</h2>
+    <details><summary>How long does an EHCP take?</summary><p>The council should issue a final EHC plan within 20 weeks of receiving your request (regulation 13(2) of the SEND Regulations 2014). It must tell you whether it will carry out an assessment within 6 weeks (regulation 5(1)), and if it decides not to issue a plan after assessing, it must tell you within 16 weeks (regulation 10(1)).</p></details>
+    <details><summary>When does the 20 weeks start?</summary><p>From the date the council receives your request for an EHC needs assessment. If you emailed it, that is the date the email arrived. Keep the sent message or proof of posting.</p></details>
+    <details><summary>How long do I have to respond to a draft EHC plan?</summary><p>At least 15 days from the date the draft is sent to you (regulation 13(1)). In that time you can comment on it, ask for a meeting, and ask for a particular school or setting to be named. If you need longer, ask in writing.</p></details>
+    <details><summary>How long do I have to appeal?</summary><p>You must register your appeal with the SEND Tribunal within two months of the date on the council's decision letter, or one month from the date on your mediation certificate, whichever is later. In most cases you need a mediation certificate first. You get one by contacting a mediation adviser; you do not have to attend mediation. You do not need one if your appeal is only about the school named in the plan. A late appeal may be accepted if you explain the delay, so get advice quickly.</p></details>
+    <details><summary>How often must an EHC plan be reviewed?</summary><p>At least every 12 months (section 44 of the Children and Families Act 2014). After a review meeting at a school, the council must decide within four weeks whether to keep, change or stop the plan (regulation 20).</p></details>
+    <details><summary>Is this legal advice?</summary><p>No. It is a date calculator based on the Children and Families Act 2014 and the Special Educational Needs and Disability Regulations 2014, and it can be wrong for your circumstances. For free independent advice contact <a href="https://www.ipsea.org.uk" target="_blank" rel="noopener">IPSEA</a> or your local SENDIASS.</p></details>
+    <details><summary>Is my date stored or sent anywhere?</summary><p>No. The sums happen on your own device. Nothing you type is sent to us. If you press "Copy a link", the link contains the date you entered, so only share it with someone you trust.</p></details>
+    <p class="note" style="margin-top:22px">Sources: <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/5/made" target="_blank" rel="noopener">regulation 5</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/10/made" target="_blank" rel="noopener">regulation 10</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/13/made" target="_blank" rel="noopener">regulation 13</a> and <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/20/made" target="_blank" rel="noopener">regulation 20</a> of the SEND Regulations 2014; <a href="https://www.legislation.gov.uk/ukpga/2014/6/section/44" target="_blank" rel="noopener">section 44</a> of the Children and Families Act 2014; <a href="https://www.gov.uk/appeal-ehc-plan-decision/appeal-as-a-parent" target="_blank" rel="noopener">GOV.UK guidance on appealing</a>. Last checked 28 October 2026.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 IncludeMe. Built in Surrey, UK.</span>
+    <span><a href="../advocate/">Advocate</a><a href="../finder/">Activity &amp; Therapy Finder</a><a href="../contact/">Contact</a><a href="../">← Back to IncludeMe</a></span>
+  </div>
+</footer>
+
+<noscript><p style="padding:16px;text-align:center">This calculator needs JavaScript. The rules: 6 weeks to decide whether to assess, 16 weeks to say if no plan will be issued, 20 weeks for the final plan, counted from the date your request was received.</p></noscript>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How long does an EHCP take?","acceptedAnswer":{"@type":"Answer","text":"The council should issue a final EHC plan within 20 weeks of receiving your request. It must tell you whether it will carry out an assessment within 6 weeks, and if it decides not to issue a plan after assessing, it must tell you within 16 weeks."}},
+{"@type":"Question","name":"How long do I have to respond to a draft EHC plan?","acceptedAnswer":{"@type":"Answer","text":"At least 15 days from the date the draft is sent to you, in which you can comment, ask for a meeting and ask for a particular school to be named."}},
+{"@type":"Question","name":"How long do I have to appeal an EHCP decision?","acceptedAnswer":{"@type":"Answer","text":"Within two months of the date on the council's decision letter, or one month from the date on your mediation certificate, whichever is later."}},
+{"@type":"Question","name":"How often must an EHC plan be reviewed?","acceptedAnswer":{"@type":"Answer","text":"At least every 12 months."}}]}
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function p2(n) { return (n < 10 ? "0" : "") + n; }
+  function parse(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || "");
+    if (!m) return null;
+    var d = new Date(+m[1], +m[2] - 1, +m[3]);
+    return d.getMonth() === +m[2] - 1 ? d : null;
+  }
+  function iso(d) { return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
+  function addDays(d, n) { var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); return x; }
+  function addMonths(d, n) {
+    var first = new Date(d.getFullYear(), d.getMonth() + n, 1);
+    var last = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+    return new Date(first.getFullYear(), first.getMonth(), Math.min(d.getDate(), last));
+  }
+  function today() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+  function diff(a, b) { return Math.round((b - a) / 864e5); }
+  function long(d) { return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); }
+  function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+
+  function when(d) {
+    var n = diff(today(), d);
+    if (n === 0) return { text: "today", cls: "today", label: "Today" };
+    if (n === 1) return { text: "tomorrow", cls: "soon", label: "Tomorrow" };
+    if (n > 1) return { text: "in " + plural(n, "day"), cls: n <= 7 ? "soon" : "up", label: n <= 7 ? "Due soon" : "Coming up" };
+    if (n === -1) return { text: "yesterday", cls: "late", label: "Passed" };
+    return { text: plural(-n, "day") + " ago", cls: "late", label: "Passed" };
+  }
+
+  /* ---- 1. the 20-week clock ---- */
+  var current = null;
+  function clock(req) {
+    return [
+      { id: "w6", wk: "6", sub: "weeks", day: 42, key: true, title: "Decision on whether to assess",
+        text: "The council must tell you whether it will carry out an EHC needs assessment, as soon as practicable and in any event within 6 weeks.", law: "Regulation 5(1), SEND Regulations 2014", name: "EHCP week 6: decision on whether to assess" },
+      { id: "w16", wk: "16", sub: "weeks", day: 112, key: true, title: "If no plan is to be issued, you must be told",
+        text: "If, after assessing, the council has decided not to issue an EHC plan, it must tell you within 16 weeks. If a plan is coming, expect the draft around now.", law: "Regulation 10(1)", name: "EHCP week 16: no-plan decision due" },
+      { id: "draft", wk: "Day 125", sub: "", day: 125, key: false, title: "Latest sensible date for the draft plan",
+        text: "You must have at least 15 days to respond to the draft before the final plan is due at week 20. So a draft that reaches you after this date makes the 20 weeks very hard to meet.", law: "Regulation 13(1) and 13(2)", name: "EHCP: latest date for the draft plan" },
+      { id: "w20", wk: "20", sub: "weeks", day: 140, key: true, title: "Final EHC plan due",
+        text: "The finished EHC plan must be sent to you as soon as practicable and in any event within 20 weeks.", law: "Regulation 13(2)", name: "EHCP week 20: final plan due" }
+    ].map(function (m) { m.date = addDays(req, m.day); return m; });
+  }
+
+  function renderClock(req) {
+    current = { req: req, items: clock(req) };
+    var t = today(), since = diff(req, t);
+    $("res-title").textContent = "Your dates";
+    $("res-sub").textContent = "Request received " + long(req) + (since >= 0 ? " (" + plural(since, "day") + " ago, week " + Math.floor(since / 7) + " of 20)." : ".");
+    var html = "";
+    current.items.forEach(function (m) {
+      var w = when(m.date);
+      html += '<li class="' + (m.key ? "key" : "") + '"><div class="wk">' + esc(m.wk) + (m.sub ? "<small>" + m.sub + "</small>" : "") + "</div>"
+        + '<div><div class="date">' + esc(long(m.date)) + '<span class="tag ' + w.cls + '">' + w.label + ", " + w.text + "</span></div>"
+        + "<h3>" + esc(m.title) + "</h3><p>" + esc(m.text) + '</p><p class="law">' + esc(m.law) + "</p></div></li>";
+    });
+    $("tl").innerHTML = html;
+    $("results").hidden = false;
+    try { history.replaceState(null, "", "?request=" + iso(req)); } catch (e) {}
+  }
+
+  $("f1").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = $("req-msg"); msg.textContent = "";
+    var raw = $("req").value;
+    var d = parse(raw);
+    if (!d) { msg.textContent = "Please choose the date your request was received."; $("results").hidden = true; return; }
+    if (d < new Date(2014, 8, 1)) { msg.textContent = "That date is before the EHC system began (September 2014). Please check it."; $("results").hidden = true; return; }
+    if (diff(today(), d) > 366) { msg.textContent = "That date is more than a year away. Please check it."; $("results").hidden = true; return; }
+    renderClock(d);
+    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("res-title").setAttribute("tabindex", "-1"); $("res-title").focus({ preventScroll: true });
+  });
+
+  function status(t) { $("status").textContent = t; setTimeout(function () { if ($("status").textContent === t) $("status").textContent = ""; }, 5000); }
+
+  $("print").addEventListener("click", function () { window.print(); });
+  $("copy").addEventListener("click", function () {
+    if (!current) return;
+    var url = location.origin + location.pathname + "?request=" + iso(current.req);
+    function fallback() { var ta = document.createElement("textarea"); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); status("Link copied."); } catch (e) { status("Could not copy. The address in your browser has your dates."); } ta.remove(); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function () { status("Link copied."); }).catch(fallback); else fallback();
+  });
+  function icsEsc(s) { return String(s).replace(/[\\;,]/g, function (m) { return "\\" + m; }).replace(/\n/g, "\\n"); }
+  function ymd(d) { return d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()); }
+  function buildICS(items) {
+    var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//IncludeMe//EHCP deadline calculator//EN", "CALSCALE:GREGORIAN"];
+    items.forEach(function (m, i) {
+      lines.push("BEGIN:VEVENT", "UID:ehcp-" + m.id + "-" + ymd(m.date) + "@includeme.uk", "DTSTAMP:" + stamp,
+        "DTSTART;VALUE=DATE:" + ymd(m.date), "DTEND;VALUE=DATE:" + ymd(addDays(m.date, 1)),
+        "SUMMARY:" + icsEsc(m.name), "DESCRIPTION:" + icsEsc(m.text + " (" + m.law + "). Dates from info.includeme.uk. Not legal advice."),
+        "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Reminder", "TRIGGER:-P7D", "END:VALARM",
+        "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Reminder", "TRIGGER:-P1D", "END:VALARM", "END:VEVENT");
+    });
+    lines.push("END:VCALENDAR");
+    return lines.join("\r\n");
+  }
+  $("ics").addEventListener("click", function () {
+    if (!current) return;
+    var blob = new Blob([buildICS(current.items)], { type: "text/calendar;charset=utf-8" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "ehcp-deadlines.ics";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    status("Calendar file downloaded. Open it to add the dates, with reminders a week and a day before.");
+  });
+  window.__ehcp = { buildICS: buildICS, clock: clock };
+
+  /* ---- 2. draft plan ---- */
+  function out(id, html) { $(id).innerHTML = html; }
+  $("f2").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var d = parse($("draft").value);
+    if (!d) { out("out2", "<p>Please choose the date you received the draft.</p>"); return; }
+    var by = addDays(d, 15), w = when(by);
+    out("out2", "<b>Reply by " + esc(long(by)) + "</b><p>That is the earliest the 15 days can end, which is " + w.text + ". Count from the date the draft was sent to you, not the date you opened it. If you need longer, ask in writing, and ask for a meeting if you want one.</p>");
+  });
+
+  /* ---- 3. appeal deadline ---- */
+  $("f3").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var dec = parse($("decision").value), cert = parse($("cert").value);
+    if (!dec) { out("out3", "<p>Please choose the date on the decision letter.</p>"); return; }
+    var a = addMonths(dec, 2), why = "two months from the decision letter";
+    if (cert) { var b = addMonths(cert, 1); if (b > a) { a = b; why = "one month from your mediation certificate"; } }
+    var w = when(a);
+    out("out3", "<b>Register by " + esc(long(a)) + "</b><p>" + (w.cls === "late" ? "That date has passed (" + w.text + "). A late appeal may still be accepted if you explain the delay, so get advice from IPSEA or SENDIASS now." : "That is " + w.text + ", worked out as " + why + ", whichever is later. Contact a mediation adviser first if you do not have a certificate. You do not need one if the appeal is only about the school named.") + "</p>");
+  });
+
+  /* ---- 4. annual review ---- */
+  $("f4").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var plan = parse($("plan").value), meet = parse($("meeting").value);
+    if (!plan) { out("out4", "<p>Please choose the date the plan was issued or the last review meeting.</p>"); return; }
+    var due = addMonths(plan, 12), w = when(due);
+    var html = "<b>Next review by " + esc(long(due)) + "</b><p>That is " + w.text + ". Counting from the review meeting date is the safer way to do it.</p>";
+    if (meet) { var dd = addDays(meet, 28); html += "<p>After the meeting on " + esc(long(meet)) + ", the council should tell you its decision on the plan by <b style=\"display:inline;font-size:inherit\">" + esc(long(dd)) + "</b> (within four weeks).</p>"; }
+    out("out4", html);
+  });
+
+  /* ---- link in: ?request=YYYY-MM-DD ---- */
+  var q = /[?&]request=(\d{4}-\d{2}-\d{2})/.exec(location.search);
+  if (q && parse(q[1])) { $("req").value = q[1]; renderClock(parse(q[1])); }
+})();
+</script>
+</body>
+</html>
