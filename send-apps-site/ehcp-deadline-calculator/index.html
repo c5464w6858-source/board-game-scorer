@@ -219,6 +219,7 @@ footer a:hover { color: var(--navy); }
       </div>
       <p class="status" id="status" role="status"></p>
       <p class="note" style="margin-top:18px">We count 7-day weeks from the day the request was received, the way most councils and charities do. Your council may count slightly differently, so treat these as the latest dates and chase early. The limits can be set aside in a few specific situations, covered below.</p>
+      <p class="note" id="check-note" style="margin-top:10px"><b>Check these against your letters.</b> Every date here is worked out from the date you typed in. If a letter from the council or the Tribunal gives a different date, work to the earlier one.</p>
     </div>
   </div>
 </section>
@@ -279,7 +280,7 @@ footer a:hover { color: var(--navy); }
       <div>
         <p class="eyebrow" style="color:var(--gold)">Advocate · free 3-day trial</p>
         <h2>Have these dates watched for you</h2>
-        <p>Advocate tracks every deadline for your child, reminds you on your phone before each one, and writes the chase letter citing the law when one is missed. Your child's details stay on your own device.</p>
+        <p>Advocate tracks every deadline for your child, reminds you on your phone before each one, and gives you template letters to chase when one is missed. Your child's details stay on your own device.</p>
         <ul>
           <li>Reminders a week, three days and a day before each date</li>
           <li>Model letters, ready to edit and send</li>
@@ -305,7 +306,7 @@ footer a:hover { color: var(--navy); }
     <details><summary>How often must an EHC plan be reviewed?</summary><p>At least every 12 months (section 44 of the Children and Families Act 2014). After a review meeting at a school, the council must decide within four weeks whether to keep, change or stop the plan (regulation 20).</p></details>
     <details><summary>Is this legal advice?</summary><p>No. It is a date calculator based on the Children and Families Act 2014 and the Special Educational Needs and Disability Regulations 2014, and it can be wrong for your circumstances. For free independent advice contact <a href="https://www.ipsea.org.uk" target="_blank" rel="noopener">IPSEA</a> or your local SENDIASS.</p></details>
     <details><summary>Is my date stored or sent anywhere?</summary><p>No. The sums happen on your own device. Nothing you type is sent to us. If you press "Copy a link", the link contains the date you entered, so only share it with someone you trust.</p></details>
-    <p class="note" style="margin-top:22px">Sources: <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/5/made" target="_blank" rel="noopener">regulation 5</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/10/made" target="_blank" rel="noopener">regulation 10</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/13/made" target="_blank" rel="noopener">regulation 13</a> and <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/20/made" target="_blank" rel="noopener">regulation 20</a> of the SEND Regulations 2014; <a href="https://www.legislation.gov.uk/ukpga/2014/6/section/44" target="_blank" rel="noopener">section 44</a> of the Children and Families Act 2014; <a href="https://www.gov.uk/appeal-ehc-plan-decision/appeal-as-a-parent" target="_blank" rel="noopener">GOV.UK guidance on appealing</a>. Last checked 28 October 2026.</p>
+    <p class="note" style="margin-top:22px">Dates and rules last checked against the legislation on 28 October 2026. Sources: <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/5/made" target="_blank" rel="noopener">regulation 5</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/10/made" target="_blank" rel="noopener">regulation 10</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/13/made" target="_blank" rel="noopener">regulation 13</a> and <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/20/made" target="_blank" rel="noopener">regulation 20</a> of the SEND Regulations 2014; <a href="https://www.legislation.gov.uk/ukpga/2014/6/section/44" target="_blank" rel="noopener">section 44</a> of the Children and Families Act 2014; <a href="https://www.gov.uk/appeal-ehc-plan-decision/appeal-as-a-parent" target="_blank" rel="noopener">GOV.UK guidance on appealing</a>. Last checked 28 October 2026.</p>
   </div>
 </section>
 </main>
@@ -422,7 +423,7 @@ footer a:hover { color: var(--navy); }
     items.forEach(function (m, i) {
       lines.push("BEGIN:VEVENT", "UID:ehcp-" + m.id + "-" + ymd(m.date) + "@includeme.uk", "DTSTAMP:" + stamp,
         "DTSTART;VALUE=DATE:" + ymd(m.date), "DTEND;VALUE=DATE:" + ymd(addDays(m.date, 1)),
-        "SUMMARY:" + icsEsc(m.name), "DESCRIPTION:" + icsEsc(m.text + " (" + m.law + "). Dates from info.includeme.uk. Not legal advice."),
+        "SUMMARY:" + icsEsc(m.name), "DESCRIPTION:" + icsEsc(m.text + " (" + m.law + "). Dates from info.includeme.uk, worked out from the date entered. Check them against your letters. Not legal advice."),
         "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Reminder", "TRIGGER:-P7D", "END:VALARM",
         "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Reminder", "TRIGGER:-P1D", "END:VALARM", "END:VEVENT");
     });
@@ -439,13 +440,15 @@ footer a:hover { color: var(--navy); }
   window.__ehcp = { buildICS: buildICS, clock: clock };
 
   /* ---- 2. draft plan ---- */
+  var CHECK = '<p class="note"><b>Check this against your letter.</b> It is worked out from the date you typed in. If the letter gives a different date, work to the earlier one.</p>';
+  var APPEAL_WARN = '<p class="note"><b>Appeal deadlines are strict.</b> If you are close to this date, ask <a href="https://www.ipsea.org.uk" target="_blank" rel="noopener">IPSEA</a> or your local SENDIASS service for advice today.</p>';
   function out(id, html) { $(id).innerHTML = html; }
   $("f2").addEventListener("submit", function (e) {
     e.preventDefault();
     var d = parse($("draft").value);
     if (!d) { out("out2", "<p>Please choose the date you received the draft.</p>"); return; }
     var by = addDays(d, 15), w = when(by);
-    out("out2", "<b>Reply by " + esc(long(by)) + "</b><p>That is the earliest the 15 days can end, which is " + w.text + ". Count from the date the draft was sent to you, not the date you opened it. If you need longer, ask in writing, and ask for a meeting if you want one.</p>");
+    out("out2", "<b>Reply by " + esc(long(by)) + "</b><p>That is the earliest the 15 days can end, which is " + w.text + ". Count from the date the draft was sent to you, not the date you opened it. If you need longer, ask in writing, and ask for a meeting if you want one.</p>" + CHECK);;
   });
 
   /* ---- 3. appeal deadline ---- */
@@ -456,7 +459,7 @@ footer a:hover { color: var(--navy); }
     var a = addMonths(dec, 2), why = "two months from the decision letter";
     if (cert) { var b = addMonths(cert, 1); if (b > a) { a = b; why = "one month from your mediation certificate"; } }
     var w = when(a);
-    out("out3", "<b>Register by " + esc(long(a)) + "</b><p>" + (w.cls === "late" ? "That date has passed (" + w.text + "). A late appeal may still be accepted if you explain the delay, so get advice from IPSEA or SENDIASS now." : "That is " + w.text + ", worked out as " + why + ", whichever is later. Contact a mediation adviser first if you do not have a certificate. You do not need one if the appeal is only about the school named.") + "</p>");
+    out("out3", "<b>Register by " + esc(long(a)) + "</b><p>" + (w.cls === "late" ? "That date has passed (" + w.text + "). A late appeal may still be accepted if you explain the delay, so get advice from IPSEA or SENDIASS now." : "That is " + w.text + ", worked out as " + why + ", whichever is later. Contact a mediation adviser first if you do not have a certificate. You do not need one if the appeal is only about the school named.") + "</p>" + CHECK + APPEAL_WARN);
   });
 
   /* ---- 4. annual review ---- */
@@ -467,7 +470,7 @@ footer a:hover { color: var(--navy); }
     var due = addMonths(plan, 12), w = when(due);
     var html = "<b>Next review by " + esc(long(due)) + "</b><p>That is " + w.text + ". Counting from the review meeting date is the safer way to do it.</p>";
     if (meet) { var dd = addDays(meet, 28); html += "<p>After the meeting on " + esc(long(meet)) + ", the council should tell you its decision on the plan by <b style=\"display:inline;font-size:inherit\">" + esc(long(dd)) + "</b> (within four weeks).</p>"; }
-    out("out4", html);
+    out("out4", html + CHECK);
   });
 
   /* ---- link in: ?request=YYYY-MM-DD ---- */
