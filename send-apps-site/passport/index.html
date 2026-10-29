@@ -138,6 +138,34 @@ footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wr
 footer a { text-decoration: none; margin-right: 6px; display: inline-block; padding: 10px 8px; }
 .subh { font: 700 1.05rem Fraunces, Georgia, serif; color: var(--plum); margin-bottom: 8px; }
 
+.panel { margin-top: 12px; display: grid; gap: 14px; }
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.tile { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: #fff; }
+.tile .tl { font: 600 12.5px Inter, sans-serif; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+.tile .big { font: 700 1.6rem/1.15 Fraunces, Georgia, serif; color: var(--plum); }
+.tile p { font-size: 14px; color: var(--muted); margin-top: 2px; }
+.tile.warnt { border-color: #E8C07A; background: var(--amber-soft); }
+.bar { height: 10px; background: var(--line); border-radius: 6px; overflow: hidden; margin: 8px 0; }
+.bar > i { display: block; height: 100%; background: var(--accent); }
+.todo { list-style: none; display: grid; gap: 6px; }
+.todo li { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; }
+.todo .dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--plum); flex: none; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; }
+.todo li.done .dot { background: var(--ok); border-color: var(--ok); }
+.todo li.done span.t { color: var(--muted); text-decoration: line-through; }
+.linkbtn { background: none; border: 0; padding: 6px 4px; font: 600 14px Inter, sans-serif; color: var(--plum); text-decoration: underline; cursor: pointer; min-height: 36px; }
+.doc { border: 1.5px solid var(--line); border-radius: 14px; padding: 12px; background: #fff; display: grid; gap: 10px; }
+.doc .top { display: flex; gap: 12px; align-items: center; }
+.doc .thumb { width: 64px; height: 64px; border-radius: 10px; background: var(--plum-soft); display: flex; align-items: center; justify-content: center; font: 700 13px Inter, sans-serif; color: var(--plum); overflow: hidden; flex: none; }
+.doc .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.doc .meta { font-size: 13px; color: var(--muted); }
+.appt { border: 1.5px solid var(--line); border-radius: 14px; padding: 12px; background: #fff; display: grid; gap: 10px; }
+.appt.past { opacity: .72; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font: 600 13.5px Inter, sans-serif; padding: 8px 14px; min-height: 40px; border-radius: 999px; border: 1.5px solid #B9B4A6; background: #fff; color: var(--plum); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--plum); color: #fff; border-color: var(--plum); }
+.drop { border: 2px dashed #B9A6D9; border-radius: 14px; padding: 18px; text-align: center; background: var(--plum-soft); }
+.chk2 { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; margin: 0; }
+.chk2 input { width: 22px; height: 22px; accent-color: var(--plum); flex: none; }
 .pp.large { font-size: 1.22rem; }
 .pp.large .blk p, .pp.large .row-card, .pp.large .emerg ul, .pp.large .kv { font-size: 1.15em; }
 .pp.large .pp-head h2 { font-size: 2.1rem; }
@@ -230,7 +258,10 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
         <button type="button" class="btn btn-ghost btn-small" id="example">See an example</button>
       </div>
       <div class="tabs no-print" role="group" aria-label="View">
+        <button type="button" class="tab" id="tabOverview" aria-pressed="false">Overview</button>
         <button type="button" class="tab" id="tabEdit" aria-pressed="true">Fill in</button>
+        <button type="button" class="tab" id="tabAppts" aria-pressed="false">Appointments</button>
+        <button type="button" class="tab" id="tabDocs" aria-pressed="false">Documents</button>
         <button type="button" class="tab" id="tabView" aria-pressed="false">See the passport</button>
         <button type="button" class="tab" id="tabCard" aria-pressed="false">Emergency card</button>
       </div>
@@ -238,6 +269,9 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     </div>
 
     <div id="editor"></div>
+    <div id="overview" class="panel" hidden></div>
+    <div id="appts" class="panel" hidden></div>
+    <div id="docs" class="panel" hidden></div>
     <div id="viewer" hidden></div>
 
     <div id="tools" class="no-print">
@@ -250,6 +284,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       </div>
       <div class="actions" id="ownerTools">
         <button type="button" class="btn btn-ghost btn-small" id="download">Download a backup file</button>
+        <button type="button" class="btn btn-ghost btn-small" id="downloadFull">Backup with documents</button>
         <label class="btn btn-ghost btn-small" for="upload" style="margin:0">Load a backup file</label>
         <input type="file" id="upload" accept="application/json,.json" class="sr">
         <button type="button" class="btn btn-danger btn-small" id="wipe">Delete this child</button>
@@ -265,6 +300,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     <ul>
       <li>Everything is saved only on this phone or computer, not on our servers.</li>
       <li>Add a photo, medicines, doctors and emergency contacts.</li>
+      <li>Keep reports, letters and photos of documents, and appointments, in the same place. Files stay on this device too.</li>
       <li>Print it, save it as a PDF, or copy a link or plain text.</li>
       <li>Make one for each child. Update it when things change.</li>
       <li>Choose what to include before you print or share, and print a small emergency card for a wallet or school bag.</li>
@@ -298,11 +334,11 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
   function id() { return "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
   function blank() {
     return { id: id(), name: "", preferred: "", dob: "", pronouns: "", languages: "", diagnoses: "", nhs: "", photo: "",
-      strengths: "", goals: "", medsChecked: "", hide: [], large: false,
+      strengths: "", goals: "", medsChecked: "", hide: [], large: false, noAllergies: false, noMeds: false, appts: [],
       communication: "", helps: "", upsets: "", calming: "", sensory: "", likes: "", dislikes: "",
       food: "", personalCare: "", sleep: "", safety: "",
       allergies: [], meds: [], team: [], contacts: [],
-      school: { name: "", teacher: "", senco: "", ehcp: "" }, updated: "" };
+      school: { name: "", teacher: "", senco: "", ehcp: "", review: "" }, updated: "" };
   }
   var HIDE = [["dob", "Date of birth"], ["diagnoses", "Diagnoses or needs"], ["nhs", "NHS number"], ["meds", "Medicines"], ["team", "Doctors and team"], ["school", "School"], ["contacts", "Emergency contacts"]];
   var LIM = { str: 2000, short: 160, arr: 30 };
@@ -322,14 +358,15 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     ["strengths", "goals", "diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety"].forEach(function (k) { b[k] = s(o[k]); });
     b.medsChecked = /^\d{4}-\d{2}-\d{2}$/.test(o.medsChecked || "") ? o.medsChecked : "";
     b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
-    b.large = o.large === true;
+    b.large = o.large === true; b.noAllergies = o.noAllergies === true; b.noMeds = o.noMeds === true;
+    b.appts = list(o.appts, ["title", "when", "who", "where", "notes"]).map(function (a) { a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; return a; });
     b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
     b.allergies = list(o.allergies, ["what", "reaction", "action"]);
     b.meds = list(o.meds, ["name", "dose", "when", "forWhat", "prescriber", "notes"]);
     b.team = list(o.team, ["role", "name", "org", "phone", "email", "notes"]);
     b.contacts = list(o.contacts, ["name", "relationship", "phone", "notes"]);
     var sc = o.school && typeof o.school === "object" ? o.school : {};
-    b.school = { name: s(sc.name, LIM.short), teacher: s(sc.teacher, LIM.short), senco: s(sc.senco, LIM.short), ehcp: s(sc.ehcp, 20) };
+    b.school = { name: s(sc.name, LIM.short), teacher: s(sc.teacher, LIM.short), senco: s(sc.senco, LIM.short), ehcp: s(sc.ehcp, 20), review: /^\d{4}-\d{2}-\d{2}$/.test(sc.review || "") ? sc.review : "" };
     b.updated = s(o.updated, 40);
     if (typeof o.id === "string" && /^[A-Za-z0-9]{3,40}$/.test(o.id)) b.id = o.id;
     return b;
@@ -342,7 +379,8 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     if (h.indexOf("nhs") >= 0) c.nhs = "";
     if (h.indexOf("meds") >= 0) { c.meds = []; c.medsChecked = ""; }
     if (h.indexOf("team") >= 0) c.team = [];
-    if (h.indexOf("school") >= 0) c.school = { name: "", teacher: "", senco: "", ehcp: "" };
+    if (h.indexOf("school") >= 0) c.school = { name: "", teacher: "", senco: "", ehcp: "", review: "" };
+    c.appts = [];
     if (h.indexOf("contacts") >= 0) c.contacts = [];
     return c;
   }
@@ -457,6 +495,11 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     draw(); wrap.appendChild(holder); wrap.appendChild(add);
     return wrap;
   }
+  function flag(label, key) {
+    var p = cur(), fid = "g" + (++uid), cb = el("input", { type: "checkbox", id: fid }); cb.checked = !!p[key];
+    cb.addEventListener("change", function () { p[key] = cb.checked; save(); });
+    return el("label", { class: "chk2", for: fid }, [cb, document.createTextNode(label)]);
+  }
   function section(title, open, body) {
     var d = el("details", { class: "sec" }); if (open) d.setAttribute("open", "");
     d.appendChild(el("summary", { text: title }));
@@ -513,10 +556,10 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       field("Staying safe", "safety", { area: true, help: "For example runs off, no road sense, needs 1:1, cannot swim." })
     ]));
     box.appendChild(section("Health: allergies, medicines and NHS number", false, [
-      el("div", {}, [el("p", { class: "subh", text: "Allergies" }), repeater("Allergy", p.allergies, [
+      el("div", {}, [el("p", { class: "subh", text: "Allergies" }), flag("No known allergies", "noAllergies"), repeater("Allergy", p.allergies, [
         { key: "what", label: "Allergic to" }, { key: "reaction", label: "What happens" }, { key: "action", label: "What to do", wide: true }
       ], "Add an allergy", "No allergies added.")]),
-      el("div", {}, [el("p", { class: "subh", text: "Medicines" }), repeater("Medicine", p.meds, [
+      el("div", {}, [el("p", { class: "subh", text: "Medicines" }), flag("No regular medicines", "noMeds"), repeater("Medicine", p.meds, [
         { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given" }, { key: "forWhat", label: "What it is for" },
         { key: "prescriber", label: "Prescribed by", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
       ], "Add a medicine", "No medicines added.")]),
@@ -537,7 +580,8 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     box.appendChild(section("School", false, [
       field("School or nursery", "name", { obj: "school" }),
       el("div", { class: "two" }, [field("Class teacher or key worker", "teacher", { obj: "school" }), field("SENCo", "senco", { obj: "school" })]),
-      field("EHCP", "ehcp", { obj: "school", help: "For example: yes, applying, no, SEN support." })
+      field("EHCP", "ehcp", { obj: "school", help: "For example: yes, applying, no, SEN support." }),
+      field("EHCP annual review due", "review", { obj: "school", type: "date", help: "Reviews must happen at least every 12 months." })
     ]));
     box.appendChild(section("Emergency contacts", false, [
       repeater("Contact", p.contacts, [
@@ -564,6 +608,8 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
 
     // emergency strip
     var em = [];
+    if (p.noAllergies && !p.allergies.some(function (a) { return a.what; })) em.push("No known allergies");
+    if (p.noMeds && !p.meds.some(function (m) { return m.name; })) em.push("No regular medicines");
     p.allergies.forEach(function (a) { if (a.what) em.push("Allergy: " + a.what + (a.reaction ? " (" + a.reaction + ")" : "") + (a.action ? ". " + a.action : "")); });
     if (p.diagnoses) em.push("Needs: " + p.diagnoses.replace(/\s*\n\s*/g, "; "));
     var gp = p.team.filter(function (t) { return t.role === "GP"; })[0];
@@ -603,7 +649,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       });
       body.appendChild(blk("My doctors and team", tr));
     }
-    var sc = p.school; var sl = [sc.name && "School: " + sc.name, sc.teacher && "Class teacher or key worker: " + sc.teacher, sc.senco && "SENCo: " + sc.senco, sc.ehcp && "EHCP: " + sc.ehcp].filter(Boolean);
+    var sc = p.school; var sl = [sc.name && "School: " + sc.name, sc.teacher && "Class teacher or key worker: " + sc.teacher, sc.senco && "SENCo: " + sc.senco, sc.ehcp && "EHCP: " + sc.ehcp, sc.review && "EHCP annual review due: " + longDate(sc.review)].filter(Boolean);
     if (sl.length) { var sd = el("div"); sl.forEach(function (t) { sd.appendChild(el("p", { text: t })); }); body.appendChild(blk("School", sd)); }
     var ct = p.contacts.filter(function (c) { return c.name || c.phone; });
     if (ct.length) {
@@ -700,18 +746,195 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toolMsg(ok); }, fallback); else fallback();
   }
 
+
+  /* ---------- documents (kept in this browser only, in IndexedDB) ---------- */
+  var CATS = ["EHCP and plans", "Assessments and reports", "Letters", "Medical and prescriptions", "Appointment letters", "School documents", "Photos", "Other"];
+  var OKTYPES = { "application/pdf": "PDF", "image/jpeg": "JPG", "image/png": "PNG", "image/webp": "WEBP", "image/gif": "GIF", "image/heic": "HEIC", "image/heif": "HEIC", "text/plain": "TXT", "application/msword": "DOC", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX" };
+  var EXT2 = { pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", heic: "image/heic", heif: "image/heif", txt: "text/plain", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+  var MAXFILE = 25 * 1024 * 1024;
+  var dbp = null;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise(function (res, rej) {
+      if (!window.indexedDB) { rej(new Error("nodb")); return; }
+      var r = indexedDB.open("includeme-passport", 1);
+      r.onupgradeneeded = function () { var d = r.result, st = d.createObjectStore("docs", { keyPath: "id" }); st.createIndex("profileId", "profileId"); };
+      r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error || new Error("db")); };
+    });
+    return dbp;
+  }
+  function tx(mode, fn) { return db().then(function (d) { return new Promise(function (res, rej) { var t = d.transaction("docs", mode), st = t.objectStore("docs"), out = fn(st); t.oncomplete = function () { res(out && out.result !== undefined ? out.result : undefined); }; t.onerror = t.onabort = function () { rej(t.error || new Error("tx")); }; }); }); }
+  function docsOf(pid) { return db().then(function (d) { return new Promise(function (res, rej) { var rq = d.transaction("docs").objectStore("docs").index("profileId").getAll(pid); rq.onsuccess = function () { res(rq.result || []); }; rq.onerror = function () { rej(rq.error); }; }); }); }
+  function putDoc(rec) { return tx("readwrite", function (st) { return st.put(rec); }); }
+  function delDoc(i) { return tx("readwrite", function (st) { return st.delete(i); }); }
+  function delDocsOf(pid) { return docsOf(pid).then(function (a) { return Promise.all(a.map(function (r) { return delDoc(r.id); })); }); }
+  function mime(f) { var t = (f.type || "").toLowerCase(); if (OKTYPES[t]) return t; var m = /\.([a-z0-9]+)$/i.exec(f.name || ""); return m && EXT2[m[1].toLowerCase()] || ""; }
+  function bytes(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+  var urls = [];
+  function freeUrls() { urls.forEach(function (u) { URL.revokeObjectURL(u); }); urls = []; }
+  function today() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  var docFilter = "All";
+  function renderDocs() {
+    var box = $("docs"), p = cur(); freeUrls(); box.textContent = "";
+    box.appendChild(el("p", { class: "note", text: "Keep reports, letters and photos of documents with the passport. They are saved on this device only. They are never uploaded to us and never included in a shared link or printed passport." }));
+    var status = el("p", { class: "status", role: "status", "aria-live": "polite" });
+    var pick = el("input", { type: "file", id: "docIn", class: "sr", multiple: "", accept: ".pdf,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.txt,.doc,.docx,image/*,application/pdf" });
+    var addLbl = el("label", { class: "btn btn-main", for: "docIn", text: "Add documents or photos" });
+    box.appendChild(el("div", { class: "drop" }, [addLbl, pick, el("p", { class: "help", text: "PDF, photos, Word documents and text files, up to 25 MB each." })]));
+    box.appendChild(status);
+    var listBox = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(listBox);
+    var meter = el("p", { class: "help" }); box.appendChild(meter);
+    if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { if (e && e.quota) meter.textContent = "This browser has about " + bytes(e.quota - e.usage) + " of room left for files on this device."; });
+
+    function draw() {
+      docsOf(p.id).then(function (all) {
+        freeUrls(); listBox.textContent = "";
+        var counts = {}; all.forEach(function (r) { counts[r.category] = (counts[r.category] || 0) + 1; });
+        var chips = el("div", { class: "chips", role: "group", "aria-label": "Filter documents" });
+        ["All"].concat(CATS).forEach(function (c) {
+          if (c !== "All" && !counts[c]) return;
+          var b = el("button", { type: "button", class: "chip", "aria-pressed": docFilter === c ? "true" : "false", text: c + (c === "All" ? " (" + all.length + ")" : " (" + counts[c] + ")") });
+          b.addEventListener("click", function () { docFilter = c; draw(); }); chips.appendChild(b);
+        });
+        if (all.length) listBox.appendChild(chips);
+        var shown = all.filter(function (r) { return docFilter === "All" || r.category === docFilter; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || b.added - a.added; });
+        if (!all.length) listBox.appendChild(el("p", { class: "empty", text: "No documents yet." }));
+        shown.forEach(function (r) {
+          var thumb = el("div", { class: "thumb", "aria-hidden": "true", text: OKTYPES[r.type] || "FILE" });
+          if (/^image\/(jpeg|png|webp|gif)$/.test(r.type)) { var u = URL.createObjectURL(r.blob); urls.push(u); thumb.textContent = ""; thumb.appendChild(el("img", { src: u, alt: "" })); }
+          var tid = "dt" + r.id, title = el("input", { type: "text", id: tid, value: r.title });
+          title.addEventListener("input", function () { r.title = title.value.slice(0, 160); putDoc(r); });
+          var cat = el("select", { class: "f", id: "dc" + r.id }); CATS.forEach(function (c) { cat.appendChild(el("option", { value: c, text: c })); }); cat.value = r.category;
+          cat.addEventListener("change", function () { r.category = cat.value; putDoc(r).then(draw); });
+          var dt = el("input", { type: "date", id: "dd" + r.id, value: r.date || "" }); dt.addEventListener("input", function () { r.date = dt.value; putDoc(r); });
+          var nt = el("textarea", { id: "dn" + r.id, rows: "2" }); nt.value = r.notes || ""; nt.addEventListener("input", function () { r.notes = nt.value.slice(0, 1000); putDoc(r); });
+          var openB = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Open" });
+          var canOpen = r.type === "application/pdf" || /^image\/(jpeg|png|webp|gif)$/.test(r.type);
+          if (canOpen) openB.addEventListener("click", function () { var u = URL.createObjectURL(new Blob([r.blob], { type: r.type })); var a = el("a", { href: u, target: "_blank", rel: "noopener" }); document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(u); }, 120000); });
+          var dl = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Download" });
+          dl.addEventListener("click", function () { var u = URL.createObjectURL(r.blob); var a = el("a", { href: u, download: r.name || "document" }); document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(u); }, 5000); });
+          var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove " + r.title);
+          rm.addEventListener("click", function () { if (!window.confirm("Remove \u201c" + r.title + "\u201d from this device?")) return; delDoc(r.id).then(draw); });
+          var acts = el("div", { class: "actions", style: "margin:0" }, canOpen ? [openB, dl, rm] : [dl, rm]);
+          listBox.appendChild(el("div", { class: "doc", role: "group", "aria-label": r.title }, [
+            el("div", { class: "top" }, [thumb, el("div", { style: "flex:1;min-width:0" }, [el("label", { for: tid, text: "Title" }), title, el("div", { class: "meta", text: (OKTYPES[r.type] || "File") + " · " + bytes(r.size) + " · " + (r.name || "") })])]),
+            el("div", { class: "two" }, [el("div", {}, [el("label", { for: "dc" + r.id, text: "Type" }), cat]), el("div", {}, [el("label", { for: "dd" + r.id, text: "Date on the document" }), dt])]),
+            el("div", {}, [el("label", { for: "dn" + r.id, text: "Notes" }), nt]), acts]));
+        });
+      }, function () { listBox.textContent = ""; listBox.appendChild(el("p", { class: "warn", text: "This browser cannot keep files on this device (it may be in private mode). Try a normal window." })); });
+    }
+    pick.addEventListener("change", function () {
+      var files = Array.prototype.slice.call(pick.files || []); pick.value = ""; if (!files.length) return;
+      var ok = 0, bad = [];
+      var chain = files.reduce(function (pr, f) {
+        return pr.then(function () {
+          var t = mime(f);
+          if (!t) { bad.push(f.name + " (type not supported)"); return; }
+          if (f.size > MAXFILE) { bad.push(f.name + " (over 25 MB)"); return; }
+          var rec = { id: id(), profileId: p.id, title: (f.name || "Document").replace(/\.[^.]+$/, "").slice(0, 160), category: /^image\//.test(t) ? "Photos" : "Other", date: today(), notes: "", name: (f.name || "").slice(0, 200), type: t, size: f.size, blob: f, added: Date.now() };
+          return putDoc(rec).then(function () { ok++; });
+        });
+      }, Promise.resolve());
+      chain.then(function () {
+        status.className = bad.length ? "status err" : "status";
+        status.textContent = (ok ? "Added " + ok + " file" + (ok === 1 ? "" : "s") + ". " : "") + (bad.length ? "Could not add: " + bad.join(", ") + "." : "");
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+        draw();
+      }, function () { status.className = "status err"; status.textContent = "Could not save the files on this device. There may not be enough room."; });
+    });
+    draw();
+  }
+
+  /* ---------- appointments ---------- */
+  function whenText(w) { if (!w) return "Date not set"; try { var d = new Date(w.length > 10 ? w : w + "T12:00"); return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) + (w.length > 10 ? ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : ""); } catch (e) { return w; } }
+  function apptTime(a) { return a.when ? new Date(a.when.length > 10 ? a.when : a.when + "T23:59").getTime() : Infinity; }
+  function icsFor(a, who) {
+    function esc(t) { return String(t || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\;"); }
+    var d = a.when.replace(/[-:]/g, ""), allday = a.when.length <= 10, L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//IncludeMe//Passport//EN", "BEGIN:VEVENT", "UID:" + id() + "@includeme.uk", "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d{3}/g, "")];
+    L.push(allday ? "DTSTART;VALUE=DATE:" + d : "DTSTART:" + d + "00");
+    L.push("SUMMARY:" + esc((who ? who + ": " : "") + (a.title || "Appointment")));
+    if (a.where) L.push("LOCATION:" + esc(a.where)); var desc = [a.who && "With: " + a.who, a.notes].filter(Boolean).join("\n"); if (desc) L.push("DESCRIPTION:" + esc(desc));
+    L.push("END:VEVENT", "END:VCALENDAR"); return L.join("\r\n");
+  }
+  function renderAppts() {
+    var box = $("appts"), p = cur(); box.textContent = "";
+    box.appendChild(el("p", { class: "note", text: "Keep appointments here so everything is in one place. They are private: they are not part of the printed passport or shared link." }));
+    var add = el("button", { type: "button", class: "btn btn-main", text: "Add an appointment" });
+    add.addEventListener("click", function () { p.appts.push({ title: "", when: "", who: "", where: "", notes: "" }); save(); draw(); var last = box.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
+    box.appendChild(add);
+    var list = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(list);
+    function draw() {
+      list.textContent = "";
+      if (!p.appts.length) list.appendChild(el("p", { class: "empty", text: "No appointments yet." }));
+      var order = p.appts.map(function (a, i) { return i; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
+      order.forEach(function (i) {
+        var a = p.appts[i], past = a.when && apptTime(a) < Date.now(), n = ++uid;
+        function f(label, key, type, wide) { var fid = "ap" + n + key, c = key === "notes" ? el("textarea", { id: fid, rows: "2" }) : el("input", { id: fid, type: type || "text" }); c.value = a[key] || ""; c.addEventListener("input", function () { a[key] = c.value; save(); }); return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]); }
+        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove appointment " + (a.title || ""));
+        rm.addEventListener("click", function () { p.appts.splice(i, 1); save(); draw(); });
+        var cal = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Add to my calendar" });
+        cal.addEventListener("click", function () { if (!a.when) { savedMsg("Set a date first.", true); return; } var blob = new Blob([icsFor(a, p.preferred || p.name)], { type: "text/calendar" }), u = URL.createObjectURL(blob), lnk = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(lnk); lnk.click(); document.body.removeChild(lnk); setTimeout(function () { URL.revokeObjectURL(u); }, 3000); });
+        list.appendChild(el("div", { class: "appt" + (past ? " past" : ""), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
+          el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center" }, [el("b", { style: "color:var(--plum)", text: whenText(a.when) + (past ? " (past)" : "") }), el("span", { class: "actions", style: "margin:0" }, [cal, rm])]),
+          el("div", { class: "two" }, [f("What is it?", "title"), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])]));
+      });
+    }
+    draw();
+  }
+
+  /* ---------- overview: everything in one place ---------- */
+  function go(sectionTitle) {
+    setMode("edit"); var sums = $("editor").querySelectorAll("summary");
+    for (var i = 0; i < sums.length; i++) if (sums[i].textContent.indexOf(sectionTitle) === 0) { var d = sums[i].parentNode; d.open = true; sums[i].scrollIntoView({ block: "start" }); sums[i].focus(); break; }
+  }
+  function tile(h, big, sub, cls, actions) { var t = el("div", { class: "tile" + (cls ? " " + cls : "") }, [el("p", { class: "tl", text: h }), el("div", { class: "big", text: big })]); if (sub) t.appendChild(el("p", { text: sub })); (actions || []).forEach(function (a) { t.appendChild(a); }); return t; }
+  function lb(text, fn) { var b = el("button", { type: "button", class: "linkbtn", text: text }); b.addEventListener("click", fn); return b; }
+  function renderOverview() {
+    var box = $("overview"), p = cur(); box.textContent = "";
+    var next = p.appts.filter(function (a) { return a.when && apptTime(a) >= Date.now(); }).sort(function (a, b) { return apptTime(a) - apptTime(b); })[0];
+    var grid = el("div", { class: "grid-cards" });
+    grid.appendChild(tile("Next appointment", next ? (next.title || "Appointment") : "None booked", next ? whenText(next.when) + (next.where ? " · " + next.where : "") : "Add the next one so it is not forgotten.", "", [lb(next ? "See all appointments" : "Add an appointment", function () { setMode("appts"); })]));
+    var gdocs = tile("Documents", "…", "", "", [lb("Open documents", function () { setMode("docs"); })]); grid.appendChild(gdocs);
+    docsOf(p.id).then(function (all) { var by = {}; all.forEach(function (r) { by[r.category] = (by[r.category] || 0) + 1; }); gdocs.querySelector(".big").textContent = all.length + (all.length === 1 ? " file" : " files"); var sp = Object.keys(by).map(function (k) { return k + ": " + by[k]; }).join(" · "); gdocs.insertBefore(el("p", { text: sp || "Add reports, letters and photos." }), gdocs.querySelector(".linkbtn")); }, function () { gdocs.querySelector(".big").textContent = "Not available"; gdocs.insertBefore(el("p", { text: "This browser cannot keep files." }), gdocs.querySelector(".linkbtn")); });
+    var mc = p.medsChecked ? (Date.now() - new Date(p.medsChecked + "T12:00:00").getTime()) > 183 * 864e5 : null;
+    var medCount = p.meds.filter(function (m) { return m.name; }).length;
+    grid.appendChild(tile("Medicines", medCount + (medCount === 1 ? " medicine" : " medicines"), p.meds.length ? (p.medsChecked ? (mc ? "Last checked over six months ago. Ask for a review." : "Last checked " + longDate(p.medsChecked) + ".") : "Add when they were last checked.") : (p.noMeds ? "No regular medicines." : "Add medicines, or tick none."), p.meds.length && (mc || !p.medsChecked) ? "warnt" : "", [lb("Open health", function () { go("Health"); })]));
+    var rev = p.school.review ? Math.round((new Date(p.school.review + "T12:00:00").getTime() - Date.now()) / 864e5) : null;
+    grid.appendChild(tile("EHCP annual review", p.school.review ? longDate(p.school.review) : "Not set", p.school.review ? (rev < 0 ? "That date has passed. Has the review happened?" : rev <= 60 ? "Coming up in " + rev + " days. Start collecting reports." : "In " + rev + " days.") : "Add the date it is due.", p.school.review && rev <= 60 ? "warnt" : "", [lb("Open school", function () { go("School"); })]));
+    box.appendChild(grid);
+
+    var items = [
+      ["Add a name", !!p.name, "About me"],
+      ["Say how they communicate", !!(p.communication || p.helps), "How I communicate"],
+      ["Add allergies, or tick no known allergies", p.allergies.some(function (a) { return a.what; }) || p.noAllergies, "Health"],
+      ["Add medicines, or tick none", p.meds.some(function (m) { return m.name; }) || p.noMeds, "Health"],
+      ["Add the GP", p.team.some(function (t) { return t.role === "GP" && (t.name || t.phone); }), "My doctors"],
+      ["Add an emergency contact", p.contacts.some(function (c) { return c.name && c.phone; }), "Emergency contacts"],
+      ["Add the school", !!p.school.name, "School"]
+    ];
+    var done = items.filter(function (i) { return i[1]; }).length, pct = Math.round(done / items.length * 100);
+    var card = el("div", { class: "tile" }, [el("p", { class: "tl", text: "Passport completeness" }), el("div", { class: "big", text: pct + "%" }), el("div", { class: "bar", "aria-hidden": "true" }, [el("i", { style: "width:" + pct + "%" })])]);
+    var ul = el("ul", { class: "todo" });
+    items.forEach(function (it) { var li = el("li", { class: it[1] ? "done" : "" }, [el("span", { class: "dot", "aria-hidden": "true", text: it[1] ? "✓" : "" }), el("span", { class: "t", text: it[0] })]); if (!it[1]) li.appendChild(lb("Do this", function () { go(it[2]); })); else li.appendChild(el("span", { class: "sr", text: " (done)" })); ul.appendChild(li); });
+    card.appendChild(ul); box.appendChild(card);
+    var q = el("div", { class: "actions" }, [lb("See the passport", function () { setMode("view"); }), lb("Emergency card", function () { setMode("card"); }), lb("Add a document", function () { setMode("docs"); })]);
+    box.appendChild(q);
+  }
+
   /* ---------- wiring ---------- */
   function renderWho() {
     var sel = $("who"); sel.textContent = "";
     store.profiles.forEach(function (p, i) { sel.appendChild(el("option", { value: p.id, text: p.name || "Child " + (i + 1) })); });
     sel.value = store.current;
   }
+  var PANES = { overview: "overview", edit: "editor", appts: "appts", docs: "docs", view: "viewer", card: "viewer" };
+  var TABS = { overview: "tabOverview", edit: "tabEdit", appts: "tabAppts", docs: "tabDocs", view: "tabView", card: "tabCard" };
   function setMode(m) {
     if (shared) m = "view";
-    mode = m; var edit = m === "edit";
-    $("editor").hidden = !edit; $("viewer").hidden = edit;
-    $("tabEdit").setAttribute("aria-pressed", m === "edit" ? "true" : "false"); $("tabView").setAttribute("aria-pressed", m === "view" ? "true" : "false"); $("tabCard").setAttribute("aria-pressed", m === "card" ? "true" : "false");
-    if (!edit) renderViewer();
+    mode = m;
+    ["editor", "overview", "appts", "docs", "viewer"].forEach(function (pid) { $(pid).hidden = PANES[m] !== pid; });
+    Object.keys(TABS).forEach(function (k) { $(TABS[k]).setAttribute("aria-pressed", k === m ? "true" : "false"); });
+    if (m === "view" || m === "card") renderViewer(); else if (m === "overview") renderOverview(); else if (m === "appts") renderAppts(); else if (m === "docs") renderDocs();
   }
   function renderOpts() {
     var box = $("opts"); box.textContent = ""; if (shared) return;
@@ -757,7 +980,10 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     $("tabEdit").addEventListener("click", function () { setMode("edit"); });
     $("tabView").addEventListener("click", function () { setMode("view"); });
     $("tabCard").addEventListener("click", function () { setMode("card"); });
-    $("print").addEventListener("click", function () { if (!shared && mode === "edit") setMode("view"); setTimeout(function () { window.print(); }, 50); });
+    $("tabOverview").addEventListener("click", function () { setMode("overview"); });
+    $("tabAppts").addEventListener("click", function () { setMode("appts"); });
+    $("tabDocs").addEventListener("click", function () { setMode("docs"); });
+    $("print").addEventListener("click", function () { if (!shared && mode !== "view" && mode !== "card") setMode("view"); setTimeout(function () { window.print(); }, 50); });
     $("copyText").addEventListener("click", function () { copy(asText(cur()), "Copied. Paste it into a message or email."); });
     $("share").addEventListener("click", function () {
       encodeShare(cur()).then(function (t) {
@@ -767,23 +993,40 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
         else copy(link, "Link copied. Anyone with it can read the passport.");
       });
     });
-    $("download").addEventListener("click", function () {
-      var blob = new Blob([JSON.stringify(cur(), null, 1)], { type: "application/json" }), a = el("a", { href: URL.createObjectURL(blob), download: "all-about-me-" + ((cur().name || "child").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "child") + ".json" });
-      document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000); toolMsg("Backup downloaded. Keep it somewhere safe: it contains the whole passport.");
+    function saveFile(text, name) { var blob = new Blob([text], { type: "application/json" }), a = el("a", { href: URL.createObjectURL(blob), download: name }); document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000); }
+    function fname(suffix) { return "all-about-me-" + ((cur().name || "child").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "child") + suffix + ".json"; }
+    $("download").addEventListener("click", function () { saveFile(JSON.stringify(cur(), null, 1), fname("")); toolMsg("Backup downloaded. It has the passport and appointments, but not documents. Keep it somewhere safe."); });
+    function b64(blob) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(",")[1] || ""); }; r.onerror = function () { rej(r.error); }; r.readAsDataURL(blob); }); }
+    $("downloadFull").addEventListener("click", function () {
+      toolMsg("Preparing the backup...");
+      docsOf(cur().id).then(function (all) {
+        return Promise.all(all.map(function (r) { return b64(r.blob).then(function (d) { return { title: r.title, category: r.category, date: r.date, notes: r.notes, name: r.name, type: r.type, size: r.size, data: d }; }); }));
+      }).then(function (docs) { saveFile(JSON.stringify({ passport: cur(), documents: docs }), fname("-with-documents")); toolMsg("Backup downloaded with " + docs.length + " document" + (docs.length === 1 ? "" : "s") + ". It can be large, and it holds everything, so keep it safe."); },
+        function () { toolMsg("Could not read the documents on this device.", true); });
     });
     $("upload").addEventListener("change", function () {
       var f = $("upload").files && $("upload").files[0]; if (!f) return;
-      if (f.size > 400000) { toolMsg("That file is too big to be a passport backup.", true); return; }
+      if (f.size > 250 * 1024 * 1024) { toolMsg("That file is too big to be a passport backup.", true); return; }
       var r = new FileReader();
       r.onload = function () {
-        try { var p = clean(JSON.parse(String(r.result))); p.id = id(); store.profiles.push(p); store.current = p.id; save(); mode = "edit"; refresh(); toolMsg("Loaded as a new child. Check it over."); }
-        catch (e) { toolMsg("That file is not a passport backup.", true); }
+        var raw; try { raw = JSON.parse(String(r.result)); } catch (e) { toolMsg("That file is not a passport backup.", true); $("upload").value = ""; return; }
+        var p = clean(raw && raw.passport ? raw.passport : raw); p.id = id(); store.profiles.push(p); store.current = p.id; save(); mode = "edit";
+        var docs = raw && Array.isArray(raw.documents) ? raw.documents.slice(0, 200) : [], n = 0;
+        function bin(d) { var s2 = atob(d), a = new Uint8Array(s2.length); for (var i = 0; i < s2.length; i++) a[i] = s2.charCodeAt(i); return a; }
+        docs.reduce(function (pr, d) {
+          return pr.then(function () {
+            var t = d && typeof d.type === "string" && OKTYPES[d.type] ? d.type : ""; if (!t || typeof d.data !== "string") return;
+            var blob; try { blob = new Blob([bin(d.data)], { type: t }); } catch (e) { return; } if (blob.size > MAXFILE) return;
+            return putDoc({ id: id(), profileId: p.id, title: s(d.title, 160) || "Document", category: CATS.indexOf(d.category) >= 0 ? d.category : "Other", date: /^\d{4}-\d{2}-\d{2}$/.test(d.date || "") ? d.date : "", notes: s(d.notes, 1000), name: s(d.name, 200), type: t, size: blob.size, blob: blob, added: Date.now() }).then(function () { n++; });
+          });
+        }, Promise.resolve()).then(function () { refresh(); toolMsg("Loaded as a new child" + (docs.length ? " with " + n + " document" + (n === 1 ? "" : "s") : "") + ". Check it over."); }, function () { refresh(); toolMsg("Loaded, but the documents could not be saved on this device.", true); });
         $("upload").value = "";
       };
       r.readAsText(f);
     });
     $("wipe").addEventListener("click", function () {
-      var p = cur(); if (!window.confirm("Delete " + (p.name || "this child") + " from this device? This cannot be undone. Download a backup first if you want to keep it.")) return;
+      var p = cur(); if (!window.confirm("Delete " + (p.name || "this child") + " and their documents from this device? This cannot be undone. Download a backup first if you want to keep it.")) return;
+      delDocsOf(p.id).catch(function () { /* no files to remove */ });
       store.profiles = store.profiles.filter(function (x) { return x.id !== p.id; });
       if (!store.profiles.length) store.profiles.push(blank());
       store.current = store.profiles[0].id; save(); refresh(); toolMsg("Deleted from this device.");
