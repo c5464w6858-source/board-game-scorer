@@ -187,9 +187,13 @@ input:focus, textarea:focus, select:focus { border-color: var(--plum); }
 .idcard .cf { background: #F3EEFB; color: var(--muted); font-size: 9.5px; padding: 3px 9px; }
 
 /* dialogs */
-dialog { border: 0; border-radius: 14px; padding: 0; width: min(94vw, 460px); box-shadow: 0 30px 70px -20px rgba(0,0,0,.5); color: var(--ink); }
+dialog { border: 0; border-radius: 14px; padding: 0; margin: auto; width: min(92vw, 420px); max-height: min(88vh, 560px); overflow-y: auto; box-shadow: 0 30px 70px -20px rgba(0,0,0,.5); color: var(--ink); }
 dialog::backdrop { background: rgba(27,21,48,.55); }
-.dlg { padding: 22px; display: grid; gap: 14px; }
+.dlg { padding: 18px; display: grid; gap: 10px; }
+.dlg .two { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+.upsell { border: 1px solid var(--plum-soft); border-left: 4px solid var(--accent); border-radius: 12px; background: var(--plum-soft); padding: 16px; margin-top: 14px; }
+.upsell h3 { font: 700 1.1rem Fraunces, Georgia, serif; color: var(--plum); }
+.upsell p { font-size: 14px; color: var(--ink); margin: 4px 0 10px; }
 .dlg h2 { font-size: 1.3rem; }
 .dlg .chk { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; font-size: 15px; margin: 0; }
 
@@ -248,6 +252,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
             <button type="button" class="mi" id="miInstall" hidden>Install as an app</button>
             <hr>
             <a class="mi" href="https://includeme.uk/" rel="noopener">Open the Activity Finder</a>
+            <a class="mi" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener">Try Advocate for EHCP cases</a>
             <button type="button" class="mi danger" id="miSignOut">Sign out</button>
           </div>
         </div>
@@ -916,6 +921,8 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     card.appendChild(ul); box.appendChild(card);
     var q = el("div", { class: "actions" }, [lb("See the passport", function () { setMode("view"); }), lb("Emergency card", function () { setMode("card"); }), lb("Add a document", function () { setMode("docs"); })]);
     box.appendChild(q);
+    box.appendChild(el("div", { class: "upsell" }, [el("h3", { text: "Fighting for an EHCP?" }), el("p", { text: "Advocate keeps the whole case in one place: deadlines, reports, phone calls, letters and a printable case pack. £3.99 a month. Case details stay on your phone." }),
+      el("a", { class: "btn btn-main btn-small", href: "https://info.includeme.uk/advocate/?utm_campaign=passport_overview", rel: "noopener", text: "See how Advocate works" })]));
   }
 
 
