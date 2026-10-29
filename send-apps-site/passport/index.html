@@ -11,6 +11,9 @@
 <meta property="og:url" content="https://info.includeme.uk/passport/">
 <meta property="og:type" content="website">
 <link rel="icon" href="../assets/logo-passport.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#3B1F63">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
@@ -135,6 +138,23 @@ footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wr
 footer a { text-decoration: none; margin-right: 6px; display: inline-block; padding: 10px 8px; }
 .subh { font: 700 1.05rem Fraunces, Georgia, serif; color: var(--plum); margin-bottom: 8px; }
 
+.pp.large { font-size: 1.22rem; }
+.pp.large .blk p, .pp.large .row-card, .pp.large .emerg ul, .pp.large .kv { font-size: 1.15em; }
+.pp.large .pp-head h2 { font-size: 2.1rem; }
+.opts { border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-top: 14px; background: #fff; }
+.opts legend { font: 700 1rem Fraunces, Georgia, serif; color: var(--plum); padding: 0 6px; }
+.opts .chk { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; font-size: 15px; margin: 0; color: var(--ink); }
+.opts input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--plum); flex: none; }
+.opts .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+.sheet { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
+.idcard { width: 90mm; min-height: 56mm; border: 2px solid var(--plum); border-radius: 10px; overflow: hidden; background: #fff; font-size: 12px; line-height: 1.35; break-inside: avoid; }
+.idcard .ch { background: var(--plum); color: #fff; padding: 6px 9px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.idcard .ch b { font: 700 14px Fraunces, Georgia, serif; }
+.idcard .ch span { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.idcard ul { list-style: none; padding: 7px 9px 8px; display: grid; gap: 2px; }
+.idcard li b { color: var(--accent-dk); }
+.idcard .cf { background: #F3EEFB; color: var(--muted); font-size: 9.5px; padding: 3px 9px; }
+@media (max-width: 600px) { .opts .grid2 { grid-template-columns: 1fr; } .idcard { width: 100%; } }
 @media (max-width: 600px) {
   .two { grid-template-columns: 1fr; }
   .kv { grid-template-columns: 1fr; gap: 0; }
@@ -155,6 +175,12 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
   .emerg { background: #fff; border-bottom: 2px solid #000; }
   .emerg h3 { color: #000; }
   .row-card { background: #fff; }
+  .idcard { border-color: #000; }
+  .idcard .ch { background: #fff; color: #000; border-bottom: 2px solid #000; }
+  .idcard .ch span, .idcard li b { color: #000; }
+  .idcard .cf { background: #fff; color: #000; }
+  .sheet { gap: 8mm; }
+  .opts { display: none !important; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -206,6 +232,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       <div class="tabs no-print" role="group" aria-label="View">
         <button type="button" class="tab" id="tabEdit" aria-pressed="true">Fill in</button>
         <button type="button" class="tab" id="tabView" aria-pressed="false">See the passport</button>
+        <button type="button" class="tab" id="tabCard" aria-pressed="false">Emergency card</button>
       </div>
       <p class="status" id="saved" role="status" aria-live="polite"></p>
     </div>
@@ -214,10 +241,12 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     <div id="viewer" hidden></div>
 
     <div id="tools" class="no-print">
+      <div id="opts"></div>
       <div class="actions">
         <button type="button" class="btn btn-main" id="print">Print or save as PDF</button>
         <button type="button" class="btn btn-accent" id="share">Copy a link to share</button>
         <button type="button" class="btn btn-ghost" id="copyText">Copy as text</button>
+        <button type="button" class="btn btn-ghost" id="install" hidden>Install as an app</button>
       </div>
       <div class="actions" id="ownerTools">
         <button type="button" class="btn btn-ghost btn-small" id="download">Download a backup file</button>
@@ -238,6 +267,8 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       <li>Add a photo, medicines, doctors and emergency contacts.</li>
       <li>Print it, save it as a PDF, or copy a link or plain text.</li>
       <li>Make one for each child. Update it when things change.</li>
+      <li>Choose what to include before you print or share, and print a small emergency card for a wallet or school bag.</li>
+      <li>Add it to your home screen to use it like an app, even without a signal. On an iPhone: tap Share, then Add to Home Screen.</li>
     </ul>
   </section>
 
@@ -267,11 +298,13 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
   function id() { return "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
   function blank() {
     return { id: id(), name: "", preferred: "", dob: "", pronouns: "", languages: "", diagnoses: "", nhs: "", photo: "",
+      strengths: "", goals: "", medsChecked: "", hide: [], large: false,
       communication: "", helps: "", upsets: "", calming: "", sensory: "", likes: "", dislikes: "",
       food: "", personalCare: "", sleep: "", safety: "",
       allergies: [], meds: [], team: [], contacts: [],
       school: { name: "", teacher: "", senco: "", ehcp: "" }, updated: "" };
   }
+  var HIDE = [["dob", "Date of birth"], ["diagnoses", "Diagnoses or needs"], ["nhs", "NHS number"], ["meds", "Medicines"], ["team", "Doctors and team"], ["school", "School"], ["contacts", "Emergency contacts"]];
   var LIM = { str: 2000, short: 160, arr: 30 };
   function s(v, n) { return typeof v === "string" ? v.slice(0, n || LIM.str) : ""; }
   function list(a, keys) {
@@ -286,7 +319,10 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     o = o && typeof o === "object" ? o : {};
     var b = blank();
     ["name", "preferred", "dob", "pronouns", "languages", "nhs"].forEach(function (k) { b[k] = s(o[k], LIM.short); });
-    ["diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety"].forEach(function (k) { b[k] = s(o[k]); });
+    ["strengths", "goals", "diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety"].forEach(function (k) { b[k] = s(o[k]); });
+    b.medsChecked = /^\d{4}-\d{2}-\d{2}$/.test(o.medsChecked || "") ? o.medsChecked : "";
+    b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
+    b.large = o.large === true;
     b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
     b.allergies = list(o.allergies, ["what", "reaction", "action"]);
     b.meds = list(o.meds, ["name", "dose", "when", "forWhat", "prescriber", "notes"]);
@@ -297,6 +333,18 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     b.updated = s(o.updated, 40);
     if (typeof o.id === "string" && /^[A-Za-z0-9]{3,40}$/.test(o.id)) b.id = o.id;
     return b;
+  }
+
+  function redact(p) {
+    var c = JSON.parse(JSON.stringify(p)), h = p.hide || [];
+    if (h.indexOf("dob") >= 0) c.dob = "";
+    if (h.indexOf("diagnoses") >= 0) c.diagnoses = "";
+    if (h.indexOf("nhs") >= 0) c.nhs = "";
+    if (h.indexOf("meds") >= 0) { c.meds = []; c.medsChecked = ""; }
+    if (h.indexOf("team") >= 0) c.team = [];
+    if (h.indexOf("school") >= 0) c.school = { name: "", teacher: "", senco: "", ehcp: "" };
+    if (h.indexOf("contacts") >= 0) c.contacts = [];
+    return c;
   }
 
   /* ---------- storage ---------- */
@@ -316,10 +364,12 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
   }
   function find(i) { for (var k = 0; k < store.profiles.length; k++) if (store.profiles[k].id === i) return store.profiles[k]; return null; }
   function cur() { return shared || find(store.current); }
+  var watchers = [];
   var saveTimer = null;
   function savedMsg(t, err) { var el = $("saved"); el.textContent = t; el.className = "status" + (err ? " err" : ""); }
   function save() {
     if (shared) return;
+    watchers.forEach(function (w) { w(); });
     clearTimeout(saveTimer);
     saveTimer = setTimeout(function () {
       try {
@@ -414,7 +464,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     return d;
   }
   function renderEditor() {
-    var p = cur(), box = $("editor"); box.textContent = ""; uid = 0;
+    var p = cur(), box = $("editor"); box.textContent = ""; uid = 0; watchers = [];
     // photo + basics
     var pic = el("div", { class: "pic", "aria-hidden": "true" });
     function drawPic() { pic.textContent = ""; if (p.photo) pic.appendChild(el("img", { src: p.photo, alt: "" })); else pic.textContent = initials(p.name); }
@@ -444,6 +494,10 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       el("div", { class: "two" }, [field("Pronouns", "pronouns"), field("Languages", "languages")]),
       field("Diagnoses or needs", "diagnoses", { area: true, help: "For example autism, ADHD, epilepsy, hearing loss. Only add what you are happy to share." })
     ]));
+    box.appendChild(section("What people like about me", false, [
+      field("What people like and admire about me", "strengths", { area: true, help: "Strengths, talents, what makes me laugh." }),
+      field("What matters to me and what I am working on", "goals", { area: true })
+    ]));
     box.appendChild(section("How I communicate and what helps", false, [
       field("How I communicate", "communication", { area: true, help: "Words, signs, symbols, devices. How I say yes, no, I need help, or I am in pain." }),
       field("What helps me", "helps", { area: true }),
@@ -466,6 +520,12 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
         { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given" }, { key: "forWhat", label: "What it is for" },
         { key: "prescriber", label: "Prescribed by", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
       ], "Add a medicine", "No medicines added.")]),
+      (function () {
+        var f = field("Medicines last checked", "medsChecked", { type: "date", help: "The day a doctor or pharmacist last went through this list with you." });
+        var note = el("p", { class: "warn", hidden: "" }); f.appendChild(note);
+        function stale() { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.medsChecked || ""); var show = !!(p.meds.length && (!m || (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) > 183 * 864e5)); note.hidden = !show; note.textContent = show ? (m ? "It is over six months since this list was checked. Ask the pharmacist or doctor to go through it again." : "Add the date a doctor or pharmacist last checked this list, so people reading it know it is up to date.") : ""; }
+        watchers.push(stale); stale(); return f;
+      })(),
       field("NHS number", "nhs", { help: "Optional. Only add it if you want it on the printed passport." })
     ]));
     box.appendChild(section("My doctors and team", false, [
@@ -490,7 +550,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
   function blk(title, body) { var b = el("div", { class: "blk" }, [el("h3", { text: title })]); b.appendChild(body); return b; }
   function para(t) { return el("p", { text: t }); }
   function renderPassport(p) {
-    var out = el("article", { class: "pp", "aria-label": "Passport for " + (p.preferred || p.name || "child") });
+    var out = el("article", { class: "pp" + (p.large ? " large" : ""), "aria-label": "Passport for " + (p.preferred || p.name || "child") });
     var shownName = p.name || "Name not added yet";
     var pic = el("div", { class: "pic", "aria-hidden": "true" }); if (p.photo) pic.appendChild(el("img", { src: p.photo, alt: "" })); else pic.textContent = initials(p.name);
     var meta = [];
@@ -517,7 +577,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     }
 
     var body = el("div", { class: "pp-body" });
-    [["How I communicate", p.communication], ["What helps me", p.helps], ["What upsets or worries me", p.upsets], ["What helps me calm down", p.calming],
+    [["What people like about me", p.strengths], ["What matters to me and what I am working on", p.goals], ["How I communicate", p.communication], ["What helps me", p.helps], ["What upsets or worries me", p.upsets], ["What helps me calm down", p.calming],
      ["Sensory needs", p.sensory], ["What I like", p.likes], ["What I dislike", p.dislikes], ["Food and drink", p.food],
      ["Personal care and toileting", p.personalCare], ["Sleep", p.sleep], ["Staying safe", p.safety]].forEach(function (x) { if (x[1]) body.appendChild(blk(x[0], para(x[1]))); });
 
@@ -530,6 +590,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
         sub.forEach(function (t) { c.appendChild(el("div", { class: "sub", text: t })); });
         rows.appendChild(c);
       });
+      if (p.medsChecked) { var old = (Date.now() - new Date(p.medsChecked + "T12:00:00").getTime()) > 183 * 864e5; rows.appendChild(el("p", { class: "sub", style: "font-size:14px;color:#5C5470", text: "List last checked with a doctor or pharmacist on " + longDate(p.medsChecked) + (old ? ". That was over six months ago, so please check." : ".") })); }
       body.appendChild(blk("Medicines", rows));
     }
     var team = p.team.filter(function (t) { return t.name || t.role || t.org || t.phone; });
@@ -559,16 +620,46 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     out.appendChild(el("div", { class: "pp-foot", text: "Made with the free IncludeMe All About Me passport." + (p.updated ? " Last updated " + new Date(p.updated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : "") + " Check medicines against the label or the pharmacist. This is not a medical record." }));
     return out;
   }
-  function renderViewer() { var v = $("viewer"); v.textContent = ""; v.appendChild(renderPassport(cur())); }
+  function card(p) {
+    var items = [];
+    p.allergies.forEach(function (a) { if (a.what) items.push(["Allergy", a.what + (a.reaction ? " (" + a.reaction + ")" : "") + (a.action ? ". " + a.action : "")]); });
+    if (p.diagnoses) items.push(["Needs", p.diagnoses.replace(/\s*\n\s*/g, "; ")]);
+    var ms = p.meds.filter(function (m) { return m.name; }).map(function (m) { return m.name + (m.dose ? " " + m.dose : ""); });
+    if (ms.length) items.push(["Medicines", ms.join(", ")]);
+    var gp = p.team.filter(function (t) { return t.role === "GP"; })[0];
+    if (gp && (gp.name || gp.org || gp.phone)) items.push(["GP", [gp.name, gp.org, gp.phone].filter(Boolean).join(", ")]);
+    p.contacts.slice(0, 2).forEach(function (c) { if (c.name || c.phone) items.push(["Call", [c.name, c.relationship && "(" + c.relationship + ")", c.phone].filter(Boolean).join(" ")]); });
+    if (p.nhs) items.push(["NHS no.", p.nhs]);
+    var ul = el("ul"); items.forEach(function (it) { ul.appendChild(el("li", {}, [el("b", { text: it[0] + ": " }), document.createTextNode(it[1])])); });
+    if (!items.length) ul.appendChild(el("li", { class: "empty", text: "Add allergies, medicines or contacts to fill this card." }));
+    return el("div", { class: "idcard", role: "group", "aria-label": "Emergency card for " + (p.name || "child") }, [
+      el("div", { class: "ch" }, [el("b", { text: p.name || "Name" }), el("span", { text: "In an emergency" })]), ul,
+      el("div", { class: "cf", text: "IncludeMe All About Me passport" + (p.updated ? " · updated " + new Date(p.updated).toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "") })]);
+  }
+  function hiddenNote(p) {
+    var names = HIDE.filter(function (h) { return (p.hide || []).indexOf(h[0]) >= 0; }).map(function (h) { return h[1]; });
+    return names.length ? el("p", { class: "note no-print", style: "margin:8px 0", text: "Left out of this version: " + names.join(", ") + "." }) : null;
+  }
+  function renderViewer() {
+    var v = $("viewer"), orig = cur(), p = redact(orig); v.textContent = "";
+    var hn = shared ? null : hiddenNote(orig); if (hn) v.appendChild(hn);
+    if (mode === "card" && !shared) {
+      var sheet = el("div", { class: "sheet" }, [card(p), card(p)]);
+      v.appendChild(sheet);
+      v.appendChild(el("p", { class: "note no-print", style: "margin-top:10px", text: "Print this, cut out the cards, and keep one in a wallet or bag and one at school. Two copies are on the page." }));
+    } else v.appendChild(renderPassport(p));
+  }
 
   /* ---------- plain text ---------- */
-  function asText(p) {
+  function asText(p0) {
+    var p = redact(p0);
     var L = [], add = function (t, v) { if (v) L.push(t + ": " + String(v).replace(/\s*\n\s*/g, "; ")); };
     L.push("ALL ABOUT ME: " + (p.name || "")); if (p.preferred && p.preferred !== p.name) add("Likes to be called", p.preferred);
     if (p.dob) add("Born", longDate(p.dob)); add("Pronouns", p.pronouns); add("Languages", p.languages); add("Needs", p.diagnoses);
     p.allergies.forEach(function (a) { if (a.what) L.push("ALLERGY: " + [a.what, a.reaction, a.action].filter(Boolean).join(" | ")); });
-    add("How I communicate", p.communication); add("What helps", p.helps); add("What upsets me", p.upsets); add("What calms me", p.calming); add("Sensory", p.sensory);
+    add("What people like about me", p.strengths); add("What matters to me", p.goals); add("How I communicate", p.communication); add("What helps", p.helps); add("What upsets me", p.upsets); add("What calms me", p.calming); add("Sensory", p.sensory);
     add("Likes", p.likes); add("Dislikes", p.dislikes); add("Food", p.food); add("Personal care", p.personalCare); add("Sleep", p.sleep); add("Safety", p.safety);
+    if (p.meds.length && p.medsChecked) add("Medicines last checked", longDate(p.medsChecked));
     p.meds.forEach(function (m) { if (m.name) L.push("MEDICINE: " + [m.name, m.dose, m.when, m.forWhat && "for " + m.forWhat, m.prescriber && "by " + m.prescriber, m.notes].filter(Boolean).join(" | ")); });
     p.team.forEach(function (t) { if (t.name || t.role) L.push("TEAM: " + [t.role, t.name, t.org, t.phone, t.email].filter(Boolean).join(" | ")); });
     var sc = p.school; if (sc.name || sc.senco) L.push("SCHOOL: " + [sc.name, sc.teacher && "teacher " + sc.teacher, sc.senco && "SENCo " + sc.senco, sc.ehcp && "EHCP " + sc.ehcp].filter(Boolean).join(" | "));
@@ -583,7 +674,7 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
   function unb64u(t) { t = t.replace(/-/g, "+").replace(/_/g, "/"); while (t.length % 4) t += "="; var b = atob(t), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
   function pipe(stream, bytes) { return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
   function encodeShare(p) {
-    var copy = JSON.parse(JSON.stringify(p)); copy.photo = ""; copy.id = "";
+    var copy = redact(p); copy.photo = ""; copy.id = ""; copy.hide = [];
     var bytes = new TextEncoder().encode(JSON.stringify(copy));
     if (typeof CompressionStream === "function") return pipe(new CompressionStream("deflate-raw"), bytes).then(function (z) { return "z." + b64u(z); }, function () { return "j." + b64u(bytes); });
     return Promise.resolve("j." + b64u(bytes));
@@ -616,15 +707,32 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     sel.value = store.current;
   }
   function setMode(m) {
-    mode = m; var edit = m === "edit" && !shared;
+    if (shared) m = "view";
+    mode = m; var edit = m === "edit";
     $("editor").hidden = !edit; $("viewer").hidden = edit;
-    $("tabEdit").setAttribute("aria-pressed", edit ? "true" : "false"); $("tabView").setAttribute("aria-pressed", edit ? "false" : "true");
+    $("tabEdit").setAttribute("aria-pressed", m === "edit" ? "true" : "false"); $("tabView").setAttribute("aria-pressed", m === "view" ? "true" : "false"); $("tabCard").setAttribute("aria-pressed", m === "card" ? "true" : "false");
     if (!edit) renderViewer();
   }
-  function refresh() { renderWho(); renderEditor(); setMode(mode); }
+  function renderOpts() {
+    var box = $("opts"); box.textContent = ""; if (shared) return;
+    var p = cur(), fs = el("fieldset", { class: "opts" }, [el("legend", { text: "What to include when you print or share" })]);
+    var g = el("div", { class: "grid2" });
+    HIDE.forEach(function (h) {
+      var cid = "o_" + h[0], cb = el("input", { type: "checkbox", id: cid });
+      cb.checked = (p.hide || []).indexOf(h[0]) < 0;
+      cb.addEventListener("change", function () { p.hide = (p.hide || []).filter(function (x) { return x !== h[0]; }); if (!cb.checked) p.hide.push(h[0]); save(); if (mode !== "edit") renderViewer(); });
+      g.appendChild(el("label", { class: "chk", for: cid }, [cb, document.createTextNode(h[1])]));
+    });
+    var lc = el("input", { type: "checkbox", id: "o_large" }); lc.checked = !!p.large;
+    lc.addEventListener("change", function () { p.large = lc.checked; save(); if (mode !== "edit") renderViewer(); });
+    g.appendChild(el("label", { class: "chk", for: "o_large" }, [lc, document.createTextNode("Large print")]));
+    fs.appendChild(g); fs.appendChild(el("p", { class: "help", text: "Ticked items are included. This only changes what is printed, copied or shared. Everything stays saved on your device." }));
+    box.appendChild(fs);
+  }
+  function refresh() { renderWho(); renderEditor(); renderOpts(); setMode(mode); }
   function example() {
     return clean({ name: "Sam Doe", preferred: "Sam", dob: "2016-04-12", pronouns: "he/him", languages: "English",
-      diagnoses: "Autism\nASD with speech delay",
+      diagnoses: "Autism\nASD with speech delay", strengths: "Funny, kind to animals, brilliant memory for train timetables.", goals: "Asking for help with words or a sign. Trying new foods.", medsChecked: new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10),
       communication: "Uses a few words and Makaton signs. Points and leads you by the hand. Says “no” by turning away.",
       helps: "Warnings before changes. A visual timetable. Quiet space to retreat to.", upsets: "Sudden noise. Changes to the plan without warning. Being touched unexpectedly.",
       calming: "Headphones, a weighted blanket, looking at his tablet.", sensory: "Hand dryers and fire alarms are very hard. Likes deep pressure hugs.",
@@ -648,7 +756,8 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
       var back = $("backBtn"); if (!back) { back = el("button", { type: "button", class: "btn btn-main btn-small", id: "backBtn", text: "Back to my passport" }); back.addEventListener("click", function () { shared = null; back.remove(); $("owner").hidden = false; $("ownerTools").hidden = false; toolMsg(""); mode = "edit"; refresh(); }); $("tools").insertBefore(back, $("tools").firstChild); } });
     $("tabEdit").addEventListener("click", function () { setMode("edit"); });
     $("tabView").addEventListener("click", function () { setMode("view"); });
-    $("print").addEventListener("click", function () { if (!shared) setMode("view"); setTimeout(function () { window.print(); }, 50); });
+    $("tabCard").addEventListener("click", function () { setMode("card"); });
+    $("print").addEventListener("click", function () { if (!shared && mode === "edit") setMode("view"); setTimeout(function () { window.print(); }, 50); });
     $("copyText").addEventListener("click", function () { copy(asText(cur()), "Copied. Paste it into a message or email."); });
     $("share").addEventListener("click", function () {
       encodeShare(cur()).then(function (t) {
@@ -685,6 +794,10 @@ footer a { text-decoration: none; margin-right: 6px; display: inline-block; padd
     });
     $("printShared").addEventListener("click", function () { window.print(); });
 
+    var deferred = null;
+    window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; $("install").hidden = false; });
+    $("install").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("install").hidden = true; }); });
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { /* offline use is a bonus */ }); });
     var m = /^#p=([zj]\.[A-Za-z0-9_-]+)$/.exec(location.hash);
     if (m) {
       decodeShare(m[1]).then(function (p) {
