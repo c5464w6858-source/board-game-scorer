@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All About Me passport: a free one-page profile for your child | IncludeMe</title>
+<meta name="description" content="Free All About Me passport for children with SEND. Make a one-page profile with how your child communicates, what helps, medicines, doctors and emergency contacts. Print it or share it. Nothing is stored on our servers.">
+<link rel="canonical" href="https://info.includeme.uk/passport/">
+<meta property="og:title" content="All About Me passport: a free one-page profile for your child">
+<meta property="og:description" content="Communication, what helps, medicines, doctors and emergency contacts on one page. Free, and nothing is stored on our servers.">
+<meta property="og:url" content="https://info.includeme.uk/passport/">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/logo-includeme.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FAF8F4; --surface: #fff; --ink: #14211C; --muted: #566660; --line: #E7E3DA;
+  --green: #073B32; --green-2: #0B4D41; --green-soft: #E4F1E8; --gold: #F5C842; --gold-dk: #7A5B0E;
+  --navy: #17214D; --red: #A3241C; --red-soft: #FBE9E7; --amber-soft: #FCEEDD; --amber: #8A4B07;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.6 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.15; letter-spacing: -.02em; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 8px; }
+h3 { font-size: 1.1rem; }
+:focus-visible { outline: 3px solid #2557D6; outline-offset: 3px; border-radius: 6px; }
+.skip { position: absolute; left: 12px; top: -80px; background: #fff; color: var(--navy); padding: 10px 16px; border: 2px solid var(--navy); border-radius: 8px; font-weight: 700; z-index: 50; text-decoration: none; }
+.skip:focus { top: 8px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+
+.hero { color: #fff; background: linear-gradient(160deg, #04251F 0%, var(--green) 60%, var(--green-2) 100%); border-bottom: 4px solid var(--gold); }
+.bar-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 72px; }
+.home { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: #fff; text-decoration: none; }
+.home img { width: 36px; height: 36px; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.nav a { color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.14); }
+.nav a:hover { background: rgba(255,255,255,.26); }
+.hero-copy { padding: 28px 0 56px; }
+.pill { display: inline-block; background: var(--gold); color: var(--green); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 16px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.hero .lead { color: rgba(255,255,255,.88); margin-top: 14px; max-width: 60ch; font-size: 1.08rem; }
+.trust { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; font-size: 14px; color: rgba(255,255,255,.9); list-style: none; }
+.trust li::before { content: "✓"; color: var(--gold); font-weight: 700; margin-right: 8px; }
+
+main { padding: 0 0 56px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-top: 16px; }
+.card.pop { margin-top: -30px; position: relative; border-top: 4px solid var(--gold); box-shadow: 0 18px 50px -24px rgba(7,59,50,.4); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 15px/1.2 Inter, sans-serif; padding: 13px 20px; min-height: 46px; border-radius: 999px; border: 1.5px solid transparent; cursor: pointer; text-decoration: none; }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:hover { background: var(--green-2); }
+.btn-gold { background: var(--gold); color: var(--green); }
+.btn-ghost { background: #fff; color: var(--green); border-color: #B9B4A6; }
+.btn-ghost:hover { border-color: var(--green); }
+.btn-danger { background: #fff; color: var(--red); border-color: #D9A6A1; }
+.btn-small { padding: 9px 14px; min-height: 40px; font-size: 14px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.status { min-height: 1.5em; font-size: 14px; font-weight: 600; color: var(--green-2); margin-top: 10px; }
+.status.err { color: var(--red); }
+.note { font-size: 14.5px; color: var(--muted); }
+.warn { background: var(--amber-soft); border-left: 4px solid var(--gold); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; color: #4A3000; }
+
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.tab { font: 600 15px Inter, sans-serif; padding: 10px 18px; min-height: 44px; border-radius: 999px; border: 1.5px solid #B9B4A6; background: #fff; color: var(--green); cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--green); color: #fff; border-color: var(--green); }
+.kids { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.kids select { font: 600 15px Inter, sans-serif; padding: 10px 12px; min-height: 44px; border: 1.5px solid #B9B4A6; border-radius: 12px; background: #fff; color: var(--ink); }
+
+/* editor */
+.sec { border: 1px solid var(--line); border-radius: 14px; background: #fff; margin-top: 12px; }
+.sec > summary { cursor: pointer; padding: 14px 16px; font: 700 1.05rem Fraunces, serif; color: var(--green); min-height: 48px; list-style: none; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.sec > summary::-webkit-details-marker { display: none; }
+.sec > summary::after { content: "+"; font: 700 22px Inter, sans-serif; color: var(--gold-dk); }
+.sec[open] > summary::after { content: "–"; }
+.sec[open] > summary { border-bottom: 1px solid var(--line); }
+.sec .in { padding: 14px 16px 18px; display: grid; gap: 14px; }
+label { display: block; font-weight: 600; font-size: 14.5px; margin-bottom: 5px; color: var(--green); }
+input[type=text], input[type=tel], input[type=email], input[type=date], textarea, select.f {
+  width: 100%; font: 400 16px Inter, sans-serif; padding: 11px 12px; border: 1.5px solid #B9B4A6; border-radius: 12px; background: #fff; color: var(--ink); min-height: 46px; }
+textarea { min-height: 84px; resize: vertical; }
+.help { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.item { border: 1.5px dashed #C9C3B3; border-radius: 12px; padding: 12px; display: grid; gap: 10px; background: #FCFBF8; }
+.item .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.item .head b { color: var(--green); }
+.photo { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.photo .pic { width: 84px; height: 84px; border-radius: 50%; background: var(--green-soft); border: 2px solid var(--gold); object-fit: cover; display: flex; align-items: center; justify-content: center; color: var(--green); font: 700 28px Fraunces, serif; overflow: hidden; }
+.photo .pic img { width: 100%; height: 100%; object-fit: cover; }
+
+/* the passport itself */
+.pp { background: #fff; border: 2px solid var(--green); border-radius: 18px; overflow: hidden; margin-top: 12px; }
+.pp-head { background: var(--green); color: #fff; padding: 18px 20px; display: flex; gap: 16px; align-items: center; }
+.pp-head .pic { width: 84px; height: 84px; border-radius: 50%; background: #fff; border: 3px solid var(--gold); flex: none; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--green); font: 700 30px Fraunces, serif; }
+.pp-head .pic img { width: 100%; height: 100%; object-fit: cover; }
+.pp-head h2 { color: #fff; margin: 0; font-size: 1.7rem; }
+.pp-head p { color: rgba(255,255,255,.9); font-size: 14.5px; }
+.pp-head .tag { display: inline-block; background: var(--gold); color: var(--green); font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+.emerg { background: var(--red-soft); border-bottom: 2px solid #E3B5B0; padding: 14px 20px; }
+.emerg h3 { color: var(--red); font-size: 1rem; margin-bottom: 6px; font-family: Inter, sans-serif; letter-spacing: 0; }
+.emerg ul { list-style: none; display: grid; gap: 3px; font-size: 15px; }
+.pp-body { padding: 6px 20px 18px; display: grid; gap: 0; }
+.blk { padding: 14px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+.blk:last-child { border-bottom: 0; }
+.blk h3 { color: var(--green); margin-bottom: 6px; }
+.blk p { white-space: pre-wrap; font-size: 15.5px; }
+.kv { display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; font-size: 15px; }
+.kv dt { font-weight: 600; color: var(--muted); }
+.rows { display: grid; gap: 8px; }
+.row-card { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #FCFBF8; font-size: 15px; break-inside: avoid; }
+.row-card b { color: var(--green); }
+.row-card .sub { color: var(--muted); font-size: 14px; }
+.pp-foot { background: #F4F1EA; padding: 12px 20px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+.banner { background: var(--green-soft); border: 1px solid #B7D8C2; border-radius: 12px; padding: 12px 14px; font-size: 14.5px; margin-bottom: 8px; }
+.empty { color: var(--muted); font-style: italic; font-size: 14.5px; }
+
+.about { margin-top: 28px; display: grid; gap: 14px; }
+.about h2 { margin-top: 10px; }
+.about ul { list-style: none; display: grid; gap: 6px; }
+.about li::before { content: "✓"; color: var(--gold-dk); font-weight: 700; margin-right: 8px; }
+.cta { background: var(--green); color: #fff; border-radius: 18px; padding: 24px; border-top: 4px solid var(--gold); margin-top: 28px; }
+.cta h2 { color: #fff; }
+.cta p { color: rgba(255,255,255,.88); max-width: 60ch; }
+.cta .btn { margin-top: 14px; margin-right: 8px; }
+footer { padding: 30px 0 34px; font-size: 14.5px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 20px; }
+footer a { text-decoration: none; margin-right: 6px; display: inline-block; padding: 10px 8px; }
+.subh { font: 700 1.05rem Fraunces, Georgia, serif; color: var(--green); margin-bottom: 8px; }
+
+@media (max-width: 600px) {
+  .two { grid-template-columns: 1fr; }
+  .kv { grid-template-columns: 1fr; gap: 0; }
+  .kv dd { margin-bottom: 8px; }
+  .pp-head { flex-direction: column; text-align: center; }
+  .home span { display: none; }
+}
+@media print {
+  .no-print, .hero, footer, .about, .cta, .tabs, .kids, .banner, .warn.no-print { display: none !important; }
+  body { background: #fff; font-size: 12pt; }
+  main { padding: 0; }
+  .card, .card.pop { border: 0; box-shadow: none; padding: 0; margin: 0; }
+  .pp { border: 1.5px solid #000; border-radius: 0; margin: 0; }
+  .pp-head { background: #fff; color: #000; border-bottom: 3px solid #000; }
+  .pp-head h2, .pp-head p { color: #000; }
+  .pp-head .pic { border-color: #000; }
+  .pp-head .tag { background: #fff; color: #000; border: 1px solid #000; }
+  .emerg { background: #fff; border-bottom: 2px solid #000; }
+  .emerg h3 { color: #000; }
+  .row-card { background: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#app">Skip to the passport</a>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar-in">
+      <a class="home" href="../" aria-label="IncludeMe home"><img src="../assets/logo-includeme.svg" alt=""><span>IncludeMe</span></a>
+      <nav class="nav" aria-label="Main">
+        <a href="../">Home</a>
+        <a href="../ehcp-deadline-calculator/">Calculator</a>
+        <a href="../advocate/">Advocate</a>
+      </nav>
+    </div>
+    <div class="hero-copy">
+      <span class="pill">Free tool</span>
+      <h1>All About Me <em>passport</em></h1>
+      <p class="lead">One page that tells a school, club, doctor or carer what they need to know about your child: how they communicate, what helps, their medicines and who looks after them.</p>
+      <ul class="trust">
+        <li>Free, no sign-up</li>
+        <li>Stays on your device</li>
+        <li>Print it or share it</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+<div class="wrap">
+  <noscript><p class="card pop">This tool needs JavaScript. It keeps everything on your own device, so nothing can be saved without it.</p></noscript>
+
+  <div class="card pop" id="shell">
+    <div id="sharedBanner" class="banner" hidden>
+      <b>This passport was shared with you.</b> It is shown only in your browser. It is not saved anywhere unless you choose to save a copy.
+      <div class="actions"><button type="button" class="btn btn-green btn-small" id="saveShared">Save a copy on this device</button><button type="button" class="btn btn-ghost btn-small" id="printShared">Print</button></div>
+    </div>
+
+    <div id="owner">
+      <div class="kids no-print">
+        <label for="who" class="sr">Child</label>
+        <select id="who" aria-label="Choose a child"></select>
+        <button type="button" class="btn btn-ghost btn-small" id="addKid">Add another child</button>
+        <button type="button" class="btn btn-ghost btn-small" id="example">See an example</button>
+      </div>
+      <div class="tabs no-print" role="group" aria-label="View">
+        <button type="button" class="tab" id="tabEdit" aria-pressed="true">Fill in</button>
+        <button type="button" class="tab" id="tabView" aria-pressed="false">See the passport</button>
+      </div>
+      <p class="status" id="saved" role="status" aria-live="polite"></p>
+    </div>
+
+    <div id="editor"></div>
+    <div id="viewer" hidden></div>
+
+    <div id="tools" class="no-print">
+      <div class="actions">
+        <button type="button" class="btn btn-green" id="print">Print or save as PDF</button>
+        <button type="button" class="btn btn-gold" id="share">Copy a link to share</button>
+        <button type="button" class="btn btn-ghost" id="copyText">Copy as text</button>
+      </div>
+      <div class="actions" id="ownerTools">
+        <button type="button" class="btn btn-ghost btn-small" id="download">Download a backup file</button>
+        <label class="btn btn-ghost btn-small" for="upload" style="margin:0">Load a backup file</label>
+        <input type="file" id="upload" accept="application/json,.json" class="sr">
+        <button type="button" class="btn btn-danger btn-small" id="wipe">Delete this child</button>
+      </div>
+      <p class="status" id="toolStatus" role="status" aria-live="polite"></p>
+      <p class="warn" style="margin-top:10px"><b>Keep it safe.</b> A shared link contains the passport itself, so anyone with the link can read it. Send it only to people you trust, not in a public post. Check medicines against the label or your pharmacist. This is not a medical record or medical advice.</p>
+    </div>
+  </div>
+
+  <section class="about" aria-labelledby="whyh">
+    <h2 id="whyh">Why a passport?</h2>
+    <p>New teachers, clubs, respite carers and doctors all ask the same questions. A passport means you write it once and hand it over, so your child doesn't have to be explained from scratch every time.</p>
+    <ul>
+      <li>Everything is saved only on this phone or computer, not on our servers.</li>
+      <li>Add a photo, medicines, doctors and emergency contacts.</li>
+      <li>Print it, save it as a PDF, or copy a link or plain text.</li>
+      <li>Make one for each child. Update it when things change.</li>
+    </ul>
+  </section>
+
+  <div class="cta">
+    <h2>Keeping on top of an EHCP too?</h2>
+    <p>Advocate tracks every statutory deadline, keeps your reports and calls on the record, and builds a case pack you can print. The Activity &amp; Therapy Finder lists clubs and therapies that welcome every child.</p>
+    <a class="btn btn-gold" href="../advocate/?utm_campaign=passport_advocate">See Advocate</a>
+    <a class="btn btn-ghost" href="https://includeme.uk/?utm_campaign=passport_finder">Open the Finder</a>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 IncludeMe. Built in Surrey, UK.</span>
+    <span><a href="../advocate/">Advocate</a><a href="../finder/">Activity &amp; Therapy Finder</a><a href="../ehcp-deadline-calculator/">Calculator</a><a href="../contact/">Contact</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "includeme.passport.v1";
+  var $ = function (id) { return document.getElementById(id); };
+  var ROLES = ["GP", "Paediatrician", "CAMHS", "Speech and language therapist", "Occupational therapist", "Physiotherapist", "Educational psychologist", "SENCo", "Teacher or key worker", "Social worker", "Dentist", "Optician", "Pharmacist", "Other"];
+
+  function id() { return "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+  function blank() {
+    return { id: id(), name: "", preferred: "", dob: "", pronouns: "", languages: "", diagnoses: "", nhs: "", photo: "",
+      communication: "", helps: "", upsets: "", calming: "", sensory: "", likes: "", dislikes: "",
+      food: "", personalCare: "", sleep: "", safety: "",
+      allergies: [], meds: [], team: [], contacts: [],
+      school: { name: "", teacher: "", senco: "", ehcp: "" }, updated: "" };
+  }
+  var LIM = { str: 2000, short: 160, arr: 30 };
+  function s(v, n) { return typeof v === "string" ? v.slice(0, n || LIM.str) : ""; }
+  function list(a, keys) {
+    if (!Array.isArray(a)) return [];
+    return a.slice(0, LIM.arr).map(function (o) {
+      var r = {}; o = o && typeof o === "object" ? o : {};
+      keys.forEach(function (k) { r[k] = s(o[k], k === "notes" ? LIM.str : LIM.short); });
+      return r;
+    });
+  }
+  function clean(o) {
+    o = o && typeof o === "object" ? o : {};
+    var b = blank();
+    ["name", "preferred", "dob", "pronouns", "languages", "nhs"].forEach(function (k) { b[k] = s(o[k], LIM.short); });
+    ["diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety"].forEach(function (k) { b[k] = s(o[k]); });
+    b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
+    b.allergies = list(o.allergies, ["what", "reaction", "action"]);
+    b.meds = list(o.meds, ["name", "dose", "when", "forWhat", "prescriber", "notes"]);
+    b.team = list(o.team, ["role", "name", "org", "phone", "email", "notes"]);
+    b.contacts = list(o.contacts, ["name", "relationship", "phone", "notes"]);
+    var sc = o.school && typeof o.school === "object" ? o.school : {};
+    b.school = { name: s(sc.name, LIM.short), teacher: s(sc.teacher, LIM.short), senco: s(sc.senco, LIM.short), ehcp: s(sc.ehcp, 20) };
+    b.updated = s(o.updated, 40);
+    if (typeof o.id === "string" && /^[A-Za-z0-9]{3,40}$/.test(o.id)) b.id = o.id;
+    return b;
+  }
+
+  /* ---------- storage ---------- */
+  var store = { profiles: [], current: null };
+  var shared = null;       // a passport opened from a link: shown, never saved unless asked
+  var mode = "edit";
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && Array.isArray(d.profiles)) { store.profiles = d.profiles.slice(0, 12).map(clean); store.current = d.current; }
+      }
+    } catch (e) { /* storage blocked: the page still works for this visit */ }
+    if (!store.profiles.length) { var p = blank(); store.profiles.push(p); store.current = p.id; }
+    if (!find(store.current)) store.current = store.profiles[0].id;
+  }
+  function find(i) { for (var k = 0; k < store.profiles.length; k++) if (store.profiles[k].id === i) return store.profiles[k]; return null; }
+  function cur() { return shared || find(store.current); }
+  var saveTimer = null;
+  function savedMsg(t, err) { var el = $("saved"); el.textContent = t; el.className = "status" + (err ? " err" : ""); }
+  function save() {
+    if (shared) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        cur().updated = new Date().toISOString();
+        localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current }));
+        savedMsg("Saved on this device only");
+      } catch (e) { savedMsg("Could not save on this device. Download a backup file so you do not lose it.", true); }
+    }, 350);
+  }
+
+  /* ---------- small DOM helpers ---------- */
+  function el(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === "text") e.textContent = attrs[k]; else if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function initials(n) { var p = (n || "").trim().split(/\s+/); return ((p[0] || "?")[0] + (p[1] ? p[1][0] : "")).toUpperCase(); }
+  function longDate(iso) { try { return new Date(iso + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return iso; } }
+  function age(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); if (!m) return "";
+    var t = new Date(), a = t.getFullYear() - +m[1];
+    if (t.getMonth() + 1 < +m[2] || (t.getMonth() + 1 === +m[2] && t.getDate() < +m[3])) a--;
+    return a >= 0 && a < 130 ? a + " years old" : "";
+  }
+
+  /* ---------- editor ---------- */
+  var uid = 0;
+  function field(label, key, o) {
+    o = o || {}; var p = cur(); var fid = "f" + (++uid);
+    var inp = o.area ? el("textarea", { id: fid }) : el("input", { id: fid, type: o.type || "text" });
+    if (o.autocomplete) inp.setAttribute("autocomplete", o.autocomplete);
+    if (o.rows) inp.setAttribute("rows", o.rows);
+    var obj = o.obj ? p[o.obj] : p;
+    inp.value = obj[key] || "";
+    inp.addEventListener("input", function () { obj[key] = inp.value; save(); });
+    var w = el("div", {}, [el("label", { for: fid, text: label }), inp]);
+    if (o.help) { var hid = fid + "h"; inp.setAttribute("aria-describedby", hid); w.appendChild(el("p", { class: "help", id: hid, text: o.help })); }
+    return w;
+  }
+  function repeater(title, arr, keys, addLabel, empty) {
+    var wrap = el("div", { class: "in", style: "padding:0;border:0" });
+    var holder = el("div", { style: "display:grid;gap:10px" });
+    function draw() {
+      holder.textContent = "";
+      arr.forEach(function (o, i) {
+        var item = el("div", { class: "item", role: "group", "aria-label": title + " " + (i + 1) });
+        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
+        rm.setAttribute("aria-label", "Remove " + title.toLowerCase() + " " + (i + 1));
+        rm.addEventListener("click", function () { arr.splice(i, 1); save(); draw(); });
+        item.appendChild(el("div", { class: "head" }, [el("b", { text: title + " " + (i + 1) }), rm]));
+        var grid = el("div", { class: "two" });
+        keys.forEach(function (k) {
+          var fid = "r" + (++uid);
+          var ctl;
+          if (k.type === "role") {
+            ctl = el("select", { id: fid, class: "f" });
+            ctl.appendChild(el("option", { value: "", text: "Choose" }));
+            ROLES.forEach(function (r) { ctl.appendChild(el("option", { value: r, text: r })); });
+            if (o[k.key] && ROLES.indexOf(o[k.key]) < 0) ctl.appendChild(el("option", { value: o[k.key], text: o[k.key] }));
+            ctl.value = o[k.key] || "";
+            ctl.addEventListener("change", function () { o[k.key] = ctl.value; save(); });
+          } else {
+            ctl = k.area ? el("textarea", { id: fid, rows: 2 }) : el("input", { id: fid, type: k.type || "text" });
+            ctl.value = o[k.key] || "";
+            ctl.addEventListener("input", function () { o[k.key] = ctl.value; save(); });
+            if (k.type === "tel") ctl.setAttribute("autocomplete", "off");
+          }
+          var cell = el("div", k.wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]);
+          grid.appendChild(cell);
+        });
+        item.appendChild(grid);
+        holder.appendChild(item);
+      });
+      if (!arr.length) holder.appendChild(el("p", { class: "empty", text: empty }));
+    }
+    var add = el("button", { type: "button", class: "btn btn-ghost btn-small", text: addLabel });
+    add.addEventListener("click", function () {
+      if (arr.length >= LIM.arr) return;
+      var o = {}; keys.forEach(function (k) { o[k.key] = ""; }); arr.push(o); save(); draw();
+      var last = holder.querySelectorAll(".item"); var f = last[last.length - 1].querySelector("input,select,textarea"); if (f) f.focus();
+    });
+    draw(); wrap.appendChild(holder); wrap.appendChild(add);
+    return wrap;
+  }
+  function section(title, open, body) {
+    var d = el("details", { class: "sec" }); if (open) d.setAttribute("open", "");
+    d.appendChild(el("summary", { text: title }));
+    var inner = el("div", { class: "in" }); body.forEach(function (b) { inner.appendChild(b); }); d.appendChild(inner);
+    return d;
+  }
+  function renderEditor() {
+    var p = cur(), box = $("editor"); box.textContent = ""; uid = 0;
+    // photo + basics
+    var pic = el("div", { class: "pic", "aria-hidden": "true" });
+    function drawPic() { pic.textContent = ""; if (p.photo) pic.appendChild(el("img", { src: p.photo, alt: "" })); else pic.textContent = initials(p.name); }
+    drawPic();
+    var file = el("input", { type: "file", accept: "image/*", id: "photoIn", class: "sr" });
+    var pick = el("label", { class: "btn btn-ghost btn-small", for: "photoIn", style: "margin:0", text: "Add a photo" });
+    var rmPhoto = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Remove photo" });
+    file.addEventListener("change", function () {
+      var f = file.files && file.files[0]; if (!f) return;
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function () {
+        var c = document.createElement("canvas"), sz = 240, r = Math.min(img.width, img.height), sx = (img.width - r) / 2, sy = (img.height - r) / 2;
+        c.width = c.height = sz; c.getContext("2d").drawImage(img, sx, sy, r, r, 0, 0, sz, sz);
+        p.photo = c.toDataURL("image/jpeg", 0.8); URL.revokeObjectURL(url); drawPic(); save();
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); savedMsg("That photo could not be read. Try a different one.", true); };
+      img.src = url;
+    });
+    rmPhoto.addEventListener("click", function () { p.photo = ""; drawPic(); save(); });
+    var photoRow = el("div", { class: "photo" }, [pic, el("div", { class: "actions", style: "margin:0" }, [pick, file, rmPhoto]), el("p", { class: "help", text: "Optional. The photo stays on this device and is not included in shared links." })]);
+
+    var nameF = field("Name", "name", { autocomplete: "off" });
+    nameF.querySelector("input").addEventListener("input", drawPic);
+    box.appendChild(section("About me", true, [
+      photoRow, nameF,
+      el("div", { class: "two" }, [field("What I like to be called", "preferred"), field("Date of birth", "dob", { type: "date" })]),
+      el("div", { class: "two" }, [field("Pronouns", "pronouns"), field("Languages", "languages")]),
+      field("Diagnoses or needs", "diagnoses", { area: true, help: "For example autism, ADHD, epilepsy, hearing loss. Only add what you are happy to share." })
+    ]));
+    box.appendChild(section("How I communicate and what helps", false, [
+      field("How I communicate", "communication", { area: true, help: "Words, signs, symbols, devices. How I say yes, no, I need help, or I am in pain." }),
+      field("What helps me", "helps", { area: true }),
+      field("What upsets or worries me", "upsets", { area: true }),
+      field("What helps me calm down", "calming", { area: true }),
+      field("Sensory needs", "sensory", { area: true, help: "Noise, light, touch, crowds, textures." })
+    ]));
+    box.appendChild(section("Daily life", false, [
+      field("What I like", "likes", { area: true }), field("What I dislike", "dislikes", { area: true }),
+      field("Food and drink", "food", { area: true, help: "Likes, dislikes, how I eat and drink, any special diet." }),
+      field("Personal care and toileting", "personalCare", { area: true }),
+      field("Sleep", "sleep", { area: true }),
+      field("Staying safe", "safety", { area: true, help: "For example runs off, no road sense, needs 1:1, cannot swim." })
+    ]));
+    box.appendChild(section("Health: allergies, medicines and NHS number", false, [
+      el("div", {}, [el("p", { class: "subh", text: "Allergies" }), repeater("Allergy", p.allergies, [
+        { key: "what", label: "Allergic to" }, { key: "reaction", label: "What happens" }, { key: "action", label: "What to do", wide: true }
+      ], "Add an allergy", "No allergies added.")]),
+      el("div", {}, [el("p", { class: "subh", text: "Medicines" }), repeater("Medicine", p.meds, [
+        { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given" }, { key: "forWhat", label: "What it is for" },
+        { key: "prescriber", label: "Prescribed by", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
+      ], "Add a medicine", "No medicines added.")]),
+      field("NHS number", "nhs", { help: "Optional. Only add it if you want it on the printed passport." })
+    ]));
+    box.appendChild(section("My doctors and team", false, [
+      repeater("Person", p.team, [
+        { key: "role", label: "Role", type: "role" }, { key: "name", label: "Name" }, { key: "org", label: "Surgery, clinic or school" }, { key: "phone", label: "Phone", type: "tel" },
+        { key: "email", label: "Email", type: "email", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
+      ], "Add a doctor or professional", "Nobody added yet. Add the GP first.")
+    ]));
+    box.appendChild(section("School", false, [
+      field("School or nursery", "name", { obj: "school" }),
+      el("div", { class: "two" }, [field("Class teacher or key worker", "teacher", { obj: "school" }), field("SENCo", "senco", { obj: "school" })]),
+      field("EHCP", "ehcp", { obj: "school", help: "For example: yes, applying, no, SEN support." })
+    ]));
+    box.appendChild(section("Emergency contacts", false, [
+      repeater("Contact", p.contacts, [
+        { key: "name", label: "Name" }, { key: "relationship", label: "Relationship" }, { key: "phone", label: "Phone", type: "tel" }, { key: "notes", label: "Notes (can collect, speaks which language)", area: true }
+      ], "Add a contact", "No contacts added yet.")
+    ]));
+  }
+
+  /* ---------- the passport view ---------- */
+  function blk(title, body) { var b = el("div", { class: "blk" }, [el("h3", { text: title })]); b.appendChild(body); return b; }
+  function para(t) { return el("p", { text: t }); }
+  function renderPassport(p) {
+    var out = el("article", { class: "pp", "aria-label": "Passport for " + (p.preferred || p.name || "child") });
+    var shownName = p.name || "Name not added yet";
+    var pic = el("div", { class: "pic", "aria-hidden": "true" }); if (p.photo) pic.appendChild(el("img", { src: p.photo, alt: "" })); else pic.textContent = initials(p.name);
+    var meta = [];
+    if (p.preferred && p.preferred !== p.name) meta.push("Likes to be called " + p.preferred);
+    if (p.dob) meta.push("Born " + longDate(p.dob) + (age(p.dob) ? " (" + age(p.dob) + ")" : ""));
+    if (p.pronouns) meta.push(p.pronouns);
+    if (p.languages) meta.push("Languages: " + p.languages);
+    var info = el("div", {}, [el("span", { class: "tag", text: "All About Me" }), el("h2", { text: shownName })]);
+    meta.forEach(function (m) { info.appendChild(el("p", { text: m })); });
+    out.appendChild(el("div", { class: "pp-head" }, [pic, info]));
+
+    // emergency strip
+    var em = [];
+    p.allergies.forEach(function (a) { if (a.what) em.push("Allergy: " + a.what + (a.reaction ? " (" + a.reaction + ")" : "") + (a.action ? ". " + a.action : "")); });
+    if (p.diagnoses) em.push("Needs: " + p.diagnoses.replace(/\s*\n\s*/g, "; "));
+    var gp = p.team.filter(function (t) { return t.role === "GP"; })[0];
+    if (gp && (gp.name || gp.org || gp.phone)) em.push("GP: " + [gp.name, gp.org, gp.phone].filter(Boolean).join(", "));
+    p.contacts.slice(0, 2).forEach(function (c) { if (c.name || c.phone) em.push("Call: " + [c.name, c.relationship && "(" + c.relationship + ")", c.phone].filter(Boolean).join(" ")); });
+    if (p.nhs) em.push("NHS number: " + p.nhs);
+    if (p.meds.some(function (m) { return m.name; })) em.push("Takes medicine: see below");
+    if (em.length) {
+      var ul = el("ul"); em.forEach(function (t) { ul.appendChild(el("li", { text: t })); });
+      out.appendChild(el("div", { class: "emerg" }, [el("h3", { text: "In an emergency" }), ul]));
+    }
+
+    var body = el("div", { class: "pp-body" });
+    [["How I communicate", p.communication], ["What helps me", p.helps], ["What upsets or worries me", p.upsets], ["What helps me calm down", p.calming],
+     ["Sensory needs", p.sensory], ["What I like", p.likes], ["What I dislike", p.dislikes], ["Food and drink", p.food],
+     ["Personal care and toileting", p.personalCare], ["Sleep", p.sleep], ["Staying safe", p.safety]].forEach(function (x) { if (x[1]) body.appendChild(blk(x[0], para(x[1]))); });
+
+    var meds = p.meds.filter(function (m) { return m.name || m.dose; });
+    if (meds.length) {
+      var rows = el("div", { class: "rows" });
+      meds.forEach(function (m) {
+        var c = el("div", { class: "row-card" }, [el("b", { text: m.name || "Medicine" }), el("span", { text: [m.dose, m.when].filter(Boolean).length ? " · " + [m.dose, m.when].filter(Boolean).join(" · ") : "" })]);
+        var sub = [m.forWhat && "For: " + m.forWhat, m.prescriber && "Prescribed by " + m.prescriber, m.notes].filter(Boolean);
+        sub.forEach(function (t) { c.appendChild(el("div", { class: "sub", text: t })); });
+        rows.appendChild(c);
+      });
+      body.appendChild(blk("Medicines", rows));
+    }
+    var team = p.team.filter(function (t) { return t.name || t.role || t.org || t.phone; });
+    if (team.length) {
+      var tr = el("div", { class: "rows" });
+      team.forEach(function (t) {
+        var c = el("div", { class: "row-card" }, [el("b", { text: t.role || "Professional" }), el("span", { text: t.name ? " · " + t.name : "" })]);
+        [t.org, [t.phone, t.email].filter(Boolean).join(" · "), t.notes].filter(Boolean).forEach(function (x) { c.appendChild(el("div", { class: "sub", text: x })); });
+        tr.appendChild(c);
+      });
+      body.appendChild(blk("My doctors and team", tr));
+    }
+    var sc = p.school; var sl = [sc.name && "School: " + sc.name, sc.teacher && "Class teacher or key worker: " + sc.teacher, sc.senco && "SENCo: " + sc.senco, sc.ehcp && "EHCP: " + sc.ehcp].filter(Boolean);
+    if (sl.length) { var sd = el("div"); sl.forEach(function (t) { sd.appendChild(el("p", { text: t })); }); body.appendChild(blk("School", sd)); }
+    var ct = p.contacts.filter(function (c) { return c.name || c.phone; });
+    if (ct.length) {
+      var cr = el("div", { class: "rows" });
+      ct.forEach(function (c) {
+        var d = el("div", { class: "row-card" }, [el("b", { text: c.name || "Contact" }), el("span", { text: c.relationship ? " · " + c.relationship : "" })]);
+        [c.phone, c.notes].filter(Boolean).forEach(function (x) { d.appendChild(el("div", { class: "sub", text: x })); });
+        cr.appendChild(d);
+      });
+      body.appendChild(blk("Emergency contacts", cr));
+    }
+    if (!body.children.length && !em.length) body.appendChild(el("p", { class: "empty", text: "Nothing added yet. Go back to “Fill in” and add a few details." }));
+    out.appendChild(body);
+    out.appendChild(el("div", { class: "pp-foot", text: "Made with the free IncludeMe All About Me passport." + (p.updated ? " Last updated " + new Date(p.updated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : "") + " Check medicines against the label or the pharmacist. This is not a medical record." }));
+    return out;
+  }
+  function renderViewer() { var v = $("viewer"); v.textContent = ""; v.appendChild(renderPassport(cur())); }
+
+  /* ---------- plain text ---------- */
+  function asText(p) {
+    var L = [], add = function (t, v) { if (v) L.push(t + ": " + String(v).replace(/\s*\n\s*/g, "; ")); };
+    L.push("ALL ABOUT ME: " + (p.name || "")); if (p.preferred && p.preferred !== p.name) add("Likes to be called", p.preferred);
+    if (p.dob) add("Born", longDate(p.dob)); add("Pronouns", p.pronouns); add("Languages", p.languages); add("Needs", p.diagnoses);
+    p.allergies.forEach(function (a) { if (a.what) L.push("ALLERGY: " + [a.what, a.reaction, a.action].filter(Boolean).join(" | ")); });
+    add("How I communicate", p.communication); add("What helps", p.helps); add("What upsets me", p.upsets); add("What calms me", p.calming); add("Sensory", p.sensory);
+    add("Likes", p.likes); add("Dislikes", p.dislikes); add("Food", p.food); add("Personal care", p.personalCare); add("Sleep", p.sleep); add("Safety", p.safety);
+    p.meds.forEach(function (m) { if (m.name) L.push("MEDICINE: " + [m.name, m.dose, m.when, m.forWhat && "for " + m.forWhat, m.prescriber && "by " + m.prescriber, m.notes].filter(Boolean).join(" | ")); });
+    p.team.forEach(function (t) { if (t.name || t.role) L.push("TEAM: " + [t.role, t.name, t.org, t.phone, t.email].filter(Boolean).join(" | ")); });
+    var sc = p.school; if (sc.name || sc.senco) L.push("SCHOOL: " + [sc.name, sc.teacher && "teacher " + sc.teacher, sc.senco && "SENCo " + sc.senco, sc.ehcp && "EHCP " + sc.ehcp].filter(Boolean).join(" | "));
+    p.contacts.forEach(function (c) { if (c.name || c.phone) L.push("CONTACT: " + [c.name, c.relationship, c.phone, c.notes].filter(Boolean).join(" | ")); });
+    add("NHS number", p.nhs);
+    L.push("(Check medicines against the label or pharmacist. Not a medical record.)");
+    return L.join("\n");
+  }
+
+  /* ---------- share link (the passport is inside the link; nothing goes to a server) ---------- */
+  function b64u(bytes) { var b = ""; for (var i = 0; i < bytes.length; i++) b += String.fromCharCode(bytes[i]); return btoa(b).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  function unb64u(t) { t = t.replace(/-/g, "+").replace(/_/g, "/"); while (t.length % 4) t += "="; var b = atob(t), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+  function pipe(stream, bytes) { return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
+  function encodeShare(p) {
+    var copy = JSON.parse(JSON.stringify(p)); copy.photo = ""; copy.id = "";
+    var bytes = new TextEncoder().encode(JSON.stringify(copy));
+    if (typeof CompressionStream === "function") return pipe(new CompressionStream("deflate-raw"), bytes).then(function (z) { return "z." + b64u(z); }, function () { return "j." + b64u(bytes); });
+    return Promise.resolve("j." + b64u(bytes));
+  }
+  function decodeShare(t) {
+    try {
+      var kind = t.slice(0, 2), data = unb64u(t.slice(2));
+      if (kind === "z.") {
+        if (typeof DecompressionStream !== "function") return Promise.reject(new Error("unsupported"));
+        return pipe(new DecompressionStream("deflate-raw"), data).then(function (b) { return clean(JSON.parse(new TextDecoder().decode(b))); });
+      }
+      if (kind === "j.") return Promise.resolve(clean(JSON.parse(new TextDecoder().decode(data))));
+    } catch (e) { /* fall through */ }
+    return Promise.reject(new Error("bad"));
+  }
+  function toolMsg(t, err) { var e = $("toolStatus"); e.textContent = t; e.className = "status" + (err ? " err" : ""); }
+  function copy(text, ok) {
+    function fallback() {
+      var ta = el("textarea", { class: "sr", "aria-hidden": "true" }); ta.value = text; document.body.appendChild(ta); ta.select();
+      var done = false; try { done = document.execCommand("copy"); } catch (e) { /* ignore */ }
+      document.body.removeChild(ta); toolMsg(done ? ok : "Could not copy. Select and copy it by hand.", !done);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toolMsg(ok); }, fallback); else fallback();
+  }
+
+  /* ---------- wiring ---------- */
+  function renderWho() {
+    var sel = $("who"); sel.textContent = "";
+    store.profiles.forEach(function (p, i) { sel.appendChild(el("option", { value: p.id, text: p.name || "Child " + (i + 1) })); });
+    sel.value = store.current;
+  }
+  function setMode(m) {
+    mode = m; var edit = m === "edit" && !shared;
+    $("editor").hidden = !edit; $("viewer").hidden = edit;
+    $("tabEdit").setAttribute("aria-pressed", edit ? "true" : "false"); $("tabView").setAttribute("aria-pressed", edit ? "false" : "true");
+    if (!edit) renderViewer();
+  }
+  function refresh() { renderWho(); renderEditor(); setMode(mode); }
+  function example() {
+    return clean({ name: "Sam Doe", preferred: "Sam", dob: "2016-04-12", pronouns: "he/him", languages: "English",
+      diagnoses: "Autism\nASD with speech delay",
+      communication: "Uses a few words and Makaton signs. Points and leads you by the hand. Says “no” by turning away.",
+      helps: "Warnings before changes. A visual timetable. Quiet space to retreat to.", upsets: "Sudden noise. Changes to the plan without warning. Being touched unexpectedly.",
+      calming: "Headphones, a weighted blanket, looking at his tablet.", sensory: "Hand dryers and fire alarms are very hard. Likes deep pressure hugs.",
+      likes: "Trains, bubbles, swimming.", dislikes: "Wet clothes, tags in tops.", food: "Eats pasta, toast and fruit. Needs a cup with a lid.",
+      personalCare: "Needs help with toileting. Wears pull-ups at night.", sleep: "Wakes around 5am. Settles with a story and music.", safety: "Runs off in open spaces. Needs a hand held near roads.",
+      allergies: [{ what: "Peanuts", reaction: "Hives and swollen lips", action: "Give antihistamine, call 999 if breathing is affected" }],
+      meds: [{ name: "Melatonin", dose: "2mg", when: "7pm", forWhat: "Sleep", prescriber: "Dr A, paediatrician", notes: "Not given at weekends unless asked" }],
+      team: [{ role: "GP", name: "Dr B", org: "Sample Surgery", phone: "01234 567890", email: "", notes: "" }, { role: "Speech and language therapist", name: "C", org: "Sample Community Trust", phone: "", email: "", notes: "Sees Sam fortnightly" }],
+      school: { name: "Sample Primary School", teacher: "Mrs D", senco: "Mr E", ehcp: "Yes" },
+      contacts: [{ name: "Alex Doe", relationship: "Parent", phone: "07700 900001", notes: "Can collect" }, { name: "Jo Doe", relationship: "Grandparent", phone: "07700 900002", notes: "Can collect" }],
+      updated: new Date().toISOString() });
+  }
+  function init() {
+    load();
+    $("who").addEventListener("change", function () { store.current = $("who").value; save(); refresh(); });
+    $("addKid").addEventListener("click", function () {
+      if (store.profiles.length >= 12) { toolMsg("That is the most children this page can hold.", true); return; }
+      var p = blank(); store.profiles.push(p); store.current = p.id; mode = "edit"; save(); refresh(); toolMsg("Added. Fill in the first details below.");
+    });
+    $("example").addEventListener("click", function () { shared = example(); $("sharedBanner").hidden = true; $("owner").hidden = true; $("ownerTools").hidden = true; setMode("view"); toolMsg("This is an example. Tap Fill in to go back to your own.");
+      var back = $("backBtn"); if (!back) { back = el("button", { type: "button", class: "btn btn-green btn-small", id: "backBtn", text: "Back to my passport" }); back.addEventListener("click", function () { shared = null; back.remove(); $("owner").hidden = false; $("ownerTools").hidden = false; toolMsg(""); mode = "edit"; refresh(); }); $("tools").insertBefore(back, $("tools").firstChild); } });
+    $("tabEdit").addEventListener("click", function () { setMode("edit"); });
+    $("tabView").addEventListener("click", function () { setMode("view"); });
+    $("print").addEventListener("click", function () { if (!shared) setMode("view"); setTimeout(function () { window.print(); }, 50); });
+    $("copyText").addEventListener("click", function () { copy(asText(cur()), "Copied. Paste it into a message or email."); });
+    $("share").addEventListener("click", function () {
+      encodeShare(cur()).then(function (t) {
+        var link = location.origin + location.pathname + "#p=" + t;
+        if (link.length > 6000) { toolMsg("This passport is too long for a link. Print it or copy it as text instead.", true); return; }
+        if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) { navigator.share({ title: "All About Me passport", url: link }).catch(function () { copy(link, "Link copied. Anyone with it can read the passport."); }); }
+        else copy(link, "Link copied. Anyone with it can read the passport.");
+      });
+    });
+    $("download").addEventListener("click", function () {
+      var blob = new Blob([JSON.stringify(cur(), null, 1)], { type: "application/json" }), a = el("a", { href: URL.createObjectURL(blob), download: "all-about-me-" + ((cur().name || "child").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "child") + ".json" });
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000); toolMsg("Backup downloaded. Keep it somewhere safe: it contains the whole passport.");
+    });
+    $("upload").addEventListener("change", function () {
+      var f = $("upload").files && $("upload").files[0]; if (!f) return;
+      if (f.size > 400000) { toolMsg("That file is too big to be a passport backup.", true); return; }
+      var r = new FileReader();
+      r.onload = function () {
+        try { var p = clean(JSON.parse(String(r.result))); p.id = id(); store.profiles.push(p); store.current = p.id; save(); mode = "edit"; refresh(); toolMsg("Loaded as a new child. Check it over."); }
+        catch (e) { toolMsg("That file is not a passport backup.", true); }
+        $("upload").value = "";
+      };
+      r.readAsText(f);
+    });
+    $("wipe").addEventListener("click", function () {
+      var p = cur(); if (!window.confirm("Delete " + (p.name || "this child") + " from this device? This cannot be undone. Download a backup first if you want to keep it.")) return;
+      store.profiles = store.profiles.filter(function (x) { return x.id !== p.id; });
+      if (!store.profiles.length) store.profiles.push(blank());
+      store.current = store.profiles[0].id; save(); refresh(); toolMsg("Deleted from this device.");
+    });
+    $("saveShared").addEventListener("click", function () {
+      var p = clean(shared); p.id = id(); store.profiles.push(p); store.current = p.id; shared = null; $("sharedBanner").hidden = true; $("owner").hidden = false; $("ownerTools").hidden = false;
+      history.replaceState(null, "", location.pathname); save(); mode = "view"; refresh(); toolMsg("Saved on this device.");
+    });
+    $("printShared").addEventListener("click", function () { window.print(); });
+
+    var m = /^#p=([zj]\.[A-Za-z0-9_-]+)$/.exec(location.hash);
+    if (m) {
+      decodeShare(m[1]).then(function (p) {
+        shared = p; $("sharedBanner").hidden = false; $("owner").hidden = true; $("ownerTools").hidden = true; setMode("view");
+      }, function () { toolMsg("That link could not be opened. Ask for a fresh one.", true); refresh(); });
+    }
+    refresh();
+  }
+  init();
+})();
+</script>
+<script src="/assets/visit.js" defer></script>
+</body>
+</html>
