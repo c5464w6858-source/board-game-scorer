@@ -1,0 +1,14 @@
+{
+  "name": "All About Me",
+  "short_name": "All About Me",
+  "description": "A one-page profile for your child, with documents and appointments. Stays on your device.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F6F4FA",
+  "theme_color": "#3B1F63",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

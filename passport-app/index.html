@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#3B1F63">
+<title>All About Me | IncludeMe</title>
+<link rel="icon" href="logo-passport.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #F6F4FA; --surface: #fff; --ink: #1B1530; --muted: #625A75; --line: #E3DEEC; --line-2: #CFC8DE;
+  --plum: #3B1F63; --plum-2: #4E2D80; --plum-soft: #F0EBF8; --accent: #E8663C; --accent-dk: #9A3412;
+  --ok: #1B6E4C; --red: #A3241C; --red-soft: #FBECEA; --amber-soft: #FCF1E0; --amber: #7A4A06;
+  --r: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--ink); font: 400 15.5px/1.55 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.2; letter-spacing: -.01em; color: var(--plum); }
+:focus-visible { outline: 3px solid #2557D6; outline-offset: 2px; border-radius: 6px; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: 12px; top: -80px; background: #fff; color: var(--plum); padding: 10px 16px; border: 2px solid var(--plum); border-radius: 8px; font-weight: 700; z-index: 90; text-decoration: none; }
+.skip:focus { top: 8px; }
+
+/* buttons: square-cornered, three clear levels */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 14.5px/1.2 Inter, sans-serif; padding: 10px 16px; min-height: 42px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; text-decoration: none; background: none; color: var(--plum); }
+.btn-main { background: var(--plum); color: #fff; }
+.btn-main:hover { background: var(--plum-2); }
+.btn-ghost { background: var(--surface); border-color: var(--line-2); color: var(--plum); }
+.btn-ghost:hover { border-color: var(--plum); }
+.btn-danger { background: var(--surface); border-color: #E2B8B3; color: var(--red); }
+.btn-small { padding: 7px 12px; min-height: 38px; font-size: 14px; }
+.linkbtn { background: none; border: 0; padding: 6px 2px; font: 600 14px Inter, sans-serif; color: var(--plum); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 36px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* sign-in */
+.gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; background: linear-gradient(160deg, #24103F 0%, var(--plum) 70%); }
+.gate-card { background: var(--surface); border-radius: 14px; padding: 28px; width: 100%; max-width: 420px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.5); }
+.gate-card .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font: 700 18px Fraunces, serif; color: var(--plum); }
+.gate-card .brand img { width: 34px; height: 34px; }
+.gate-card h1 { font-size: 1.5rem; margin-bottom: 8px; }
+.gate-card p { color: var(--muted); font-size: 14.5px; margin-bottom: 14px; }
+.gate-card .btn { width: 100%; margin-top: 12px; min-height: 46px; }
+.msg { margin-top: 12px; font-size: 14px; font-weight: 600; color: var(--red); }
+.msg.ok { color: var(--ok); }
+.fine { font-size: 13px; color: var(--muted); }
+
+/* shell */
+.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 30; }
+.top-in { max-width: 940px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 17px Fraunces, serif; color: var(--plum); }
+.brand img { width: 30px; height: 30px; }
+.top-r { display: flex; align-items: center; gap: 8px; }
+.menuwrap { position: relative; }
+.who, .acct { display: inline-flex; align-items: center; gap: 8px; font: 600 14.5px Inter, sans-serif; min-height: 42px; padding: 5px 10px 5px 6px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; max-width: 220px; }
+.who:hover, .acct:hover { border-color: var(--plum); }
+.who > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acct { padding: 5px; }
+.av { width: 30px; height: 30px; border-radius: 50%; background: var(--plum); color: #fff; display: inline-flex; align-items: center; justify-content: center; font: 700 12px Inter, sans-serif; overflow: hidden; flex: none; }
+.av img { width: 100%; height: 100%; object-fit: cover; }
+.chev { width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: -3px 2px 0 2px; flex: none; }
+.menu { position: absolute; right: 0; top: calc(100% + 6px); min-width: 230px; max-width: 86vw; background: var(--surface); border: 1px solid var(--line-2); border-radius: 10px; box-shadow: 0 14px 34px -10px rgba(27,21,48,.35); padding: 6px; z-index: 50; }
+.menu .mi { display: flex; width: 100%; align-items: center; gap: 10px; text-align: left; font: 500 14.5px Inter, sans-serif; padding: 10px 10px; min-height: 42px; border: 0; background: none; border-radius: 6px; color: var(--ink); cursor: pointer; text-decoration: none; }
+.menu .mi:hover, .menu .mi:focus-visible { background: var(--plum-soft); }
+.menu .mi.danger { color: var(--red); }
+.menu .mi[aria-current="true"] { font-weight: 700; }
+.menu .mi[aria-current="true"]::after { content: "✓"; margin-left: auto; color: var(--ok); }
+.menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
+.menu .mh { font-size: 12.5px; color: var(--muted); padding: 8px 10px 4px; word-break: break-all; }
+
+.tabs { background: var(--surface); border-bottom: 1px solid var(--line); }
+.tabs-in { max-width: 940px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tabs-in::-webkit-scrollbar { display: none; }
+.tab { font: 600 14.5px Inter, sans-serif; padding: 14px 14px 12px; min-height: 48px; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.tab:hover { color: var(--plum); }
+.tab[aria-current="page"] { color: var(--plum); border-bottom-color: var(--plum); }
+.page { max-width: 940px; margin: 0 auto; padding: 18px 16px 60px; }
+.panel { display: grid; gap: 14px; }
+.quiet { font-size: 13px; color: var(--muted); min-height: 1.2em; margin-bottom: 10px; }
+.status { font-size: 13px; color: var(--muted); }
+.status.err { color: var(--red); font-weight: 600; }
+.toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 11px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; max-width: min(92vw, 520px); z-index: 80; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+.toast:empty { display: none; }
+.toast.err { background: var(--red); }
+.banner { background: var(--plum-soft); border: 1px solid #D9CCEF; border-radius: var(--r); padding: 12px 14px; font-size: 14.5px; margin-bottom: 14px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.note { font-size: 14px; color: var(--muted); }
+.warn { background: var(--amber-soft); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--amber); }
+.help { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.empty { color: var(--muted); font-style: italic; font-size: 14.5px; }
+.subh { font: 700 1rem Fraunces, Georgia, serif; color: var(--plum); margin-bottom: 8px; }
+
+/* forms */
+label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--ink); }
+input[type=text], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], textarea, select.f {
+  width: 100%; font: 400 16px Inter, sans-serif; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: #fff; color: var(--ink); min-height: 44px; }
+textarea { min-height: 84px; resize: vertical; }
+input:focus, textarea:focus, select:focus { border-color: var(--plum); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sec { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); margin-bottom: 10px; }
+.sec > summary { cursor: pointer; padding: 15px 16px; font: 700 1.02rem Fraunces, serif; color: var(--plum); min-height: 52px; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.sec > summary::-webkit-details-marker { display: none; }
+.sec > summary::after { content: ""; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin-right: 4px; transition: transform .15s; }
+.sec[open] > summary::after { transform: rotate(-135deg); }
+.sec[open] > summary { border-bottom: 1px solid var(--line); }
+.sec .in { padding: 16px; display: grid; gap: 14px; }
+.item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; background: #FBFAFD; }
+.item .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.item .head b { color: var(--plum); font-size: 14px; }
+.photo { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.pic { width: 72px; height: 72px; border-radius: 50%; background: var(--plum-soft); border: 1px solid var(--line-2); display: flex; align-items: center; justify-content: center; color: var(--plum); font: 700 24px Fraunces, serif; overflow: hidden; flex: none; }
+.pic img { width: 100%; height: 100%; object-fit: cover; }
+.chk2 { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; margin: 0; }
+.chk2 input, .chk input { width: 20px; height: 20px; accent-color: var(--plum); flex: none; }
+
+/* overview */
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.tile { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--surface); }
+.tile .tl { font: 600 12px Inter, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.tile .big { font: 700 1.45rem/1.2 Fraunces, Georgia, serif; color: var(--plum); }
+.tile p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.tile.warnt { border-color: #E8C07A; background: var(--amber-soft); }
+.bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin: 10px 0; }
+.bar > i { display: block; height: 100%; background: var(--plum); }
+.todo { list-style: none; display: grid; gap: 2px; }
+.todo li { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 14.5px; border-top: 1px solid var(--line); }
+.todo .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line-2); flex: none; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; }
+.todo li.done .dot { background: var(--ok); border-color: var(--ok); }
+.todo li.done span.t { color: var(--muted); }
+.todo li .linkbtn { margin-left: auto; }
+.empty-state { text-align: center; padding: 38px 18px; background: var(--surface); border: 1px dashed var(--line-2); border-radius: 12px; }
+.empty-state h2 { font-size: 1.3rem; margin-bottom: 6px; }
+.empty-state p { color: var(--muted); margin-bottom: 14px; }
+
+/* documents and appointments */
+.drop { border: 1px dashed var(--line-2); border-radius: 12px; padding: 18px; text-align: center; background: var(--surface); }
+.doc, .appt { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--surface); display: grid; gap: 10px; }
+.doc .top { display: flex; gap: 12px; align-items: center; position: static; border: 0; background: none; z-index: auto; }
+.doc .thumb { width: 60px; height: 60px; border-radius: 8px; background: var(--plum-soft); display: flex; align-items: center; justify-content: center; font: 700 12px Inter, sans-serif; color: var(--plum); overflow: hidden; flex: none; }
+.doc .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.doc .meta { font-size: 13px; color: var(--muted); }
+.appt.past { opacity: .7; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font: 600 13px Inter, sans-serif; padding: 7px 11px; min-height: 36px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--plum); border-color: var(--plum); color: #fff; }
+
+/* the passport and the card */
+.actionbar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 12px; }
+.pp { background: #fff; border: 1px solid var(--line-2); border-radius: 12px; overflow: hidden; }
+.pp-head { background: var(--plum); color: #fff; padding: 20px; display: flex; gap: 16px; align-items: center; }
+.pp-head .pic { width: 80px; height: 80px; background: #fff; border: 3px solid rgba(255,255,255,.7); font-size: 28px; }
+.pp-head h2 { color: #fff; margin: 0; font-size: 1.6rem; }
+.pp-head p { color: rgba(255,255,255,.92); font-size: 14.5px; }
+.pp-head .tag { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #fff; opacity: .85; margin-bottom: 4px; }
+.emerg { background: var(--red-soft); border-bottom: 1px solid #E8C4BF; padding: 14px 20px; }
+.emerg h3 { color: var(--red); font: 700 13px Inter, sans-serif; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.emerg ul { list-style: none; display: grid; gap: 3px; font-size: 15px; }
+.pp-body { padding: 4px 20px 16px; }
+.blk { padding: 14px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+.blk:last-child { border-bottom: 0; }
+.blk h3 { font-size: 1.02rem; margin-bottom: 6px; }
+.blk p { white-space: pre-wrap; font-size: 15.5px; }
+.rows { display: grid; gap: 8px; }
+.row-card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: #FBFAFD; font-size: 15px; break-inside: avoid; }
+.row-card b { color: var(--plum); }
+.row-card .sub { color: var(--muted); font-size: 14px; }
+.pp-foot { background: #F6F4FA; padding: 12px 20px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); }
+.pp.large { font-size: 1.22rem; }
+.pp.large .blk p, .pp.large .row-card, .pp.large .emerg ul { font-size: 1.15em; }
+.pp.large .pp-head h2 { font-size: 2.1rem; }
+.sheet { display: flex; gap: 14px; flex-wrap: wrap; }
+.idcard { width: 90mm; min-height: 56mm; border: 2px solid var(--plum); border-radius: 10px; overflow: hidden; background: #fff; font-size: 12px; line-height: 1.35; break-inside: avoid; }
+.idcard .ch { background: var(--plum); color: #fff; padding: 6px 9px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.idcard .ch b { font: 700 14px Fraunces, Georgia, serif; }
+.idcard .ch span { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .9; }
+.idcard ul { list-style: none; padding: 7px 9px 8px; display: grid; gap: 2px; }
+.idcard li b { color: var(--accent-dk); }
+.idcard .cf { background: #F3EEFB; color: var(--muted); font-size: 9.5px; padding: 3px 9px; }
+
+/* dialogs */
+dialog { border: 0; border-radius: 14px; padding: 0; width: min(94vw, 460px); box-shadow: 0 30px 70px -20px rgba(0,0,0,.5); color: var(--ink); }
+dialog::backdrop { background: rgba(27,21,48,.55); }
+.dlg { padding: 22px; display: grid; gap: 14px; }
+.dlg h2 { font-size: 1.3rem; }
+.dlg .chk { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; font-size: 15px; margin: 0; }
+
+footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
+
+@media (max-width: 640px) {
+  .two { grid-template-columns: 1fr; }
+  .pp-head { flex-direction: column; text-align: center; }
+  .brand span { display: none; }
+  .actionbar .btn { flex: 1 1 auto; }
+}
+@media print {
+  .top, .tabs, .actionbar, .banner, .quiet, .toast, footer.fine, #acctMenu, .skip { display: none !important; }
+  body { background: #fff; font-size: 12pt; }
+  .page { padding: 0; max-width: none; }
+  .pp { border: 1.5px solid #000; border-radius: 0; }
+  .pp-head { background: #fff; color: #000; border-bottom: 3px solid #000; }
+  .pp-head h2, .pp-head p, .pp-head .tag { color: #000; opacity: 1; }
+  .pp-head .pic { border-color: #000; }
+  .emerg { background: #fff; border-bottom: 2px solid #000; }
+  .emerg h3 { color: #000; }
+  .row-card { background: #fff; }
+  .idcard { border-color: #000; }
+  .idcard .ch { background: #fff; color: #000; border-bottom: 2px solid #000; }
+  .idcard li b, .idcard .ch span { color: #000; }
+  .idcard .cf { background: #fff; color: #000; }
+  .sheet { gap: 8mm; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<main id="gate" class="gate" hidden aria-label="Sign in">
+  <div class="gate-card" id="gateCard"></div>
+</main>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="top-in">
+      <a class="brand" href="/" aria-label="All About Me home"><img src="logo-passport.svg" alt=""><span>All About Me</span></a>
+      <div class="top-r" id="topR">
+        <div class="menuwrap" id="kidWrap">
+          <button type="button" class="who" id="kidBtn" aria-expanded="false"><span class="av" id="kidAv" aria-hidden="true">+</span><span id="kidName">Add a child</span><span class="chev" aria-hidden="true"></span></button>
+          <div class="menu" id="kidMenu" aria-label="Children" hidden></div>
+        </div>
+        <div class="menuwrap" id="acctWrap">
+          <button type="button" class="acct" id="acctBtn" aria-expanded="false" aria-label="Account and backups"><span class="av" id="acctAv" aria-hidden="true">?</span></button>
+          <div class="menu" id="acctMenu" aria-label="Account and backups" hidden>
+            <p class="mh" id="acctEmail"></p>
+            <hr>
+            <button type="button" class="mi" id="miDownload">Download a backup</button>
+            <button type="button" class="mi" id="miDownloadFull">Backup with documents</button>
+            <button type="button" class="mi" id="miLoad">Load a backup</button>
+            <button type="button" class="mi" id="miInstall" hidden>Install as an app</button>
+            <hr>
+            <a class="mi" href="https://includeme.uk/" rel="noopener">Open the Activity Finder</a>
+            <button type="button" class="mi danger" id="miSignOut">Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Sections">
+    <div class="tabs-in" id="tabsIn">
+      <button type="button" class="tab" id="tabOverview">Overview</button>
+      <button type="button" class="tab" id="tabEdit">Details</button>
+      <button type="button" class="tab" id="tabAppts">Appointments</button>
+      <button type="button" class="tab" id="tabDocs">Documents</button>
+      <button type="button" class="tab" id="tabView">Passport</button>
+      <button type="button" class="tab" id="tabCard">Emergency card</button>
+    </div>
+  </nav>
+
+  <main id="main" class="page">
+    <h1 class="sr">All About Me</h1>
+    <div id="exampleBanner" class="banner" hidden><span><b>This is an example.</b> Nothing here is saved.</span><button type="button" class="btn btn-main btn-small" id="exampleBack">Back to my passports</button></div>
+    <div id="sharedBanner" class="banner" hidden><span><b>This passport was shared with you.</b> It is shown only in your browser and is not saved anywhere unless you choose to.</span><span class="actions"><button type="button" class="btn btn-ghost btn-small" id="printShared">Print</button><button type="button" class="btn btn-main btn-small" id="saveShared">Save a copy</button></span></div>
+    <input type="file" id="upload" accept="application/json,.json" class="sr" tabindex="-1" aria-label="Load a backup file">
+    <p class="quiet status" id="saved" role="status" aria-live="polite"></p>
+
+    <div id="editor"></div>
+    <div id="overview" class="panel" hidden></div>
+    <div id="appts" class="panel" hidden></div>
+    <div id="docs" class="panel" hidden></div>
+    <div id="viewWrap" hidden>
+      <div class="actionbar" id="actionbar">
+        <button type="button" class="btn btn-ghost" id="inclBtn">What to include</button>
+        <div class="menuwrap" id="shareWrap">
+          <button type="button" class="btn btn-ghost" id="shareBtn" aria-expanded="false">Share <span class="chev" aria-hidden="true"></span></button>
+          <div class="menu" id="shareMenu" aria-label="Share" hidden>
+            <button type="button" class="mi" id="miLink">Copy a share link</button>
+            <button type="button" class="mi" id="miText">Copy as text</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-main" id="print">Print or save as PDF</button>
+      </div>
+      <div id="viewer"></div>
+    </div>
+  </main>
+  <footer class="fine">
+    Everything here is saved on this device only. It is not uploaded to us. Check medicines against the label or your pharmacist. This is not a medical record or medical advice. <a href="/privacy.html">Privacy</a>
+  </footer>
+</div>
+
+<p class="toast" id="toolStatus" role="status" aria-live="polite"></p>
+
+<dialog id="dlgChild" aria-labelledby="dcTitle">
+  <form class="dlg" id="childForm" novalidate>
+    <h2 id="dcTitle">Add a child</h2>
+    <p class="note">Start with their name. You can add everything else later.</p>
+    <div><label for="dcName">Name</label><input id="dcName" type="text" autocomplete="off" required aria-describedby="dcErr"></div>
+    <div class="two"><div><label for="dcPref">Likes to be called</label><input id="dcPref" type="text" autocomplete="off"></div><div><label for="dcDob">Date of birth</label><input id="dcDob" type="date"></div></div>
+    <div class="photo"><div class="pic" id="dcPic" aria-hidden="true">?</div><div class="actions"><label class="btn btn-ghost btn-small" for="dcPhoto" style="margin:0">Add a photo</label><input type="file" id="dcPhoto" accept="image/*" class="sr"></div></div>
+    <p class="msg" id="dcErr" role="alert"></p>
+    <div class="actions" style="justify-content:flex-end"><button type="button" class="btn btn-ghost" id="dcCancel">Cancel</button><button type="submit" class="btn btn-main" id="dcAdd">Add child</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgIncl" aria-labelledby="diTitle">
+  <div class="dlg">
+    <h2 id="diTitle">What to include</h2>
+    <p class="note">Ticked items are included when you print, copy or share. Everything stays saved on your device.</p>
+    <div id="inclList"></div>
+    <div class="actions" style="justify-content:flex-end"><button type="button" class="btn btn-main" id="diDone">Done</button></div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "includeme.passport.v1";
+  var $ = function (id) { return document.getElementById(id); };
+  var ROLES = ["GP", "Paediatrician", "CAMHS", "Speech and language therapist", "Occupational therapist", "Physiotherapist", "Educational psychologist", "SENCo", "Teacher or key worker", "Social worker", "Dentist", "Optician", "Pharmacist", "Other"];
+
+  function id() { return "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+  function blank() {
+    return { id: id(), name: "", preferred: "", dob: "", pronouns: "", languages: "", diagnoses: "", nhs: "", photo: "",
+      strengths: "", goals: "", medsChecked: "", hide: [], large: false, noAllergies: false, noMeds: false, appts: [],
+      communication: "", helps: "", upsets: "", calming: "", sensory: "", likes: "", dislikes: "",
+      food: "", personalCare: "", sleep: "", safety: "",
+      allergies: [], meds: [], team: [], contacts: [],
+      school: { name: "", teacher: "", senco: "", ehcp: "", review: "" }, updated: "" };
+  }
+  var HIDE = [["dob", "Date of birth"], ["diagnoses", "Diagnoses or needs"], ["nhs", "NHS number"], ["meds", "Medicines"], ["team", "Doctors and team"], ["school", "School"], ["contacts", "Emergency contacts"]];
+  var LIM = { str: 2000, short: 160, arr: 30 };
+  function s(v, n) { return typeof v === "string" ? v.slice(0, n || LIM.str) : ""; }
+  function list(a, keys) {
+    if (!Array.isArray(a)) return [];
+    return a.slice(0, LIM.arr).map(function (o) {
+      var r = {}; o = o && typeof o === "object" ? o : {};
+      keys.forEach(function (k) { r[k] = s(o[k], k === "notes" ? LIM.str : LIM.short); });
+      return r;
+    });
+  }
+  function clean(o) {
+    o = o && typeof o === "object" ? o : {};
+    var b = blank();
+    ["name", "preferred", "dob", "pronouns", "languages", "nhs"].forEach(function (k) { b[k] = s(o[k], LIM.short); });
+    ["strengths", "goals", "diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety"].forEach(function (k) { b[k] = s(o[k]); });
+    b.medsChecked = /^\d{4}-\d{2}-\d{2}$/.test(o.medsChecked || "") ? o.medsChecked : "";
+    b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
+    b.large = o.large === true; b.noAllergies = o.noAllergies === true; b.noMeds = o.noMeds === true;
+    b.appts = list(o.appts, ["title", "when", "who", "where", "notes"]).map(function (a) { a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; return a; });
+    b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
+    b.allergies = list(o.allergies, ["what", "reaction", "action"]);
+    b.meds = list(o.meds, ["name", "dose", "when", "forWhat", "prescriber", "notes"]);
+    b.team = list(o.team, ["role", "name", "org", "phone", "email", "notes"]);
+    b.contacts = list(o.contacts, ["name", "relationship", "phone", "notes"]);
+    var sc = o.school && typeof o.school === "object" ? o.school : {};
+    b.school = { name: s(sc.name, LIM.short), teacher: s(sc.teacher, LIM.short), senco: s(sc.senco, LIM.short), ehcp: s(sc.ehcp, 20), review: /^\d{4}-\d{2}-\d{2}$/.test(sc.review || "") ? sc.review : "" };
+    b.updated = s(o.updated, 40);
+    if (typeof o.id === "string" && /^[A-Za-z0-9]{3,40}$/.test(o.id)) b.id = o.id;
+    return b;
+  }
+
+  function redact(p) {
+    var c = JSON.parse(JSON.stringify(p)), h = p.hide || [];
+    if (h.indexOf("dob") >= 0) c.dob = "";
+    if (h.indexOf("diagnoses") >= 0) c.diagnoses = "";
+    if (h.indexOf("nhs") >= 0) c.nhs = "";
+    if (h.indexOf("meds") >= 0) { c.meds = []; c.medsChecked = ""; }
+    if (h.indexOf("team") >= 0) c.team = [];
+    if (h.indexOf("school") >= 0) c.school = { name: "", teacher: "", senco: "", ehcp: "", review: "" };
+    c.appts = [];
+    if (h.indexOf("contacts") >= 0) c.contacts = [];
+    return c;
+  }
+
+  /* ---------- storage ---------- */
+  var store = { profiles: [], current: null };
+  var shared = null;       // a passport opened from a link: shown, never saved unless asked
+  var mode = "edit";
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && Array.isArray(d.profiles)) { store.profiles = d.profiles.slice(0, 12).map(clean); store.current = d.current; }
+      }
+    } catch (e) { /* storage blocked: the page still works for this visit */ }
+    if (!store.profiles.length) { var p = blank(); store.profiles.push(p); store.current = p.id; }
+    if (!find(store.current)) store.current = store.profiles[0].id;
+  }
+  function find(i) { for (var k = 0; k < store.profiles.length; k++) if (store.profiles[k].id === i) return store.profiles[k]; return null; }
+  function cur() { return shared || find(store.current); }
+  var watchers = [];
+  var saveTimer = null;
+  function savedMsg(t, err) { var e = $("saved"); e.textContent = t; e.className = "quiet status" + (err ? " err" : ""); }
+  function save() {
+    if (shared) return;
+    watchers.forEach(function (w) { w(); });
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        cur().updated = new Date().toISOString();
+        localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current }));
+        savedMsg("Saved on this device only");
+      } catch (e) { savedMsg("Could not save on this device. Download a backup file so you do not lose it.", true); }
+    }, 350);
+  }
+
+  /* ---------- small DOM helpers ---------- */
+  function el(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === "text") e.textContent = attrs[k]; else if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function initials(n) { var p = (n || "").trim().split(/\s+/); return ((p[0] || "?")[0] + (p[1] ? p[1][0] : "")).toUpperCase(); }
+  function longDate(iso) { try { return new Date(iso + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return iso; } }
+  function age(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); if (!m) return "";
+    var t = new Date(), a = t.getFullYear() - +m[1];
+    if (t.getMonth() + 1 < +m[2] || (t.getMonth() + 1 === +m[2] && t.getDate() < +m[3])) a--;
+    return a >= 0 && a < 130 ? a + " years old" : "";
+  }
+
+  /* ---------- editor ---------- */
+  var uid = 0;
+  function field(label, key, o) {
+    o = o || {}; var p = cur(); var fid = "f" + (++uid);
+    var inp = o.area ? el("textarea", { id: fid }) : el("input", { id: fid, type: o.type || "text" });
+    if (o.autocomplete) inp.setAttribute("autocomplete", o.autocomplete);
+    if (o.rows) inp.setAttribute("rows", o.rows);
+    var obj = o.obj ? p[o.obj] : p;
+    inp.value = obj[key] || "";
+    inp.addEventListener("input", function () { obj[key] = inp.value; save(); });
+    var w = el("div", {}, [el("label", { for: fid, text: label }), inp]);
+    if (o.help) { var hid = fid + "h"; inp.setAttribute("aria-describedby", hid); w.appendChild(el("p", { class: "help", id: hid, text: o.help })); }
+    return w;
+  }
+  function repeater(title, arr, keys, addLabel, empty) {
+    var wrap = el("div", { class: "in", style: "padding:0;border:0" });
+    var holder = el("div", { style: "display:grid;gap:10px" });
+    function draw() {
+      holder.textContent = "";
+      arr.forEach(function (o, i) {
+        var item = el("div", { class: "item", role: "group", "aria-label": title + " " + (i + 1) });
+        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
+        rm.setAttribute("aria-label", "Remove " + title.toLowerCase() + " " + (i + 1));
+        rm.addEventListener("click", function () { arr.splice(i, 1); save(); draw(); });
+        item.appendChild(el("div", { class: "head" }, [el("b", { text: title + " " + (i + 1) }), rm]));
+        var grid = el("div", { class: "two" });
+        keys.forEach(function (k) {
+          var fid = "r" + (++uid);
+          var ctl;
+          if (k.type === "role") {
+            ctl = el("select", { id: fid, class: "f" });
+            ctl.appendChild(el("option", { value: "", text: "Choose" }));
+            ROLES.forEach(function (r) { ctl.appendChild(el("option", { value: r, text: r })); });
+            if (o[k.key] && ROLES.indexOf(o[k.key]) < 0) ctl.appendChild(el("option", { value: o[k.key], text: o[k.key] }));
+            ctl.value = o[k.key] || "";
+            ctl.addEventListener("change", function () { o[k.key] = ctl.value; save(); });
+          } else {
+            ctl = k.area ? el("textarea", { id: fid, rows: 2 }) : el("input", { id: fid, type: k.type || "text" });
+            ctl.value = o[k.key] || "";
+            ctl.addEventListener("input", function () { o[k.key] = ctl.value; save(); });
+            if (k.type === "tel") ctl.setAttribute("autocomplete", "off");
+          }
+          var cell = el("div", k.wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]);
+          grid.appendChild(cell);
+        });
+        item.appendChild(grid);
+        holder.appendChild(item);
+      });
+      if (!arr.length) holder.appendChild(el("p", { class: "empty", text: empty }));
+    }
+    var add = el("button", { type: "button", class: "btn btn-ghost btn-small", text: addLabel });
+    add.addEventListener("click", function () {
+      if (arr.length >= LIM.arr) return;
+      var o = {}; keys.forEach(function (k) { o[k.key] = ""; }); arr.push(o); save(); draw();
+      var last = holder.querySelectorAll(".item"); var f = last[last.length - 1].querySelector("input,select,textarea"); if (f) f.focus();
+    });
+    draw(); wrap.appendChild(holder); wrap.appendChild(add);
+    return wrap;
+  }
+  function flag(label, key) {
+    var p = cur(), fid = "g" + (++uid), cb = el("input", { type: "checkbox", id: fid }); cb.checked = !!p[key];
+    cb.addEventListener("change", function () { p[key] = cb.checked; save(); });
+    return el("label", { class: "chk2", for: fid }, [cb, document.createTextNode(label)]);
+  }
+  function section(title, open, body) {
+    var d = el("details", { class: "sec" }); if (open) d.setAttribute("open", "");
+    d.appendChild(el("summary", { text: title }));
+    var inner = el("div", { class: "in" }); body.forEach(function (b) { inner.appendChild(b); }); d.appendChild(inner);
+    return d;
+  }
+  function renderEditor() {
+    var p = cur(), box = $("editor"); box.textContent = ""; uid = 0; watchers = [];
+    // photo + basics
+    var pic = el("div", { class: "pic", "aria-hidden": "true" });
+    function drawPic() { pic.textContent = ""; if (p.photo) pic.appendChild(el("img", { src: p.photo, alt: "" })); else pic.textContent = initials(p.name); }
+    drawPic();
+    var file = el("input", { type: "file", accept: "image/*", id: "photoIn", class: "sr" });
+    var pick = el("label", { class: "btn btn-ghost btn-small", for: "photoIn", style: "margin:0", text: "Add a photo" });
+    var rmPhoto = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Remove photo" });
+    file.addEventListener("change", function () {
+      var f = file.files && file.files[0]; if (!f) return;
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function () {
+        var c = document.createElement("canvas"), sz = 240, r = Math.min(img.width, img.height), sx = (img.width - r) / 2, sy = (img.height - r) / 2;
+        c.width = c.height = sz; c.getContext("2d").drawImage(img, sx, sy, r, r, 0, 0, sz, sz);
+        p.photo = c.toDataURL("image/jpeg", 0.8); URL.revokeObjectURL(url); drawPic(); save();
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); savedMsg("That photo could not be read. Try a different one.", true); };
+      img.src = url;
+    });
+    rmPhoto.addEventListener("click", function () { p.photo = ""; drawPic(); save(); });
+    var photoRow = el("div", { class: "photo" }, [pic, el("div", { class: "actions", style: "margin:0" }, [pick, file, rmPhoto]), el("p", { class: "help", text: "Optional. The photo stays on this device and is not included in shared links." })]);
+
+    var nameF = field("Name", "name", { autocomplete: "off" });
+    nameF.querySelector("input").addEventListener("input", drawPic);
+    box.appendChild(section("About me", true, [
+      photoRow, nameF,
+      el("div", { class: "two" }, [field("What I like to be called", "preferred"), field("Date of birth", "dob", { type: "date" })]),
+      el("div", { class: "two" }, [field("Pronouns", "pronouns"), field("Languages", "languages")]),
+      field("Diagnoses or needs", "diagnoses", { area: true, help: "For example autism, ADHD, epilepsy, hearing loss. Only add what you are happy to share." })
+    ]));
+    box.appendChild(section("What people like about me", false, [
+      field("What people like and admire about me", "strengths", { area: true, help: "Strengths, talents, what makes me laugh." }),
+      field("What matters to me and what I am working on", "goals", { area: true })
+    ]));
+    box.appendChild(section("How I communicate and what helps", false, [
+      field("How I communicate", "communication", { area: true, help: "Words, signs, symbols, devices. How I say yes, no, I need help, or I am in pain." }),
+      field("What helps me", "helps", { area: true }),
+      field("What upsets or worries me", "upsets", { area: true }),
+      field("What helps me calm down", "calming", { area: true }),
+      field("Sensory needs", "sensory", { area: true, help: "Noise, light, touch, crowds, textures." })
+    ]));
+    box.appendChild(section("Daily life", false, [
+      field("What I like", "likes", { area: true }), field("What I dislike", "dislikes", { area: true }),
+      field("Food and drink", "food", { area: true, help: "Likes, dislikes, how I eat and drink, any special diet." }),
+      field("Personal care and toileting", "personalCare", { area: true }),
+      field("Sleep", "sleep", { area: true }),
+      field("Staying safe", "safety", { area: true, help: "For example runs off, no road sense, needs 1:1, cannot swim." })
+    ]));
+    box.appendChild(section("Health: allergies, medicines and NHS number", false, [
+      el("div", {}, [el("p", { class: "subh", text: "Allergies" }), flag("No known allergies", "noAllergies"), repeater("Allergy", p.allergies, [
+        { key: "what", label: "Allergic to" }, { key: "reaction", label: "What happens" }, { key: "action", label: "What to do", wide: true }
+      ], "Add an allergy", "No allergies added.")]),
+      el("div", {}, [el("p", { class: "subh", text: "Medicines" }), flag("No regular medicines", "noMeds"), repeater("Medicine", p.meds, [
+        { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given" }, { key: "forWhat", label: "What it is for" },
+        { key: "prescriber", label: "Prescribed by", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
+      ], "Add a medicine", "No medicines added.")]),
+      (function () {
+        var f = field("Medicines last checked", "medsChecked", { type: "date", help: "The day a doctor or pharmacist last went through this list with you." });
+        var note = el("p", { class: "warn", hidden: "" }); f.appendChild(note);
+        function stale() { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.medsChecked || ""); var show = !!(p.meds.length && (!m || (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) > 183 * 864e5)); note.hidden = !show; note.textContent = show ? (m ? "It is over six months since this list was checked. Ask the pharmacist or doctor to go through it again." : "Add the date a doctor or pharmacist last checked this list, so people reading it know it is up to date.") : ""; }
+        watchers.push(stale); stale(); return f;
+      })(),
+      field("NHS number", "nhs", { help: "Optional. Only add it if you want it on the printed passport." })
+    ]));
+    box.appendChild(section("My doctors and team", false, [
+      repeater("Person", p.team, [
+        { key: "role", label: "Role", type: "role" }, { key: "name", label: "Name" }, { key: "org", label: "Surgery, clinic or school" }, { key: "phone", label: "Phone", type: "tel" },
+        { key: "email", label: "Email", type: "email", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
+      ], "Add a doctor or professional", "Nobody added yet. Add the GP first.")
+    ]));
+    box.appendChild(section("School", false, [
+      field("School or nursery", "name", { obj: "school" }),
+      el("div", { class: "two" }, [field("Class teacher or key worker", "teacher", { obj: "school" }), field("SENCo", "senco", { obj: "school" })]),
+      field("EHCP", "ehcp", { obj: "school", help: "For example: yes, applying, no, SEN support." }),
+      field("EHCP annual review due", "review", { obj: "school", type: "date", help: "Reviews must happen at least every 12 months." })
+    ]));
+    box.appendChild(section("Emergency contacts", false, [
+      repeater("Contact", p.contacts, [
+        { key: "name", label: "Name" }, { key: "relationship", label: "Relationship" }, { key: "phone", label: "Phone", type: "tel" }, { key: "notes", label: "Notes (can collect, speaks which language)", area: true }
+      ], "Add a contact", "No contacts added yet.")
+    ]));
+  }
+
+  /* ---------- the passport view ---------- */
+  function blk(title, body) { var b = el("div", { class: "blk" }, [el("h3", { text: title })]); b.appendChild(body); return b; }
+  function para(t) { return el("p", { text: t }); }
+  function renderPassport(p) {
+    var out = el("article", { class: "pp" + (p.large ? " large" : ""), "aria-label": "Passport for " + (p.preferred || p.name || "child") });
+    var shownName = p.name || "Name not added yet";
+    var pic = el("div", { class: "pic", "aria-hidden": "true" }); if (p.photo) pic.appendChild(el("img", { src: p.photo, alt: "" })); else pic.textContent = initials(p.name);
+    var meta = [];
+    if (p.preferred && p.preferred !== p.name) meta.push("Likes to be called " + p.preferred);
+    if (p.dob) meta.push("Born " + longDate(p.dob) + (age(p.dob) ? " (" + age(p.dob) + ")" : ""));
+    if (p.pronouns) meta.push(p.pronouns);
+    if (p.languages) meta.push("Languages: " + p.languages);
+    var info = el("div", {}, [el("span", { class: "tag", text: "All About Me" }), el("h2", { text: shownName })]);
+    meta.forEach(function (m) { info.appendChild(el("p", { text: m })); });
+    out.appendChild(el("div", { class: "pp-head" }, [pic, info]));
+
+    // emergency strip
+    var em = [];
+    if (p.noAllergies && !p.allergies.some(function (a) { return a.what; })) em.push("No known allergies");
+    if (p.noMeds && !p.meds.some(function (m) { return m.name; })) em.push("No regular medicines");
+    p.allergies.forEach(function (a) { if (a.what) em.push("Allergy: " + a.what + (a.reaction ? " (" + a.reaction + ")" : "") + (a.action ? ". " + a.action : "")); });
+    if (p.diagnoses) em.push("Needs: " + p.diagnoses.replace(/\s*\n\s*/g, "; "));
+    var gp = p.team.filter(function (t) { return t.role === "GP"; })[0];
+    if (gp && (gp.name || gp.org || gp.phone)) em.push("GP: " + [gp.name, gp.org, gp.phone].filter(Boolean).join(", "));
+    p.contacts.slice(0, 2).forEach(function (c) { if (c.name || c.phone) em.push("Call: " + [c.name, c.relationship && "(" + c.relationship + ")", c.phone].filter(Boolean).join(" ")); });
+    if (p.nhs) em.push("NHS number: " + p.nhs);
+    if (p.meds.some(function (m) { return m.name; })) em.push("Takes medicine: see below");
+    if (em.length) {
+      var ul = el("ul"); em.forEach(function (t) { ul.appendChild(el("li", { text: t })); });
+      out.appendChild(el("div", { class: "emerg" }, [el("h3", { text: "In an emergency" }), ul]));
+    }
+
+    var body = el("div", { class: "pp-body" });
+    [["What people like about me", p.strengths], ["What matters to me and what I am working on", p.goals], ["How I communicate", p.communication], ["What helps me", p.helps], ["What upsets or worries me", p.upsets], ["What helps me calm down", p.calming],
+     ["Sensory needs", p.sensory], ["What I like", p.likes], ["What I dislike", p.dislikes], ["Food and drink", p.food],
+     ["Personal care and toileting", p.personalCare], ["Sleep", p.sleep], ["Staying safe", p.safety]].forEach(function (x) { if (x[1]) body.appendChild(blk(x[0], para(x[1]))); });
+
+    var meds = p.meds.filter(function (m) { return m.name || m.dose; });
+    if (meds.length) {
+      var rows = el("div", { class: "rows" });
+      meds.forEach(function (m) {
+        var c = el("div", { class: "row-card" }, [el("b", { text: m.name || "Medicine" }), el("span", { text: [m.dose, m.when].filter(Boolean).length ? " · " + [m.dose, m.when].filter(Boolean).join(" · ") : "" })]);
+        var sub = [m.forWhat && "For: " + m.forWhat, m.prescriber && "Prescribed by " + m.prescriber, m.notes].filter(Boolean);
+        sub.forEach(function (t) { c.appendChild(el("div", { class: "sub", text: t })); });
+        rows.appendChild(c);
+      });
+      if (p.medsChecked) { var old = (Date.now() - new Date(p.medsChecked + "T12:00:00").getTime()) > 183 * 864e5; rows.appendChild(el("p", { class: "sub", style: "font-size:14px;color:#5C5470", text: "List last checked with a doctor or pharmacist on " + longDate(p.medsChecked) + (old ? ". That was over six months ago, so please check." : ".") })); }
+      body.appendChild(blk("Medicines", rows));
+    }
+    var team = p.team.filter(function (t) { return t.name || t.role || t.org || t.phone; });
+    if (team.length) {
+      var tr = el("div", { class: "rows" });
+      team.forEach(function (t) {
+        var c = el("div", { class: "row-card" }, [el("b", { text: t.role || "Professional" }), el("span", { text: t.name ? " · " + t.name : "" })]);
+        [t.org, [t.phone, t.email].filter(Boolean).join(" · "), t.notes].filter(Boolean).forEach(function (x) { c.appendChild(el("div", { class: "sub", text: x })); });
+        tr.appendChild(c);
+      });
+      body.appendChild(blk("My doctors and team", tr));
+    }
+    var sc = p.school; var sl = [sc.name && "School: " + sc.name, sc.teacher && "Class teacher or key worker: " + sc.teacher, sc.senco && "SENCo: " + sc.senco, sc.ehcp && "EHCP: " + sc.ehcp, sc.review && "EHCP annual review due: " + longDate(sc.review)].filter(Boolean);
+    if (sl.length) { var sd = el("div"); sl.forEach(function (t) { sd.appendChild(el("p", { text: t })); }); body.appendChild(blk("School", sd)); }
+    var ct = p.contacts.filter(function (c) { return c.name || c.phone; });
+    if (ct.length) {
+      var cr = el("div", { class: "rows" });
+      ct.forEach(function (c) {
+        var d = el("div", { class: "row-card" }, [el("b", { text: c.name || "Contact" }), el("span", { text: c.relationship ? " · " + c.relationship : "" })]);
+        [c.phone, c.notes].filter(Boolean).forEach(function (x) { d.appendChild(el("div", { class: "sub", text: x })); });
+        cr.appendChild(d);
+      });
+      body.appendChild(blk("Emergency contacts", cr));
+    }
+    if (!body.children.length && !em.length) body.appendChild(el("p", { class: "empty", text: "Nothing added yet. Open Details and add a few things." }));
+    out.appendChild(body);
+    out.appendChild(el("div", { class: "pp-foot", text: "Made with the free IncludeMe All About Me passport." + (p.updated ? " Last updated " + new Date(p.updated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : "") + " Check medicines against the label or the pharmacist. This is not a medical record." }));
+    return out;
+  }
+  function card(p) {
+    var items = [];
+    p.allergies.forEach(function (a) { if (a.what) items.push(["Allergy", a.what + (a.reaction ? " (" + a.reaction + ")" : "") + (a.action ? ". " + a.action : "")]); });
+    if (p.diagnoses) items.push(["Needs", p.diagnoses.replace(/\s*\n\s*/g, "; ")]);
+    var ms = p.meds.filter(function (m) { return m.name; }).map(function (m) { return m.name + (m.dose ? " " + m.dose : ""); });
+    if (ms.length) items.push(["Medicines", ms.join(", ")]);
+    var gp = p.team.filter(function (t) { return t.role === "GP"; })[0];
+    if (gp && (gp.name || gp.org || gp.phone)) items.push(["GP", [gp.name, gp.org, gp.phone].filter(Boolean).join(", ")]);
+    p.contacts.slice(0, 2).forEach(function (c) { if (c.name || c.phone) items.push(["Call", [c.name, c.relationship && "(" + c.relationship + ")", c.phone].filter(Boolean).join(" ")]); });
+    if (p.nhs) items.push(["NHS no.", p.nhs]);
+    var ul = el("ul"); items.forEach(function (it) { ul.appendChild(el("li", {}, [el("b", { text: it[0] + ": " }), document.createTextNode(it[1])])); });
+    if (!items.length) ul.appendChild(el("li", { class: "empty", text: "Add allergies, medicines or contacts to fill this card." }));
+    return el("div", { class: "idcard", role: "group", "aria-label": "Emergency card for " + (p.name || "child") }, [
+      el("div", { class: "ch" }, [el("b", { text: p.name || "Name" }), el("span", { text: "In an emergency" })]), ul,
+      el("div", { class: "cf", text: "IncludeMe All About Me passport" + (p.updated ? " · updated " + new Date(p.updated).toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "") })]);
+  }
+  function hiddenNote(p) {
+    var names = HIDE.filter(function (h) { return (p.hide || []).indexOf(h[0]) >= 0; }).map(function (h) { return h[1]; });
+    return names.length ? el("p", { class: "note no-print", style: "margin:8px 0", text: "Left out of this version: " + names.join(", ") + "." }) : null;
+  }
+  function renderViewer() {
+    var v = $("viewer"), orig = cur(), p = redact(orig); v.textContent = "";
+    var hn = shared ? null : hiddenNote(orig); if (hn) v.appendChild(hn);
+    if (mode === "card" && !shared) {
+      var sheet = el("div", { class: "sheet" }, [card(p), card(p)]);
+      v.appendChild(sheet);
+      v.appendChild(el("p", { class: "note no-print", style: "margin-top:10px", text: "Print this, cut out the cards, and keep one in a wallet or bag and one at school. Two copies are on the page." }));
+    } else v.appendChild(renderPassport(p));
+  }
+
+  /* ---------- plain text ---------- */
+  function asText(p0) {
+    var p = redact(p0);
+    var L = [], add = function (t, v) { if (v) L.push(t + ": " + String(v).replace(/\s*\n\s*/g, "; ")); };
+    L.push("ALL ABOUT ME: " + (p.name || "")); if (p.preferred && p.preferred !== p.name) add("Likes to be called", p.preferred);
+    if (p.dob) add("Born", longDate(p.dob)); add("Pronouns", p.pronouns); add("Languages", p.languages); add("Needs", p.diagnoses);
+    p.allergies.forEach(function (a) { if (a.what) L.push("ALLERGY: " + [a.what, a.reaction, a.action].filter(Boolean).join(" | ")); });
+    add("What people like about me", p.strengths); add("What matters to me", p.goals); add("How I communicate", p.communication); add("What helps", p.helps); add("What upsets me", p.upsets); add("What calms me", p.calming); add("Sensory", p.sensory);
+    add("Likes", p.likes); add("Dislikes", p.dislikes); add("Food", p.food); add("Personal care", p.personalCare); add("Sleep", p.sleep); add("Safety", p.safety);
+    if (p.meds.length && p.medsChecked) add("Medicines last checked", longDate(p.medsChecked));
+    p.meds.forEach(function (m) { if (m.name) L.push("MEDICINE: " + [m.name, m.dose, m.when, m.forWhat && "for " + m.forWhat, m.prescriber && "by " + m.prescriber, m.notes].filter(Boolean).join(" | ")); });
+    p.team.forEach(function (t) { if (t.name || t.role) L.push("TEAM: " + [t.role, t.name, t.org, t.phone, t.email].filter(Boolean).join(" | ")); });
+    var sc = p.school; if (sc.name || sc.senco) L.push("SCHOOL: " + [sc.name, sc.teacher && "teacher " + sc.teacher, sc.senco && "SENCo " + sc.senco, sc.ehcp && "EHCP " + sc.ehcp].filter(Boolean).join(" | "));
+    p.contacts.forEach(function (c) { if (c.name || c.phone) L.push("CONTACT: " + [c.name, c.relationship, c.phone, c.notes].filter(Boolean).join(" | ")); });
+    add("NHS number", p.nhs);
+    L.push("(Check medicines against the label or pharmacist. Not a medical record.)");
+    return L.join("\n");
+  }
+
+  /* ---------- share link (the passport is inside the link; nothing goes to a server) ---------- */
+  function b64u(bytes) { var b = ""; for (var i = 0; i < bytes.length; i++) b += String.fromCharCode(bytes[i]); return btoa(b).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  function unb64u(t) { t = t.replace(/-/g, "+").replace(/_/g, "/"); while (t.length % 4) t += "="; var b = atob(t), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+  function pipe(stream, bytes) { return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
+  function encodeShare(p) {
+    var copy = redact(p); copy.photo = ""; copy.id = ""; copy.hide = [];
+    var bytes = new TextEncoder().encode(JSON.stringify(copy));
+    if (typeof CompressionStream === "function") return pipe(new CompressionStream("deflate-raw"), bytes).then(function (z) { return "z." + b64u(z); }, function () { return "j." + b64u(bytes); });
+    return Promise.resolve("j." + b64u(bytes));
+  }
+  function decodeShare(t) {
+    try {
+      var kind = t.slice(0, 2), data = unb64u(t.slice(2));
+      if (kind === "z.") {
+        if (typeof DecompressionStream !== "function") return Promise.reject(new Error("unsupported"));
+        return pipe(new DecompressionStream("deflate-raw"), data).then(function (b) { return clean(JSON.parse(new TextDecoder().decode(b))); });
+      }
+      if (kind === "j.") return Promise.resolve(clean(JSON.parse(new TextDecoder().decode(data))));
+    } catch (e) { /* fall through */ }
+    return Promise.reject(new Error("bad"));
+  }
+  var toastTimer = null;
+  function toolMsg(t, err) { var e = $("toolStatus"); e.textContent = t; e.className = "toast" + (err ? " err" : ""); clearTimeout(toastTimer); if (t) toastTimer = setTimeout(function () { e.textContent = ""; }, err ? 9000 : 6000); }
+  function copy(text, ok) {
+    function fallback() {
+      var ta = el("textarea", { class: "sr", "aria-hidden": "true" }); ta.value = text; document.body.appendChild(ta); ta.select();
+      var done = false; try { done = document.execCommand("copy"); } catch (e) { /* ignore */ }
+      document.body.removeChild(ta); toolMsg(done ? ok : "Could not copy. Select and copy it by hand.", !done);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toolMsg(ok); }, fallback); else fallback();
+  }
+
+
+  /* ---------- documents (kept in this browser only, in IndexedDB) ---------- */
+  var CATS = ["EHCP and plans", "Assessments and reports", "Letters", "Medical and prescriptions", "Appointment letters", "School documents", "Photos", "Other"];
+  var OKTYPES = { "application/pdf": "PDF", "image/jpeg": "JPG", "image/png": "PNG", "image/webp": "WEBP", "image/gif": "GIF", "image/heic": "HEIC", "image/heif": "HEIC", "text/plain": "TXT", "application/msword": "DOC", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX" };
+  var EXT2 = { pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", heic: "image/heic", heif: "image/heif", txt: "text/plain", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+  var MAXFILE = 25 * 1024 * 1024;
+  var dbp = null;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise(function (res, rej) {
+      if (!window.indexedDB) { rej(new Error("nodb")); return; }
+      var r = indexedDB.open("includeme-passport", 1);
+      r.onupgradeneeded = function () { var d = r.result, st = d.createObjectStore("docs", { keyPath: "id" }); st.createIndex("profileId", "profileId"); };
+      r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error || new Error("db")); };
+    });
+    return dbp;
+  }
+  function tx(mode, fn) { return db().then(function (d) { return new Promise(function (res, rej) { var t = d.transaction("docs", mode), st = t.objectStore("docs"), out = fn(st); t.oncomplete = function () { res(out && out.result !== undefined ? out.result : undefined); }; t.onerror = t.onabort = function () { rej(t.error || new Error("tx")); }; }); }); }
+  function docsOf(pid) { return db().then(function (d) { return new Promise(function (res, rej) { var rq = d.transaction("docs").objectStore("docs").index("profileId").getAll(pid); rq.onsuccess = function () { res(rq.result || []); }; rq.onerror = function () { rej(rq.error); }; }); }); }
+  function putDoc(rec) { return tx("readwrite", function (st) { return st.put(rec); }); }
+  function delDoc(i) { return tx("readwrite", function (st) { return st.delete(i); }); }
+  function delDocsOf(pid) { return docsOf(pid).then(function (a) { return Promise.all(a.map(function (r) { return delDoc(r.id); })); }); }
+  function mime(f) { var t = (f.type || "").toLowerCase(); if (OKTYPES[t]) return t; var m = /\.([a-z0-9]+)$/i.exec(f.name || ""); return m && EXT2[m[1].toLowerCase()] || ""; }
+  function bytes(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
+  var urls = [];
+  function freeUrls() { urls.forEach(function (u) { URL.revokeObjectURL(u); }); urls = []; }
+  function today() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  var docFilter = "All";
+  function renderDocs() {
+    var box = $("docs"), p = cur(); freeUrls(); box.textContent = "";
+    box.appendChild(el("p", { class: "note", text: "Keep reports, letters and photos of documents with the passport. They are saved on this device only. They are never uploaded to us and never included in a shared link or printed passport." }));
+    var status = el("p", { class: "status", role: "status", "aria-live": "polite" });
+    var pick = el("input", { type: "file", id: "docIn", class: "sr", multiple: "", accept: ".pdf,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.txt,.doc,.docx,image/*,application/pdf" });
+    var addLbl = el("label", { class: "btn btn-main", for: "docIn", text: "Add documents or photos" });
+    box.appendChild(el("div", { class: "drop" }, [addLbl, pick, el("p", { class: "help", text: "PDF, photos, Word documents and text files, up to 25 MB each." })]));
+    box.appendChild(status);
+    var listBox = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(listBox);
+    var meter = el("p", { class: "help" }); box.appendChild(meter);
+    if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { if (e && e.quota) meter.textContent = "This browser has about " + bytes(e.quota - e.usage) + " of room left for files on this device."; });
+
+    function draw() {
+      docsOf(p.id).then(function (all) {
+        freeUrls(); listBox.textContent = "";
+        var counts = {}; all.forEach(function (r) { counts[r.category] = (counts[r.category] || 0) + 1; });
+        var chips = el("div", { class: "chips", role: "group", "aria-label": "Filter documents" });
+        ["All"].concat(CATS).forEach(function (c) {
+          if (c !== "All" && !counts[c]) return;
+          var b = el("button", { type: "button", class: "chip", "aria-pressed": docFilter === c ? "true" : "false", text: c + (c === "All" ? " (" + all.length + ")" : " (" + counts[c] + ")") });
+          b.addEventListener("click", function () { docFilter = c; draw(); }); chips.appendChild(b);
+        });
+        if (all.length) listBox.appendChild(chips);
+        var shown = all.filter(function (r) { return docFilter === "All" || r.category === docFilter; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || b.added - a.added; });
+        if (!all.length) listBox.appendChild(el("p", { class: "empty", text: "No documents yet." }));
+        shown.forEach(function (r) {
+          var thumb = el("div", { class: "thumb", "aria-hidden": "true", text: OKTYPES[r.type] || "FILE" });
+          if (/^image\/(jpeg|png|webp|gif)$/.test(r.type)) { var u = URL.createObjectURL(r.blob); urls.push(u); thumb.textContent = ""; thumb.appendChild(el("img", { src: u, alt: "" })); }
+          var tid = "dt" + r.id, title = el("input", { type: "text", id: tid, value: r.title });
+          title.addEventListener("input", function () { r.title = title.value.slice(0, 160); putDoc(r); });
+          var cat = el("select", { class: "f", id: "dc" + r.id }); CATS.forEach(function (c) { cat.appendChild(el("option", { value: c, text: c })); }); cat.value = r.category;
+          cat.addEventListener("change", function () { r.category = cat.value; putDoc(r).then(draw); });
+          var dt = el("input", { type: "date", id: "dd" + r.id, value: r.date || "" }); dt.addEventListener("input", function () { r.date = dt.value; putDoc(r); });
+          var nt = el("textarea", { id: "dn" + r.id, rows: "2" }); nt.value = r.notes || ""; nt.addEventListener("input", function () { r.notes = nt.value.slice(0, 1000); putDoc(r); });
+          var openB = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Open" });
+          var canOpen = r.type === "application/pdf" || /^image\/(jpeg|png|webp|gif)$/.test(r.type);
+          if (canOpen) openB.addEventListener("click", function () { var u = URL.createObjectURL(new Blob([r.blob], { type: r.type })); var a = el("a", { href: u, target: "_blank", rel: "noopener" }); document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(u); }, 120000); });
+          var dl = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Download" });
+          dl.addEventListener("click", function () { var u = URL.createObjectURL(r.blob); var a = el("a", { href: u, download: r.name || "document" }); document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(u); }, 5000); });
+          var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove " + r.title);
+          rm.addEventListener("click", function () { if (!window.confirm("Remove \u201c" + r.title + "\u201d from this device?")) return; delDoc(r.id).then(draw); });
+          var acts = el("div", { class: "actions", style: "margin:0" }, canOpen ? [openB, dl, rm] : [dl, rm]);
+          listBox.appendChild(el("div", { class: "doc", role: "group", "aria-label": r.title }, [
+            el("div", { class: "top" }, [thumb, el("div", { style: "flex:1;min-width:0" }, [el("label", { for: tid, text: "Title" }), title, el("div", { class: "meta", text: (OKTYPES[r.type] || "File") + " · " + bytes(r.size) + " · " + (r.name || "") })])]),
+            el("div", { class: "two" }, [el("div", {}, [el("label", { for: "dc" + r.id, text: "Type" }), cat]), el("div", {}, [el("label", { for: "dd" + r.id, text: "Date on the document" }), dt])]),
+            el("div", {}, [el("label", { for: "dn" + r.id, text: "Notes" }), nt]), acts]));
+        });
+      }, function () { listBox.textContent = ""; listBox.appendChild(el("p", { class: "warn", text: "This browser cannot keep files on this device (it may be in private mode). Try a normal window." })); });
+    }
+    pick.addEventListener("change", function () {
+      var files = Array.prototype.slice.call(pick.files || []); pick.value = ""; if (!files.length) return;
+      var ok = 0, bad = [];
+      var chain = files.reduce(function (pr, f) {
+        return pr.then(function () {
+          var t = mime(f);
+          if (!t) { bad.push(f.name + " (type not supported)"); return; }
+          if (f.size > MAXFILE) { bad.push(f.name + " (over 25 MB)"); return; }
+          var rec = { id: id(), profileId: p.id, title: (f.name || "Document").replace(/\.[^.]+$/, "").slice(0, 160), category: /^image\//.test(t) ? "Photos" : "Other", date: today(), notes: "", name: (f.name || "").slice(0, 200), type: t, size: f.size, blob: f, added: Date.now() };
+          return putDoc(rec).then(function () { ok++; });
+        });
+      }, Promise.resolve());
+      chain.then(function () {
+        status.className = bad.length ? "status err" : "status";
+        status.textContent = (ok ? "Added " + ok + " file" + (ok === 1 ? "" : "s") + ". " : "") + (bad.length ? "Could not add: " + bad.join(", ") + "." : "");
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+        draw();
+      }, function () { status.className = "status err"; status.textContent = "Could not save the files on this device. There may not be enough room."; });
+    });
+    draw();
+  }
+
+  /* ---------- appointments ---------- */
+  function whenText(w) { if (!w) return "Date not set"; try { var d = new Date(w.length > 10 ? w : w + "T12:00"); return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) + (w.length > 10 ? ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : ""); } catch (e) { return w; } }
+  function apptTime(a) { return a.when ? new Date(a.when.length > 10 ? a.when : a.when + "T23:59").getTime() : Infinity; }
+  function icsFor(a, who) {
+    function esc(t) { return String(t || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\;"); }
+    var d = a.when.replace(/[-:]/g, ""), allday = a.when.length <= 10, L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//IncludeMe//Passport//EN", "BEGIN:VEVENT", "UID:" + id() + "@includeme.uk", "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d{3}/g, "")];
+    L.push(allday ? "DTSTART;VALUE=DATE:" + d : "DTSTART:" + d + "00");
+    L.push("SUMMARY:" + esc((who ? who + ": " : "") + (a.title || "Appointment")));
+    if (a.where) L.push("LOCATION:" + esc(a.where)); var desc = [a.who && "With: " + a.who, a.notes].filter(Boolean).join("\n"); if (desc) L.push("DESCRIPTION:" + esc(desc));
+    L.push("END:VEVENT", "END:VCALENDAR"); return L.join("\r\n");
+  }
+  function renderAppts() {
+    var box = $("appts"), p = cur(); box.textContent = "";
+    box.appendChild(el("p", { class: "note", text: "Keep appointments here so everything is in one place. They are private: they are not part of the printed passport or shared link." }));
+    var add = el("button", { type: "button", class: "btn btn-main", text: "Add an appointment" });
+    add.addEventListener("click", function () { p.appts.push({ title: "", when: "", who: "", where: "", notes: "" }); save(); draw(); var last = box.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
+    box.appendChild(add);
+    var list = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(list);
+    function draw() {
+      list.textContent = "";
+      if (!p.appts.length) list.appendChild(el("p", { class: "empty", text: "No appointments yet." }));
+      var order = p.appts.map(function (a, i) { return i; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
+      order.forEach(function (i) {
+        var a = p.appts[i], past = a.when && apptTime(a) < Date.now(), n = ++uid;
+        function f(label, key, type, wide) { var fid = "ap" + n + key, c = key === "notes" ? el("textarea", { id: fid, rows: "2" }) : el("input", { id: fid, type: type || "text" }); c.value = a[key] || ""; c.addEventListener("input", function () { a[key] = c.value; save(); }); return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]); }
+        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove appointment " + (a.title || ""));
+        rm.addEventListener("click", function () { p.appts.splice(i, 1); save(); draw(); });
+        var cal = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Add to my calendar" });
+        cal.addEventListener("click", function () { if (!a.when) { savedMsg("Set a date first.", true); return; } var blob = new Blob([icsFor(a, p.preferred || p.name)], { type: "text/calendar" }), u = URL.createObjectURL(blob), lnk = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(lnk); lnk.click(); document.body.removeChild(lnk); setTimeout(function () { URL.revokeObjectURL(u); }, 3000); });
+        list.appendChild(el("div", { class: "appt" + (past ? " past" : ""), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
+          el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center" }, [el("b", { style: "color:var(--plum)", text: whenText(a.when) + (past ? " (past)" : "") }), el("span", { class: "actions", style: "margin:0" }, [cal, rm])]),
+          el("div", { class: "two" }, [f("What is it?", "title"), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])]));
+      });
+    }
+    draw();
+  }
+
+  /* ---------- overview: everything in one place ---------- */
+  function go(sectionTitle) {
+    setMode("edit"); var sums = $("editor").querySelectorAll("summary");
+    for (var i = 0; i < sums.length; i++) if (sums[i].textContent.indexOf(sectionTitle) === 0) { var d = sums[i].parentNode; d.open = true; sums[i].scrollIntoView({ block: "start" }); sums[i].focus(); break; }
+  }
+  function tile(h, big, sub, cls, actions) { var t = el("div", { class: "tile" + (cls ? " " + cls : "") }, [el("p", { class: "tl", text: h }), el("div", { class: "big", text: big })]); if (sub) t.appendChild(el("p", { text: sub })); (actions || []).forEach(function (a) { t.appendChild(a); }); return t; }
+  function lb(text, fn) { var b = el("button", { type: "button", class: "linkbtn", text: text }); b.addEventListener("click", fn); return b; }
+  function renderOverview() {
+    var box = $("overview"), p = cur(); box.textContent = "";
+    var next = p.appts.filter(function (a) { return a.when && apptTime(a) >= Date.now(); }).sort(function (a, b) { return apptTime(a) - apptTime(b); })[0];
+    var grid = el("div", { class: "grid-cards" });
+    grid.appendChild(tile("Next appointment", next ? (next.title || "Appointment") : "None booked", next ? whenText(next.when) + (next.where ? " · " + next.where : "") : "Add the next one so it is not forgotten.", "", [lb(next ? "See all appointments" : "Add an appointment", function () { setMode("appts"); })]));
+    var gdocs = tile("Documents", "…", "", "", [lb("Open documents", function () { setMode("docs"); })]); grid.appendChild(gdocs);
+    docsOf(p.id).then(function (all) { var by = {}; all.forEach(function (r) { by[r.category] = (by[r.category] || 0) + 1; }); gdocs.querySelector(".big").textContent = all.length + (all.length === 1 ? " file" : " files"); var sp = Object.keys(by).map(function (k) { return k + ": " + by[k]; }).join(" · "); gdocs.insertBefore(el("p", { text: sp || "Add reports, letters and photos." }), gdocs.querySelector(".linkbtn")); }, function () { gdocs.querySelector(".big").textContent = "Not available"; gdocs.insertBefore(el("p", { text: "This browser cannot keep files." }), gdocs.querySelector(".linkbtn")); });
+    var mc = p.medsChecked ? (Date.now() - new Date(p.medsChecked + "T12:00:00").getTime()) > 183 * 864e5 : null;
+    var medCount = p.meds.filter(function (m) { return m.name; }).length;
+    grid.appendChild(tile("Medicines", medCount + (medCount === 1 ? " medicine" : " medicines"), p.meds.length ? (p.medsChecked ? (mc ? "Last checked over six months ago. Ask for a review." : "Last checked " + longDate(p.medsChecked) + ".") : "Add when they were last checked.") : (p.noMeds ? "No regular medicines." : "Add medicines, or tick none."), p.meds.length && (mc || !p.medsChecked) ? "warnt" : "", [lb("Open health", function () { go("Health"); })]));
+    var rev = p.school.review ? Math.round((new Date(p.school.review + "T12:00:00").getTime() - Date.now()) / 864e5) : null;
+    grid.appendChild(tile("EHCP annual review", p.school.review ? longDate(p.school.review) : "Not set", p.school.review ? (rev < 0 ? "That date has passed. Has the review happened?" : rev <= 60 ? "Coming up in " + rev + " days. Start collecting reports." : "In " + rev + " days.") : "Add the date it is due.", p.school.review && rev <= 60 ? "warnt" : "", [lb("Open school", function () { go("School"); })]));
+    box.appendChild(grid);
+
+    var items = [
+      ["Add a name", !!p.name, "About me"],
+      ["Say how they communicate", !!(p.communication || p.helps), "How I communicate"],
+      ["Add allergies, or tick no known allergies", p.allergies.some(function (a) { return a.what; }) || p.noAllergies, "Health"],
+      ["Add medicines, or tick none", p.meds.some(function (m) { return m.name; }) || p.noMeds, "Health"],
+      ["Add the GP", p.team.some(function (t) { return t.role === "GP" && (t.name || t.phone); }), "My doctors"],
+      ["Add an emergency contact", p.contacts.some(function (c) { return c.name && c.phone; }), "Emergency contacts"],
+      ["Add the school", !!p.school.name, "School"]
+    ];
+    var done = items.filter(function (i) { return i[1]; }).length, pct = Math.round(done / items.length * 100);
+    var card = el("div", { class: "tile" }, [el("p", { class: "tl", text: "Passport completeness" }), el("div", { class: "big", text: pct + "%" }), el("div", { class: "bar", "aria-hidden": "true" }, [el("i", { style: "width:" + pct + "%" })])]);
+    var ul = el("ul", { class: "todo" });
+    items.forEach(function (it) { var li = el("li", { class: it[1] ? "done" : "" }, [el("span", { class: "dot", "aria-hidden": "true", text: it[1] ? "✓" : "" }), el("span", { class: "t", text: it[0] })]); if (!it[1]) li.appendChild(lb("Do this", function () { go(it[2]); })); else li.appendChild(el("span", { class: "sr", text: " (done)" })); ul.appendChild(li); });
+    card.appendChild(ul); box.appendChild(card);
+    var q = el("div", { class: "actions" }, [lb("See the passport", function () { setMode("view"); }), lb("Emergency card", function () { setMode("card"); }), lb("Add a document", function () { setMode("docs"); })]);
+    box.appendChild(q);
+  }
+
+
+  /* ---------- sign-in: one IncludeMe account, the same email and password as the Activity Finder ---------- */
+  var SB = "https://ysoxkcuuphaivacqmgwr.supabase.co", SBKEY = "sb_publishable_fiRBs6eA8B8nWuaNthZyJA_Yp9LWyXx", SES_KEY = "includeme.passport.auth.v1";
+  function getSession() { try { var s = JSON.parse(localStorage.getItem(SES_KEY)); return s && s.access_token ? s : null; } catch (e) { return null; } }
+  function setSession(v) { try { if (v) localStorage.setItem(SES_KEY, JSON.stringify(v)); else localStorage.removeItem(SES_KEY); } catch (e) { /* storage blocked */ } }
+  var SB_ERR = { invalid_credentials: "That email and password do not match.", email_not_confirmed: "Confirm your email first. Check your inbox for the link we sent.", weak_password: "Choose a stronger password, at least 8 characters.",
+    over_email_send_rate_limit: "Too many emails sent. Please wait a few minutes and try again.", over_request_rate_limit: "Too many attempts. Please wait a few minutes and try again.", same_password: "Choose a password you have not used before.", user_banned: "This account has been disabled. Contact hello@includeme.uk." };
+  function sbFetch(path, opts) {
+    opts = opts || {}; var headers = { apikey: SBKEY, "content-type": "application/json" };
+    if (opts.token) headers.authorization = "Bearer " + opts.token;
+    var ctl = new AbortController(), timer = setTimeout(function () { ctl.abort(); }, 10000);
+    return fetch(SB + path, { method: opts.method || "POST", headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined, signal: ctl.signal })
+      .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { if (!res.ok) { var code = d.error_code || d.code || ""; var e = new Error(SB_ERR[code] || (res.status === 429 ? SB_ERR.over_request_rate_limit : "Something went wrong. Please try again.")); e.status = res.status; e.code = code; throw e; } return d; }); })
+      .finally(function () { clearTimeout(timer); });
+  }
+  function keep(t, fallbackEmail) {
+    var s = { access_token: t.access_token, refresh_token: t.refresh_token, expires_at: Date.now() + ((+t.expires_in || 3600) - 60) * 1000, email: (t.user && t.user.email) || fallbackEmail || "" };
+    setSession(s); return s;
+  }
+  function redirectTo() { return "?redirect_to=" + encodeURIComponent(location.origin + "/"); }
+  function checkAuth() {
+    var s = getSession(); if (!s) return Promise.resolve(false);
+    if (s.expires_at > Date.now()) return Promise.resolve(true);
+    return sbFetch("/auth/v1/token?grant_type=refresh_token", { body: { refresh_token: s.refresh_token } }).then(function (t) { keep(t, s.email); return true; },
+      function (err) { if (err && (err.status === 400 || err.status === 401 || err.status === 403)) { setSession(null); return false; } return true; });   // no signal: stay in
+  }
+  function signOut() { var s = getSession(); setSession(null); if (s) sbFetch("/auth/v1/logout?scope=local", { token: s.access_token }).catch(function () { /* already gone */ }); }
+
+  var gateEmail = "";
+  function gateView(kids) { var c = $("gateCard"); c.textContent = ""; c.appendChild(el("div", { class: "brand" }, [el("img", { src: "logo-passport.svg", alt: "" }), el("span", { text: "All About Me" })])); kids.forEach(function (k) { if (k) c.appendChild(k); }); $("app").hidden = true; $("gate").hidden = false; }
+  function note(msg, isErr) { return msg ? el("p", { class: "msg" + (isErr === false ? " ok" : ""), role: isErr === false ? "status" : "alert", text: msg }) : null; }
+  function privacyLine() { return el("p", { class: "fine", style: "margin-top:14px" }, ["Free to use. Your child's details stay on this device. ", el("a", { href: "privacy.html", text: "Privacy" }), "."]); }
+  function pwField(id, label, autocomplete) {
+    var inp = el("input", { id: id, type: "password", autocomplete: autocomplete, minlength: "8" }), show = el("input", { type: "checkbox", id: id + "S" });
+    show.addEventListener("change", function () { inp.type = show.checked ? "text" : "password"; });
+    return { inp: inp, node: el("div", {}, [el("label", { for: id, text: label }), inp, el("label", { class: "chk2", for: id + "S", style: "min-height:36px;font-weight:500;font-size:13.5px" }, [show, document.createTextNode("Show password")])]) };
+  }
+  function showGate(msg, isErr, mode) {
+    mode = mode === "up" ? "up" : "in";
+    var email = el("input", { id: "gEmail", type: "email", autocomplete: "email", inputmode: "email", placeholder: "you@example.com" }); email.value = gateEmail;
+    var pw = pwField("gPw", "Password", mode === "up" ? "new-password" : "current-password");
+    var btn = el("button", { type: "button", class: "btn btn-main", id: "gGo", text: mode === "up" ? "Create account" : "Sign in" });
+    function go() {
+      var em = email.value.trim(), p = pw.inp.value; gateEmail = em;
+      if (!em) { showGate("Enter your email address.", true, mode); return; }
+      if (!p) { showGate("Enter your password.", true, mode); return; }
+      if (mode === "up" && p.length < 8) { showGate("Choose a password with at least 8 characters.", true, mode); return; }
+      btn.disabled = true; btn.textContent = mode === "up" ? "Creating..." : "Signing in...";
+      if (mode === "up") sbFetch("/auth/v1/signup" + redirectTo(), { body: { email: em, password: p } }).then(function (d) { if (d && d.access_token) { keep(d, em); enterApp(); } else showCheckEmail(); }, function (e) { showGate(e.message, true, mode); });
+      else sbFetch("/auth/v1/token?grant_type=password", { body: { email: em, password: p } }).then(function (t) { keep(t, em); enterApp(); }, function (e) { if (e.code === "email_not_confirmed") showCheckEmail(e.message); else showGate(e.message, true, mode); });
+    }
+    btn.addEventListener("click", go); [email, pw.inp].forEach(function (i) { i.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); }); });
+    var swap = el("button", { type: "button", class: "linkbtn", text: mode === "up" ? "I already have an account" : "Create an account" }); swap.addEventListener("click", function () { gateEmail = email.value.trim(); showGate("", true, mode === "up" ? "in" : "up"); });
+    var forgot = mode === "in" ? el("button", { type: "button", class: "linkbtn", text: "Forgot your password?" }) : null; if (forgot) forgot.addEventListener("click", function () { gateEmail = email.value.trim(); showForgot(); });
+    gateView([el("h1", { text: mode === "up" ? "Create your account" : "Sign in" }),
+      el("p", { text: mode === "up" ? "One IncludeMe account works across the Activity Finder and this app. If you already have a Finder account, sign in with that instead." : "Use your IncludeMe email and password. They are the same as the Activity Finder." }),
+      el("label", { for: "gEmail", text: "Email address" }), email, pw.node, btn, note(msg, isErr), el("div", { class: "actions", style: "margin-top:10px;justify-content:space-between" }, [swap, forgot]),
+      el("p", { class: "fine", style: "margin-top:12px", text: "Anyone you share a passport link with can read it without an account." }), privacyLine()]);
+    (gateEmail ? pw.inp : email).focus();
+  }
+  function showCheckEmail(msg) {
+    var again = el("button", { type: "button", class: "btn btn-ghost", id: "gAgain", text: "Send the email again" });
+    again.addEventListener("click", function () { again.disabled = true; sbFetch("/auth/v1/resend" + redirectTo(), { body: { type: "signup", email: gateEmail } }).then(function () { toolMsg("We sent it again."); again.disabled = false; }, function (e) { toolMsg(e.message, true); again.disabled = false; }); });
+    var back = el("button", { type: "button", class: "linkbtn", text: "Back to sign in" }); back.addEventListener("click", function () { showGate("", true, "in"); });
+    gateView([el("h1", { text: "Check your email" }), el("p", {}, ["We sent a link to ", el("b", { text: gateEmail || "your email" }), ". Tap it to confirm your address, then sign in. If you already have an account, sign in instead or reset your password."]), msg ? note(msg, true) : null, again, el("p", { style: "margin-top:12px" }, [back]), el("p", { class: "fine", text: "Nothing arrived? Check your spam folder." })]);
+  }
+  function showForgot(msg, isErr) {
+    var email = el("input", { id: "gEmail", type: "email", autocomplete: "email", inputmode: "email", placeholder: "you@example.com" }); email.value = gateEmail;
+    var btn = el("button", { type: "button", class: "btn btn-main", id: "gGo", text: "Email me a reset link" });
+    function go() { var em = email.value.trim(); gateEmail = em; if (!em) { showForgot("Enter your email address.", true); return; } btn.disabled = true; btn.textContent = "Sending...";
+      sbFetch("/auth/v1/recover" + redirectTo(), { body: { email: em } }).then(function () { showForgot("If that email has an account, we have sent a reset link. Check your inbox.", false); }, function (e) { showForgot(e.message, true); }); }
+    btn.addEventListener("click", go); email.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+    var back = el("button", { type: "button", class: "linkbtn", text: "Back to sign in" }); back.addEventListener("click", function () { showGate("", true, "in"); });
+    gateView([el("h1", { text: "Reset your password" }), el("p", { text: "We will email you a link to choose a new one. It changes your password for the Activity Finder too." }), el("label", { for: "gEmail", text: "Email address" }), email, btn, note(msg, isErr), el("p", { style: "margin-top:12px" }, [back])]);
+    email.focus();
+  }
+  function showNewPassword(tokens, msg) {
+    var a = pwField("gPw", "New password", "new-password"), b = pwField("gPw2", "Type it again", "new-password");
+    var btn = el("button", { type: "button", class: "btn btn-main", id: "gGo", text: "Save new password" });
+    btn.addEventListener("click", function () {
+      if (a.inp.value.length < 8) { showNewPassword(tokens, "Choose a password with at least 8 characters."); return; }
+      if (a.inp.value !== b.inp.value) { showNewPassword(tokens, "The two passwords do not match."); return; }
+      btn.disabled = true; btn.textContent = "Saving...";
+      sbFetch("/auth/v1/user", { method: "PUT", token: tokens.access_token, body: { password: a.inp.value } }).then(function (u) { keep({ access_token: tokens.access_token, refresh_token: tokens.refresh_token, expires_in: tokens.expires_in, user: u }, ""); toolMsg("Password changed."); enterApp(); }, function (e) { showNewPassword(tokens, e.message); });
+    });
+    gateView([el("h1", { text: "Choose a new password" }), el("p", { text: "This changes your password for the Activity Finder too." }), a.node, b.node, btn, note(msg, true)]);
+    a.inp.focus();
+  }
+  function readAuthHash() {
+    var h = location.hash.slice(1); if (!/(^|&)(access_token|error)=/.test(h)) return null;
+    var p = new URLSearchParams(h); return { access_token: p.get("access_token"), refresh_token: p.get("refresh_token"), type: p.get("type"), expires_in: +p.get("expires_in") || 3600, error: p.get("error_description") || p.get("error") };
+  }
+
+  /* ---------- menus and dialogs ---------- */
+  var openM = null;
+  function closeMenus() { Array.prototype.forEach.call(document.querySelectorAll(".menu"), function (m) { m.hidden = true; }); Array.prototype.forEach.call(document.querySelectorAll("[aria-expanded]"), function (b) { b.setAttribute("aria-expanded", "false"); }); openM = null; }
+  function menuItems(m) { return Array.prototype.filter.call(m.querySelectorAll(".mi"), function (x) { return !x.hidden; }); }
+  function wireMenu(btn, menu) {
+    btn.addEventListener("click", function () { var show = menu.hidden; closeMenus(); if (show) { menu.hidden = false; btn.setAttribute("aria-expanded", "true"); openM = { btn: btn, menu: menu }; var f = menuItems(menu)[0]; if (f) f.focus(); } });
+    menu.addEventListener("keydown", function (e) {
+      var it = menuItems(menu), i = it.indexOf(document.activeElement);
+      if (e.key === "ArrowDown") { e.preventDefault(); (it[i + 1] || it[0]).focus(); } else if (e.key === "ArrowUp") { e.preventDefault(); (it[i - 1] || it[it.length - 1]).focus(); }
+      else if (e.key === "Home") { e.preventDefault(); it[0].focus(); } else if (e.key === "End") { e.preventDefault(); it[it.length - 1].focus(); }
+    });
+  }
+  document.addEventListener("click", function (e) { if (openM && !openM.menu.contains(e.target) && !openM.btn.contains(e.target)) closeMenus(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && openM) { var b = openM.btn; closeMenus(); b.focus(); } });
+  function after(menu, fn) { menu.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".mi") && !e.target.closest("label")) { closeMenus(); } }); }
+
+  function shrinkPhoto(f) {
+    return new Promise(function (res, rej) {
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function () { var c = document.createElement("canvas"), sz = 240, r = Math.min(img.width, img.height), sx = (img.width - r) / 2, sy = (img.height - r) / 2; c.width = c.height = sz; c.getContext("2d").drawImage(img, sx, sy, r, r, 0, 0, sz, sz); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", 0.8)); };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error("photo")); };
+      img.src = url;
+    });
+  }
+  function isEmpty(p) { var b = blank(); b.id = p.id; b.updated = p.updated; return JSON.stringify(b) === JSON.stringify(p); }
+  function named() { return store.profiles.filter(function (p) { return p.name; }); }
+  var dcPhoto = "";
+  function openChildDialog() {
+    closeMenus(); dcPhoto = ""; ["dcName", "dcPref", "dcDob"].forEach(function (i) { $(i).value = ""; }); $("dcErr").textContent = ""; $("dcPic").textContent = "?"; $("dcPhoto").value = "";
+    var d = $("dlgChild"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); $("dcName").focus();
+  }
+  function closeDlg(i) { var d = $(i); if (d.close) d.close(); else d.removeAttribute("open"); }
+  function renderIncl() {
+    var box = $("inclList"); box.textContent = ""; var p = cur();
+    HIDE.forEach(function (h) {
+      var cid = "o_" + h[0], cb = el("input", { type: "checkbox", id: cid }); cb.checked = (p.hide || []).indexOf(h[0]) < 0;
+      cb.addEventListener("change", function () { p.hide = (p.hide || []).filter(function (x) { return x !== h[0]; }); if (!cb.checked) p.hide.push(h[0]); save(); if (mode === "view" || mode === "card") renderViewer(); });
+      box.appendChild(el("label", { class: "chk", for: cid }, [cb, document.createTextNode(h[1])]));
+    });
+    var lc = el("input", { type: "checkbox", id: "o_large" }); lc.checked = !!p.large;
+    lc.addEventListener("change", function () { p.large = lc.checked; save(); if (mode === "view" || mode === "card") renderViewer(); });
+    box.appendChild(el("label", { class: "chk", for: "o_large" }, [lc, document.createTextNode("Large print")]));
+  }
+
+  /* ---------- who and where ---------- */
+  function avatar(span, p) { span.textContent = ""; if (p && p.photo) span.appendChild(el("img", { src: p.photo, alt: "" })); else span.textContent = p && p.name ? initials(p.name) : "+"; }
+  function renderWho() {
+    var menu = $("kidMenu"); menu.textContent = ""; var p = cur();
+    avatar($("kidAv"), p); $("kidName").textContent = p && p.name ? p.name : "Add a child";
+    named().forEach(function (c) {
+      var b = el("button", { type: "button", class: "mi", "aria-current": c.id === store.current ? "true" : "false", text: c.name });
+      b.addEventListener("click", function () { closeMenus(); store.current = c.id; save(); refresh(); }); menu.appendChild(b);
+    });
+    if (named().length) menu.appendChild(el("hr"));
+    var add = el("button", { type: "button", class: "mi", text: "Add a child" }); add.addEventListener("click", function () { if (store.profiles.length >= 12) { toolMsg("That is the most children this page can hold.", true); return; } openChildDialog(); }); menu.appendChild(add);
+    if (p && p.name) { var del = el("button", { type: "button", class: "mi danger", text: "Delete " + p.name + "…" }); del.addEventListener("click", function () { closeMenus(); deleteChild(); }); menu.appendChild(del); }
+  }
+  function deleteChild() {
+    var p = cur(); if (!window.confirm("Delete " + (p.name || "this child") + " and their documents from this device? This cannot be undone. Download a backup first if you want to keep it.")) return;
+    delDocsOf(p.id).catch(function () { /* no files to remove */ });
+    store.profiles = store.profiles.filter(function (x) { return x.id !== p.id; });
+    if (!store.profiles.length) store.profiles.push(blank());
+    store.current = (named()[0] || store.profiles[0]).id; save(); refresh(); toolMsg("Deleted from this device.");
+  }
+  var PANES = { overview: "overview", edit: "editor", appts: "appts", docs: "docs", view: "viewWrap", card: "viewWrap" };
+  var TABS = { overview: "tabOverview", edit: "tabEdit", appts: "tabAppts", docs: "tabDocs", view: "tabView", card: "tabCard" };
+  function emptyState() {
+    var box = $("overview"); box.textContent = "";
+    var add = el("button", { type: "button", class: "btn btn-main", text: "Add a child" }); add.addEventListener("click", openChildDialog);
+    var ex = el("button", { type: "button", class: "btn btn-ghost", text: "See an example" }); ex.addEventListener("click", showExample);
+    box.appendChild(el("div", { class: "empty-state" }, [el("h2", { text: "Start with your child's name" }), el("p", { text: "Make a one-page passport with how they communicate, what helps, medicines, doctors and emergency contacts. Keep their documents and appointments in the same place." }), el("div", { class: "actions", style: "justify-content:center" }, [add, ex])]));
+  }
+  function setMode(m) {
+    if (shared) m = "view";
+    if (!shared && !cur().name && m !== "edit") m = "overview";
+    mode = m;
+    ["editor", "overview", "appts", "docs", "viewWrap"].forEach(function (pid) { $(pid).hidden = PANES[m] !== pid; });
+    Object.keys(TABS).forEach(function (k) { if (k === m) $(TABS[k]).setAttribute("aria-current", "page"); else $(TABS[k]).removeAttribute("aria-current"); });
+    if (m === "view" || m === "card") renderViewer(); else if (m === "overview") { if (!shared && !cur().name) emptyState(); else renderOverview(); } else if (m === "appts") renderAppts(); else if (m === "docs") renderDocs();
+  }
+  function refresh() { renderWho(); renderEditor(); renderIncl(); setMode(mode); }
+  function chrome(on) { $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
+  function showExample() { shared = example(); $("exampleBanner").hidden = false; $("sharedBanner").hidden = true; chrome(false); setMode("view"); }
+  function example() {
+    return clean({ name: "Sam Doe", preferred: "Sam", dob: "2016-04-12", pronouns: "he/him", languages: "English",
+      diagnoses: "Autism\nASD with speech delay", strengths: "Funny, kind to animals, brilliant memory for train timetables.", goals: "Asking for help with words or a sign. Trying new foods.", medsChecked: new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10),
+      communication: "Uses a few words and Makaton signs. Points and leads you by the hand. Says “no” by turning away.",
+      helps: "Warnings before changes. A visual timetable. Quiet space to retreat to.", upsets: "Sudden noise. Changes to the plan without warning. Being touched unexpectedly.",
+      calming: "Headphones, a weighted blanket, looking at his tablet.", sensory: "Hand dryers and fire alarms are very hard. Likes deep pressure hugs.",
+      likes: "Trains, bubbles, swimming.", dislikes: "Wet clothes, tags in tops.", food: "Eats pasta, toast and fruit. Needs a cup with a lid.",
+      personalCare: "Needs help with toileting. Wears pull-ups at night.", sleep: "Wakes around 5am. Settles with a story and music.", safety: "Runs off in open spaces. Needs a hand held near roads.",
+      allergies: [{ what: "Peanuts", reaction: "Hives and swollen lips", action: "Give antihistamine, call 999 if breathing is affected" }],
+      meds: [{ name: "Melatonin", dose: "2mg", when: "7pm", forWhat: "Sleep", prescriber: "Dr A, paediatrician", notes: "Not given at weekends unless asked" }],
+      team: [{ role: "GP", name: "Dr B", org: "Sample Surgery", phone: "01234 567890", email: "", notes: "" }, { role: "Speech and language therapist", name: "C", org: "Sample Community Trust", phone: "", email: "", notes: "Sees Sam fortnightly" }],
+      school: { name: "Sample Primary School", teacher: "Mrs D", senco: "Mr E", ehcp: "Yes" },
+      contacts: [{ name: "Alex Doe", relationship: "Parent", phone: "07700 900001", notes: "Can collect" }, { name: "Jo Doe", relationship: "Grandparent", phone: "07700 900002", notes: "Can collect" }],
+      updated: new Date().toISOString() });
+  }
+
+  /* ---------- starting up ---------- */
+  var wired = false;
+  function enterApp() {
+    $("gate").hidden = true; $("app").hidden = false; load();
+    var s = getSession(); $("acctEmail").textContent = s && s.email ? s.email : ""; $("acctAv").textContent = s && s.email ? s.email[0].toUpperCase() : "?";
+    mode = named().length ? "overview" : "edit"; if (!named().length) mode = "overview";
+    chrome(true); refresh();
+    if (!named().length) openChildDialog();
+  }
+  function wire() {
+    if (wired) return; wired = true;
+    wireMenu($("kidBtn"), $("kidMenu")); wireMenu($("acctBtn"), $("acctMenu")); wireMenu($("shareBtn"), $("shareMenu"));
+    [$("kidMenu"), $("acctMenu"), $("shareMenu")].forEach(function (m) { after(m); });
+    Object.keys(TABS).forEach(function (k) { $(TABS[k]).addEventListener("click", function () { setMode(k); }); });
+    $("print").addEventListener("click", function () { if (!shared && mode !== "view" && mode !== "card") setMode("view"); setTimeout(function () { window.print(); }, 50); });
+    $("printShared").addEventListener("click", function () { window.print(); });
+    $("miText").addEventListener("click", function () { copy(asText(cur()), "Copied. Paste it into a message or email."); });
+    $("miLink").addEventListener("click", function () {
+      encodeShare(cur()).then(function (t) {
+        var link = location.origin + location.pathname + "#p=" + t;
+        if (link.length > 6000) { toolMsg("This passport is too long for a link. Print it or copy it as text instead.", true); return; }
+        if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) { navigator.share({ title: "All About Me passport", url: link }).catch(function () { copy(link, "Link copied. Anyone with it can read the passport."); }); }
+        else copy(link, "Link copied. Anyone with it can read the passport.");
+      });
+    });
+    $("inclBtn").addEventListener("click", function () { renderIncl(); var d = $("dlgIncl"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); });
+    $("diDone").addEventListener("click", function () { closeDlg("dlgIncl"); });
+    $("exampleBack").addEventListener("click", function () { shared = null; $("exampleBanner").hidden = true; chrome(true); refresh(); });
+    $("saveShared").addEventListener("click", function () {
+      if (!getSession()) { toolMsg("Sign in first to save a copy. Open the passport app and sign in.", true); return; }
+      load(); var p = clean(shared); p.id = id(); store.profiles = store.profiles.filter(function (x) { return !isEmpty(x); }); store.profiles.push(p); store.current = p.id; shared = null;
+      $("sharedBanner").hidden = true; history.replaceState(null, "", location.pathname); save(); chrome(true); mode = "overview"; refresh(); toolMsg("Saved on this device.");
+    });
+    $("miSignOut").addEventListener("click", function () { signOut(); closeMenus(); showGate("You are signed out. Your passports are still saved on this device.", false); });
+    /* add a child */
+    $("dcCancel").addEventListener("click", function () { closeDlg("dlgChild"); });
+    $("dcName").addEventListener("input", function () { $("dcErr").textContent = ""; if (!dcPhoto) $("dcPic").textContent = initials($("dcName").value) === "?" ? "?" : initials($("dcName").value); });
+    $("dcPhoto").addEventListener("change", function () { var f = $("dcPhoto").files && $("dcPhoto").files[0]; if (!f) return; shrinkPhoto(f).then(function (d) { dcPhoto = d; $("dcPic").textContent = ""; $("dcPic").appendChild(el("img", { src: d, alt: "" })); }, function () { $("dcErr").textContent = "That photo could not be read. Try a different one."; }); });
+    $("childForm").addEventListener("submit", function (e) {
+      e.preventDefault(); var nm = $("dcName").value.trim(); if (!nm) { $("dcErr").textContent = "Enter your child's name."; $("dcName").focus(); return; }
+      var p = blank(); p.name = nm.slice(0, LIM.short); p.preferred = $("dcPref").value.trim().slice(0, LIM.short); p.dob = /^\d{4}-\d{2}-\d{2}$/.test($("dcDob").value) ? $("dcDob").value : ""; p.photo = dcPhoto;
+      store.profiles = store.profiles.filter(function (x) { return !isEmpty(x); }); store.profiles.push(p); store.current = p.id; save(); closeDlg("dlgChild"); mode = "overview"; refresh(); toolMsg("Added " + p.name + ".");
+    });
+    /* backups */
+    function saveFile(text, name) { var blob = new Blob([text], { type: "application/json" }), a = el("a", { href: URL.createObjectURL(blob), download: name }); document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000); }
+    function fname(suffix) { return "all-about-me-" + ((cur().name || "child").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "child") + suffix + ".json"; }
+    $("miDownload").addEventListener("click", function () { saveFile(JSON.stringify(cur(), null, 1), fname("")); toolMsg("Backup downloaded. It has the passport and appointments, but not documents. Keep it somewhere safe."); });
+    function b64(blob) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(",")[1] || ""); }; r.onerror = function () { rej(r.error); }; r.readAsDataURL(blob); }); }
+    $("miDownloadFull").addEventListener("click", function () {
+      toolMsg("Preparing the backup...");
+      docsOf(cur().id).then(function (all) {
+        return Promise.all(all.map(function (r) { return b64(r.blob).then(function (d) { return { title: r.title, category: r.category, date: r.date, notes: r.notes, name: r.name, type: r.type, size: r.size, data: d }; }); }));
+      }).then(function (docs) { saveFile(JSON.stringify({ passport: cur(), documents: docs }), fname("-with-documents")); toolMsg("Backup downloaded with " + docs.length + " document" + (docs.length === 1 ? "" : "s") + ". It can be large, and it holds everything, so keep it safe."); },
+        function () { toolMsg("Could not read the documents on this device.", true); });
+    });
+    $("upload").addEventListener("change", function () {
+      var f = $("upload").files && $("upload").files[0]; if (!f) return; closeMenus();
+      if (f.size > 250 * 1024 * 1024) { toolMsg("That file is too big to be a passport backup.", true); return; }
+      var r = new FileReader();
+      r.onload = function () {
+        var raw; try { raw = JSON.parse(String(r.result)); } catch (e) { toolMsg("That file is not a passport backup.", true); $("upload").value = ""; return; }
+        var p = clean(raw && raw.passport ? raw.passport : raw); p.id = id(); store.profiles = store.profiles.filter(function (x) { return !isEmpty(x); }); store.profiles.push(p); store.current = p.id; save(); mode = "overview";
+        var docs = raw && Array.isArray(raw.documents) ? raw.documents.slice(0, 200) : [], n = 0;
+        function bin(d) { var s2 = atob(d), a = new Uint8Array(s2.length); for (var i = 0; i < s2.length; i++) a[i] = s2.charCodeAt(i); return a; }
+        docs.reduce(function (pr, d) {
+          return pr.then(function () {
+            var t = d && typeof d.type === "string" && OKTYPES[d.type] ? d.type : ""; if (!t || typeof d.data !== "string") return;
+            var blob; try { blob = new Blob([bin(d.data)], { type: t }); } catch (e) { return; } if (blob.size > MAXFILE) return;
+            return putDoc({ id: id(), profileId: p.id, title: s(d.title, 160) || "Document", category: CATS.indexOf(d.category) >= 0 ? d.category : "Other", date: /^\d{4}-\d{2}-\d{2}$/.test(d.date || "") ? d.date : "", notes: s(d.notes, 1000), name: s(d.name, 200), type: t, size: blob.size, blob: blob, added: Date.now() }).then(function () { n++; });
+          });
+        }, Promise.resolve()).then(function () { refresh(); toolMsg("Loaded " + (p.name || "the child") + (docs.length ? " with " + n + " document" + (n === 1 ? "" : "s") : "") + ". Check it over."); }, function () { refresh(); toolMsg("Loaded, but the documents could not be saved on this device.", true); });
+        $("upload").value = "";
+      };
+      r.readAsText(f);
+    });
+    var deferred = null;
+    window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; $("miInstall").hidden = false; });
+    $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
+    $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { /* offline use is a bonus */ }); });
+  }
+  function init() {
+    wire();
+    var ah = readAuthHash();
+    if (ah) {
+      history.replaceState(null, "", location.pathname);
+      if (ah.error || !ah.access_token) { showGate(ah.error ? "That link has expired or was already used. Sign in, or ask for a new one." : "That link could not be used.", true, "in"); return; }
+      if (ah.type === "recovery") { showNewPassword(ah); return; }
+      sbFetch("/auth/v1/user", { method: "GET", token: ah.access_token }).then(function (u) { keep({ access_token: ah.access_token, refresh_token: ah.refresh_token, expires_in: ah.expires_in, user: u }, ""); toolMsg("Email confirmed. Welcome."); enterApp(); }, function () { showGate("Your email is confirmed. Sign in to continue.", false, "in"); });
+      return;
+    }
+    var m = /^#p=([zj]\.[A-Za-z0-9_-]+)$/.exec(location.hash);
+    if (m) {
+      decodeShare(m[1]).then(function (p) { shared = p; $("gate").hidden = true; $("app").hidden = false; $("sharedBanner").hidden = false; chrome(false); setMode("view"); },
+        function () { toolMsg("That link could not be opened. Ask for a fresh one.", true); checkAuth().then(function (ok) { if (ok) enterApp(); else showGate(); }); });
+      return;
+    }
+    checkAuth().then(function (ok) { if (ok) enterApp(); else showGate(); });
+  }
+  init();
+})();
+</script>
+</body>
+</html>
