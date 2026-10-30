@@ -137,7 +137,8 @@ footer a { text-decoration: none; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
 .bar.on-dark .app-pp[aria-current] { background: #fff; color: #3B1F63; }
-.app-pp em { background: #E8663C; color: #fff; }
+@media (max-width: 480px) { .app-home { display: none; } .apps { min-width: 0; overflow-x: auto; scrollbar-width: none; } .app { flex: none; white-space: nowrap; } }
+.app-pp em { background: #E8663C; color: #1B1530; }
 </style>
 </head>
 <body>

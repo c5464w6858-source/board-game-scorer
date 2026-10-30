@@ -4,153 +4,257 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>All About Me: a one-page profile for your child | IncludeMe</title>
-<meta name="description" content="A one-page profile for children with SEND: how they communicate, what helps, medicines, doctors and emergency contacts, with documents and appointments in the same place. It stays on your device. Sign in with your Advocate email.">
+<meta name="description" content="A free one-page profile for children with SEND: how they communicate, what helps, medicines, doctors and emergency contacts, with documents and appointments in the same place. It stays on your device. Sign in with your IncludeMe account.">
 <link rel="canonical" href="https://info.includeme.uk/passport/">
-<meta property="og:title" content="All About Me: a one-page profile for your child">
-<meta property="og:description" content="Communication, what helps, medicines, doctors, documents and appointments in one place. It stays on your device.">
+<meta property="og:title" content="All About Me: a one-page profile for your child | IncludeMe">
+<meta property="og:description" content="Communication, what helps, medicines, doctors, documents and appointments in one place. Free. It stays on your device.">
 <meta property="og:url" content="https://info.includeme.uk/passport/">
-<meta property="og:type" content="website">
 <meta property="og:image" content="https://info.includeme.uk/assets/fb-passport.png">
+<meta property="og:image:alt" content="All About Me: a one-page profile for your child">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://info.includeme.uk/assets/fb-passport.png">
 <link rel="icon" href="../assets/logo-passport.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-:root { --bg:#F6F4FA; --surface:#fff; --ink:#1B1530; --muted:#625A75; --line:#E3DEEC; --plum:#3B1F63; --plum-2:#4E2D80; --plum-soft:#F0EBF8; --accent:#E8663C; --accent-dk:#9A3412; }
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-body { background:var(--bg); color:var(--ink); font:400 16px/1.65 Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
-a { color:inherit; }
-img { max-width:100%; display:block; }
-.wrap { max-width:980px; margin:0 auto; padding:0 20px; }
-h1,h2,h3 { font-family:Fraunces,Georgia,serif; font-weight:700; line-height:1.15; letter-spacing:-.015em; color:var(--plum); }
-:focus-visible { outline:3px solid #2557D6; outline-offset:3px; border-radius:6px; }
-.skip { position:absolute; left:12px; top:-80px; background:#fff; color:var(--plum); padding:10px 16px; border:2px solid var(--plum); border-radius:8px; font-weight:700; z-index:50; text-decoration:none; }
-.skip:focus { top:8px; }
-.btn { display:inline-flex; align-items:center; justify-content:center; font:600 16px/1.2 Inter,sans-serif; padding:14px 22px; min-height:48px; border-radius:8px; text-decoration:none; border:1px solid transparent; }
-.btn-main { background:var(--plum); color:#fff; }
-.btn-main:hover { background:var(--plum-2); }
-.btn-ghost { background:#fff; border-color:#CFC8DE; color:var(--plum); }
-.btn-ghost:hover { border-color:var(--plum); }
-header.bar { background:var(--surface); border-bottom:1px solid var(--line); }
-.bar-in { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:64px; }
-.brand { display:flex; align-items:center; gap:10px; text-decoration:none; font:700 18px Fraunces,serif; color:var(--plum); }
-.brand img { width:32px; height:32px; }
-nav a { text-decoration:none; font-weight:600; font-size:14.5px; color:var(--muted); padding:10px 8px; display:inline-block; }
-nav a:hover { color:var(--plum); }
-.hero { background:linear-gradient(160deg,#24103F 0%,var(--plum) 70%,var(--plum-2) 100%); color:#fff; }
-.hero-in { display:grid; grid-template-columns:1.25fr .75fr; gap:36px; align-items:center; padding:56px 0 64px; }
-.eyebrow { font-size:12.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#F4B79F; margin-bottom:12px; }
-.hero h1 { color:#fff; font-size:clamp(2.1rem,5vw,3.2rem); }
-.hero p { color:rgba(255,255,255,.9); font-size:1.1rem; margin-top:16px; max-width:56ch; }
-.hero .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
-.hero .btn-main { background:#fff; color:var(--plum); }
-.hero .btn-main:hover { background:#F0EBF8; }
-.hero .btn-ghost { background:transparent; border-color:rgba(255,255,255,.5); color:#fff; }
-.hero small { display:block; margin-top:14px; color:rgba(255,255,255,.75); font-size:14px; }
-.cover { justify-self:center; width:min(220px,100%); filter:drop-shadow(0 22px 30px rgba(0,0,0,.4)); transform:rotate(3deg); }
-section { padding:56px 0; }
-h2 { font-size:clamp(1.5rem,3vw,2rem); margin-bottom:10px; }
-.lead { color:var(--muted); max-width:62ch; }
-.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
-.card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; }
-.card h3 { font-size:1.1rem; margin-bottom:6px; }
-.card p { color:var(--muted); font-size:15px; }
-.steps { list-style:none; counter-reset:s; display:grid; gap:14px; max-width:720px; margin-top:20px; }
-.steps li { counter-increment:s; display:grid; grid-template-columns:36px 1fr; gap:14px; }
-.steps li::before { content:counter(s); width:34px; height:34px; border-radius:50%; background:var(--plum); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; }
-.steps b { color:var(--plum); }
-.band { background:var(--surface); border-block:1px solid var(--line); }
-.safe { display:grid; gap:8px; margin-top:16px; list-style:none; }
-.safe li::before { content:"✓"; color:var(--accent-dk); font-weight:700; margin-right:10px; }
-.end { background:var(--plum); color:#fff; border-radius:14px; padding:34px; text-align:center; }
-.end h2 { color:#fff; }
-.end p { color:rgba(255,255,255,.88); margin:0 auto 20px; max-width:54ch; }
-.end .btn-main { background:#fff; color:var(--plum); }
-footer { padding:36px 0; font-size:14.5px; color:var(--muted); }
-footer .wrap { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:20px; }
-footer a { text-decoration:none; margin-right:14px; }
-@media (max-width:760px) { .hero-in { grid-template-columns:1fr; padding:40px 0 48px; } .cover { display:none; } .grid { grid-template-columns:1fr; } nav { display:none; } }
+:root {
+  --bg: #F6F4FA; --surface: #fff; --ink: #1B1530; --muted: #625A75; --line: #E3DEEC;
+  --teal: #0F6B5C; --teal-soft: #E4F1EC;
+  --navy: #3B1F63; --navy-2: #4E2D80; --navy-soft: #F0EBF8; --gold: #E8663C; --gold-dk: #9A3412;
+  --green: #1E9D6E;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.65 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-height: 1.12; letter-spacing: -.02em; }
+h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); }
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+h3 { font-size: 1.25rem; }
+section { padding: 88px 0; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dk); margin-bottom: 14px; }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 58ch; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 Inter, sans-serif; padding: 14px 24px; border-radius: 999px; text-decoration: none; border: 1.5px solid transparent; transition: background .15s, transform .15s; white-space: nowrap; }
+.btn-gold { background: var(--gold); color: #1B1530; }
+.btn-gold:hover { background: #F07A52; transform: translateY(-1px); }
+.btn-line { border-color: rgba(255,255,255,.4); color: #fff; }
+.btn-line:hover { border-color: #fff; }
+
+/* top bar (sits inside the hero) */
+.bar { position: relative; z-index: 2; }
+.bar-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 80px; }
+.home { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; font-size: 21px; letter-spacing: -.02em; color: var(--ink); text-decoration: none; }
+.home img { width: 40px; height: 40px; }
+.apps { display: flex; gap: 6px; align-items: center; }
+.app { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 8px; border-radius: 999px; background: rgba(255,255,255,.55); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; transition: background .15s; }
+.app img { width: 28px; height: 28px; }
+.app-home { padding: 10px 18px; }
+.app:hover { background: rgba(255,255,255,.85); }
+.app .short { display: none; }
+.app em { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: #E8663C; color: #1B1530; padding: 2px 8px; border-radius: 999px; margin-left: 2px; }
+.app[aria-current] { background: var(--ink); color: #fff; }
+.bar.on-dark .home { color: #fff; }
+.bar.on-dark .app { background: rgba(255,255,255,.13); color: #fff; }
+.bar.on-dark .app:hover { background: rgba(255,255,255,.24); }
+.bar.on-dark .app-im[aria-current] { background: #4FD1A1; color: #0A3F36; }
+.bar.on-dark .app-adv[aria-current] { background: #E8663C; color: #1B1530; }
+.bar.on-dark .app-home[aria-current] { background: #fff; color: var(--ink); }
+@media (max-width: 720px) {
+  .bar-in { height: 64px; }
+  .home { font-size: 19px; }
+  .home img { width: 34px; height: 34px; }
+  .apps { gap: 4px; }
+  .app { padding: 5px 11px 5px 6px; font-size: 13px; gap: 6px; }
+  .app-home { padding: 8px 12px; }
+  .app img { width: 22px; height: 22px; }
+  .app .long, .app em { display: none; }
+  .app .short { display: inline; }
+}
+@media (max-width: 480px) { .home span { display: none; } }
+
+.hero { position: relative; overflow: hidden; isolation: isolate; color: #fff; padding: 0; background: linear-gradient(160deg, #2A1546 0%, #3B1F63 55%, #4E2D80 100%); border-bottom: 4px solid var(--gold); }
+.hero::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(232,102,60,.22), transparent); z-index: -1; }
+.hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: end; }
+.hero-copy { padding: 80px 0; }
+.pill { display: inline-block; background: var(--gold); color: #1B1530; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.hero .lead { color: rgba(255,255,255,.82); margin: 22px 0 32px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.stage { position: relative; height: 520px; display: flex; justify-content: center; align-items: flex-end; }
+.phone { width: min(290px, 70%); position: relative; bottom: -40px; background: #150A28; padding: 7px; border-radius: 38px; box-shadow: 0 0 0 3px var(--gold), 0 0 60px rgba(232,102,60,.25), 0 40px 80px rgba(0,0,0,.5); }
+.phone img { border-radius: 31px; width: 100%; height: auto; }
+
+/* clock */
+.section-head { max-width: 660px; margin-bottom: 48px; }
+.clock { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.milestone { background: var(--navy); color: #fff; border-radius: 22px; padding: 30px; border-top: 4px solid var(--gold); }
+.milestone b { font: 700 3.6rem/1 Fraunces, serif; color: var(--gold); }
+.milestone small { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.7); margin: 6px 0 14px; }
+.milestone h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.milestone p { font-size: 15px; color: rgba(255,255,255,.78); }
+.note { margin-top: 22px; font-size: 14.5px; color: var(--muted); max-width: 70ch; }
+
+/* features */
+.alt { background: var(--surface); border-block: 1px solid var(--line); }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat { background: var(--bg); border: 1px solid var(--line); border-radius: 18px; padding: 28px; border-top: 3px solid var(--gold); }
+.feat h3 { font: 700 1.05rem Inter, sans-serif; letter-spacing: 0; color: var(--navy); margin-bottom: 6px; }
+.feat p { color: var(--muted); font-size: 15px; }
+
+/* pricing */
+.price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 860px; }
+.price { border-radius: 22px; padding: 34px; border: 1px solid var(--line); background: var(--surface); }
+.price.adv { background: var(--navy); color: #fff; border: 0; border-top: 4px solid var(--gold); }
+.price h3 { margin-bottom: 6px; }
+.price .amt { font: 700 2.2rem/1.1 Fraunces, serif; margin: 14px 0; color: var(--teal); }
+.price.adv .amt { color: var(--gold); }
+.price p, .price li { font-size: 15px; color: var(--muted); }
+.price.adv p, .price.adv li { color: rgba(255,255,255,.78); }
+.price ul { list-style: none; margin-top: 16px; display: grid; gap: 8px; }
+.tiers { margin-top: 16px; border-top: 1px solid rgba(255,255,255,.18); }
+.tiers div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.18); font-size: 15px; color: rgba(255,255,255,.85); }
+.tiers b { color: var(--gold); font-weight: 700; white-space: nowrap; }
+.price li::before { content: "✓"; font-weight: 700; margin-right: 8px; color: var(--green); }
+.price.adv li::before { color: var(--gold); }
+
+/* faq */
+.faq { max-width: 760px; }
+details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; color: var(--navy); }
+details p { margin-top: 10px; color: var(--muted); }
+
+footer { padding: 48px 0 36px; font-size: 14.5px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 24px; }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--navy); }
+
+@media (max-width: 900px) {
+  section { padding: 64px 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .hero-copy { padding: 56px 0 32px; }
+  .stage { height: clamp(330px, 92vw, 520px); }
+  .clock, .feat-grid, .price-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+.bar.on-dark .app-pp[aria-current] { background: #E8663C; color: #1B1530; }
+.app-pp em { background: #E8663C; color: #1B1530; }
+
+.phone img { aspect-ratio: 1262 / 2152; object-fit: cover; object-position: top; }
+.steps { list-style: none; display: grid; gap: 14px; max-width: 760px; counter-reset: s; }
+.steps li { counter-increment: s; display: flex; gap: 16px; align-items: flex-start; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+.steps li::before { content: counter(s); flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; font: 700 15px/34px Inter, sans-serif; text-align: center; }
+.safe { list-style: none; display: grid; gap: 10px; max-width: 760px; margin-top: 8px; }
+.safe li { padding-left: 28px; position: relative; color: var(--muted); }
+.safe li::before { content: "\2713"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+.end { background: var(--navy); color: #fff; border-radius: 22px; border-top: 4px solid var(--gold); padding: 40px 32px; text-align: center; }
+.end h2 { color: #fff; } .end p { color: rgba(255,255,255,.8); margin: 12px 0 24px; }
+@media (max-width: 480px) { .wrap { padding: 0 18px; } .app-home { display: none; } .apps { min-width: 0; overflow-x: auto; scrollbar-width: none; } .app { flex: none; white-space: nowrap; } }
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to the content</a>
-<header class="bar">
-  <div class="wrap bar-in">
-    <a class="brand" href="../" aria-label="IncludeMe home"><img src="../assets/logo-passport.svg" alt=""><span>IncludeMe</span></a>
-    <nav aria-label="Main"><a href="../">Home</a><a href="../ehcp-deadline-calculator/">Calculator</a><a href="../advocate/">Advocate</a><a href="../contact/">Contact</a></nav>
+<main>
+
+<section class="hero">
+  <header class="bar on-dark">
+    <div class="wrap bar-in">
+      <a class="home" href="../" aria-label="IncludeMe home"><img src="../assets/logo-includeme.svg" alt=""><span>IncludeMe</span></a>
+      <nav class="apps" aria-label="Main">
+        <a class="app app-home" href="../">Home</a>
+        <a class="app app-im" href="../finder/"><img src="../assets/logo-includeme.svg" alt=""><span class="long">Activity &amp; Therapy Finder</span><span class="short">Finder</span></a>
+        <a class="app app-adv" href="../advocate/"><img src="../assets/logo-advocate.svg" alt=""><span class="long">Advocate EHCP app</span><span class="short">Advocate</span><em>New</em></a>
+        <a class="app app-pp" href="../passport/" aria-current="page"><img src="../assets/logo-passport.svg" alt=""><span class="long">All About Me</span><span class="short">Passport</span><em>Free</em></a>
+      </nav>
+    </div>
+  </header>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="pill">Free for families</span>
+      <h1>Everything about your child, <em>in one place.</em></h1>
+      <p class="lead">One place for the things every school, club and doctor asks. How they communicate, what helps, medicines, doctors and emergency contacts, plus their documents and appointments.</p>
+      <div class="hero-btns">
+        <a class="btn btn-gold" href="https://includeme-passport.netlify.app/">Open All About Me</a>
+        <a class="btn btn-line" href="#how">How it works</a>
+      </div>
+      <p style="margin-top:18px;font-size:14.5px;color:rgba(255,255,255,.75)">Free. Sign in with your IncludeMe account, the same email and password as the Activity Finder.</p>
+    </div>
+    <div class="stage">
+      <div class="phone"><img src="../assets/passport-screen.jpg" width="1170" height="2532" alt="All About Me: an example profile for Sam with an emergency box showing allergy, GP and contacts"></div>
+    </div>
   </div>
-</header>
+</section>
 
-<div class="hero">
-  <div class="wrap hero-in">
-    <div>
-      <p class="eyebrow">For parents and carers of children with SEND</p>
-      <h1>All About Me</h1>
-      <p>One place for the things every school, club and doctor asks about your child. How they communicate, what helps, medicines, doctors and emergency contacts, plus their documents and appointments.</p>
-      <div class="cta">
-        <a class="btn btn-main" href="https://includeme-passport.netlify.app/">Open All About Me</a>
-        <a class="btn btn-ghost" href="#how">How it works</a>
-      </div>
-      <small>Free. Sign in with your IncludeMe account, the same email and password as the Activity Finder.</small>
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">What it does</p>
+      <h2>Fill it in once. Use it everywhere.</h2>
+      <p class="lead">Print it, share it, or keep it ready for the next meeting.</p>
     </div>
-    <svg class="cover" viewBox="0 0 200 260" aria-hidden="true" focusable="false"><rect x="8" y="8" width="184" height="244" rx="14" fill="#24103F" stroke="#E8663C" stroke-width="4"/><rect x="22" y="22" width="156" height="216" rx="8" fill="none" stroke="#E8663C" stroke-width="1.5" stroke-dasharray="4 5"/><circle cx="100" cy="104" r="40" fill="none" stroke="#E8663C" stroke-width="3"/><circle cx="88" cy="94" r="9" fill="#E8663C"/><circle cx="114" cy="98" r="7" fill="#fff" opacity=".85"/><path d="M70 132 Q70 112 88 112 Q106 112 106 132Z" fill="#fff" opacity=".9"/><path d="M104 130 Q104 114 114 114 Q126 114 126 130Z" fill="#E8663C" opacity=".7"/><text x="100" y="178" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="17" fill="#fff">ALL ABOUT ME</text></svg>
+    <div class="feat-grid">
+      <div class="feat"><h3>A one-page passport</h3><p>How they communicate, what helps and upsets them, sensory needs, food, sleep and staying safe, with an emergency summary at the top.</p></div>
+      <div class="feat"><h3>Medicines and doctors</h3><p>Every medicine with dose and timing, allergies, the GP and the rest of the team, and a reminder when the list was last checked.</p></div>
+      <div class="feat"><h3>Documents and appointments</h3><p>Keep reports, letters and photos of paperwork with the passport, and every appointment with a calendar file for your phone.</p></div>
+      <div class="feat"><h3>Choose what to share</h3><p>Leave out the NHS number, medicines or contacts for a particular club or school before you print or send it.</p></div>
+      <div class="feat"><h3>An emergency card</h3><p>A small printable card for your wallet or your child&rsquo;s school bag with allergies, medicines and who to call.</p></div>
+      <div class="feat"><h3>One for each child</h3><p>Add as many children as you need and switch between them in a tap.</p></div>
+    </div>
   </div>
-</div>
+</section>
 
-<main id="main">
-  <section>
-    <div class="wrap">
-      <h2>Everything about your child, in one place</h2>
-      <p class="lead">Fill it in once. Print it, share it, or keep it ready for the next meeting.</p>
-      <div class="grid">
-        <div class="card"><h3>A one-page passport</h3><p>How they communicate, what helps and upsets them, sensory needs, food, sleep and staying safe, with an emergency summary at the top.</p></div>
-        <div class="card"><h3>Medicines and doctors</h3><p>Every medicine with dose and timing, allergies, the GP and the rest of the team, and a reminder when the list was last checked.</p></div>
-        <div class="card"><h3>Documents and appointments</h3><p>Keep reports, letters and photos of paperwork with the passport, and every appointment with a calendar file for your phone.</p></div>
-        <div class="card"><h3>Choose what to share</h3><p>Leave out the NHS number, medicines or contacts for a particular club or school before you print or send it.</p></div>
-        <div class="card"><h3>An emergency card</h3><p>A small printable card for your wallet or your child's school bag with allergies, medicines and who to call.</p></div>
-        <div class="card"><h3>One for each child</h3><p>Add as many children as you need and switch between them in a tap.</p></div>
-      </div>
-    </div>
-  </section>
+<section class="alt" id="how">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">How it works</p><h2>Three steps.</h2></div>
+    <ol class="steps">
+      <li><span><b>Sign in</b> with your IncludeMe email and password (the same as the Activity Finder), or create a free account.</span></li>
+      <li><span><b>Add your child</b> by name and fill in what you want. Each section is optional.</span></li>
+      <li><span><b>Print or share it.</b> A shared link opens for the person you send it to without an account.</span></li>
+    </ol>
+  </div>
+</section>
 
-  <section class="band" id="how">
-    <div class="wrap">
-      <h2>How it works</h2>
-      <ol class="steps">
-        <li><span><b>Sign in</b> with your IncludeMe email and password (the same as the Activity Finder), or create a free account.</span></li>
-        <li><span><b>Add your child</b> by name and fill in what you want. Each section is optional.</span></li>
-        <li><span><b>Print or share it.</b> A shared link opens for the person you send it to without an account.</span></li>
-      </ol>
-    </div>
-  </section>
+<section>
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Privacy</p><h2>Your child&rsquo;s details stay with you.</h2></div>
+    <ul class="safe">
+      <li>Everything is saved on your own phone or computer. It is not uploaded to us.</li>
+      <li>Documents and photos stay on the device and are never included in a link or printout.</li>
+      <li>You decide what each printout, copy or link includes.</li>
+      <li>It is not a medical record. Check medicines against the label or your pharmacist.</li>
+    </ul>
+  </div>
+</section>
 
-  <section>
-    <div class="wrap">
-      <h2>Your child's details stay with you</h2>
-      <ul class="safe">
-        <li>Everything is saved on your own phone or computer. It is not uploaded to us.</li>
-        <li>Documents and photos stay on the device and are never included in a link or printout.</li>
-        <li>You decide what each printout, copy or link includes.</li>
-        <li>It is not a medical record. Check medicines against the label or your pharmacist.</li>
-      </ul>
-    </div>
-  </section>
+<section class="alt">
+  <div class="wrap faq">
+    <div class="section-head"><p class="eyebrow">Questions</p><h2>Good to know.</h2></div>
+    <details><summary>Is it really free?</summary><p>Yes. All About Me is free to use. You only need an IncludeMe account, which is also free.</p></details>
+    <details><summary>Do I need a new account?</summary><p>No. If you already use the Activity &amp; Therapy Finder, sign in with the same email and password. Otherwise you can create an account in a minute.</p></details>
+    <details><summary>Is there an app to download?</summary><p>Not from an app store. It is a website that you can add to your Home Screen so it opens like an app, on iPhone, Android or a computer.</p></details>
+    <details><summary>What if I lose my phone?</summary><p>Your passports are kept on your device, so there is a backup option in the account menu. Save a backup now and then, and you can load it on any device.</p></details>
+    <details><summary>Is this medical or legal advice?</summary><p>No. It helps you keep information in one place. Check medicines against the label or your pharmacist.</p></details>
+  </div>
+</section>
 
-  <section>
-    <div class="wrap">
-      <div class="end">
-        <h2>Ready to make one?</h2>
-        <p>It takes a few minutes to start, and you can add more any time.</p>
-        <a class="btn btn-main" href="https://includeme-passport.netlify.app/">Open All About Me</a>
-      </div>
+<section>
+  <div class="wrap">
+    <div class="end">
+      <h2>Ready to make one?</h2>
+      <p>It takes a few minutes to start, and you can add more any time.</p>
+      <a class="btn btn-gold" href="https://includeme-passport.netlify.app/">Open All About Me</a>
     </div>
-  </section>
+  </div>
+</section>
+
 </main>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 IncludeMe. Built in Surrey, UK.</span>
-    <span><a href="../advocate/">Advocate</a><a href="../finder/">Activity &amp; Therapy Finder</a><a href="../ehcp-deadline-calculator/">Calculator</a><a href="../contact/">Contact</a></span>
+    <span>&copy; 2026 IncludeMe. Built in Surrey, UK.</span>
+    <span><a href="../advocate/">Advocate</a> &middot; <a href="../finder/">Activity &amp; Therapy Finder</a> &middot; <a href="../ehcp-deadline-calculator/">Free deadline calculator</a> &middot; <a href="../contact/">Contact</a> &middot; <a href="https://includeme-passport.netlify.app/privacy.html" target="_blank" rel="noopener">Privacy</a></span>
   </div>
 </footer>
 
