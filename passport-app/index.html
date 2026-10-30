@@ -92,6 +92,10 @@ h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-heigh
 .toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 11px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; max-width: min(92vw, 520px); z-index: 80; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
 .toast:empty { display: none; }
 .toast.err { background: var(--red); }
+.install { align-items: flex-start; justify-content: space-between; }
+.install p { margin: 0 0 4px; font-size: 14px; }
+.install .inst-h { font-size: 15.5px; color: var(--plum); }
+.install .actions { margin-top: 2px; }
 .banner { background: var(--plum-soft); border: 1px solid #D9CCEF; border-radius: var(--r); padding: 12px 14px; font-size: 14.5px; margin-bottom: 14px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
 .note { font-size: 14px; color: var(--muted); }
 .warn { background: var(--amber-soft); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--amber); }
@@ -273,6 +277,14 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
 
   <main id="main" class="page">
     <h1 class="sr">All About Me</h1>
+    <section id="installBar" class="banner install" aria-labelledby="instTitle" hidden>
+      <div class="inst-text">
+        <p class="inst-h" id="instTitle"><b>Save All About Me to your phone</b></p>
+        <p><b>iPhone:</b> open this page in Safari, tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
+        <p><b>Android:</b> tap the <b>Install</b> button, or the &#8942; menu then <b>Install app</b> or <b>Add to Home screen</b>.</p>
+      </div>
+      <span class="actions"><button type="button" class="btn btn-main btn-small" id="instGo" hidden>Install</button><button type="button" class="btn btn-ghost btn-small" id="instHide">Hide for now</button></span>
+    </section>
     <div id="exampleBanner" class="banner" hidden><span><b>This is an example.</b> Nothing here is saved.</span><button type="button" class="btn btn-main btn-small" id="exampleBack">Back to my passports</button></div>
     <div id="sharedBanner" class="banner" hidden><span><b>This passport was shared with you.</b> It is shown only in your browser and is not saved anywhere unless you choose to.</span><span class="actions"><button type="button" class="btn btn-ghost btn-small" id="printShared">Print</button><button type="button" class="btn btn-main btn-small" id="saveShared">Save a copy</button></span></div>
     <input type="file" id="upload" accept="application/json,.json" class="sr" tabindex="-1" aria-label="Load a backup file">
@@ -1099,7 +1111,17 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     if (m === "view" || m === "card") renderViewer(); else if (m === "overview") { if (!shared && !cur().name) emptyState(); else renderOverview(); } else if (m === "appts") renderAppts(); else if (m === "docs") renderDocs();
   }
   function refresh() { renderWho(); renderEditor(); renderIncl(); setMode(mode); }
-  function chrome(on) { $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
+  function chrome(on) { updateInstall(on); $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
+  /* Prompt to save it to the home screen: shown at the top until it is installed, or hidden for two weeks */
+  var installEvt = null, INST_KEY = "includeme.passport.installhide.v1";
+  function isInstalled() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
+  function updateInstall(own) {
+    var bar = $("installBar"); if (!bar) return;
+    var hidden = 0; try { hidden = +localStorage.getItem(INST_KEY) || 0; } catch (e) { /* storage blocked */ }
+    var phone = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+    bar.hidden = !(own !== false && !shared && !isInstalled() && (phone || installEvt) && hidden < Date.now());
+    $("instGo").hidden = !installEvt;
+  }
   function showExample() { shared = example(); $("exampleBanner").hidden = false; $("sharedBanner").hidden = true; chrome(false); setMode("view"); }
   function example() {
     return clean({ name: "Sam Doe", preferred: "Sam", dob: "2016-04-12", pronouns: "he/him", languages: "English",
@@ -1193,7 +1215,10 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       r.readAsText(f);
     });
     var deferred = null;
-    window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; $("miInstall").hidden = false; });
+    window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; installEvt = e; $("miInstall").hidden = false; updateInstall(); });
+    window.addEventListener("appinstalled", function () { installEvt = null; deferred = null; $("installBar").hidden = true; $("miInstall").hidden = true; toolMsg("Saved to your phone."); });
+    $("instGo").addEventListener("click", function () { if (!installEvt) return; var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; deferred = null; updateInstall(); $("miInstall").hidden = true; }); });
+    $("instHide").addEventListener("click", function () { try { localStorage.setItem(INST_KEY, String(Date.now() + 14 * 864e5)); } catch (e) { /* storage blocked */ } $("installBar").hidden = true; });
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { /* offline use is a bonus */ }); });
