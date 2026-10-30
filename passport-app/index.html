@@ -280,8 +280,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     <section id="installBar" class="banner install" aria-labelledby="instTitle" hidden>
       <div class="inst-text">
         <p class="inst-h" id="instTitle"><b>Save All About Me to your phone</b></p>
-        <p><b>iPhone:</b> open this page in Safari, tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
-        <p><b>Android:</b> tap the <b>Install</b> button, or the &#8942; menu then <b>Install app</b> or <b>Add to Home screen</b>.</p>
+        <p id="instHow"></p>
       </div>
       <span class="actions"><button type="button" class="btn btn-main btn-small" id="instGo" hidden>Install</button><button type="button" class="btn btn-ghost btn-small" id="instHide">Hide for now</button></span>
     </section>
@@ -1119,6 +1118,13 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     var bar = $("installBar"); if (!bar) return;
     var hidden = 0; try { hidden = +localStorage.getItem(INST_KEY) || 0; } catch (e) { /* storage blocked */ }
     var phone = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+    var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+    var how = $("instHow"); how.textContent = "";
+    function add(parts) { parts.forEach(function (x) { how.appendChild(typeof x === "string" ? document.createTextNode(x) : el("b", { text: x[0] })); }); }
+    if (ios) add(["Tap the Share button (the square with an arrow, at the bottom or top of the screen), then ", ["Add to Home Screen"], ". It then opens like an app."]);
+    else if (installEvt) add(["Tap ", ["Install"], " to add it to your home screen. It then opens like an app."]);
+    else if (/Android/i.test(navigator.userAgent)) add(["Tap the menu (three dots), then ", ["Install app"], " or ", ["Add to Home screen"], ". It then opens like an app."]);
+    else add(["Use your browser's menu to ", ["Install"], " or ", ["Add to Home screen"], "."]);
     bar.hidden = !(own !== false && !shared && !isInstalled() && (phone || installEvt) && hidden < Date.now());
     $("instGo").hidden = !installEvt;
   }
