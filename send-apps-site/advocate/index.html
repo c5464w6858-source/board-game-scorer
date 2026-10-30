@@ -142,6 +142,8 @@ footer a:hover { color: var(--navy); }
   .clock, .feat-grid, .price-grid { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+.bar.on-dark .app-pp[aria-current] { background: #fff; color: #3B1F63; }
+.app-pp em { background: #E8663C; color: #fff; }
 </style>
 </head>
 <body>
@@ -156,6 +158,7 @@ footer a:hover { color: var(--navy); }
         <a class="app app-home" href="../">Home</a>
         <a class="app app-im" href="../finder/"><img src="../assets/logo-includeme.svg" alt=""><span class="long">Activity &amp; Therapy Finder</span><span class="short">Finder</span></a>
         <a class="app app-adv" href="../advocate/" aria-current="page"><img src="../assets/logo-advocate.svg" alt=""><span class="long">Advocate EHCP app</span><span class="short">Advocate</span><em>New</em></a>
+        <a class="app app-pp" href="../passport/"><img src="../assets/logo-passport.svg" alt=""><span class="long">All About Me</span><span class="short">Passport</span><em>Free</em></a>
       </nav>
     </div>
   </header>
