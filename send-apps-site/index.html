@@ -136,6 +136,16 @@ section { padding: 96px 0; }
 .band-adv .stage { order: -1; }
 .band-adv { background: linear-gradient(160deg, #101A45 0%, #17214D 55%, #1F2C66 100%); border-top: 4px solid var(--gold); }
 .band-adv h2 { font-size: clamp(2.2rem, 4.4vw, 3.3rem); }
+/* ALL ABOUT ME */
+.band-pp { background: linear-gradient(160deg, #2A1546 0%, #3B1F63 55%, #4E2D80 100%); border-top: 4px solid #E8663C; }
+.band-pp::before { content: ""; position: absolute; inset: -30% -10% auto auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(232,102,60,.22), transparent); z-index: -1; }
+.band-pp .pill { background: rgba(232,102,60,.18); color: #FFB59B; }
+.band-pp .band-points li { border-color: rgba(232,102,60,.7); }
+.band-pp h2 { font-size: clamp(2.2rem, 4.4vw, 3.3rem); }
+.band-pp .phone img { aspect-ratio: 1262 / 2152; object-fit: cover; object-position: top; }
+.btn-coral { background: #E8663C; color: #1B1530; }
+.btn-coral:hover { background: #F07A52; }
+
 .band-adv h2 em { font-style: normal; color: var(--gold); }
 .band-adv .pill { background: var(--gold); color: var(--navy); font-weight: 700; }
 .band-adv .band-points b { color: var(--gold); font-size: 16.5px; }
@@ -212,6 +222,9 @@ footer { padding: 64px 0 36px; font-size: 15px; }
   .hero > .wrap:not(.bar-in) { padding-top: 32px; }
   }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+.bar.on-dark .app-pp[aria-current] { background: #fff; color: #3B1F63; }
+@media (max-width: 480px) { .app-home { display: none; } .apps { min-width: 0; overflow-x: auto; scrollbar-width: none; } .app { flex: none; white-space: nowrap; } }
+.app-pp em { background: #E8663C; color: #1B1530; }
 </style>
 </head>
 <body>
@@ -227,6 +240,7 @@ footer { padding: 64px 0 36px; font-size: 15px; }
         <a class="app app-home" href="./" aria-current="page">Home</a>
         <a class="app app-im" href="finder/"><img src="assets/logo-includeme.svg" alt=""><span class="long">Activity &amp; Therapy Finder</span><span class="short">Finder</span></a>
         <a class="app app-adv" href="advocate/"><img src="assets/logo-advocate.svg" alt=""><span class="long">Advocate EHCP app</span><span class="short">Advocate</span><em>New</em></a>
+        <a class="app app-pp" href="passport/"><img src="assets/logo-passport.svg" alt=""><span class="long">All About Me</span><span class="short">Passport</span><em>Free</em></a>
       </nav>
     </div>
   </header>
@@ -300,13 +314,36 @@ footer { padding: 64px 0 36px; font-size: 15px; }
       </ul>
       <div class="adv-cta"><a class="btn btn-gold" href="https://advocate.includeme.uk/">Start free trial →</a><a href="advocate/" style="font-size:15px;color:#fff;font-weight:600;text-decoration:underline">Details &amp; pricing</a></div>
       <p style="margin-top:16px;font-size:15px"><a href="ehcp-deadline-calculator/" style="color:#E3B94E;font-weight:600;text-decoration:underline">Free tool: EHCP deadline calculator →</a></p>
-      <p style="margin-top:8px;font-size:15px"><a href="passport/" style="color:#E3B94E;font-weight:600;text-decoration:underline">Free tool: All About Me passport →</a></p>
     </div>
     <div class="stage" aria-label="A screen from Advocate">
       <div class="phone solo"><img src="assets/advocate-screen.jpg" width="1262" height="2152" alt="Advocate: the 20-week clock with statutory deadlines and the next step to record" loading="lazy"></div>
     </div>
   </div>
 </section>
+
+<!-- ALL ABOUT ME -->
+<section class="band band-pp" id="passport">
+  <div class="wrap band-grid">
+    <div class="band-copy">
+      <span class="pill"><img src="assets/logo-passport.svg" alt="">All About Me · Free</span>
+      <h2>Everything about your child, <em>in one place.</em></h2>
+      <p class="lead">A one-page profile for children with SEND. Anyone who looks after your child can see in a minute how they communicate, what helps, and what to do in an emergency.</p>
+      <ul class="band-points">
+        <li><b>Profile and emergency card</b><span>How they communicate, what helps and upsets them, allergies and who to call.</span></li>
+        <li><b>Medicines and doctors</b><span>Doses, the GP and every professional in one list.</span></li>
+        <li><b>Documents and photos</b><span>Keep reports and letters with the profile they belong to.</span></li>
+        <li><b>Appointments</b><span>Add them to your calendar so none are missed.</span></li>
+        <li><b>You choose what to share</b><span>Print it, or send a link with only the parts you pick. Your child&rsquo;s details stay on your device.</span></li>
+      </ul>
+      <div class="adv-cta"><a class="btn btn-coral" href="https://includeme-passport.netlify.app/">Open All About Me &rarr;</a><a href="passport/" style="font-size:15px;color:#fff;font-weight:600;text-decoration:underline">Details</a></div>
+      <p style="margin-top:14px;font-size:14px;color:rgba(255,255,255,.75)">Free. Sign in with your IncludeMe account, the same email and password as the Activity Finder.</p>
+    </div>
+    <div class="stage" aria-label="A screen from All About Me">
+      <div class="phone solo"><img src="assets/passport-screen.jpg" width="1170" height="2532" alt="All About Me: an example profile for Sam with an emergency box showing allergy, GP and contacts" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
 
 <!-- HOW -->
 <section id="how">

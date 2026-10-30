@@ -93,6 +93,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wr
 footer a { text-decoration: none; margin-right: 16px; }
 footer a:hover { color: var(--teal); }
 @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+.bar.on-dark .app-pp[aria-current] { background: #fff; color: #3B1F63; }
+@media (max-width: 480px) { .app-home { display: none; } .apps { min-width: 0; overflow-x: auto; scrollbar-width: none; } .app { flex: none; white-space: nowrap; } }
+.app-pp em { background: #E8663C; color: #1B1530; }
 </style>
 </head>
 <body>
@@ -104,6 +107,7 @@ footer a:hover { color: var(--teal); }
         <a class="app app-home" href="../">Home</a>
         <a class="app app-im" href="../finder/"><img src="../assets/logo-includeme.svg" alt=""><span class="long">Activity &amp; Therapy Finder</span><span class="short">Finder</span></a>
         <a class="app app-adv" href="../advocate/"><img src="../assets/logo-advocate.svg" alt=""><span class="long">Advocate EHCP app</span><span class="short">Advocate</span><em>New</em></a>
+        <a class="app app-pp" href="../passport/"><img src="../assets/logo-passport.svg" alt=""><span class="long">All About Me</span><span class="short">Passport</span><em>Free</em></a>
       </nav>
     </div>
   </header>
