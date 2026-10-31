@@ -4651,6 +4651,27 @@ const AdminPanel=({activities,setActivities,onClose})=>{
   );
 };
 
+// Gentle pointers to the other free IncludeMe tools. Shown once, inside the account menu, never as a pop-up.
+const MoreFromIncludeMe=()=>{
+  const items=[
+    ["Going through an EHCP?","Advocate keeps deadlines, reports, calls and letters in one place. See a demo, no sign-in.","https://advocate.includeme.uk/?utm_campaign=finder_menu","Advocate"],
+    ["Free EHCP deadline calculator","Enter the date the council got your request and see your 6, 16 and 20 week dates.","https://info.includeme.uk/ehcp-deadline-calculator/?utm_campaign=finder_menu","Open the calculator"],
+    ["All About Me, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://includeme-passport.netlify.app/?utm_campaign=finder_menu","Open All About Me"],
+  ];
+  return(
+    <div style={{marginTop:18,paddingTop:16,borderTop:`1px solid ${C.slate100}`}}>
+      <div style={{fontSize:11,fontWeight:600,color:C.slate400,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:10}}>More from IncludeMe</div>
+      {items.map(([t,d,href,cta])=>(
+        <a key={t} href={href} target="_blank" rel="noopener noreferrer" style={{display:"block",textDecoration:"none",background:C.slate50,border:`1px solid ${C.slate100}`,borderRadius:10,padding:"11px 13px",marginBottom:8}}>
+          <div style={{fontSize:13.5,fontWeight:600,color:C.slate800}}>{t}</div>
+          <div style={{fontSize:12.5,color:C.slate500,lineHeight:1.45,margin:"2px 0 5px"}}>{d}</div>
+          <div style={{fontSize:12.5,fontWeight:600,color:C.brand}}>{cta} ↗</div>
+        </a>
+      ))}
+    </div>
+  );
+};
+
 const AccountModal=({user,onClose,onUpdateUser,onLogout,currentFilters,onLoadPreset,myListings=[],onEditListing,onDeleteListing,onActivateListing,onActivateVerifiedListing,activities=[],userLoc,initialTab,upgradeConfirmation,initialShowEnquiries})=>{
   const [tab,setTab]=useState(initialTab||(user.accountType==="business"&&myListings.length?"listings":"profile"));
   const [flash,setFlash]=useState("");
@@ -4710,6 +4731,7 @@ const AccountModal=({user,onClose,onUpdateUser,onLogout,currentFilters,onLoadPre
             <div style={{fontSize:13,color:C.slate600}}>{user.email}</div>
           </div>
           <Btn onClick={handleSaveProfileClick} loading={saving}>Save Changes</Btn>
+          {user.accountType==="individual"&&<MoreFromIncludeMe/>}
           <div style={{marginTop:12,paddingTop:16,borderTop:`1px solid ${C.slate100}`}}>
             <button onClick={onLogout} style={{display:"flex",alignItems:"center",gap:7,color:C.slate400,background:"none",border:"none",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:F.body,padding:0}}>
               <Icons.logout/> Sign out
