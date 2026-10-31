@@ -1,0 +1,19 @@
+{
+  "name": "IncludeMe — SEND Activity Finder",
+  "short_name": "IncludeMe",
+  "description": "Find inclusive activities, therapies and charities for children with special educational needs across the UK.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F7F6F2",
+  "theme_color": "#0F6B5C",
+  "categories": ["education", "health", "kids"],
+  "lang": "en-GB",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "form_factor": "narrow" }
+  ]
+}
