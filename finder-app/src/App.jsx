@@ -4697,9 +4697,55 @@ const PromoStrip=()=>{
 
 // Our two other products, listed inside the menu with a short description. Families only.
 const APP_ROWS=[
-  {id:"ehcp",name:"EHCP Tracker",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
-  {id:"pp",name:"All About Me",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
+  {id:"ehcp",name:"EHCP Tracker",tag:"NEW",bg:"#17214D",accent:"#E3B94E",accentInk:"#17214D",tabInk:"#E3B94E",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+  {id:"pp",name:"Child Organiser",tag:"FREE",bg:"#3B1F63",accent:"#FF8A5B",accentInk:"#1B1530",tabInk:"#FFB594",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
 ];
+
+// Product tabs along the very top: you land on IncludeMe (the Finder). Tapping EHCP Tracker or All About Me drops a drawer down
+// with more information; tapping anywhere else (or the IncludeMe tab) closes it and you are back on IncludeMe. Families only.
+const AppTabs=()=>{
+  const [open,setOpen]=useState(null);
+  useEffect(()=>{
+    if(!open)return;
+    const esc=e=>{if(e.key==="Escape")setOpen(null);};
+    const away=e=>{if(wrap.current&&!wrap.current.contains(e.target))setOpen(null);};
+    document.addEventListener("keydown",esc);document.addEventListener("pointerdown",away);
+    return()=>{document.removeEventListener("keydown",esc);document.removeEventListener("pointerdown",away);};
+  },[open]);
+  const wrap=useRef(null);
+  const cur=APP_ROWS.find(r=>r.id===open);
+  // Tabs hang from the top edge of the screen. Each product has its own colours; the drawer is the same colour as its tab, so they read as one piece.
+  const tab=(bg,ink,isOpen,dim)=>({position:"relative",zIndex:3,flex:"0 1 auto",minWidth:0,padding:"8px clamp(7px,2.6vw,13px) 9px",border:"none",borderRadius:isOpen?"0":"0 0 11px 11px",background:bg,color:ink,opacity:dim?0.6:1,fontFamily:F.body,fontWeight:700,fontSize:"clamp(11px,3.3vw,12.5px)",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",cursor:"pointer",boxShadow:isOpen?"none":"0 2px 6px rgba(0,0,0,0.25)"});
+  return(
+    <div ref={wrap}>
+      <div style={{position:"relative"}}>
+        <div className="prod-tabs" role="tablist" aria-label="IncludeMe products" style={{maxWidth:1080,margin:"0 auto",padding:"0 16px",display:"flex",gap:5,position:"relative",zIndex:3}}>
+          <button type="button" role="tab" aria-selected={!open} onClick={()=>setOpen(null)} style={tab(!open?"#fff":"#12806E",!open?"#0A5044":"#fff",false,!!open)}>IncludeMe</button>
+          {APP_ROWS.map(r=>(
+            <button key={r.id} type="button" role="tab" aria-selected={open===r.id} aria-expanded={open===r.id} aria-controls="prod-drawer" onClick={()=>setOpen(o=>o===r.id?null:r.id)} style={tab(r.bg,r.tabInk,open===r.id,false)}>
+              {r.name}<span aria-hidden="true" className="prod-caret" style={{fontSize:8,marginLeft:5,display:"inline-block",transform:open===r.id?"rotate(180deg)":"none"}}>▼</span>
+            </button>
+          ))}
+        </div>
+        {cur&&(<>
+          <div onClick={()=>setOpen(null)} aria-hidden="true" style={{position:"fixed",inset:0,background:"rgba(10,20,18,0.5)",zIndex:1}}/>
+          <div id="prod-drawer" role="tabpanel" aria-label={cur.name} style={{position:"absolute",left:0,right:0,top:"100%",zIndex:2,background:cur.bg,boxShadow:"0 18px 40px rgba(20,24,40,0.35)"}}>
+            <div style={{maxWidth:1080,margin:"0 auto",padding:"16px 16px 20px",display:"flex",gap:13,alignItems:"flex-start"}}>
+              <img src={cur.logo} alt="" width="48" height="48" style={{borderRadius:12,flexShrink:0}}/>
+              <div style={{minWidth:0,flex:1}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}><span style={{fontSize:17,fontWeight:700,color:"#fff"}}>{cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.accent,color:cur.accentInk}}>{cur.tag}</span></div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.5,marginBottom:12}}>{cur.desc}</div>
+                <a href={cur.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(null)} style={{display:"inline-block",background:cur.accent,color:cur.accentInk,borderRadius:99,padding:"10px 20px",fontSize:13.5,fontWeight:800,textDecoration:"none"}}>{cur.cta} ↗</a>
+                <div style={{fontSize:11.5,color:"rgba(255,255,255,0.65)",marginTop:10}}>A separate app from the Finder. Opens in a new tab. Tap anywhere else to go back to IncludeMe.</div>
+              </div>
+            </div>
+          </div>
+        </>)}
+      </div>
+      <div style={{height:7}}/>
+    </div>
+  );
+};
 
 // One menu at the top right for everything personal: alerts, saved places, account (and the admin panel for admins).
 const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin})=>{
@@ -4733,22 +4779,6 @@ const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin}
           {item("♥","Saved",saved,onSaved,false)}
           {item("👤",name||"My account",0,onAccount)}
           {isAdmin&&item("⚙️","Admin panel",0,onAdmin)}
-          <div style={{height:1,background:C.slate100,margin:"6px 4px 8px"}}/>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"2px 12px 6px"}}>More from IncludeMe</div>
-          {APP_ROWS.map(r=>(
-            <a key={r.id} role="menuitem" href={r.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(false)} style={{display:"flex",gap:11,alignItems:"flex-start",padding:"11px 12px",borderRadius:12,textDecoration:"none",border:`1px solid ${C.slate100}`,margin:"0 4px 8px"}}>
-              <img src={r.logo} alt="" width="38" height="38" style={{borderRadius:10,flexShrink:0}}/>
-              <span style={{minWidth:0,flex:1,display:"block"}}>
-                <span style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
-                  <span style={{fontSize:14.5,fontWeight:700,color:C.slate900}}>{r.name}</span>
-                  <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:r.tagBg,color:r.tagInk}}>{r.tag}</span>
-                </span>
-                <span style={{display:"block",fontSize:12.5,color:C.slate500,lineHeight:1.45,margin:"3px 0 5px"}}>{r.desc}</span>
-                <span style={{display:"block",fontSize:12.5,fontWeight:700,color:C.brand}}>{r.cta} ↗</span>
-              </span>
-            </a>
-          ))}
-          <p style={{fontSize:11.5,color:C.slate400,lineHeight:1.45,margin:"2px 12px 6px"}}>Separate apps from the Finder. They open in a new tab.</p>
         </div>
       )}
     </div>
@@ -6362,6 +6392,8 @@ export default function App() {
             .hdr-bar-inner{padding-left:10px!important;padding-right:10px!important;}
           }
           @media(max-width:360px){
+            .prod-caret{display:none!important;}
+            .prod-tabs{padding-left:10px!important;padding-right:10px!important;gap:4px!important;}
             .hdr-wordmark{font-size:16px!important;}
             .hdr-logo{display:none!important;}
             .hdr-ic{width:34px!important;height:34px!important;min-width:34px!important;}
@@ -6378,6 +6410,7 @@ export default function App() {
             but the header never had the equivalent top padding, which is
             why the header buttons became unclickable on real devices. */}
         <div style={{background:C.brandDk,paddingTop:"env(safe-area-inset-top)"}}>
+          {user.accountType==="individual"&&<AppTabs/>}
           <div className="hdr-bar-inner" style={{maxWidth:1080,margin:"0 auto",padding:"0 16px",display:"flex",alignItems:"center",justifyContent:"space-between",height:54}}>
             <div style={{display:"flex",alignItems:"center",gap:10,minWidth:0}}>
               <div className="hdr-logo" style={{width:30,height:30,borderRadius:9,background:"rgba(255,255,255,0.14)",border:"1px solid rgba(255,255,255,0.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
