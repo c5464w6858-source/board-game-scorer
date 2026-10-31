@@ -4654,9 +4654,9 @@ const AdminPanel=({activities,setActivities,onClose})=>{
 // Our own adverts for the other IncludeMe tools: a slim strip near the top of the list, plus two cards among the listings.
 // Families only, never providers. The strip can be dismissed for a week.
 const PROMOS={
-  ehcp:{title:"Going through an EHCP?",text:"Advocate keeps every deadline, report and phone call in one place. See what it does and how it works.",cta:"Find out more",chip:"Going through an EHCP?",chipCta:"Find out more",
+  ehcp:{title:"Going through an EHCP?",text:"EHCP Tracker keeps every deadline, report and phone call in one place. See what it does and how it works.",cta:"Find out more",chip:"Going through an EHCP?",chipCta:"Find out more",
     href:c=>`https://info.includeme.uk/advocate/?utm_campaign=${c}`,logo:"./promo/logo-advocate.svg",bg:"linear-gradient(160deg,#101A45 0%,#1F2C66 100%)",accent:"#E3B94E",accentInk:"#17214D",chipBg:"#ECEEF8",chipInk:"#17214D"},
-  pp:{title:"All About Me, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"All About Me, free",
+  pp:{title:"Child Passport, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"Child Passport, free",
     href:c=>`https://info.includeme.uk/passport/?utm_campaign=${c}`,logo:"./promo/logo-passport.svg",bg:"linear-gradient(160deg,#2A1546 0%,#4E2D80 100%)",accent:"#FF8A5B",accentInk:"#1B1530",chipBg:"#F0EBF8",chipInk:"#3B1F63"},
 };
 const PromoCard=({kind})=>{
@@ -4695,54 +4695,11 @@ const PromoStrip=()=>{
   );
 };
 
-// Two buttons under the header bar for our separate products. Tapping one drops a drawer down with more information and a link.
-// Only one drawer is open at a time. Families only.
-const APPS_KEY="im_apps_seen";
+// Our two other products, listed inside the menu with a short description. Families only.
 const APP_ROWS=[
-  {id:"ehcp",name:"Advocate",tag:"EHCP",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Organise an EHCP: every deadline, report, phone call and letter in one place. £3.99 a month after a 3-day free trial, cancel any time.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
-  {id:"pp",name:"All About Me",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"A one-page profile for your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
+  {id:"ehcp",name:"EHCP Tracker",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+  {id:"pp",name:"Child Passport",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"One page about your child for school, clubs, doctors and sitters: medicines, how they communicate and who to call. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
 ];
-const AppsDrawer=()=>{
-  const [open,setOpen]=useState(null);
-  const ref=useRef(null);
-  useEffect(()=>{
-    if(!open)return;
-    const away=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(null);};
-    const esc=e=>{if(e.key==="Escape")setOpen(null);};
-    document.addEventListener("mousedown",away);document.addEventListener("touchstart",away);document.addEventListener("keydown",esc);
-    return()=>{document.removeEventListener("mousedown",away);document.removeEventListener("touchstart",away);document.removeEventListener("keydown",esc);};
-  },[open]);
-  const cur=APP_ROWS.find(r=>r.id===open);
-  return(
-    <div ref={ref} className="apps-strip" style={{background:"rgba(0,0,0,0.14)"}}>
-      <div style={{maxWidth:1080,margin:"0 auto",padding:"7px 16px",display:"flex",gap:8,alignItems:"center"}}>
-        <span className="apps-strip-lbl" style={{fontSize:10.5,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",flexShrink:0}}>More from IncludeMe</span>
-        {APP_ROWS.map(r=>(
-          <button key={r.id} type="button" onClick={()=>setOpen(o=>o===r.id?null:r.id)} aria-expanded={open===r.id} aria-controls="apps-drawer"
-            style={{flex:"1 1 0",minWidth:0,display:"flex",alignItems:"center",gap:7,padding:"6px 9px",borderRadius:10,border:`1px solid ${open===r.id?"#fff":"rgba(255,255,255,0.25)"}`,background:open===r.id?"rgba(255,255,255,0.2)":"rgba(255,255,255,0.08)",color:"#fff",fontFamily:F.body,fontWeight:700,fontSize:12.5,cursor:"pointer",textAlign:"left"}}>
-            <img src={r.logo} alt="" width="22" height="22" style={{borderRadius:6,flexShrink:0}}/>
-            <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{r.name}</span>
-            <span aria-hidden="true" style={{fontSize:10,transform:open===r.id?"rotate(180deg)":"none",transition:"transform .15s",flexShrink:0}}>▼</span>
-          </button>
-        ))}
-      </div>
-      {cur&&(
-        <div id="apps-drawer" role="region" aria-label={cur.name} className="apps-drawer" style={{background:"#fff",borderBottom:"1px solid rgba(0,0,0,0.08)",boxShadow:"0 14px 30px rgba(20,24,40,0.22)"}}>
-          <div style={{maxWidth:1080,margin:"0 auto",padding:"14px 16px 16px",display:"flex",gap:12,alignItems:"flex-start"}}>
-            <img src={cur.logo} alt="" width="44" height="44" style={{borderRadius:12,flexShrink:0}}/>
-            <div style={{minWidth:0,flex:1}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}><span style={{fontSize:15,fontWeight:700,color:C.slate900}}>{cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.tagBg,color:cur.tagInk}}>{cur.tag}</span></div>
-              <div style={{fontSize:13.5,color:C.slate500,lineHeight:1.5,marginBottom:10}}>{cur.desc}</div>
-              <a href={cur.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(null)} style={{display:"inline-block",background:C.brand,color:"#fff",borderRadius:99,padding:"9px 18px",fontSize:13.5,fontWeight:700,textDecoration:"none"}}>{cur.cta} ↗</a>
-              <div style={{fontSize:11.5,color:C.slate400,marginTop:8}}>A separate app from the Finder. Opens in a new tab.</div>
-            </div>
-            <button type="button" onClick={()=>setOpen(null)} aria-label="Close" style={{background:"none",border:"none",fontSize:22,lineHeight:1,color:C.slate400,cursor:"pointer",padding:"2px 4px",flexShrink:0}}>×</button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
 // One menu at the top right for everything personal: alerts, saved places, account (and the admin panel for admins).
 const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin})=>{
@@ -4771,11 +4728,27 @@ const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin}
         {alerts>0&&<span className="hdr-badge" style={{position:"absolute",top:-4,right:-4,minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 0 2px #0F6B5C"}}>{alerts>9?"9+":alerts}</span>}
       </button>
       {open&&(
-        <div role="menu" aria-label="Menu" style={{position:"absolute",right:0,top:"calc(100% + 10px)",width:"min(280px, 92vw)",background:"#fff",borderRadius:16,boxShadow:"0 18px 50px rgba(20,24,40,0.35)",padding:8,zIndex:200}}>
+        <div role="menu" aria-label="Menu" style={{position:"absolute",right:0,top:"calc(100% + 10px)",width:"min(330px, 94vw)",maxHeight:"calc(100vh - 90px)",overflowY:"auto",background:"#fff",borderRadius:16,boxShadow:"0 18px 50px rgba(20,24,40,0.35)",padding:8,zIndex:200}}>
           {item("🔔","Alerts, messages and planner",alerts,onAlerts,true)}
           {item("♥","Saved",saved,onSaved,false)}
           {item("👤",name||"My account",0,onAccount)}
           {isAdmin&&item("⚙️","Admin panel",0,onAdmin)}
+          <div style={{height:1,background:C.slate100,margin:"6px 4px 8px"}}/>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"2px 12px 6px"}}>More from IncludeMe</div>
+          {APP_ROWS.map(r=>(
+            <a key={r.id} role="menuitem" href={r.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(false)} style={{display:"flex",gap:11,alignItems:"flex-start",padding:"11px 12px",borderRadius:12,textDecoration:"none",border:`1px solid ${C.slate100}`,margin:"0 4px 8px"}}>
+              <img src={r.logo} alt="" width="38" height="38" style={{borderRadius:10,flexShrink:0}}/>
+              <span style={{minWidth:0,flex:1,display:"block"}}>
+                <span style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
+                  <span style={{fontSize:14.5,fontWeight:700,color:C.slate900}}>{r.name}</span>
+                  <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:r.tagBg,color:r.tagInk}}>{r.tag}</span>
+                </span>
+                <span style={{display:"block",fontSize:12.5,color:C.slate500,lineHeight:1.45,margin:"3px 0 5px"}}>{r.desc}</span>
+                <span style={{display:"block",fontSize:12.5,fontWeight:700,color:C.brand}}>{r.cta} ↗</span>
+              </span>
+            </a>
+          ))}
+          <p style={{fontSize:11.5,color:C.slate400,lineHeight:1.45,margin:"2px 12px 6px"}}>Separate apps from the Finder. They open in a new tab.</p>
         </div>
       )}
     </div>
@@ -4785,9 +4758,9 @@ const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin}
 // Gentle pointers to the other free IncludeMe tools. Shown once, inside the account menu, never as a pop-up.
 const MoreFromIncludeMe=()=>{
   const items=[
-    ["Going through an EHCP?","Advocate keeps deadlines, reports, calls and letters in one place.","https://info.includeme.uk/advocate/?utm_campaign=finder_menu","Find out about Advocate"],
+    ["Going through an EHCP?","EHCP Tracker keeps deadlines, reports, calls and letters in one place.","https://info.includeme.uk/advocate/?utm_campaign=finder_menu","Find out about EHCP Tracker"],
     ["Free EHCP deadline calculator","Enter the date the council got your request and see your 6, 16 and 20 week dates.","https://info.includeme.uk/ehcp-deadline-calculator/?utm_campaign=finder_menu","Open the calculator"],
-    ["All About Me, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about All About Me"],
+    ["Child Passport, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about Child Passport"],
   ];
   return(
     <div style={{marginTop:18,paddingTop:16,borderTop:`1px solid ${C.slate100}`}}>
@@ -5137,8 +5110,8 @@ const MoreFromCarousel=()=>{
   const ref=useRef(null);
   const [active,setActive]=useState(0);
   const items=[
-    {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"Advocate keeps every deadline, report, call and letter in one place. See what it does and how it works.",cta:"Find out more ↗"},
-    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"All About Me",blurb:"A one-page profile for your child: medicines, doctors, how they communicate. Free, and it uses your Finder login.",cta:"Find out more ↗"},
+    {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"EHCP Tracker keeps every deadline, report, call and letter in one place. See what it does and how it works.",cta:"Find out more ↗"},
+    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"Child Passport",blurb:"A one-page profile for your child: medicines, doctors, how they communicate. Free, and it uses your Finder login.",cta:"Find out more ↗"},
   ];
   const onScroll=()=>{const el=ref.current;if(!el)return;const w=el.firstChild?el.firstChild.getBoundingClientRect().width+12:el.clientWidth;setActive(Math.round(el.scrollLeft/w));};
   const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.children[i].scrollIntoView({behavior:"smooth",inline:"start",block:"nearest"});};
@@ -5167,7 +5140,7 @@ const MoreFromCarousel=()=>{
       </div>
       <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:9}}>
         {items.map((it,i)=>(
-          <button key={it.id} onClick={()=>go(i)} aria-label={`Show ${it.kind==="ehcp"?"Advocate":"All About Me"}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>
+          <button key={it.id} onClick={()=>go(i)} aria-label={`Show ${it.kind==="ehcp"?"EHCP Tracker":"Child Passport"}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>
         ))}
       </div>
     </div>
@@ -6374,8 +6347,7 @@ export default function App() {
             .hdr-tabs{padding-left:10px!important;padding-right:10px!important;-webkit-mask-image:linear-gradient(to right,#000 90%,transparent);mask-image:linear-gradient(to right,#000 90%,transparent);}
             .hdr-tab{flex:1 1 0;text-align:center;padding:10px 6px;font-size:13.5px;}
             .hdr-tabs{gap:5px!important;-webkit-mask-image:none!important;mask-image:none!important;}
-            .apps-strip-lbl{display:none!important;}
-              .hdr-tagline{display:none!important;}
+                          .hdr-tagline{display:none!important;}
             .hdr-saved .hdr-lbl{display:none!important;}
             .leaflet-pane,.leaflet-top,.leaflet-bottom,.leaflet-control{z-index:1!important;}
             .leaflet-container{z-index:0!important;position:relative!important;}
@@ -6445,7 +6417,6 @@ export default function App() {
               </>)}
             </div>
           </div>
-          {user.accountType==="individual"&&<AppsDrawer/>}
           {/* App tabs live in the header, scrollable on phones. The last two open our other tools in a new tab. */}
           <div className="hdr-tabs" style={{maxWidth:1080,margin:"0 auto",padding:"2px 16px 0",display:"flex",gap:6,overflowX:"auto"}}>
             {[["activities","Activities"],["therapies","Therapies"],["charities","Charities"]].map(([id,label])=>(
