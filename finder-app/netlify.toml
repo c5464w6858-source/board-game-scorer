@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Pretty path: /api/place-photo -> the function
+[[redirects]]
+  from = "/api/place-photo"
+  to = "/.netlify/functions/place-photo"
+  status = 200
+
+# SPA fallback so client-side routing / OAuth redirects land on the app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
