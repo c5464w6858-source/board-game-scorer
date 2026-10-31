@@ -42,14 +42,17 @@ function behaviour(send) {
       ticking = false;
       var d = document.documentElement, pct = (window.pageYOffset + window.innerHeight) / Math.max(d.scrollHeight, 1) * 100;
       [25, 50, 75, 100].forEach(function (m) { if (pct >= m - 2) once("d" + m, { d: m }); });
+      checkParts();
     });
   }, { passive: true });
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { once("v" + label(e.target), { v: label(e.target) }); io.unobserve(e.target); } });
-    }, { rootMargin: "0px 0px -35% 0px", threshold: 0 });
-    document.querySelectorAll("section, footer").forEach(function (el) { label(el); io.observe(el); });
+  var parts = Array.prototype.slice.call(document.querySelectorAll("section, footer"));
+  function checkParts() {
+    parts.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.height > 0 && r.top <= window.innerHeight * 0.65) once("v" + label(el), { v: label(el) });
+    });
   }
+  setTimeout(checkParts, 300);
   function target(a) {
     var t = a.getAttribute("data-t"); if (t) return t;
     var href = a.getAttribute("href"); if (!href) return "button";
