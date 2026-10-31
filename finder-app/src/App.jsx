@@ -4654,10 +4654,10 @@ const AdminPanel=({activities,setActivities,onClose})=>{
 // Our own adverts for the other IncludeMe tools: a slim strip near the top of the list, plus two cards among the listings.
 // Families only, never providers. The strip can be dismissed for a week.
 const PROMOS={
-  ehcp:{title:"Going through an EHCP?",text:"Advocate keeps every deadline, report and phone call in one place. Look round a demo, no sign-in needed.",cta:"See a demo",chip:"Going through an EHCP?",chipCta:"Try Advocate",
-    href:c=>`https://advocate.includeme.uk/?utm_campaign=${c}`,logo:"./promo/logo-advocate.svg",bg:"linear-gradient(160deg,#101A45 0%,#1F2C66 100%)",accent:"#E3B94E",accentInk:"#17214D",chipBg:"#ECEEF8",chipInk:"#17214D"},
-  pp:{title:"All About Me, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Sign in with this same email and password.",cta:"Open All About Me",chip:"About your child",chipCta:"All About Me, free",
-    href:c=>`https://includeme-passport.netlify.app/?utm_campaign=${c}`,logo:"./promo/logo-passport.svg",bg:"linear-gradient(160deg,#2A1546 0%,#4E2D80 100%)",accent:"#FF8A5B",accentInk:"#1B1530",chipBg:"#F0EBF8",chipInk:"#3B1F63"},
+  ehcp:{title:"Going through an EHCP?",text:"Advocate keeps every deadline, report and phone call in one place. See what it does and how it works.",cta:"Find out more",chip:"Going through an EHCP?",chipCta:"Find out more",
+    href:c=>`https://info.includeme.uk/advocate/?utm_campaign=${c}`,logo:"./promo/logo-advocate.svg",bg:"linear-gradient(160deg,#101A45 0%,#1F2C66 100%)",accent:"#E3B94E",accentInk:"#17214D",chipBg:"#ECEEF8",chipInk:"#17214D"},
+  pp:{title:"All About Me, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"All About Me, free",
+    href:c=>`https://info.includeme.uk/passport/?utm_campaign=${c}`,logo:"./promo/logo-passport.svg",bg:"linear-gradient(160deg,#2A1546 0%,#4E2D80 100%)",accent:"#FF8A5B",accentInk:"#1B1530",chipBg:"#F0EBF8",chipInk:"#3B1F63"},
 };
 const PromoCard=({kind})=>{
   const m=PROMOS[kind];
@@ -4695,12 +4695,66 @@ const PromoStrip=()=>{
   );
 };
 
+// "Apps" menu: says plainly that Advocate and All About Me are separate IncludeMe products, away from the Finder's own tabs.
+const APPS_KEY="im_apps_seen";
+const AppsMenu=()=>{
+  const [open,setOpen]=useState(false);
+  const [seen,setSeen]=useState(()=>{try{return !!localStorage.getItem(APPS_KEY);}catch{return true;}});
+  const ref=useRef(null);
+  useEffect(()=>{
+    if(!open)return;
+    const away=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    const esc=e=>{if(e.key==="Escape")setOpen(false);};
+    document.addEventListener("mousedown",away);document.addEventListener("touchstart",away);document.addEventListener("keydown",esc);
+    return()=>{document.removeEventListener("mousedown",away);document.removeEventListener("touchstart",away);document.removeEventListener("keydown",esc);};
+  },[open]);
+  const toggle=()=>{setOpen(o=>!o);if(!seen){setSeen(true);try{localStorage.setItem(APPS_KEY,"1");}catch{}}};
+  const rows=[
+    {name:"Advocate",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Organise an EHCP: deadlines, reports, calls and letters in one place.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+    {name:"All About Me",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"A one-page profile for your child: medicines, doctors, how they communicate.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
+  ];
+  return(
+    <div ref={ref} style={{position:"relative",flexShrink:0}}>
+      <button className="hdr-ic hdr-apps" onClick={toggle} aria-expanded={open} aria-haspopup="true" title="More IncludeMe apps" style={{position:"relative",display:"flex",alignItems:"center",gap:6,padding:"6px 11px",borderRadius:9,border:"1px solid rgba(255,255,255,0.28)",background:"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.6"/><circle cx="8" cy="3" r="1.6"/><circle cx="13" cy="3" r="1.6"/><circle cx="3" cy="8" r="1.6"/><circle cx="8" cy="8" r="1.6"/><circle cx="13" cy="8" r="1.6"/><circle cx="3" cy="13" r="1.6"/><circle cx="8" cy="13" r="1.6"/><circle cx="13" cy="13" r="1.6"/></svg>
+        <span className="hdr-lbl">Apps</span>
+        {!seen&&<span className="hdr-badge" style={{width:10,height:10,borderRadius:99,background:"#FF8A5B",boxShadow:"0 0 0 2px #0A5044",position:"absolute",top:-3,right:-3}}/>}
+      </button>
+      {open&&(
+        <div className="apps-panel" role="dialog" aria-label="More IncludeMe apps" style={{position:"absolute",right:0,top:"calc(100% + 10px)",width:"min(340px, 92vw)",background:"#fff",borderRadius:16,boxShadow:"0 18px 50px rgba(20,24,40,0.35)",padding:14,zIndex:200,textAlign:"left"}}>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"2px 4px 10px"}}>IncludeMe apps</div>
+          <div style={{display:"flex",alignItems:"center",gap:11,padding:"10px 10px",borderRadius:12,background:C.brandLt,marginBottom:8}}>
+            <div style={{width:36,height:36,borderRadius:10,background:C.brand,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <svg width="20" height="20" viewBox="0 0 36 36" fill="none"><circle cx="11" cy="8" r="4" fill="white"/><circle cx="25" cy="8" r="4" fill="rgba(255,255,255,0.6)"/><path d="M4 28v-3a7 7 0 0 1 7-7h0a7 7 0 0 1 7 7v3" stroke="white" strokeWidth="2.5" strokeLinecap="round"/><path d="M18 28v-3a7 7 0 0 1 7-7h0a7 7 0 0 1 7 7v3" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+            <div style={{minWidth:0}}><div style={{fontSize:14,fontWeight:700,color:C.slate900}}>Activity Finder</div><div style={{fontSize:12,color:C.brand,fontWeight:600}}>You are here</div></div>
+          </div>
+          {rows.map(r=>(
+            <a key={r.name} href={r.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(false)} style={{display:"flex",gap:11,alignItems:"flex-start",padding:"10px 10px",borderRadius:12,textDecoration:"none",border:`1px solid ${C.slate100}`,marginBottom:8}}>
+              <img src={r.logo} alt="" width="36" height="36" style={{borderRadius:10,flexShrink:0}}/>
+              <div style={{minWidth:0,flex:1}}>
+                <div style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
+                  <span style={{fontSize:14,fontWeight:700,color:C.slate900}}>{r.name}</span>
+                  <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:r.tagBg,color:r.tagInk}}>{r.tag}</span>
+                </div>
+                <div style={{fontSize:12.5,color:C.slate500,lineHeight:1.4,margin:"2px 0 4px"}}>{r.desc}</div>
+                <div style={{fontSize:12.5,fontWeight:700,color:C.brand}}>{r.cta} ↗</div>
+              </div>
+            </a>
+          ))}
+          <p style={{fontSize:11.5,color:C.slate400,lineHeight:1.45,margin:"4px 4px 2px"}}>These are separate apps from the Finder and open in a new tab. All About Me uses your IncludeMe email and password.</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Gentle pointers to the other free IncludeMe tools. Shown once, inside the account menu, never as a pop-up.
 const MoreFromIncludeMe=()=>{
   const items=[
-    ["Going through an EHCP?","Advocate keeps deadlines, reports, calls and letters in one place. See a demo, no sign-in.","https://advocate.includeme.uk/?utm_campaign=finder_menu","Advocate"],
+    ["Going through an EHCP?","Advocate keeps deadlines, reports, calls and letters in one place.","https://info.includeme.uk/advocate/?utm_campaign=finder_menu","Find out about Advocate"],
     ["Free EHCP deadline calculator","Enter the date the council got your request and see your 6, 16 and 20 week dates.","https://info.includeme.uk/ehcp-deadline-calculator/?utm_campaign=finder_menu","Open the calculator"],
-    ["All About Me, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://includeme-passport.netlify.app/?utm_campaign=finder_menu","Open All About Me"],
+    ["All About Me, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about All About Me"],
   ];
   return(
     <div style={{marginTop:18,paddingTop:16,borderTop:`1px solid ${C.slate100}`}}>
@@ -4941,12 +4995,22 @@ const LandingAuthCard=({onAuth})=>{
 };
 
 // ─── Notifications inbox (in-app feed of holiday clubs & availability near you) ─
-const NotificationsModal=({items,onOpen,onClose,onClear,onClearOne})=>{
+const NotificationsModal=({items,onOpen,onClose,onClear,onClearOne,unreadMessages=0,onMessages,onPlanner})=>{
   return(
     <Modal onClose={onClose} maxWidth={520}>
       <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,marginBottom:4,paddingRight:32}}>
         <h2 style={{margin:0,fontSize:20,fontWeight:700,color:C.slate900,fontFamily:F.display}}>Notifications</h2>
         {items.length>0&&<button onClick={onClear} style={{flexShrink:0,background:"none",border:"none",color:C.brand,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:F.body,padding:"2px 0"}}>Clear all</button>}
+      </div>
+      <div style={{display:"flex",gap:8,margin:"4px 0 16px",flexWrap:"wrap"}}>
+        {onMessages&&<button onClick={onMessages} style={{flex:"1 1 150px",display:"flex",alignItems:"center",gap:10,padding:"11px 13px",borderRadius:10,border:`1px solid ${C.slate100}`,background:C.slate50,cursor:"pointer",fontFamily:F.body,textAlign:"left"}}>
+          <span style={{fontSize:18}}>💬</span>
+          <span style={{display:"flex",flexDirection:"column"}}><span style={{fontSize:13.5,fontWeight:700,color:C.slate900}}>Messages</span><span style={{fontSize:12,color:unreadMessages>0?"#2563EB":C.slate500,fontWeight:unreadMessages>0?700:500}}>{unreadMessages>0?`${unreadMessages} new`:"Replies from providers"}</span></span>
+        </button>}
+        {onPlanner&&<button onClick={onPlanner} style={{flex:"1 1 150px",display:"flex",alignItems:"center",gap:10,padding:"11px 13px",borderRadius:10,border:`1px solid ${C.slate100}`,background:C.slate50,cursor:"pointer",fontFamily:F.body,textAlign:"left"}}>
+          <span style={{fontSize:18}}>🗓️</span>
+          <span style={{display:"flex",flexDirection:"column"}}><span style={{fontSize:13.5,fontWeight:700,color:C.slate900}}>Holiday planner</span><span style={{fontSize:12,color:C.slate500}}>Plan your school holidays</span></span>
+        </button>}
       </div>
       <p style={{margin:"0 0 18px",fontSize:13,color:C.slate400}}>New holiday clubs and availability near you</p>
       {items.length===0?(
@@ -5033,6 +5097,50 @@ const EventThumb=({img,emoji})=>{
   );
   return <img src={img} alt="" onError={()=>setErr(true)} style={{flexShrink:0,width:74,alignSelf:"stretch",minHeight:74,objectFit:"cover",borderRadius:"14px 0 0 14px",display:"block"}}/>;
 };
+// For now, the banner at the top of the Activities list shows our own apps instead of local events (families only).
+// Set to false to bring the events banner back.
+const PROMO_REPLACES_EVENTS=true;
+const MoreFromCarousel=()=>{
+  const ref=useRef(null);
+  const [active,setActive]=useState(0);
+  const items=[
+    {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"Advocate keeps every deadline, report, call and letter in one place. See what it does and how it works.",cta:"Find out more ↗"},
+    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"All About Me",blurb:"A one-page profile for your child: medicines, doctors, how they communicate. Free, and it uses your Finder login.",cta:"Find out more ↗"},
+  ];
+  const onScroll=()=>{const el=ref.current;if(!el)return;const w=el.firstChild?el.firstChild.getBoundingClientRect().width+12:el.clientWidth;setActive(Math.round(el.scrollLeft/w));};
+  const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.children[i].scrollIntoView({behavior:"smooth",inline:"start",block:"nearest"});};
+  return(
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"0 2px 7px"}}>More from IncludeMe</div>
+      <div ref={ref} onScroll={onScroll} className="evt-scroll" style={{display:"flex",gap:12,overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",paddingBottom:2}}>
+        <style>{`.evt-scroll::-webkit-scrollbar{display:none}`}</style>
+        {items.map(it=>{const m=PROMOS[it.kind];return(
+          <a key={it.id} href={m.href("finder_banner_"+it.kind)} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
+            <div style={{display:"flex",alignItems:"stretch",background:C.white,border:`1px solid ${C.slate200}`,borderRadius:14,boxShadow:"0 4px 14px rgba(40,33,22,0.08)",overflow:"hidden",height:"100%"}}>
+              <div style={{width:96,flexShrink:0,background:m.bg,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src={m.logo} alt="" width="52" height="52" style={{borderRadius:14}}/>
+              </div>
+              <div style={{flex:1,minWidth:0,padding:"12px 14px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
+                  <span style={{fontSize:9,fontWeight:800,letterSpacing:"0.08em",color:it.tagInk,background:it.tagBg,borderRadius:5,padding:"2px 7px"}}>{it.tag}</span>
+                  <span style={{fontSize:11,color:C.slate400,fontWeight:600,whiteSpace:"nowrap"}}>A separate app</span>
+                </div>
+                <div style={{color:C.slate900,fontWeight:700,fontSize:14.5,lineHeight:1.25,marginBottom:3}}>{it.title}</div>
+                <div style={{color:C.slate500,fontSize:12,lineHeight:1.4,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{it.blurb}</div>
+                <div style={{marginTop:7,color:C.brand,fontSize:12,fontWeight:700}}>{it.cta}</div>
+              </div>
+            </div>
+          </a>);})}
+      </div>
+      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:9}}>
+        {items.map((it,i)=>(
+          <button key={it.id} onClick={()=>go(i)} aria-label={`Show ${it.kind==="ehcp"?"Advocate":"All About Me"}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const EventCarousel=({events})=>{
   const ref=useRef(null);
   const [active,setActive]=useState(0);
@@ -6224,8 +6332,18 @@ export default function App() {
       {/* ── Header ── */}
       <header style={{position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 0 rgba(40,33,22,0.06), 0 6px 24px rgba(40,33,22,0.06)"}}>
         <style>{`
+          .hdr-tabs{scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+          .hdr-tabs::-webkit-scrollbar{display:none;}
+          .hdr-tab{position:relative;flex:0 0 auto;padding:9px 16px;background:rgba(255,255,255,0.1);color:#b0dcd1;font:600 13.5px/1 'Inter',system-ui,sans-serif;border:none;border-radius:10px 10px 0 0;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,color .15s;}
+          .hdr-tab:hover{background:rgba(255,255,255,0.18);color:#fff;}
+          .hdr-tab.on{background:#fff;color:#0A5044;font-weight:800;}
           @media(max-width:600px){
-            .hdr-tagline{display:none!important;}
+            .hdr-tabs{padding-left:10px!important;padding-right:10px!important;-webkit-mask-image:linear-gradient(to right,#000 90%,transparent);mask-image:linear-gradient(to right,#000 90%,transparent);}
+            .hdr-tab{flex:1 1 0;text-align:center;padding:10px 6px;font-size:13.5px;}
+            .hdr-tabs{gap:5px!important;-webkit-mask-image:none!important;mask-image:none!important;}
+            .hdr-apps .hdr-lbl{display:none!important;}
+            .apps-panel{position:fixed!important;left:10px!important;right:10px!important;top:auto!important;bottom:88px!important;width:auto!important;max-height:70vh;overflow-y:auto;}
+              .hdr-tagline{display:none!important;}
             .hdr-saved .hdr-lbl{display:none!important;}
             .leaflet-pane,.leaflet-top,.leaflet-bottom,.leaflet-control{z-index:1!important;}
             .leaflet-container{z-index:0!important;position:relative!important;}
@@ -6270,10 +6388,11 @@ export default function App() {
               <span className="hdr-tagline" style={{fontSize:10,color:"rgba(255,255,255,0.55)",fontWeight:600,letterSpacing:"0.14em",textTransform:"uppercase",marginLeft:3,borderLeft:"1px solid rgba(255,255,255,0.2)",paddingLeft:11}}>SEND Finder</span>
             </div>
             <div className="hdr-right-group" style={{display:"flex",alignItems:"center",gap:7,flexShrink:0}}>
+              {user.accountType==="individual"&&<AppsMenu/>}
               {user.accountType==="individual"&&(<>
-                <button className="hdr-ic hdr-alerts-btn" onClick={openNotifs} title="Notifications" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadNotifs>0?"#FCD34D":"rgba(255,255,255,0.2)"}`,background:unreadNotifs>0?"rgba(245,158,11,0.25)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body,flexShrink:0}}>
+                <button className="hdr-ic hdr-alerts-btn" onClick={openNotifs} title="Notifications, messages and planner" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${(unreadNotifs+unreadMessages)>0?"#FCD34D":"rgba(255,255,255,0.2)"}`,background:(unreadNotifs+unreadMessages)>0?"rgba(245,158,11,0.25)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body,flexShrink:0}}>
                   <span style={{fontSize:14,lineHeight:0}}>🔔</span><span className="hdr-alerts-lbl">Alerts</span>
-                  {unreadNotifs>0&&<span className="hdr-badge" style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{unreadNotifs>9?"9+":unreadNotifs}</span>}
+                  {(unreadNotifs+unreadMessages)>0&&<span className="hdr-badge" style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{(unreadNotifs+unreadMessages)>9?"9+":(unreadNotifs+unreadMessages)}</span>}
                 </button>
               </>)}
               {user.accountType==="individual"&&(
@@ -6282,15 +6401,10 @@ export default function App() {
                   {(user.favourites||[]).length>0&&<span className="hdr-badge" style={{background:"#EF4444",color:"#fff",borderRadius:99,minWidth:16,height:16,padding:"0 4px",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{(user.favourites||[]).length}</span>}
                 </button>
               )}
-              {user&&(
+              {user&&user.accountType!=="individual"&&(
                 <button className="hdr-ic" onClick={()=>setShowMessages(true)} title="Messages" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadMessages>0?"#93C5FD":"rgba(255,255,255,0.2)"}`,background:unreadMessages>0?"rgba(59,130,246,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
                   <span style={{fontSize:14,lineHeight:0}}>💬</span>
                   {unreadMessages>0&&<span className="hdr-badge" style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:"#3B82F6",color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{unreadMessages>9?"9+":unreadMessages}</span>}
-                </button>
-              )}
-              {user.accountType==="individual"&&(
-                <button className="hdr-ic" onClick={()=>{setAccountInitTab("planner");setShowAccount(true);}} title="Holiday Planner" style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.12)",border:"1.5px solid rgba(255,255,255,0.25)",color:"white",fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  🗓️
                 </button>
               )}
               {user&&user.accountType==="business"&&(
@@ -6308,6 +6422,12 @@ export default function App() {
                 </button>
               )}
             </div>
+          </div>
+          {/* App tabs live in the header, scrollable on phones. The last two open our other tools in a new tab. */}
+          <div className="hdr-tabs" style={{maxWidth:1080,margin:"0 auto",padding:"2px 16px 0",display:"flex",gap:6,overflowX:"auto"}}>
+            {[["activities","Activities"],["therapies","Therapies"],["charities","Charities"]].map(([id,label])=>(
+              <button key={id} onClick={()=>setSectionTab(id)} className={"hdr-tab"+(sectionTab===id?" on":"")} aria-current={sectionTab===id?"page":undefined}>{label}</button>
+            ))}
           </div>
         </div>
 
@@ -6337,34 +6457,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Row 3: Tabs — green underline strip; active tab connects directly into it */}
-        <div style={{background:C.white,borderBottom:`4px solid ${C.brand}`}}>
-          <div style={{maxWidth:1080,margin:"0 auto",padding:"8px 20px 0",display:"flex",gap:6,justifyContent:"center"}}>
-            {[
-              {id:"activities", label:"Activities"},
-              {id:"therapies",  label:"Therapies"},
-              {id:"charities",  label:"Charities"},
-            ].map(({id,label})=>{
-              const active=sectionTab===id;
-              return(
-                <button key={id} onClick={()=>setSectionTab(id)} style={{
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  padding:active?"11px 28px 9px":"11px 20px 9px",
-                  border:"none",borderRadius:active?"10px 10px 0 0":10,
-                  background:active?C.brand:"transparent",
-                  cursor:"pointer",
-                  fontSize:active?15:14,fontWeight:active?800:500,
-                  color:active?"#fff":C.slate500,
-                  fontFamily:F.body,letterSpacing:"0.01em",
-                  transition:"all 0.18s",
-                  whiteSpace:"nowrap",lineHeight:1,
-                }}>
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
       </header>
 
@@ -6531,7 +6623,7 @@ export default function App() {
       }
 
       {/* ── Quick type filter bar — activities ── */}
-      {sectionTab==="activities"&&<div style={{maxWidth:1020,margin:"0 auto",padding:"10px 0 0"}}>
+      {sectionTab==="activities"&&<div style={{maxWidth:1020,margin:"0 auto",padding:"12px 0 10px",background:"#fff",boxShadow:"0 0 0 100vmax #fff",clipPath:"inset(0 -100vmax)"}}>
         <div style={{display:"flex",gap:6,overflowX:"auto",padding:"0 24px 6px",scrollbarWidth:"none"}}>
           <style>{`.qf-bar::-webkit-scrollbar{display:none}`}</style>
           <button onClick={()=>setTypeFilter("All Types")} style={{flexShrink:0,padding:"6px 16px",borderRadius:6,border:`1px solid ${typeFilter==="All Types"?C.brand:C.slate200}`,background:typeFilter==="All Types"?C.brand:C.white,color:typeFilter==="All Types"?C.white:C.slate600,fontSize:12,fontWeight:typeFilter==="All Types"?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>All</button>
@@ -6544,7 +6636,7 @@ export default function App() {
       </div>}
 
       {/* ── Quick category filter bar — therapies (#6) ── */}
-      {sectionTab==="therapies"&&<div style={{maxWidth:1020,margin:"0 auto",padding:"10px 0 0"}}>
+      {sectionTab==="therapies"&&<div style={{maxWidth:1020,margin:"0 auto",padding:"12px 0 10px",background:"#fff",boxShadow:"0 0 0 100vmax #fff",clipPath:"inset(0 -100vmax)"}}>
         <div style={{display:"flex",gap:6,overflowX:"auto",padding:"0 24px 6px",scrollbarWidth:"none"}}>
           <button onClick={()=>setTherapyCategoryFilter("All")} style={{flexShrink:0,padding:"6px 16px",borderRadius:6,border:`1px solid ${therapyCategoryFilter==="All"?C.brand:C.slate200}`,background:therapyCategoryFilter==="All"?C.brand:C.white,color:therapyCategoryFilter==="All"?C.white:C.slate600,fontSize:12,fontWeight:therapyCategoryFilter==="All"?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>All</button>
           {THERAPY_CATEGORIES.filter(cat=>cat.id!=="All").map(cat=>{
@@ -6555,7 +6647,7 @@ export default function App() {
       </div>}
 
       {/* ── Quick filter bar — charities (type of support) ── */}
-      {sectionTab==="charities"&&<div style={{maxWidth:1020,margin:"0 auto",padding:"10px 0 0"}}>
+      {sectionTab==="charities"&&<div style={{maxWidth:1020,margin:"0 auto",padding:"12px 0 10px",background:"#fff",boxShadow:"0 0 0 100vmax #fff",clipPath:"inset(0 -100vmax)"}}>
         <div style={{display:"flex",gap:6,overflowX:"auto",padding:"0 24px 6px",scrollbarWidth:"none"}}>
           <button onClick={()=>setSupportFilter([])} style={{flexShrink:0,padding:"6px 16px",borderRadius:6,border:`1px solid ${supportFilter.length===0?C.brand:C.slate200}`,background:supportFilter.length===0?C.brand:C.white,color:supportFilter.length===0?C.white:C.slate600,fontSize:12,fontWeight:supportFilter.length===0?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>All</button>
           {CHARITY_SUPPORT.map(s=>{
@@ -6649,9 +6741,8 @@ export default function App() {
           {sectionTab==="activities"&&(()=>{
             const R=(distRadius||40)*1.60934;
             const inArea=EVENTS.filter(e=>!userLoc||(e.lat!=null&&haversine(userLoc.lat,userLoc.lng,e.lat,e.lng)<=R));
-            return <EventCarousel events={inArea}/>;
+            return (PROMO_REPLACES_EVENTS&&user&&user.accountType==="individual")?<MoreFromCarousel/>:<EventCarousel events={inArea}/>;
           })()}
-          {user&&user.accountType==="individual"&&<PromoStrip/>}
           {/* ── Holiday banner (#4) — only within 30 days of a school holiday ── */}
           {sectionTab==="activities"&&(()=>{
             const nh=nextHoliday();const within=nh&&nh.days<=30;
@@ -6691,7 +6782,7 @@ export default function App() {
                   </button>
                 ));
               }
-              if(user&&user.accountType==="individual"&&cards.length>=3){
+              if(!PROMO_REPLACES_EVENTS&&user&&user.accountType==="individual"&&cards.length>=3){
                 cards.splice(Math.min(2,cards.length),0,<PromoCard key="promo-ehcp" kind="ehcp"/>);
                 if(cards.length>=7)cards.splice(Math.min(6,cards.length),0,<PromoCard key="promo-pp" kind="pp"/>);
               }
@@ -6722,7 +6813,7 @@ export default function App() {
       {showSaved&&<SavedModal user={user} activities={activities} userLoc={userLoc} onOpen={setSelected} onFav={handleFav} onClose={()=>setShowSaved(false)}/>}
       {showMessages&&<MessagesModal messages={messages} onMarkRead={markMessageRead} onOpen={openListingById} onClose={()=>setShowMessages(false)} activities={activities} user={user}/>}
       {showPlanner&&user&&<HolidayPlannerModal user={user} activities={activities} userLoc={userLoc} onClose={()=>setShowPlanner(false)}/>}
-      {showNotifs&&<NotificationsModal items={notifList} onOpen={openListingById} onClose={()=>setShowNotifs(false)} onClear={clearAllNotifs} onClearOne={clearOneNotif}/>}
+      {showNotifs&&<NotificationsModal items={notifList} onOpen={openListingById} onClose={()=>setShowNotifs(false)} onClear={clearAllNotifs} onClearOne={clearOneNotif} unreadMessages={unreadMessages} onMessages={()=>{setShowNotifs(false);setShowMessages(true);}} onPlanner={()=>{setShowNotifs(false);setAccountInitTab("planner");setShowAccount(true);}}/>}
       {showSuggest&&<SuggestClubModal user={user} onClose={()=>setShowSuggest(false)}/>}
       {showLocOnboard&&<LocationOnboardModal onSet={handleLocOnboardSet} onSkip={()=>setShowLocOnboard(false)}/>}
       {showNotifSub&&<NotifSubModal user={user} userLoc={userLoc} locLabel={locLabel} onSave={handleNotifSubSave} onClose={()=>setShowNotifSub(false)}/>}
