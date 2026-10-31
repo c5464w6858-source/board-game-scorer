@@ -4697,8 +4697,8 @@ const PromoStrip=()=>{
 
 // Our two other products, listed inside the menu with a short description. Families only.
 const APP_ROWS=[
-  {id:"ehcp",name:"EHCP Tracker",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
-  {id:"pp",name:"All About Me",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
+  {id:"ehcp",name:"EHCP Tracker",tag:"NEW",bg:"#17214D",accent:"#E3B94E",accentInk:"#17214D",tabInk:"#E3B94E",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+  {id:"pp",name:"Child Organiser",tag:"FREE",bg:"#3B1F63",accent:"#FF8A5B",accentInk:"#1B1530",tabInk:"#FFB594",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
 ];
 
 // Product tabs along the very top: you land on IncludeMe (the Finder). Tapping EHCP Tracker or All About Me drops a drawer down
@@ -4714,31 +4714,35 @@ const AppTabs=()=>{
   },[open]);
   const wrap=useRef(null);
   const cur=APP_ROWS.find(r=>r.id===open);
-  const tab=(on)=>({position:"relative",zIndex:3,flex:"0 1 auto",minWidth:0,padding:"8px clamp(6px,2.6vw,12px)",border:"none",borderRadius:"9px 9px 0 0",background:on?"#fff":"rgba(255,255,255,0.1)",color:on?"#0A5044":"#c9e6de",fontFamily:F.body,fontWeight:on?800:600,fontSize:"clamp(11px,3.3vw,12.5px)",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",cursor:"pointer"});
+  // Tabs hang from the top edge of the screen. Each product has its own colours; the drawer is the same colour as its tab, so they read as one piece.
+  const tab=(bg,ink,isOpen,dim)=>({position:"relative",zIndex:3,flex:"0 1 auto",minWidth:0,padding:"8px clamp(7px,2.6vw,13px) 9px",border:"none",borderRadius:isOpen?"0":"0 0 11px 11px",background:bg,color:ink,opacity:dim?0.6:1,fontFamily:F.body,fontWeight:700,fontSize:"clamp(11px,3.3vw,12.5px)",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",cursor:"pointer",boxShadow:isOpen?"none":"0 2px 6px rgba(0,0,0,0.25)"});
   return(
-    <div ref={wrap} style={{position:"relative"}}>
-      <div className="prod-tabs" role="tablist" aria-label="IncludeMe products" style={{maxWidth:1080,margin:"0 auto",padding:"6px 16px 0",display:"flex",gap:5,background:"transparent",position:"relative",zIndex:3}}>
-        <button type="button" role="tab" aria-selected={!open} onClick={()=>setOpen(null)} style={tab(!open)}>IncludeMe</button>
-        {APP_ROWS.map(r=>(
-          <button key={r.id} type="button" role="tab" aria-selected={open===r.id} aria-expanded={open===r.id} aria-controls="prod-drawer" onClick={()=>setOpen(o=>o===r.id?null:r.id)} style={tab(open===r.id)}>
-            {r.name}<span aria-hidden="true" className="prod-caret" style={{fontSize:8,marginLeft:5,display:"inline-block",transform:open===r.id?"rotate(180deg)":"none"}}>▼</span>
-          </button>
-        ))}
-      </div>
-      {cur&&(<>
-        <div onClick={()=>setOpen(null)} aria-hidden="true" style={{position:"fixed",inset:0,background:"rgba(10,20,18,0.45)",zIndex:1}}/>
-        <div id="prod-drawer" role="tabpanel" aria-label={cur.name} style={{position:"absolute",left:0,right:0,top:"100%",zIndex:2,background:"#fff",boxShadow:"0 18px 40px rgba(20,24,40,0.3)"}}>
-          <div style={{maxWidth:1080,margin:"0 auto",padding:"16px 16px 18px",display:"flex",gap:13,alignItems:"flex-start"}}>
-            <img src={cur.logo} alt="" width="46" height="46" style={{borderRadius:12,flexShrink:0}}/>
-            <div style={{minWidth:0,flex:1}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}><span style={{fontSize:16,fontWeight:700,color:C.slate900}}>{cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.tagBg,color:cur.tagInk}}>{cur.tag}</span></div>
-              <div style={{fontSize:13.5,color:C.slate500,lineHeight:1.5,marginBottom:11}}>{cur.desc}</div>
-              <a href={cur.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(null)} style={{display:"inline-block",background:C.brand,color:"#fff",borderRadius:99,padding:"10px 20px",fontSize:13.5,fontWeight:700,textDecoration:"none"}}>{cur.cta} ↗</a>
-              <div style={{fontSize:11.5,color:C.slate400,marginTop:9}}>A separate app from the Finder. Opens in a new tab. Tap anywhere else to go back to IncludeMe.</div>
+    <div ref={wrap}>
+      <div style={{position:"relative"}}>
+        <div className="prod-tabs" role="tablist" aria-label="IncludeMe products" style={{maxWidth:1080,margin:"0 auto",padding:"0 16px",display:"flex",gap:5,position:"relative",zIndex:3}}>
+          <button type="button" role="tab" aria-selected={!open} onClick={()=>setOpen(null)} style={tab(!open?"#fff":"#12806E",!open?"#0A5044":"#fff",false,!!open)}>IncludeMe</button>
+          {APP_ROWS.map(r=>(
+            <button key={r.id} type="button" role="tab" aria-selected={open===r.id} aria-expanded={open===r.id} aria-controls="prod-drawer" onClick={()=>setOpen(o=>o===r.id?null:r.id)} style={tab(r.bg,r.tabInk,open===r.id,false)}>
+              {r.name}<span aria-hidden="true" className="prod-caret" style={{fontSize:8,marginLeft:5,display:"inline-block",transform:open===r.id?"rotate(180deg)":"none"}}>▼</span>
+            </button>
+          ))}
+        </div>
+        {cur&&(<>
+          <div onClick={()=>setOpen(null)} aria-hidden="true" style={{position:"fixed",inset:0,background:"rgba(10,20,18,0.5)",zIndex:1}}/>
+          <div id="prod-drawer" role="tabpanel" aria-label={cur.name} style={{position:"absolute",left:0,right:0,top:"100%",zIndex:2,background:cur.bg,boxShadow:"0 18px 40px rgba(20,24,40,0.35)"}}>
+            <div style={{maxWidth:1080,margin:"0 auto",padding:"16px 16px 20px",display:"flex",gap:13,alignItems:"flex-start"}}>
+              <img src={cur.logo} alt="" width="48" height="48" style={{borderRadius:12,flexShrink:0}}/>
+              <div style={{minWidth:0,flex:1}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}><span style={{fontSize:17,fontWeight:700,color:"#fff"}}>{cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.accent,color:cur.accentInk}}>{cur.tag}</span></div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.5,marginBottom:12}}>{cur.desc}</div>
+                <a href={cur.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(null)} style={{display:"inline-block",background:cur.accent,color:cur.accentInk,borderRadius:99,padding:"10px 20px",fontSize:13.5,fontWeight:800,textDecoration:"none"}}>{cur.cta} ↗</a>
+                <div style={{fontSize:11.5,color:"rgba(255,255,255,0.65)",marginTop:10}}>A separate app from the Finder. Opens in a new tab. Tap anywhere else to go back to IncludeMe.</div>
+              </div>
             </div>
           </div>
-        </div>
-      </>)}
+        </>)}
+      </div>
+      <div style={{height:7}}/>
     </div>
   );
 };
