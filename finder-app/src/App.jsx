@@ -4695,11 +4695,58 @@ const PromoStrip=()=>{
   );
 };
 
-// "Apps" menu: says plainly that Advocate and All About Me are separate IncludeMe products, away from the Finder's own tabs.
+// Two buttons under the header bar for our separate products. Tapping one drops a drawer down with more information and a link.
+// Only one drawer is open at a time. Families only.
 const APPS_KEY="im_apps_seen";
-const AppsMenu=()=>{
+const APP_ROWS=[
+  {id:"ehcp",name:"Advocate",tag:"EHCP",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Organise an EHCP: every deadline, report, phone call and letter in one place. £3.99 a month after a 3-day free trial, cancel any time.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+  {id:"pp",name:"All About Me",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"A one-page profile for your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
+];
+const AppsDrawer=()=>{
+  const [open,setOpen]=useState(null);
+  const ref=useRef(null);
+  useEffect(()=>{
+    if(!open)return;
+    const away=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(null);};
+    const esc=e=>{if(e.key==="Escape")setOpen(null);};
+    document.addEventListener("mousedown",away);document.addEventListener("touchstart",away);document.addEventListener("keydown",esc);
+    return()=>{document.removeEventListener("mousedown",away);document.removeEventListener("touchstart",away);document.removeEventListener("keydown",esc);};
+  },[open]);
+  const cur=APP_ROWS.find(r=>r.id===open);
+  return(
+    <div ref={ref} className="apps-strip" style={{background:"rgba(0,0,0,0.14)"}}>
+      <div style={{maxWidth:1080,margin:"0 auto",padding:"7px 16px",display:"flex",gap:8,alignItems:"center"}}>
+        <span className="apps-strip-lbl" style={{fontSize:10.5,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",flexShrink:0}}>More from IncludeMe</span>
+        {APP_ROWS.map(r=>(
+          <button key={r.id} type="button" onClick={()=>setOpen(o=>o===r.id?null:r.id)} aria-expanded={open===r.id} aria-controls="apps-drawer"
+            style={{flex:"1 1 0",minWidth:0,display:"flex",alignItems:"center",gap:7,padding:"6px 9px",borderRadius:10,border:`1px solid ${open===r.id?"#fff":"rgba(255,255,255,0.25)"}`,background:open===r.id?"rgba(255,255,255,0.2)":"rgba(255,255,255,0.08)",color:"#fff",fontFamily:F.body,fontWeight:700,fontSize:12.5,cursor:"pointer",textAlign:"left"}}>
+            <img src={r.logo} alt="" width="22" height="22" style={{borderRadius:6,flexShrink:0}}/>
+            <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{r.name}</span>
+            <span aria-hidden="true" style={{fontSize:10,transform:open===r.id?"rotate(180deg)":"none",transition:"transform .15s",flexShrink:0}}>▼</span>
+          </button>
+        ))}
+      </div>
+      {cur&&(
+        <div id="apps-drawer" role="region" aria-label={cur.name} className="apps-drawer" style={{background:"#fff",borderBottom:"1px solid rgba(0,0,0,0.08)",boxShadow:"0 14px 30px rgba(20,24,40,0.22)"}}>
+          <div style={{maxWidth:1080,margin:"0 auto",padding:"14px 16px 16px",display:"flex",gap:12,alignItems:"flex-start"}}>
+            <img src={cur.logo} alt="" width="44" height="44" style={{borderRadius:12,flexShrink:0}}/>
+            <div style={{minWidth:0,flex:1}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}><span style={{fontSize:15,fontWeight:700,color:C.slate900}}>{cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.tagBg,color:cur.tagInk}}>{cur.tag}</span></div>
+              <div style={{fontSize:13.5,color:C.slate500,lineHeight:1.5,marginBottom:10}}>{cur.desc}</div>
+              <a href={cur.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(null)} style={{display:"inline-block",background:C.brand,color:"#fff",borderRadius:99,padding:"9px 18px",fontSize:13.5,fontWeight:700,textDecoration:"none"}}>{cur.cta} ↗</a>
+              <div style={{fontSize:11.5,color:C.slate400,marginTop:8}}>A separate app from the Finder. Opens in a new tab.</div>
+            </div>
+            <button type="button" onClick={()=>setOpen(null)} aria-label="Close" style={{background:"none",border:"none",fontSize:22,lineHeight:1,color:C.slate400,cursor:"pointer",padding:"2px 4px",flexShrink:0}}>×</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// One menu at the top right for everything personal: alerts, saved places, account (and the admin panel for admins).
+const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin})=>{
   const [open,setOpen]=useState(false);
-  const [seen,setSeen]=useState(()=>{try{return !!localStorage.getItem(APPS_KEY);}catch{return true;}});
   const ref=useRef(null);
   useEffect(()=>{
     if(!open)return;
@@ -4708,41 +4755,27 @@ const AppsMenu=()=>{
     document.addEventListener("mousedown",away);document.addEventListener("touchstart",away);document.addEventListener("keydown",esc);
     return()=>{document.removeEventListener("mousedown",away);document.removeEventListener("touchstart",away);document.removeEventListener("keydown",esc);};
   },[open]);
-  const toggle=()=>{setOpen(o=>!o);if(!seen){setSeen(true);try{localStorage.setItem(APPS_KEY,"1");}catch{}}};
-  const rows=[
-    {name:"Advocate",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Organise an EHCP: deadlines, reports, calls and letters in one place.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
-    {name:"All About Me",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"A one-page profile for your child: medicines, doctors, how they communicate.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
-  ];
+  const go=fn=>()=>{setOpen(false);fn();};
+  const item=(icon,label,count,fn,hot)=>(
+    <button type="button" role="menuitem" onClick={go(fn)} style={{display:"flex",alignItems:"center",gap:12,width:"100%",padding:"13px 12px",borderRadius:10,border:"none",background:"none",cursor:"pointer",fontFamily:F.body,fontSize:15,fontWeight:600,color:C.slate900,textAlign:"left",minHeight:48}}>
+      <span style={{width:24,textAlign:"center",fontSize:17,lineHeight:1}} aria-hidden="true">{icon}</span>
+      <span style={{flex:1}}>{label}</span>
+      {count>0&&<span style={{minWidth:20,height:20,padding:"0 6px",borderRadius:99,background:hot?C.accent:C.slate400,color:"#fff",fontSize:11,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{count>9?"9+":count}</span>}
+    </button>
+  );
   return(
     <div ref={ref} style={{position:"relative",flexShrink:0}}>
-      <button className="hdr-ic hdr-apps" onClick={toggle} aria-expanded={open} aria-haspopup="true" title="More IncludeMe apps" style={{position:"relative",display:"flex",alignItems:"center",gap:6,padding:"6px 11px",borderRadius:9,border:"1px solid rgba(255,255,255,0.28)",background:"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.6"/><circle cx="8" cy="3" r="1.6"/><circle cx="13" cy="3" r="1.6"/><circle cx="3" cy="8" r="1.6"/><circle cx="8" cy="8" r="1.6"/><circle cx="13" cy="8" r="1.6"/><circle cx="3" cy="13" r="1.6"/><circle cx="8" cy="13" r="1.6"/><circle cx="13" cy="13" r="1.6"/></svg>
-        <span className="hdr-lbl">Apps</span>
-        {!seen&&<span className="hdr-badge" style={{width:10,height:10,borderRadius:99,background:"#FF8A5B",boxShadow:"0 0 0 2px #0A5044",position:"absolute",top:-3,right:-3}}/>}
+      <button type="button" className="hdr-ic" onClick={()=>setOpen(o=>!o)} aria-expanded={open} aria-haspopup="menu" aria-label={"Menu"+(alerts>0?", "+alerts+" new":"")}
+        style={{position:"relative",width:38,height:38,borderRadius:10,border:"1px solid rgba(255,255,255,0.3)",background:"rgba(255,255,255,0.12)",color:"#fff",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
+        {alerts>0&&<span className="hdr-badge" style={{position:"absolute",top:-4,right:-4,minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 0 2px #0F6B5C"}}>{alerts>9?"9+":alerts}</span>}
       </button>
       {open&&(
-        <div className="apps-panel" role="dialog" aria-label="More IncludeMe apps" style={{position:"absolute",right:0,top:"calc(100% + 10px)",width:"min(340px, 92vw)",background:"#fff",borderRadius:16,boxShadow:"0 18px 50px rgba(20,24,40,0.35)",padding:14,zIndex:200,textAlign:"left"}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"2px 4px 10px"}}>IncludeMe apps</div>
-          <div style={{display:"flex",alignItems:"center",gap:11,padding:"10px 10px",borderRadius:12,background:C.brandLt,marginBottom:8}}>
-            <div style={{width:36,height:36,borderRadius:10,background:C.brand,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-              <svg width="20" height="20" viewBox="0 0 36 36" fill="none"><circle cx="11" cy="8" r="4" fill="white"/><circle cx="25" cy="8" r="4" fill="rgba(255,255,255,0.6)"/><path d="M4 28v-3a7 7 0 0 1 7-7h0a7 7 0 0 1 7 7v3" stroke="white" strokeWidth="2.5" strokeLinecap="round"/><path d="M18 28v-3a7 7 0 0 1 7-7h0a7 7 0 0 1 7 7v3" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round"/></svg>
-            </div>
-            <div style={{minWidth:0}}><div style={{fontSize:14,fontWeight:700,color:C.slate900}}>Activity Finder</div><div style={{fontSize:12,color:C.brand,fontWeight:600}}>You are here</div></div>
-          </div>
-          {rows.map(r=>(
-            <a key={r.name} href={r.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(false)} style={{display:"flex",gap:11,alignItems:"flex-start",padding:"10px 10px",borderRadius:12,textDecoration:"none",border:`1px solid ${C.slate100}`,marginBottom:8}}>
-              <img src={r.logo} alt="" width="36" height="36" style={{borderRadius:10,flexShrink:0}}/>
-              <div style={{minWidth:0,flex:1}}>
-                <div style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
-                  <span style={{fontSize:14,fontWeight:700,color:C.slate900}}>{r.name}</span>
-                  <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:r.tagBg,color:r.tagInk}}>{r.tag}</span>
-                </div>
-                <div style={{fontSize:12.5,color:C.slate500,lineHeight:1.4,margin:"2px 0 4px"}}>{r.desc}</div>
-                <div style={{fontSize:12.5,fontWeight:700,color:C.brand}}>{r.cta} ↗</div>
-              </div>
-            </a>
-          ))}
-          <p style={{fontSize:11.5,color:C.slate400,lineHeight:1.45,margin:"4px 4px 2px"}}>These are separate apps from the Finder and open in a new tab. All About Me uses your IncludeMe email and password.</p>
+        <div role="menu" aria-label="Menu" style={{position:"absolute",right:0,top:"calc(100% + 10px)",width:"min(280px, 92vw)",background:"#fff",borderRadius:16,boxShadow:"0 18px 50px rgba(20,24,40,0.35)",padding:8,zIndex:200}}>
+          {item("🔔","Alerts, messages and planner",alerts,onAlerts,true)}
+          {item("♥","Saved",saved,onSaved,false)}
+          {item("👤",name||"My account",0,onAccount)}
+          {isAdmin&&item("⚙️","Admin panel",0,onAdmin)}
         </div>
       )}
     </div>
@@ -6341,8 +6374,7 @@ export default function App() {
             .hdr-tabs{padding-left:10px!important;padding-right:10px!important;-webkit-mask-image:linear-gradient(to right,#000 90%,transparent);mask-image:linear-gradient(to right,#000 90%,transparent);}
             .hdr-tab{flex:1 1 0;text-align:center;padding:10px 6px;font-size:13.5px;}
             .hdr-tabs{gap:5px!important;-webkit-mask-image:none!important;mask-image:none!important;}
-            .hdr-apps .hdr-lbl{display:none!important;}
-            .apps-panel{position:fixed!important;left:10px!important;right:10px!important;top:auto!important;bottom:88px!important;width:auto!important;max-height:70vh;overflow-y:auto;}
+            .apps-strip-lbl{display:none!important;}
               .hdr-tagline{display:none!important;}
             .hdr-saved .hdr-lbl{display:none!important;}
             .leaflet-pane,.leaflet-top,.leaflet-bottom,.leaflet-control{z-index:1!important;}
@@ -6388,19 +6420,7 @@ export default function App() {
               <span className="hdr-tagline" style={{fontSize:10,color:"rgba(255,255,255,0.55)",fontWeight:600,letterSpacing:"0.14em",textTransform:"uppercase",marginLeft:3,borderLeft:"1px solid rgba(255,255,255,0.2)",paddingLeft:11}}>SEND Finder</span>
             </div>
             <div className="hdr-right-group" style={{display:"flex",alignItems:"center",gap:7,flexShrink:0}}>
-              {user.accountType==="individual"&&<AppsMenu/>}
-              {user.accountType==="individual"&&(<>
-                <button className="hdr-ic hdr-alerts-btn" onClick={openNotifs} title="Notifications, messages and planner" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${(unreadNotifs+unreadMessages)>0?"#FCD34D":"rgba(255,255,255,0.2)"}`,background:(unreadNotifs+unreadMessages)>0?"rgba(245,158,11,0.25)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body,flexShrink:0}}>
-                  <span style={{fontSize:14,lineHeight:0}}>🔔</span><span className="hdr-alerts-lbl">Alerts</span>
-                  {(unreadNotifs+unreadMessages)>0&&<span className="hdr-badge" style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{(unreadNotifs+unreadMessages)>9?"9+":(unreadNotifs+unreadMessages)}</span>}
-                </button>
-              </>)}
-              {user.accountType==="individual"&&(
-                <button className="hdr-ic hdr-saved" onClick={()=>setShowSaved(true)} style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${(user.favourites||[]).length>0?"#FCA5A5":"rgba(255,255,255,0.2)"}`,background:(user.favourites||[]).length>0?"rgba(239,68,68,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
-                  <span style={{color:(user.favourites||[]).length>0?"#FECACA":"white",lineHeight:0}}><Icons.heart filled={(user.favourites||[]).length>0}/></span><span className="hdr-lbl">Saved</span>
-                  {(user.favourites||[]).length>0&&<span className="hdr-badge" style={{background:"#EF4444",color:"#fff",borderRadius:99,minWidth:16,height:16,padding:"0 4px",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{(user.favourites||[]).length}</span>}
-                </button>
-              )}
+              {user.accountType==="individual"&&<HeaderMenu alerts={unreadNotifs+unreadMessages} saved={(user.favourites||[]).length} name={user.name&&!user.name.includes("@")?user.name:user.email} onAlerts={openNotifs} onSaved={()=>setShowSaved(true)} onAccount={()=>setShowAccount(true)} onAdmin={()=>setShowAdmin(true)} isAdmin={isAdmin}/>}
               {user&&user.accountType!=="individual"&&(
                 <button className="hdr-ic" onClick={()=>setShowMessages(true)} title="Messages" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadMessages>0?"#93C5FD":"rgba(255,255,255,0.2)"}`,background:unreadMessages>0?"rgba(59,130,246,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
                   <span style={{fontSize:14,lineHeight:0}}>💬</span>
@@ -6412,6 +6432,7 @@ export default function App() {
                   <Icons.plus/><span>Add listing</span>
                 </button>
               )}
+              {user.accountType!=="individual"&&(<>
               <button className="hdr-ic" onClick={()=>setShowAccount(true)} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.16)",border:"1.5px solid rgba(255,255,255,0.3)",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:F.display,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 {(user.name&&!user.name.includes("@")?user.name:user.email)[0].toUpperCase()}
               </button>
@@ -6421,8 +6442,10 @@ export default function App() {
                   ⚙️
                 </button>
               )}
+              </>)}
             </div>
           </div>
+          {user.accountType==="individual"&&<AppsDrawer/>}
           {/* App tabs live in the header, scrollable on phones. The last two open our other tools in a new tab. */}
           <div className="hdr-tabs" style={{maxWidth:1080,margin:"0 auto",padding:"2px 16px 0",display:"flex",gap:6,overflowX:"auto"}}>
             {[["activities","Activities"],["therapies","Therapies"],["charities","Charities"]].map(([id,label])=>(
