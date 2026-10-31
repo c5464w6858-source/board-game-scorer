@@ -4656,7 +4656,7 @@ const AdminPanel=({activities,setActivities,onClose})=>{
 const PROMOS={
   ehcp:{title:"Going through an EHCP?",text:"EHCP Tracker keeps every deadline, report and phone call in one place. See what it does and how it works.",cta:"Find out more",chip:"Going through an EHCP?",chipCta:"Find out more",
     href:c=>`https://info.includeme.uk/advocate/?utm_campaign=${c}`,logo:"./promo/logo-advocate.svg",bg:"linear-gradient(160deg,#101A45 0%,#1F2C66 100%)",accent:"#E3B94E",accentInk:"#17214D",chipBg:"#ECEEF8",chipInk:"#17214D"},
-  pp:{title:"All About Me, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"All About Me, free",
+  pp:{title:"Child Organiser, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"Child Organiser, free",
     href:c=>`https://info.includeme.uk/passport/?utm_campaign=${c}`,logo:"./promo/logo-passport.svg",bg:"linear-gradient(160deg,#2A1546 0%,#4E2D80 100%)",accent:"#FF8A5B",accentInk:"#1B1530",chipBg:"#F0EBF8",chipInk:"#3B1F63"},
 };
 const PromoCard=({kind})=>{
@@ -4701,7 +4701,7 @@ const APP_ROWS=[
   {id:"pp",name:"Child Organiser",tag:"FREE",bg:"#552D8C",accent:"#FF8A5B",accentInk:"#1B1530",tabInk:"#FFE0D2",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
 ];
 
-// Product tabs along the very top: you land on IncludeMe (the Finder). Tapping EHCP Tracker or All About Me drops a drawer down
+// Product tabs along the very top: you land on IncludeMe (the Finder). Tapping EHCP Tracker or Child Organiser drops a drawer down
 // with more information; tapping anywhere else (or the IncludeMe tab) closes it and you are back on IncludeMe. Families only.
 const AppTabs=()=>{
   const [open,setOpen]=useState(null);
@@ -4806,7 +4806,7 @@ const MoreFromIncludeMe=()=>{
   const items=[
     ["Going through an EHCP?","EHCP Tracker keeps deadlines, reports, calls and letters in one place.","https://info.includeme.uk/advocate/?utm_campaign=finder_menu","Find out about EHCP Tracker"],
     ["Free EHCP deadline calculator","Enter the date the council got your request and see your 6, 16 and 20 week dates.","https://info.includeme.uk/ehcp-deadline-calculator/?utm_campaign=finder_menu","Open the calculator"],
-    ["All About Me, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about All About Me"],
+    ["Child Organiser, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about Child Organiser"],
   ];
   return(
     <div style={{marginTop:18,paddingTop:16,borderTop:`1px solid ${C.slate100}`}}>
@@ -5157,7 +5157,7 @@ const MoreFromCarousel=()=>{
   const [active,setActive]=useState(0);
   const items=[
     {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"EHCP Tracker keeps every deadline, report, call and letter in one place. See what it does and how it works.",cta:"Find out more ↗"},
-    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"All About Me",blurb:"A one-page profile for your child: medicines, doctors, how they communicate. Free, and it uses your Finder login.",cta:"Find out more ↗"},
+    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"Child Organiser",blurb:"A one-page profile for your child: medicines, doctors, how they communicate. Free, and it uses your Finder login.",cta:"Find out more ↗"},
   ];
   const onScroll=()=>{const el=ref.current;if(!el)return;const w=el.firstChild?el.firstChild.getBoundingClientRect().width+12:el.clientWidth;setActive(Math.round(el.scrollLeft/w));};
   const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.children[i].scrollIntoView({behavior:"smooth",inline:"start",block:"nearest"});};
@@ -5186,7 +5186,7 @@ const MoreFromCarousel=()=>{
       </div>
       <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:9}}>
         {items.map((it,i)=>(
-          <button key={it.id} onClick={()=>go(i)} aria-label={`Show ${it.kind==="ehcp"?"EHCP Tracker":"All About Me"}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>
+          <button key={it.id} onClick={()=>go(i)} aria-label={`Show ${it.kind==="ehcp"?"EHCP Tracker":"Child Organiser"}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>
         ))}
       </div>
     </div>

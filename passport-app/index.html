@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#3B1F63">
-<title>All About Me | IncludeMe</title>
+<title>Child Organiser | IncludeMe</title>
 <link rel="icon" href="logo-passport.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -251,7 +251,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
 <div id="app" hidden>
   <header class="top">
     <div class="top-in">
-      <a class="brand" href="/" aria-label="All About Me home"><img src="logo-passport.svg" alt=""><span>All About Me</span></a>
+      <a class="brand" href="/" aria-label="Child Organiser home"><img src="logo-passport.svg" alt=""><span>Child Organiser</span></a>
       <div class="top-r" id="topR">
         <div class="menuwrap" id="kidWrap">
           <button type="button" class="who" id="kidBtn" aria-expanded="false"><span class="av" id="kidAv" aria-hidden="true">+</span><span id="kidName">Add a child</span><span class="chev" aria-hidden="true"></span></button>
@@ -268,7 +268,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
             <button type="button" class="mi" id="miInstall" hidden>Install as an app</button>
             <hr>
             <a class="mi" href="https://includeme.uk/" rel="noopener">Open the Activity Finder</a>
-            <a class="mi" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener">Try Advocate for EHCP cases</a>
+            <a class="mi" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener">Try EHCP Tracker for EHCP cases</a>
             <button type="button" class="mi danger" id="miSignOut">Sign out</button>
           </div>
         </div>
@@ -288,10 +288,10 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   </nav>
 
   <main id="main" class="page">
-    <h1 class="sr">All About Me</h1>
+    <h1 class="sr">Child Organiser</h1>
     <section id="installBar" class="banner install" aria-labelledby="instTitle" hidden>
       <div class="inst-text">
-        <p class="inst-h" id="instTitle"><b>Save All About Me to your phone</b></p>
+        <p class="inst-h" id="instTitle"><b>Save Child Organiser to your phone</b></p>
         <p id="instHow"></p>
       </div>
       <span class="actions"><button type="button" class="btn btn-main btn-small" id="instGo" hidden>Install</button><button type="button" class="btn btn-ghost btn-small" id="instHide">Hide for now</button></span>
@@ -627,7 +627,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     if (p.dob) meta.push("Born " + longDate(p.dob) + (age(p.dob) ? " (" + age(p.dob) + ")" : ""));
     if (p.pronouns) meta.push(p.pronouns);
     if (p.languages) meta.push("Languages: " + p.languages);
-    var info = el("div", {}, [el("span", { class: "tag", text: "All About Me" }), el("h2", { text: shownName })]);
+    var info = el("div", {}, [el("span", { class: "tag", text: "Child Organiser" }), el("h2", { text: shownName })]);
     meta.forEach(function (m) { info.appendChild(el("p", { text: m })); });
     out.appendChild(el("div", { class: "pp-head" }, [pic, info]));
 
@@ -688,7 +688,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     }
     if (!body.children.length && !em.length) body.appendChild(el("p", { class: "empty", text: "Nothing added yet. Open Details and add a few things." }));
     out.appendChild(body);
-    out.appendChild(el("div", { class: "pp-foot", text: "Made with the free IncludeMe All About Me passport." + (p.updated ? " Last updated " + new Date(p.updated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : "") + " Check medicines against the label or the pharmacist. This is not a medical record." }));
+    out.appendChild(el("div", { class: "pp-foot", text: "Made with the free IncludeMe Child Organiser." + (p.updated ? " Last updated " + new Date(p.updated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : "") + " Check medicines against the label or the pharmacist. This is not a medical record." }));
     return out;
   }
   function card(p) {
@@ -705,7 +705,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     if (!items.length) ul.appendChild(el("li", { class: "empty", text: "Add allergies, medicines or contacts to fill this card." }));
     return el("div", { class: "idcard", role: "group", "aria-label": "Emergency card for " + (p.name || "child") }, [
       el("div", { class: "ch" }, [el("b", { text: p.name || "Name" }), el("span", { text: "In an emergency" })]), ul,
-      el("div", { class: "cf", text: "IncludeMe All About Me passport" + (p.updated ? " · updated " + new Date(p.updated).toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "") })]);
+      el("div", { class: "cf", text: "IncludeMe Child Organiser" + (p.updated ? " · updated " + new Date(p.updated).toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "") })]);
   }
   function hiddenNote(p) {
     var names = HIDE.filter(function (h) { return (p.hide || []).indexOf(h[0]) >= 0; }).map(function (h) { return h[1]; });
@@ -945,8 +945,8 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     card.appendChild(ul); box.appendChild(card);
     var q = el("div", { class: "actions" }, [lb("See the passport", function () { setMode("view"); }), lb("Emergency card", function () { setMode("card"); }), lb("Add a document", function () { setMode("docs"); })]);
     box.appendChild(q);
-    box.appendChild(el("div", { class: "upsell" }, [el("h3", { text: "Managing an EHCP?" }), el("p", { text: "Advocate keeps the whole case in one place: deadlines, reports, phone calls, letters and a printable case pack. £3.99 a month. Case details stay on your phone." }),
-      el("a", { class: "btn btn-main btn-small", href: "https://info.includeme.uk/advocate/?utm_campaign=passport_overview", rel: "noopener", text: "See how Advocate works" })]));
+    box.appendChild(el("div", { class: "upsell" }, [el("h3", { text: "Managing an EHCP?" }), el("p", { text: "EHCP Tracker keeps the whole case in one place: deadlines, reports, phone calls, letters and a printable case pack. £3.99 a month. Case details stay on your phone." }),
+      el("a", { class: "btn btn-main btn-small", href: "https://info.includeme.uk/advocate/?utm_campaign=passport_overview", rel: "noopener", text: "See how EHCP Tracker works" })]));
   }
 
 
@@ -978,7 +978,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   function signOut() { var s = getSession(); setSession(null); if (s) sbFetch("/auth/v1/logout?scope=local", { token: s.access_token }).catch(function () { /* already gone */ }); }
 
   var gateEmail = "";
-  function gateView(kids) { var c = $("gateCard"); c.textContent = ""; c.appendChild(el("div", { class: "brand" }, [el("img", { src: "logo-passport.svg", alt: "" }), el("span", { text: "All About Me" })])); kids.forEach(function (k) { if (k) c.appendChild(k); }); $("app").hidden = true; $("gate").hidden = false; }
+  function gateView(kids) { var c = $("gateCard"); c.textContent = ""; c.appendChild(el("div", { class: "brand" }, [el("img", { src: "logo-passport.svg", alt: "" }), el("span", { text: "Child Organiser" })])); kids.forEach(function (k) { if (k) c.appendChild(k); }); $("app").hidden = true; $("gate").hidden = false; }
   function note(msg, isErr) { return msg ? el("p", { class: "msg" + (isErr === false ? " ok" : ""), role: isErr === false ? "status" : "alert", text: msg }) : null; }
   function privacyLine() { return el("p", { class: "fine", style: "margin-top:14px" }, ["Free to use. Your child's details stay on this device. ", el("a", { href: "privacy.html", text: "Privacy" }), "."]); }
   function pwField(id, label, autocomplete) {
@@ -1201,7 +1201,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       encodeShare(cur()).then(function (t) {
         var link = location.origin + location.pathname + "#p=" + t;
         if (link.length > 6000) { toolMsg("This passport is too long for a link. Print it or copy it as text instead.", true); return; }
-        if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) { navigator.share({ title: "All About Me passport", url: link }).catch(function () { copy(link, "Link copied. Anyone with it can read the passport."); }); }
+        if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) { navigator.share({ title: "Child Organiser", url: link }).catch(function () { copy(link, "Link copied. Anyone with it can read the passport."); }); }
         else copy(link, "Link copied. Anyone with it can read the passport.");
       });
     });

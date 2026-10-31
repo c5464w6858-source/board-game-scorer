@@ -1,7 +1,7 @@
 {
-  "name": "All About Me",
-  "short_name": "All About Me",
-  "description": "A one-page profile for your child, with documents and appointments. Stays on your device.",
+  "name": "Child Organiser",
+  "short_name": "Child Organiser",
+  "description": "Everything about your child in one place: profile, documents and appointments. Stays on your device.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
