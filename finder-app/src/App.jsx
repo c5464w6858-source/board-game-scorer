@@ -4651,6 +4651,50 @@ const AdminPanel=({activities,setActivities,onClose})=>{
   );
 };
 
+// Our own adverts for the other IncludeMe tools: a slim strip near the top of the list, plus two cards among the listings.
+// Families only, never providers. The strip can be dismissed for a week.
+const PROMOS={
+  ehcp:{title:"Going through an EHCP?",text:"Advocate keeps every deadline, report and phone call in one place. Look round a demo, no sign-in needed.",cta:"See a demo",chip:"Going through an EHCP?",chipCta:"Try Advocate",
+    href:c=>`https://advocate.includeme.uk/?utm_campaign=${c}`,logo:"./promo/logo-advocate.svg",bg:"linear-gradient(160deg,#101A45 0%,#1F2C66 100%)",accent:"#E3B94E",accentInk:"#17214D",chipBg:"#ECEEF8",chipInk:"#17214D"},
+  pp:{title:"All About Me, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Sign in with this same email and password.",cta:"Open All About Me",chip:"About your child",chipCta:"All About Me, free",
+    href:c=>`https://includeme-passport.netlify.app/?utm_campaign=${c}`,logo:"./promo/logo-passport.svg",bg:"linear-gradient(160deg,#2A1546 0%,#4E2D80 100%)",accent:"#FF8A5B",accentInk:"#1B1530",chipBg:"#F0EBF8",chipInk:"#3B1F63"},
+};
+const PromoCard=({kind})=>{
+  const m=PROMOS[kind];
+  return(
+    <a href={m.href("finder_card_"+kind)} target="_blank" rel="noopener noreferrer" style={{display:"flex",flexDirection:"column",gap:10,justifyContent:"center",minHeight:210,padding:"22px 20px",borderRadius:16,background:m.bg,textDecoration:"none",boxShadow:"0 6px 20px rgba(23,33,77,0.18)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        <img src={m.logo} alt="" width="36" height="36" style={{borderRadius:9}}/>
+        <span style={{fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)"}}>From IncludeMe</span>
+      </div>
+      <span style={{color:"#fff",fontWeight:700,fontSize:19,lineHeight:1.2,fontFamily:F.display}}>{m.title}</span>
+      <span style={{color:"rgba(255,255,255,0.85)",fontSize:13.5,lineHeight:1.5}}>{m.text}</span>
+      <span style={{alignSelf:"flex-start",marginTop:4,background:m.accent,color:m.accentInk,borderRadius:99,padding:"9px 18px",fontSize:13.5,fontWeight:700}}>{m.cta} →</span>
+    </a>
+  );
+};
+const PROMO_STRIP_KEY="im_promo_strip_until";
+const PromoStrip=()=>{
+  const [hidden,setHidden]=useState(()=>{try{return Number(localStorage.getItem(PROMO_STRIP_KEY)||0)>Date.now();}catch{return false;}});
+  if(hidden)return null;
+  const close=()=>{try{localStorage.setItem(PROMO_STRIP_KEY,String(Date.now()+7*864e5));}catch{}setHidden(true);};
+  return(
+    <div style={{display:"flex",alignItems:"stretch",gap:8,margin:"0 0 14px"}}>
+      <div style={{flex:1,display:"flex",gap:8,flexWrap:"wrap"}}>
+        {["ehcp","pp"].map(k=>{const m=PROMOS[k];return(
+          <a key={k} href={m.href("finder_strip_"+k)} target="_blank" rel="noopener noreferrer" style={{flex:"1 1 150px",display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderRadius:12,background:m.chipBg,textDecoration:"none",border:"1px solid rgba(0,0,0,0.06)"}}>
+            <img src={m.logo} alt="" width="28" height="28" style={{borderRadius:8,flexShrink:0}}/>
+            <span style={{display:"flex",flexDirection:"column",minWidth:0}}>
+              <span style={{fontSize:13,fontWeight:700,color:m.chipInk,lineHeight:1.25}}>{m.chip}</span>
+              <span style={{fontSize:12.5,fontWeight:600,color:m.chipInk,opacity:0.8}}>{m.chipCta} ↗</span>
+            </span>
+          </a>);})}
+      </div>
+      <button onClick={close} aria-label="Hide these for a week" title="Hide for a week" style={{flexShrink:0,width:30,alignSelf:"flex-start",background:"none",border:"none",color:C.slate400,fontSize:20,lineHeight:1,cursor:"pointer",padding:"4px 0"}}>×</button>
+    </div>
+  );
+};
+
 // Gentle pointers to the other free IncludeMe tools. Shown once, inside the account menu, never as a pop-up.
 const MoreFromIncludeMe=()=>{
   const items=[
@@ -6607,6 +6651,7 @@ export default function App() {
             const inArea=EVENTS.filter(e=>!userLoc||(e.lat!=null&&haversine(userLoc.lat,userLoc.lng,e.lat,e.lng)<=R));
             return <EventCarousel events={inArea}/>;
           })()}
+          {user&&user.accountType==="individual"&&<PromoStrip/>}
           {/* ── Holiday banner (#4) — only within 30 days of a school holiday ── */}
           {sectionTab==="activities"&&(()=>{
             const nh=nextHoliday();const within=nh&&nh.days<=30;
@@ -6645,6 +6690,10 @@ export default function App() {
                     <span style={{marginTop:4,background:"#fff",color:C.brand,borderRadius:8,padding:"8px 16px",fontSize:13,fontWeight:700}}>Suggest an activity →</span>
                   </button>
                 ));
+              }
+              if(user&&user.accountType==="individual"&&cards.length>=3){
+                cards.splice(Math.min(2,cards.length),0,<PromoCard key="promo-ehcp" kind="ehcp"/>);
+                if(cards.length>=7)cards.splice(Math.min(6,cards.length),0,<PromoCard key="promo-pp" kind="pp"/>);
               }
               return cards;
             })()}
