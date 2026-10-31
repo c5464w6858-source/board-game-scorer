@@ -4697,7 +4697,7 @@ const PromoStrip=()=>{
 
 // Our two other products, listed inside the menu with a short description. Families only.
 const APP_ROWS=[
-  {id:"ehcp",name:"EHCP Tracker",tag:"NEW",bg:"#243480",accent:"#E3B94E",accentInk:"#17214D",tabInk:"#FFE69A",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+  {id:"ehcp",name:"EHCP Tracker",long:"Advocate – EHCP Tracker",tag:"NEW",bg:"#243480",accent:"#E3B94E",accentInk:"#17214D",tabInk:"#FFE69A",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
   {id:"pp",name:"Child Organiser",tag:"FREE",bg:"#552D8C",accent:"#FF8A5B",accentInk:"#1B1530",tabInk:"#FFE0D2",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
 ];
 
@@ -4723,7 +4723,7 @@ const AppTabs=()=>{
           <button type="button" role="tab" aria-selected={!open} onClick={()=>setOpen(null)} style={tab(!open?"#fff":"#17806C",!open?"#0A5044":"#fff",false,!!open)}><span aria-hidden="true" className="prod-logo" style={{display:"inline-flex",width:16,height:16,borderRadius:4,background:"#0F6B5C",verticalAlign:"middle",marginRight:5,alignItems:"center",justifyContent:"center"}}><svg width="11" height="11" viewBox="0 0 36 36" fill="none"><circle cx="11" cy="8" r="4" fill="white"/><circle cx="25" cy="8" r="4" fill="rgba(255,255,255,0.6)"/><path d="M4 28v-3a7 7 0 0 1 7-7h0a7 7 0 0 1 7 7v3" stroke="white" strokeWidth="3" strokeLinecap="round"/><path d="M18 28v-3a7 7 0 0 1 7-7h0a7 7 0 0 1 7 7v3" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeLinecap="round"/></svg></span>IncludeMe</button>
           {APP_ROWS.map(r=>(
             <button key={r.id} type="button" role="tab" aria-selected={open===r.id} aria-expanded={open===r.id} aria-controls="prod-drawer" onClick={()=>setOpen(o=>o===r.id?null:r.id)} style={tab(r.bg,r.tabInk,open===r.id,false)}>
-              <img src={r.logo} alt="" width="16" height="16" className="prod-logo" style={{borderRadius:4,verticalAlign:"middle",marginRight:5,flexShrink:0}}/>{r.name}<span aria-hidden="true" className="prod-caret" style={{fontSize:8,marginLeft:5,display:"inline-block",transform:open===r.id?"rotate(180deg)":"none"}}>▼</span>
+              <img src={r.logo} alt="" width="16" height="16" className="prod-logo" style={{borderRadius:4,verticalAlign:"middle",marginRight:5,flexShrink:0}}/>{r.long?<><span className="nm-short">{r.name}</span><span className="nm-long">{r.long}</span></>:r.name}<span aria-hidden="true" className="prod-caret" style={{fontSize:8,marginLeft:5,display:"inline-block",transform:open===r.id?"rotate(180deg)":"none"}}>▼</span>
             </button>
           ))}
         </div>
@@ -4733,7 +4733,7 @@ const AppTabs=()=>{
             <div style={{maxWidth:1080,margin:"0 auto",padding:"16px 16px 20px",display:"flex",gap:13,alignItems:"flex-start"}}>
               <img src={cur.logo} alt="" width="48" height="48" style={{borderRadius:12,flexShrink:0}}/>
               <div style={{minWidth:0,flex:1}}>
-                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}><span style={{fontSize:17,fontWeight:700,color:"#fff"}}>{cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.accent,color:cur.accentInk}}>{cur.tag}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4,flexWrap:"wrap"}}><span style={{fontSize:17,fontWeight:700,color:"#fff"}}>{cur.long||cur.name}</span><span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:cur.accent,color:cur.accentInk}}>{cur.tag}</span></div>
                 <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.5,marginBottom:12}}>{cur.desc}</div>
                 <a href={cur.href} target="_blank" rel="noopener noreferrer" onClick={()=>setOpen(null)} style={{display:"inline-block",background:cur.accent,color:cur.accentInk,borderRadius:99,padding:"10px 20px",fontSize:13.5,fontWeight:800,textDecoration:"none"}}>{cur.cta} ↗</a>
                 <div style={{fontSize:11.5,color:"rgba(255,255,255,0.65)",marginTop:10}}>A separate app from the Finder. Opens in a new tab. Tap anywhere else to go back to IncludeMe.</div>
@@ -4786,7 +4786,7 @@ const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin}
               <img src={r.logo} alt="" width="38" height="38" style={{borderRadius:10,flexShrink:0}}/>
               <span style={{minWidth:0,flex:1,display:"block"}}>
                 <span style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
-                  <span style={{fontSize:14.5,fontWeight:700,color:C.slate900}}>{r.name}</span>
+                  <span style={{fontSize:14.5,fontWeight:700,color:C.slate900}}>{r.long||r.name}</span>
                   <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.06em",padding:"2px 7px",borderRadius:99,background:r.accent,color:r.accentInk}}>{r.tag}</span>
                 </span>
                 <span style={{display:"block",fontSize:12.5,color:C.slate500,lineHeight:1.45,margin:"3px 0 5px"}}>{r.desc}</span>
@@ -6407,6 +6407,8 @@ export default function App() {
             .hdr-saved .hdr-lbl,.hdr-alerts-lbl{display:none!important;}
             .hdr-bar-inner{padding-left:10px!important;padding-right:10px!important;}
           }
+          .nm-long{display:none;}
+          @media(min-width:760px){.nm-long{display:inline;}.nm-short{display:none;}}
           @media(max-width:480px){
             .prod-caret{display:none!important;}
           }
