@@ -996,7 +996,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       if (!p) { showGate("Enter your password.", true, mode); return; }
       if (mode === "up" && p.length < 8) { showGate("Choose a password with at least 8 characters.", true, mode); return; }
       btn.disabled = true; btn.textContent = mode === "up" ? "Creating..." : "Signing in...";
-      if (mode === "up") sbFetch("/auth/v1/signup" + redirectTo(), { body: { email: em, password: p } }).then(function (d) { if (d && d.access_token) { keep(d, em); enterApp(); } else showCheckEmail(); }, function (e) { showGate(e.message, true, mode); });
+      if (mode === "up") sbFetch("/auth/v1/signup" + redirectTo(), { body: { email: em, password: p } }).then(function (d) { if (d && d.access_token) { keep(d, em); enterApp(); } else if (d && Array.isArray(d.identities) && d.identities.length === 0) { gateEmail = em; showGate("That email already has an IncludeMe account (the same one as the Activity Finder). Sign in, or choose Forgot your password.", true, "in"); } else showCheckEmail(); }, function (e) { showGate(e.message, true, mode); });
       else sbFetch("/auth/v1/token?grant_type=password", { body: { email: em, password: p } }).then(function (t) { keep(t, em); enterApp(); }, function (e) { if (e.code === "email_not_confirmed") showCheckEmail(e.message); else showGate(e.message, true, mode); });
     }
     btn.addEventListener("click", go); [email, pw.inp].forEach(function (i) { i.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); }); });
