@@ -6189,11 +6189,17 @@ export default function App() {
             .hdr-add{padding:6px 10px!important;}
             .hdr-alerts-lbl{display:none!important;}
             .hdr-alerts-btn{padding:6px 9px!important;}
-            .hdr-right-group{gap:5px!important;}
+            .hdr-right-group{gap:6px!important;}
+            .hdr-ic{width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;border-radius:50%!important;justify-content:center!important;gap:0!important;flex-shrink:0!important;position:relative!important;}
+            .hdr-ic .hdr-badge{position:absolute!important;top:-4px!important;right:-4px!important;box-shadow:0 0 0 2px #0F6B5C;}
+            .hdr-saved .hdr-lbl,.hdr-alerts-lbl{display:none!important;}
             .hdr-bar-inner{padding-left:10px!important;padding-right:10px!important;}
           }
           @media(max-width:360px){
             .hdr-wordmark{font-size:16px!important;}
+            .hdr-logo{display:none!important;}
+            .hdr-ic{width:34px!important;height:34px!important;min-width:34px!important;}
+            .hdr-right-group{gap:5px!important;}
           }
         `}</style>
         {/* Row 1: Brand bar */}
@@ -6208,7 +6214,7 @@ export default function App() {
         <div style={{background:C.brandDk,paddingTop:"env(safe-area-inset-top)"}}>
           <div className="hdr-bar-inner" style={{maxWidth:1080,margin:"0 auto",padding:"0 16px",display:"flex",alignItems:"center",justifyContent:"space-between",height:54}}>
             <div style={{display:"flex",alignItems:"center",gap:10,minWidth:0}}>
-              <div style={{width:30,height:30,borderRadius:9,background:"rgba(255,255,255,0.14)",border:"1px solid rgba(255,255,255,0.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <div className="hdr-logo" style={{width:30,height:30,borderRadius:9,background:"rgba(255,255,255,0.14)",border:"1px solid rgba(255,255,255,0.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 <svg width="17" height="17" viewBox="0 0 36 36" fill="none">
                   <circle cx="11" cy="8" r="4" fill="white"/>
                   <circle cx="25" cy="8" r="4" fill="rgba(255,255,255,0.55)"/>
@@ -6221,25 +6227,25 @@ export default function App() {
             </div>
             <div className="hdr-right-group" style={{display:"flex",alignItems:"center",gap:7,flexShrink:0}}>
               {user.accountType==="individual"&&(<>
-                <button className="hdr-alerts-btn" onClick={openNotifs} title="Notifications" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadNotifs>0?"#FCD34D":"rgba(255,255,255,0.2)"}`,background:unreadNotifs>0?"rgba(245,158,11,0.25)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body,flexShrink:0}}>
+                <button className="hdr-ic hdr-alerts-btn" onClick={openNotifs} title="Notifications" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadNotifs>0?"#FCD34D":"rgba(255,255,255,0.2)"}`,background:unreadNotifs>0?"rgba(245,158,11,0.25)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body,flexShrink:0}}>
                   <span style={{fontSize:14,lineHeight:0}}>🔔</span><span className="hdr-alerts-lbl">Alerts</span>
-                  {unreadNotifs>0&&<span style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{unreadNotifs>9?"9+":unreadNotifs}</span>}
+                  {unreadNotifs>0&&<span className="hdr-badge" style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:C.accent,color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{unreadNotifs>9?"9+":unreadNotifs}</span>}
                 </button>
               </>)}
               {user.accountType==="individual"&&(
-                <button className="hdr-saved" onClick={()=>setShowSaved(true)} style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${(user.favourites||[]).length>0?"#FCA5A5":"rgba(255,255,255,0.2)"}`,background:(user.favourites||[]).length>0?"rgba(239,68,68,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
+                <button className="hdr-ic hdr-saved" onClick={()=>setShowSaved(true)} style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${(user.favourites||[]).length>0?"#FCA5A5":"rgba(255,255,255,0.2)"}`,background:(user.favourites||[]).length>0?"rgba(239,68,68,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
                   <span style={{color:(user.favourites||[]).length>0?"#FECACA":"white",lineHeight:0}}><Icons.heart filled={(user.favourites||[]).length>0}/></span><span className="hdr-lbl">Saved</span>
-                  {(user.favourites||[]).length>0&&<span style={{background:"#EF4444",color:"#fff",borderRadius:99,minWidth:16,height:16,padding:"0 4px",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{(user.favourites||[]).length}</span>}
+                  {(user.favourites||[]).length>0&&<span className="hdr-badge" style={{background:"#EF4444",color:"#fff",borderRadius:99,minWidth:16,height:16,padding:"0 4px",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{(user.favourites||[]).length}</span>}
                 </button>
               )}
               {user&&(
-                <button onClick={()=>setShowMessages(true)} title="Messages" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadMessages>0?"#93C5FD":"rgba(255,255,255,0.2)"}`,background:unreadMessages>0?"rgba(59,130,246,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
+                <button className="hdr-ic" onClick={()=>setShowMessages(true)} title="Messages" style={{position:"relative",display:"flex",alignItems:"center",gap:5,padding:"6px 11px",borderRadius:9,border:`1px solid ${unreadMessages>0?"#93C5FD":"rgba(255,255,255,0.2)"}`,background:unreadMessages>0?"rgba(59,130,246,0.22)":"rgba(255,255,255,0.1)",color:"white",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:F.body}}>
                   <span style={{fontSize:14,lineHeight:0}}>💬</span>
-                  {unreadMessages>0&&<span style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:"#3B82F6",color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{unreadMessages>9?"9+":unreadMessages}</span>}
+                  {unreadMessages>0&&<span className="hdr-badge" style={{minWidth:16,height:16,padding:"0 4px",borderRadius:99,background:"#3B82F6",color:"#fff",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{unreadMessages>9?"9+":unreadMessages}</span>}
                 </button>
               )}
               {user.accountType==="individual"&&(
-                <button onClick={()=>{setAccountInitTab("planner");setShowAccount(true);}} title="Holiday Planner" style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.12)",border:"1.5px solid rgba(255,255,255,0.25)",color:"white",fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <button className="hdr-ic" onClick={()=>{setAccountInitTab("planner");setShowAccount(true);}} title="Holiday Planner" style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.12)",border:"1.5px solid rgba(255,255,255,0.25)",color:"white",fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   🗓️
                 </button>
               )}
@@ -6248,7 +6254,7 @@ export default function App() {
                   <Icons.plus/><span>Add listing</span>
                 </button>
               )}
-              <button onClick={()=>setShowAccount(true)} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.16)",border:"1.5px solid rgba(255,255,255,0.3)",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:F.display,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <button className="hdr-ic" onClick={()=>setShowAccount(true)} style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.16)",border:"1.5px solid rgba(255,255,255,0.3)",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:F.display,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 {(user.name&&!user.name.includes("@")?user.name:user.email)[0].toUpperCase()}
               </button>
               {/* Admin cog — visible only to exact-match admin accounts */}
