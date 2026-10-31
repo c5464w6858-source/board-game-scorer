@@ -954,7 +954,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   function getSession() { try { var s = JSON.parse(localStorage.getItem(SES_KEY)); return s && s.access_token ? s : null; } catch (e) { return null; } }
   function setSession(v) { try { if (v) localStorage.setItem(SES_KEY, JSON.stringify(v)); else localStorage.removeItem(SES_KEY); } catch (e) { /* storage blocked */ } }
   var SB_ERR = { invalid_credentials: "That email and password do not match.", email_not_confirmed: "Confirm your email first. Check your inbox for the link we sent.", weak_password: "Choose a stronger password, at least 8 characters.",
-    over_email_send_rate_limit: "Too many emails sent. Please wait a few minutes and try again.", over_request_rate_limit: "Too many attempts. Please wait a few minutes and try again.", same_password: "Choose a password you have not used before.", user_banned: "This account has been disabled. Contact hello@includeme.uk." };
+    over_email_send_rate_limit: "Too many emails sent. Please wait a few minutes and try again.", over_request_rate_limit: "Too many attempts. Please wait a few minutes and try again.", otp_expired: "That code is not right or has expired. Check it, or ask for a new one.", otp_disabled: "Sign-in codes are not switched on yet. Use your password for now.", same_password: "Choose a password you have not used before.", user_banned: "This account has been disabled. Contact hello@includeme.uk." };
   function sbFetch(path, opts) {
     opts = opts || {}; var headers = { apikey: SBKEY, "content-type": "application/json" };
     if (opts.token) headers.authorization = "Bearer " + opts.token;
@@ -1001,12 +1001,34 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     }
     btn.addEventListener("click", go); [email, pw.inp].forEach(function (i) { i.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); }); });
     var swap = el("button", { type: "button", class: "linkbtn", text: mode === "up" ? "I already have an account" : "Create an account" }); swap.addEventListener("click", function () { gateEmail = email.value.trim(); showGate("", true, mode === "up" ? "in" : "up"); });
+    var codeBtn = mode === "in" ? el("button", { type: "button", class: "btn btn-ghost", id: "gCode", style: "margin-top:10px", text: "Email me a code instead" }) : null;
+    if (codeBtn) codeBtn.addEventListener("click", function () { var em = email.value.trim(); gateEmail = em; if (!em) { showGate("Enter your email address first, then ask for a code.", true, "in"); return; } sendCode(em, codeBtn); });
     var forgot = mode === "in" ? el("button", { type: "button", class: "linkbtn", text: "Forgot your password?" }) : null; if (forgot) forgot.addEventListener("click", function () { gateEmail = email.value.trim(); showForgot(); });
     gateView([el("h1", { text: mode === "up" ? "Create your account" : "Sign in" }),
       el("p", { text: mode === "up" ? "One IncludeMe account works across the Activity Finder and this app. If you already have a Finder account, sign in with that instead." : "Use your IncludeMe email and password. They are the same as the Activity Finder." }),
-      el("label", { for: "gEmail", text: "Email address" }), email, pw.node, btn, note(msg, isErr), el("div", { class: "actions", style: "margin-top:10px;justify-content:space-between" }, [swap, forgot]),
+      el("label", { for: "gEmail", text: "Email address" }), email, pw.node, btn, codeBtn, note(msg, isErr), el("div", { class: "actions", style: "margin-top:10px;justify-content:space-between" }, [swap, forgot]),
       el("p", { class: "fine", style: "margin-top:12px", text: "Anyone you share a passport link with can read it without an account." }), privacyLine()]);
     (gateEmail ? pw.inp : email).focus();
+  }
+  function sendCode(em, btn) {
+    if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+    sbFetch("/auth/v1/otp" + redirectTo(), { body: { email: em, create_user: true } }).then(function () { showCode(em, "We sent a code to " + em + ".", false); },
+      function (e) { showGate(e.message, true, "in"); });
+  }
+  function showCode(em, msg, isErr) {
+    var inp = el("input", { id: "gCodeIn", type: "text", inputmode: "numeric", autocomplete: "one-time-code", maxlength: "10", placeholder: "6-digit code", "aria-describedby": "gCodeNote" });
+    var go = el("button", { type: "button", class: "btn btn-main", id: "gGo", text: "Sign in" });
+    function verify() {
+      var t = inp.value.replace(/\s+/g, ""); if (!/^\d{6,10}$/.test(t)) { showCode(em, "Type the code from the email. It is made of numbers.", true); return; }
+      go.disabled = true; go.textContent = "Checking...";
+      sbFetch("/auth/v1/verify", { body: { type: "email", email: em, token: t } }).then(function (r) { keep(r, em); enterApp(); }, function (e) { showCode(em, e.status === 429 ? e.message : "That code is not right or has expired. Check it, or ask for a new one.", true); });
+    }
+    go.addEventListener("click", verify); inp.addEventListener("keydown", function (e) { if (e.key === "Enter") verify(); });
+    var again = el("button", { type: "button", class: "linkbtn", text: "Send a new code" }); again.addEventListener("click", function () { again.disabled = true; sendCode(em, null); });
+    var back = el("button", { type: "button", class: "linkbtn", text: "Use a password instead" }); back.addEventListener("click", function () { gateEmail = em; showGate("", true, "in"); });
+    gateView([el("h1", { text: "Enter your code" }), el("p", { id: "gCodeNote", text: "We emailed a code to " + em + ". Type it here, or tap the link in the email if it has one. It works for a few minutes. Check your spam folder if it has not arrived." }),
+      el("label", { for: "gCodeIn", text: "Code" }), inp, go, note(msg, isErr), el("div", { class: "actions", style: "margin-top:10px;justify-content:space-between" }, [again, back])]);
+    inp.focus();
   }
   function showCheckEmail(msg) {
     var again = el("button", { type: "button", class: "btn btn-ghost", id: "gAgain", text: "Send the email again" });
