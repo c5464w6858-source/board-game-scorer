@@ -239,6 +239,76 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   .sheet { gap: 8mm; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---- look and feel: scan first ---- */
+body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(--bg) 60%); }
+.ico { display: inline-flex; vertical-align: middle; }
+.tabs { box-shadow: 0 6px 18px -14px rgba(59,31,99,.5); }
+.tab { display: inline-flex; align-items: center; gap: 7px; border-radius: 10px 10px 0 0; }
+.tab .ico svg { width: 18px; height: 18px; }
+.tab[aria-current="page"] { background: var(--plum-soft); }
+.fab { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 40; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 15px 22px 15px 18px; min-height: 56px; background: linear-gradient(135deg, #F0783F 0%, #E8663C 55%, #D8532B 100%); color: #fff; font: 700 16px Inter, sans-serif; cursor: pointer; box-shadow: 0 14px 28px -8px rgba(216,83,43,.65), 0 2px 0 rgba(255,255,255,.25) inset; }
+.fab:hover { filter: brightness(1.06); }
+.fab .ico svg { width: 24px; height: 24px; }
+.page { padding-bottom: 110px; }
+.hero { position: relative; overflow: hidden; border-radius: 18px; padding: 22px 20px 22px; color: #fff; background: linear-gradient(150deg, #2A1546 0%, #3B1F63 50%, #5A33A0 100%); box-shadow: 0 22px 40px -26px rgba(59,31,99,.9); }
+.hero::after { content: ""; position: absolute; right: -60px; top: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,138,91,.55), transparent); pointer-events: none; }
+.hero h2 { color: #fff; font-size: 1.55rem; margin-bottom: 6px; position: relative; }
+.hero p { color: rgba(255,255,255,.88); font-size: 15px; max-width: 34em; position: relative; }
+.hero .steps { list-style: none; display: grid; gap: 6px; margin: 14px 0 16px; position: relative; }
+.hero .steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: rgba(255,255,255,.92); }
+.hero .steps li::before { content: "✓"; flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,.18); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
+.hero .btn-scan { position: relative; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 12px; padding: 14px 22px; min-height: 52px; background: #FF8A5B; color: #1B1530; font: 700 16.5px Inter, sans-serif; cursor: pointer; box-shadow: 0 10px 22px -10px rgba(0,0,0,.6); }
+.hero .btn-scan .ico svg { width: 24px; height: 24px; }
+.hero .alt { position: relative; margin-left: 10px; background: none; border: 0; color: #fff; text-decoration: underline; text-underline-offset: 3px; font: 600 14.5px Inter, sans-serif; cursor: pointer; min-height: 44px; }
+.hero .alt:focus-visible { outline-color: #fff; }
+.tile { border-radius: 14px; box-shadow: 0 10px 24px -20px rgba(59,31,99,.6); border-top: 4px solid var(--plum-2); }
+.grid-cards .tile:nth-child(2) { border-top-color: #1B6E4C; }
+.grid-cards .tile:nth-child(3) { border-top-color: #E8663C; }
+.grid-cards .tile:nth-child(4) { border-top-color: #0E7490; }
+.sec-h { display: flex; align-items: center; gap: 8px; font: 700 1.1rem Fraunces, Georgia, serif; color: var(--plum); margin: 4px 0 -4px; }
+.upc { display: grid; gap: 10px; }
+.upc-item { display: flex; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--c, var(--plum)); border-radius: 14px; padding: 12px 14px; box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
+.dateblock { flex: none; width: 56px; text-align: center; border-radius: 12px; background: var(--plum-soft); padding: 6px 0 7px; }
+.dateblock b { display: block; font: 700 1.45rem/1 Fraunces, Georgia, serif; color: var(--plum); }
+.dateblock span { font: 700 11px Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.upc-item .what { min-width: 0; flex: 1; }
+.upc-item .what b { display: block; color: var(--ink); overflow: hidden; text-overflow: ellipsis; }
+.upc-item .what span { font-size: 13.5px; color: var(--muted); }
+.remdet { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; margin-bottom: 12px; }
+.remdet > summary, .apedit > summary { cursor: pointer; font: 600 14.5px Inter, sans-serif; color: var(--plum); min-height: 46px; display: flex; align-items: center; }
+.remdet[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+.remdet > .panel { padding-bottom: 12px; }
+.apsum { font-weight: 600; margin-top: 2px; }
+.apedit { border-top: 1px solid var(--line); margin-top: 4px; }
+.catchip { display: inline-flex; align-items: center; gap: 6px; font: 700 12px Inter, sans-serif; padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--c, var(--plum)) 14%, #fff); color: var(--c, var(--plum)); border: 1px solid color-mix(in srgb, var(--c, var(--plum)) 35%, #fff); }
+.appt { border-left: 6px solid var(--c, var(--plum)); border-radius: 14px; box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
+.appt .head b { font: 700 1.1rem Fraunces, Georgia, serif; }
+.cgrid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.contact { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 10px; box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
+.contact .who2 { display: flex; gap: 12px; align-items: center; }
+.contact .cav { flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--c, var(--plum)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font: 700 16px Inter, sans-serif; }
+.contact .nm b { display: block; font-size: 16px; color: var(--ink); }
+.contact .nm span { font-size: 13.5px; color: var(--muted); }
+.contact .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.contact .acts .btn { flex: 1 1 auto; }
+.contact a.btn { text-decoration: none; }
+.csearch { max-width: 420px; }
+.scan-sec { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 12px 0; background: #fff; }
+.scan-sec h3 { font-size: 1.02rem; margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+.scan-top { display: flex; gap: 12px; align-items: flex-start; }
+.scan-top img { width: 84px; height: 110px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line-2); flex: none; }
+.warnbox { background: var(--amber-soft); border: 1px solid #E8C07A; color: var(--amber); border-radius: 10px; padding: 10px 12px; margin: 12px 0; font-size: 14.5px; }
+.pick { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 6px 0; border-top: 1px solid var(--line); }
+.pick:first-of-type { border-top: 0; }
+.pick input { margin-top: 4px; flex: none; width: 20px; height: 20px; }
+.pick label { margin: 0; font-weight: 500; }
+.pick small { display: block; color: var(--muted); font-weight: 400; }
+.doneList { list-style: none; display: grid; gap: 8px; margin: 12px 0; }
+.doneList li { display: flex; gap: 10px; align-items: flex-start; }
+.doneList li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--ok); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+@media (max-width: 520px) { .fab span:last-child { font-size: 15px; } .hero h2 { font-size: 1.35rem; } }
+@media print { .fab { display: none !important; } }
 </style>
 </head>
 <body>
@@ -280,7 +350,8 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     <div class="tabs-in" id="tabsIn">
       <button type="button" class="tab" id="tabOverview">Overview</button>
       <button type="button" class="tab" id="tabEdit">Details</button>
-      <button type="button" class="tab" id="tabAppts">Appointments</button>
+      <button type="button" class="tab" id="tabAppts">Diary</button>
+      <button type="button" class="tab" id="tabContacts">Contacts</button>
       <button type="button" class="tab" id="tabDocs">Documents</button>
       <button type="button" class="tab" id="tabView">Passport</button>
       <button type="button" class="tab" id="tabCard">Emergency card</button>
@@ -304,6 +375,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     <div id="editor"></div>
     <div id="overview" class="panel" hidden></div>
     <div id="appts" class="panel" hidden></div>
+    <div id="contacts" class="panel" hidden></div>
     <div id="docs" class="panel" hidden></div>
     <div id="viewWrap" hidden>
       <div class="actionbar" id="actionbar">
@@ -324,6 +396,8 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     Everything here is saved on this device only. It is not uploaded to us. Check medicines against the label or your pharmacist. This is not a medical record or medical advice. <a href="/privacy.html">Privacy</a>
   </footer>
 </div>
+
+<aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*" class="sr" tabindex="-1" aria-label="Choose a photo of a letter, text or prescription"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan a letter</span></button></aside>
 
 <p class="toast" id="toolStatus" role="status" aria-live="polite"></p>
 
@@ -389,7 +463,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     b.medsChecked = /^\d{4}-\d{2}-\d{2}$/.test(o.medsChecked || "") ? o.medsChecked : "";
     b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
     b.large = o.large === true; b.noAllergies = o.noAllergies === true; b.noMeds = o.noMeds === true;
-    b.appts = list(o.appts, ["title", "when", "who", "where", "notes", "cat", "aid"]).map(function (a) { a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; if (APPT_CATS.indexOf(a.cat) < 0) a.cat = "Other"; if (!/^[A-Za-z0-9]{3,40}$/.test(a.aid)) a.aid = id(); return a; });
+    b.appts = list(o.appts, ["title", "when", "who", "where", "notes", "cat", "aid", "docId"]).map(function (a) { if (!/^[A-Za-z0-9]{3,40}$/.test(a.docId)) a.docId = ""; a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; if (APPT_CATS.indexOf(a.cat) < 0) a.cat = "Other"; if (!/^[A-Za-z0-9]{3,40}$/.test(a.aid)) a.aid = id(); return a; });
     b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
     b.allergies = list(o.allergies, ["what", "reaction", "action"]);
     b.meds = list(o.meds, ["name", "dose", "when", "forWhat", "prescriber", "notes"]);
@@ -453,6 +527,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   function el(tag, attrs, kids) {
     var e = document.createElement(tag);
     Object.keys(attrs || {}).forEach(function (k) {
+      if (attrs[k] === null || attrs[k] === undefined) return;
       if (k === "text") e.textContent = attrs[k]; else if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]);
     });
     (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
@@ -948,9 +1023,10 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   }
   function remindersPanel() {
     var pf = prefs(), who = getSession(), msg = el("p", { class: "status", role: "status", "aria-live": "polite" }), box = el("div", { class: "panel", style: "margin-top:0" });
+    var leadName = LEADS.filter(function (l) { return l[0] === pf.leadDays; })[0][1].toLowerCase();
+    var sumTxt = "Reminders: " + leadName + (pf.email || pf.push ? " · " + [pf.email ? "email" : "", pf.push ? "phone" : ""].filter(Boolean).join(" and ") + " on" : " · tap to switch on");
     function say(t, err) { msg.textContent = t || ""; msg.className = "status" + (err ? " err" : ""); }
     function fail(e) { say(e && e.message ? e.message : "Something went wrong. Please try again.", true); }
-    box.appendChild(el("h2", { text: "Reminders", style: "margin-bottom:4px;font-size:1.2rem" }));
     box.appendChild(el("p", { class: "note", text: "We remind you before each appointment, three days before unless you choose otherwise." }));
     var sel = el("select", { id: "leadSel" }); LEADS.forEach(function (l) { var o = el("option", { value: String(l[0]), text: l[1] }); if (l[0] === pf.leadDays) o.selected = true; sel.appendChild(o); });
     sel.addEventListener("change", function () { patchPrefs({ leadDays: +sel.value }); say("Saved."); syncNow().then(function () { say("Saved. Reminders will come " + LEADS.filter(function (l) { return l[0] === +sel.value; })[0][1].toLowerCase() + "."); }).catch(function () { say("Saved on this phone. It will update the reminders next time you are online."); }); });
@@ -972,10 +1048,37 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     box.appendChild(el("div", { class: "actions", style: "margin:10px 0 4px" }, [test, del]));
     box.appendChild(msg);
     box.appendChild(el("p", { class: "note", style: "font-size:13px", text: "To send reminders we keep, for each upcoming appointment, only its date, time and type (for example Hospital), plus your email address and this phone's notification address. Never your child's name, the place, notes or contacts. On an iPhone, notifications work once Child Organiser is on your Home Screen." }));
-    return box;
+    var det = el("details", { class: "remdet" }, [el("summary", { text: sumTxt }), box]);
+    return det;
   }
 
-  /* ---- scanning a letter ---- */
+  /* ---- icons and colours ---- */
+  var ICONS = {
+    camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    home: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    folder: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+    file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+    alert: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'
+  };
+  function ico(n, size) { var e = document.createElement("span"); e.className = "ico"; e.setAttribute("aria-hidden", "true"); e.innerHTML = '<svg viewBox="0 0 24 24" width="' + (size || 20) + '" height="' + (size || 20) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[n] + "</svg>"; return e; }
+  var CAT_STYLE = { "GP": "#1B6E4C", "Hospital": "#B4332A", "Dentist": "#0E7490", "Optician": "#4F46E5", "Therapy": "#7E3FB5", "School": "#B45309", "Social care": "#1D4ED8", "Review meeting": "#3B1F63", "Other": "#5B5470" };
+  function catColor(c) { return CAT_STYLE[c] || CAT_STYLE.Other; }
+  function catChip(c) { return el("span", { class: "catchip", style: "--c:" + catColor(c) }, [c || "Other"]); }
+  (function tabIcons() {
+    var map = { tabOverview: "home", tabEdit: "user", tabAppts: "calendar", tabContacts: "users", tabDocs: "folder", tabView: "file", tabCard: "alert" };
+    Object.keys(map).forEach(function (k) { var t = $(k); if (t && !t.querySelector(".ico")) t.insertBefore(ico(map[k], 18), t.firstChild); });
+    $("scanFab").querySelector(".ico").appendChild(ico("camera", 24));
+  })();
+
+  /* ---- scanning a letter: the main thing this app does ---- */
+  function pickLetter() { if (!getSession()) { savedMsg("Sign in to scan letters.", true); return; } $("scanFile").click(); }
+  function getDoc(i) { return db().then(function (d) { return new Promise(function (res, rej) { var rq = d.transaction("docs").objectStore("docs").get(i); rq.onsuccess = function () { res(rq.result || null); }; rq.onerror = function () { rej(rq.error); }; }); }); }
+  function dataUrlToBlob(u) { var m = /^data:([^;]+);base64,(.*)$/.exec(u), bin = atob(m[2]), a = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return new Blob([a], { type: m[1] }); }
   function shrinkLetter(f) {
     return new Promise(function (res, rej) {
       var img = new Image(), url = URL.createObjectURL(f);
@@ -987,78 +1090,159 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       img.src = url;
     });
   }
-  function scanDlg(nodes) { var d = $("dlgScan"), b = $("scanBody"); b.textContent = ""; nodes.forEach(function (n) { b.appendChild(n); }); if (!d.open) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); } }
+  function scanDlg(nodes) { var d = $("dlgScan"), b = $("scanBody"); b.textContent = ""; nodes.forEach(function (n) { if (n) b.appendChild(n); }); if (!d.open) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); } d.scrollTop = 0; }
   function scanClose() { closeDlg("dlgScan"); }
+  function closeBtn(label) { var b = el("button", { type: "button", class: "btn btn-main", text: label || "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); }
   function startScan(file) {
     if (!file) return;
     var run = function () {
       scanDlg([el("h2", { text: "Reading your letter" }), el("p", { class: "note", role: "status", text: "This takes a few seconds. Please keep this page open." })]);
-      shrinkLetter(file).then(function (img) { return api("/api/diary/scan", { method: "POST", body: { image: img, consent: true } }); }).then(scanReview).catch(function (e) {
-        scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add the appointment by hand instead." }), e && e.why ? el("p", { class: "note", style: "font-size:12px", text: "Reference for support: " + e.why }) : null,
-          (function () { var b = el("button", { type: "button", class: "btn btn-main", text: "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); })()]);
+      shrinkLetter(file).then(function (img) { return api("/api/diary/scan", { method: "POST", body: { image: img, consent: true } }).then(function (r) { scanReview(r, img); }); }).catch(function (e) {
+        scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add the appointment by hand instead." }), e && e.why ? el("p", { class: "note", style: "font-size:12px", text: "Reference for support: " + e.why }) : null, closeBtn()]);
       });
     };
     if (prefs().consent) { run(); return; }
     var agree = el("button", { type: "button", class: "btn btn-main", text: "I agree, read my letter" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
     agree.addEventListener("click", function () { patchPrefs({ consent: true }); run(); }); no.addEventListener("click", scanClose);
     scanDlg([el("h2", { text: "Before we read your letter" }),
-      el("p", { text: "To fill in the appointment for you, this photo is sent to us and read by an AI service. The photo is not saved, not shared and not used for anything else: it is deleted as soon as it has been read." }),
-      el("p", { class: "note", text: "This is the one thing in Child Organiser that leaves your phone, and only when you choose to scan. Check what it found before you save. If you would rather not, add the appointment by hand." }),
+      el("p", { text: "To read it, the photo is sent to us and read by an AI service. It is not saved, not shared and not used for anything else: it is deleted as soon as it has been read. We keep a copy on this phone only, if you choose to." }),
+      el("p", { class: "note", text: "This is the one thing in Child Organiser that leaves your phone, and only when you choose to scan. You check everything it found before anything is saved. If you would rather not, add things by hand." }),
       el("div", { class: "actions", style: "justify-content:flex-end" }, [no, agree])]);
   }
-  function dline(label, key, v, type, wide) {
-    var fid = "sc" + (++uid), c = el("input", { id: fid, type: type || "text" }); c.value = v || ""; c.setAttribute("data-k", key);
-    return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]);
+  function norm(v) { return String(v || "").toLowerCase().replace(/\s+/g, " ").trim(); }
+  function first(v) { return norm(v).split(" ")[0]; }
+  function teamIndex(t, c) {
+    var digits = (c.phone || "").replace(/\D/g, ""), nm = norm(c.name || c.org);
+    for (var i = 0; i < t.length; i++) { if (digits && (t[i].phone || "").replace(/\D/g, "") === digits) return i; if (nm && norm(t[i].name) === nm && norm(t[i].org) === norm(c.name ? c.org : "")) return i; }
+    return -1;
   }
-  function scanReview(r) {
-    var p = cur(), ids = {};
-    var head = [el("h2", { text: r.isAppointment === false ? "That does not look like an appointment" : "Check the appointment" }),
-      el("p", { class: "note", text: "This is what we read. Correct anything that is wrong, then save it to the diary." })];
-    var cat = el("select", { id: "scCat" }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === r.category) o.selected = true; cat.appendChild(o); });
-    var notes = el("textarea", { id: "scNotes", rows: "3" }); notes.value = r.notes || "";
-    var when = (r.date || "") + (r.date && r.time ? "T" + r.time : "");
-    var form = el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [dline("What is it?", "title", r.title), el("div", {}, [el("label", { for: "scCat", text: "Type" }), cat]),
-      dline("Date and time", "when", when && when.length > 10 ? when : (r.date ? r.date + "T09:00" : ""), "datetime-local"), dline("Who with", "who", r["with"]), dline("Where", "where", r.where, "text"),
-      el("div", {}, [el("label", { for: "scNotes", text: "Notes (what to bring, reference number)" }), notes])]);
-    var contacts = el("div", {}), cs = (r.contacts || []).map(function (c, i) {
-      var cb = el("input", { type: "checkbox", id: "scc" + i }); cb.checked = true;
-      var line = [c.name || c.org, c.role, c.phone, c.email].filter(Boolean).join(" · ");
-      contacts.appendChild(el("div", { style: "display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:4px 0" }, [cb, el("label", { for: "scc" + i, text: line, style: "margin:0;font-weight:500" })]));
-      return { c: c, cb: cb };
+  /* everything else a letter can tell us: each item is ticked only if it would fill a gap, never silently overwriting what is there */
+  function proposals(p, r) {
+    var out = [], c = r.child || {}, sc = r.school || {};
+    function scalar(label, have, val, set, fmt) {
+      if (!val) return; var shown = fmt ? fmt(val) : val;
+      if (!have) out.push({ label: label, detail: shown, on: true, apply: function () { set(val); } });
+      else if (norm(have) !== norm(val)) out.push({ label: label, detail: shown, was: fmt ? fmt(have) : have, on: false, apply: function () { set(val); } });
+    }
+    scalar("Name", p.name, c.name, function (v) { p.name = s(v, LIM.short); });
+    scalar("Likes to be called", p.preferred, c.preferred, function (v) { p.preferred = s(v, LIM.short); });
+    scalar("Date of birth", p.dob, c.dob, function (v) { p.dob = v; }, longDate);
+    scalar("NHS number", p.nhs, c.nhs, function (v) { p.nhs = s(v, LIM.short); });
+    if (c.diagnoses) {
+      if (!p.diagnoses) out.push({ label: "Diagnoses or needs", detail: c.diagnoses, on: true, apply: function () { p.diagnoses = s(c.diagnoses); } });
+      else if (norm(p.diagnoses).indexOf(norm(c.diagnoses)) < 0) out.push({ label: "Diagnoses or needs", detail: "Add: " + c.diagnoses, on: false, apply: function () { p.diagnoses = s(p.diagnoses + "\n" + c.diagnoses); } });
+    }
+    (r.allergies || []).forEach(function (a) {
+      if (p.allergies.some(function (x) { return norm(x.what) === norm(a.what); })) return;
+      out.push({ label: "Allergy", detail: a.what + (a.reaction ? " (" + a.reaction + ")" : ""), on: true, apply: function () { if (p.allergies.length < LIM.arr) p.allergies.push({ what: s(a.what, LIM.short), reaction: s(a.reaction, LIM.short), action: s(a.action, LIM.short) }); p.noAllergies = false; } });
     });
-    var body = head.concat([form]);
-    if (cs.length) body = body.concat([el("h3", { text: "Add these to my doctors and team", style: "margin-top:14px;font-size:1rem" }), contacts]);
+    (r.meds || []).forEach(function (m) {
+      if (p.meds.some(function (x) { return norm(x.name) === norm(m.name); })) return;
+      out.push({ label: "Medicine", detail: [m.name, m.dose, m.when].filter(Boolean).join(", "), on: true, apply: function () { if (p.meds.length < LIM.arr) p.meds.push({ name: s(m.name, LIM.short), dose: s(m.dose, LIM.short), when: s(m.when, LIM.short), forWhat: s(m.forWhat, LIM.short), prescriber: s(m.prescriber, LIM.short), notes: s(m.notes, LIM.str) }); p.noMeds = false; } });
+    });
+    scalar("School", p.school.name, sc.name, function (v) { p.school.name = s(v, LIM.short); });
+    scalar("Class teacher", p.school.teacher, sc.teacher, function (v) { p.school.teacher = s(v, LIM.short); });
+    scalar("SENCo", p.school.senco, sc.senco, function (v) { p.school.senco = s(v, LIM.short); });
+    scalar("EHCP reference", p.school.ehcp, sc.ehcp, function (v) { p.school.ehcp = s(v, 20); });
+    scalar("EHCP annual review", p.school.review, sc.review, function (v) { p.school.review = v; }, longDate);
+    return out;
+  }
+  function pickRow(idv, on, title, small) {
+    var cb = el("input", { type: "checkbox", id: idv }); cb.checked = on;
+    return { cb: cb, node: el("div", { class: "pick" }, [cb, el("label", { for: idv }, [title, small ? el("small", { text: small }) : null])]) };
+  }
+  function dline(label, key, v, type) {
+    var fid = "sc" + (++uid), c = el("input", { id: fid, type: type || "text" }); c.value = v || ""; c.setAttribute("data-k", key);
+    return el("div", {}, [el("label", { for: fid, text: label }), c]);
+  }
+  function scanReview(r, img) {
+    var p = cur(), ap = r.appointment, N = [], sid = "sv" + (++uid);
+    N.push(el("h2", { text: "Here is what we found" }));
+    N.push(el("div", { class: "scan-top" }, [el("img", { src: img, alt: "The letter you scanned" }), el("p", { text: r.summary || "Check each part below, then save." })]));
+    var cn = first(r.child && r.child.name), mine = [first(p.name), first(p.preferred)].filter(Boolean);
+    if (cn && mine.length && mine.indexOf(cn) < 0) N.push(el("div", { class: "warnbox", role: "alert" }, ["This letter looks like it is about ", el("b", { text: r.child.name }), ", but you are in ", el("b", { text: p.preferred || p.name }), "'s diary. Check it is the right child before saving."]));
+    // 1. keep the letter itself
+    var docOn = pickRow(sid + "d", true, "Save the letter in Documents", "Kept on this phone only");
+    var docTitle = el("input", { type: "text", id: sid + "dt" }); docTitle.value = r.docTitle || "Scanned letter";
+    var docCat = el("select", { id: sid + "dc" }); CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === r.docCategory) o.selected = true; docCat.appendChild(o); });
+    N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "The letter" }), docOn.node, el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [el("div", {}, [el("label", { for: sid + "dt", text: "Name it" }), docTitle]), el("div", {}, [el("label", { for: sid + "dc", text: "Filed under" }), docCat])])]));
+    // 2. the appointment
+    var apOn = null, cat = null, apNotes = null;
+    if (ap && (ap.date || ap.title)) {
+      apOn = pickRow(sid + "a", true, "Add to the diary");
+      cat = el("select", { id: sid + "ac" }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === ap.category) o.selected = true; cat.appendChild(o); });
+      apNotes = el("textarea", { id: sid + "an", rows: "3" }); apNotes.value = ap.notes || "";
+      var when = ap.date ? ap.date + "T" + (ap.time || "09:00") : "";
+      N.push(el("div", { class: "scan-sec", id: sid + "form" }, [el("h3", { text: "The appointment" }), apOn.node,
+        el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [dline("What is it?", "title", ap.title), el("div", {}, [el("label", { for: sid + "ac", text: "Type" }), cat]), dline("Date and time", "when", when, "datetime-local"), dline("Who with", "who", ap["with"]), dline("Where", "where", ap.where), el("div", {}, [el("label", { for: sid + "an", text: "Notes (what to bring, reference number)" }), apNotes])])]));
+    }
+    // 3. contacts
+    var cs = (r.contacts || []).map(function (c, i) {
+      var exists = teamIndex(p.team, c) >= 0, line = [c.name || c.org, c.role, c.phone, c.email].filter(Boolean).join(" · ");
+      var row = pickRow(sid + "c" + i, !exists, line, exists ? "Already in your contacts" : (c.org && c.name ? c.org : ""));
+      return { c: c, row: row, exists: exists };
+    });
+    if (cs.length) N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Contacts" })].concat(cs.map(function (x) { return x.row.node; }))));
+    // 4. fill in the passport
+    var props = proposals(p, r).map(function (x, i) {
+      x.row = pickRow(sid + "p" + i, x.on, x.label + ": " + x.detail, x.was ? "Currently: " + x.was : ""); return x;
+    });
+    if (props.length) {
+      N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Fill in the passport" }), el("p", { class: "note", text: "Only gaps are ticked for you. Check medicines, doses and allergies against the label or letter before you save." })].concat(props.map(function (x) { return x.row.node; }))));
+    }
     var err = el("p", { class: "msg", role: "alert" });
-    var save2 = el("button", { type: "button", class: "btn btn-main", text: "Save to the diary" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    var save2 = el("button", { type: "button", class: "btn btn-main", text: "Save what is ticked" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
     cancel.addEventListener("click", scanClose);
     save2.addEventListener("click", function () {
       var v = {}; Array.prototype.forEach.call($("scanBody").querySelectorAll("[data-k]"), function (i) { v[i.getAttribute("data-k")] = i.value.trim(); });
-      if (!v.title && !v.when) { err.textContent = "Add a name or a date first."; return; }
-      if (p.appts.length >= LIM.arr * 4) { err.textContent = "There are a lot of appointments already. Remove old ones first."; return; }
-      p.appts.push({ aid: id(), title: s(v.title, LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(v.when) ? v.when : "", who: s(v.who, LIM.short), where: s(v.where, LIM.short), notes: s(notes.value, LIM.str), cat: cat.value });
-      var added = 0;
-      cs.forEach(function (x) {
-        if (!x.cb.checked || p.team.length >= LIM.arr) return;
-        var digits = (x.c.phone || "").replace(/\D/g, ""), nm = x.c.name || x.c.org || "";
-        var dup = p.team.some(function (t) { return (digits && (t.phone || "").replace(/\D/g, "") === digits) || (nm && t.name === nm && (t.org || "") === (x.c.org || "")); });
-        if (dup) return;
-        p.team.push({ role: s(x.c.role || cat.value, LIM.short), name: s(nm, LIM.short), org: s(x.c.name ? x.c.org : "", LIM.short), phone: s(x.c.phone, LIM.short), email: s(x.c.email, LIM.short), notes: "" }); added++;
-      });
-      save(); scanClose(); renderAppts(); renderEditor(); savedMsg("Added to the diary" + (added ? " and " + added + (added === 1 ? " contact" : " contacts") + " added to my doctors and team" : "") + ".");
+      var addAppt = apOn && apOn.cb.checked;
+      if (addAppt && !v.title && !v.when) { err.textContent = "Add a name or a date for the appointment, or untick it."; return; }
+      save2.disabled = true; var done = [], docRec = null;
+      var chain = Promise.resolve();
+      if (docOn.cb.checked) {
+        chain = chain.then(function () {
+          var blob = dataUrlToBlob(img);
+          docRec = { id: id(), profileId: p.id, title: (docTitle.value || "Scanned letter").trim().slice(0, 160), category: docCat.value, date: r.docDate || today(), notes: (r.summary || "").slice(0, 1000), name: "scanned-letter.jpg", type: "image/jpeg", size: blob.size, blob: blob, added: Date.now() };
+          return putDoc(docRec).then(function () { done.push("The letter is saved in Documents under " + docRec.category); if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); });
+        });
+      }
+      chain.then(function () {
+        if (addAppt) {
+          p.appts.push({ aid: id(), title: s(v.title, LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(v.when) ? v.when : "", who: s(v.who, LIM.short), where: s(v.where, LIM.short), notes: s(apNotes.value, LIM.str), cat: cat.value, docId: docRec ? docRec.id : "" });
+          done.push("Added to the diary: " + (v.title || "appointment") + (v.when ? ", " + whenText(v.when) : ""));
+        }
+        var added = 0;
+        cs.forEach(function (x) {
+          if (!x.row.cb.checked || x.exists || p.team.length >= LIM.arr) return;
+          var nm = x.c.name || x.c.org || "";
+          p.team.push({ role: s(x.c.role || (cat ? cat.value : ""), LIM.short), name: s(nm, LIM.short), org: s(x.c.name ? x.c.org : "", LIM.short), phone: s(x.c.phone, LIM.short), email: s(x.c.email, LIM.short), notes: "" }); added++;
+        });
+        if (added) done.push(added + (added === 1 ? " contact" : " contacts") + " added to Contacts");
+        var filled = 0; props.forEach(function (x) { if (x.row.cb.checked) { x.apply(); filled++; } });
+        if (filled) done.push(filled + (filled === 1 ? " detail" : " details") + " filled in on the passport");
+        if (!done.length) { scanClose(); return; }
+        save(); renderAppts(); renderEditor();
+        var more = el("button", { type: "button", class: "btn btn-ghost", text: "Scan another" }); more.addEventListener("click", function () { scanClose(); pickLetter(); });
+        var see = el("button", { type: "button", class: "btn btn-main", text: addAppt ? "See the diary" : "Done" });
+        see.addEventListener("click", function () { scanClose(); if (addAppt) setMode("appts"); else setMode(mode); });
+        scanDlg([el("h2", { text: "All filed" }), el("ul", { class: "doneList" }, done.map(function (t) { return el("li", { text: t }); })), el("div", { class: "actions", style: "justify-content:flex-end" }, [more, see])]);
+        refreshSoon();
+      }, function () { save2.disabled = false; err.textContent = "Could not save the letter on this phone. There may not be enough room."; });
     });
-    scanDlg(body.concat([err, el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, save2])]));
+    N.push(err); N.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, save2]));
+    scanDlg(N);
   }
+  function refreshSoon() { setTimeout(function () { if (mode === "overview") renderOverview(); else if (mode === "contacts") renderContacts(); else if (mode === "docs") renderDocs(); }, 0); }
 
   function renderAppts() {
     var box = $("appts"), p = cur(); box.textContent = "";
-    box.appendChild(el("p", { class: "note", text: "Keep appointments here so everything is in one place. They are private: they are not part of the printed passport or shared link." }));
+    box.appendChild(el("p", { class: "note", text: "Every appointment in one diary. Scan a letter or text and it is filed for you. Appointments are private: they are not part of the printed passport or shared link." }));
     var bar = el("div", { class: "actions", style: "margin:0 0 12px" });
-    var scan = el("label", { class: "btn btn-main", for: "scanFile", style: "margin:0", text: "Scan a letter or text" });
-    var inp = el("input", { type: "file", id: "scanFile", accept: "image/*", capture: "environment", class: "sr" });
-    inp.addEventListener("change", function () { var f = inp.files && inp.files[0]; inp.value = ""; if (!getSession()) { savedMsg("Sign in to read letters from a photo.", true); return; } startScan(f); });
-    var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add an appointment" });
-    add.addEventListener("click", function () { p.appts.push({ aid: id(), title: "", when: "", who: "", where: "", notes: "", cat: "Other" }); save(); draw(); var last = list.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
-    bar.appendChild(scan); bar.appendChild(inp); bar.appendChild(add); box.appendChild(bar);
+    var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan a letter or text"]);
+    scan.addEventListener("click", pickLetter);
+    var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add by hand" });
+    add.addEventListener("click", function () { p.appts.push({ aid: id(), title: "", when: "", who: "", where: "", notes: "", cat: "Other", docId: "" }); save(); draw(); var last = list.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
+    bar.appendChild(scan); bar.appendChild(add); box.appendChild(bar);
     if (getSession()) box.appendChild(remindersPanel());
     var list = el("div", { class: "panel", style: "margin-top:12px" }); box.appendChild(list);
     function row(a, i, past) {
@@ -1070,13 +1254,17 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       rm.addEventListener("click", function () { p.appts.splice(i, 1); save(); draw(); });
       var cal = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Add to my calendar" });
       cal.addEventListener("click", function () { if (!a.when) { savedMsg("Set a date first.", true); return; } var blob = new Blob([icsFor(a, p.preferred || p.name)], { type: "text/calendar" }), u = URL.createObjectURL(blob), lnk = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(lnk); lnk.click(); lnk.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 2000); });
-      return el("div", { class: "appt" + (past ? " past" : ""), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
-        el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap" }, [el("b", { style: "color:var(--plum)", text: whenText(a.when) + (past ? " (past)" : "") }), el("span", { class: "actions", style: "margin:0" }, [cal, rm])]),
-        el("div", { class: "two" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])]);
+      var letter = null;
+      if (a.docId) { letter = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "View the letter" }); letter.addEventListener("click", function () { getDoc(a.docId).then(function (d) { if (!d) { savedMsg("That letter is no longer on this phone.", true); return; } var u = URL.createObjectURL(new Blob([d.blob], { type: d.type })); var l = el("a", { href: u, target: "_blank", rel: "noopener" }); document.body.appendChild(l); l.click(); l.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }); }); }
+      return el("div", { class: "appt" + (past ? " past" : ""), style: "--c:" + catColor(a.cat), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
+        el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap" }, [el("span", {}, [el("b", { style: "color:var(--plum);display:block", text: whenText(a.when) + (past ? " (past)" : "") }), catChip(a.cat)]), el("span", { class: "actions", style: "margin:0" }, [letter, cal, rm])]),
+        el("p", { class: "apsum", text: [a.title || "Appointment", [a.who, a.where].filter(Boolean).join(" · ")].filter(Boolean).join(" — ") }),
+        a.notes ? el("p", { class: "note", text: a.notes }) : null,
+        el("details", { class: "apedit", open: !a.title && !a.when ? "" : null }, [el("summary", { text: "Edit details" }), el("div", { class: "two", style: "margin-top:10px" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])])]);
     }
     function draw() {
       list.textContent = "";
-      if (!p.appts.length) { list.appendChild(el("p", { class: "empty", text: "No appointments yet. Scan a letter or text, or add one by hand." })); return; }
+      if (!p.appts.length) { list.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Tap Scan a letter or text and photograph your next appointment letter." })); return; }
       var idx = p.appts.map(function (a, i) { return i; }), now = Date.now();
       var up = idx.filter(function (i) { return !p.appts[i].when || apptTime(p.appts[i]) >= now; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
       var old = idx.filter(function (i) { return p.appts[i].when && apptTime(p.appts[i]) < now; }).sort(function (x, y) { return apptTime(p.appts[y]) - apptTime(p.appts[x]); });
@@ -1084,6 +1272,43 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       if (old.length) { var d = el("details", { style: "margin-top:10px" }, [el("summary", { text: "Past appointments (" + old.length + ")", style: "cursor:pointer;min-height:44px;display:flex;align-items:center" })]); old.forEach(function (i) { d.appendChild(row(p.appts[i], i, true)); }); list.appendChild(d); }
     }
     draw();
+  }
+
+
+  /* ---------- contacts: everyone in one place, one tap to call ---------- */
+  function initials2(n) { var q = String(n || "?").replace(/^(Dr|Mr|Mrs|Ms|Miss|Prof)\.?\s+/i, "").trim().split(/\s+/); return ((q[0] || "?")[0] + (q[1] ? q[1][0] : "")).toUpperCase(); }
+  function roleColor(role) { var r = norm(role); return r.indexOf("gp") === 0 || r.indexOf("doctor") >= 0 ? CAT_STYLE.GP : /hospital|consultant|paediatric|clinic|nurse|ward/.test(r) ? CAT_STYLE.Hospital : /dent/.test(r) ? CAT_STYLE.Dentist : /optic|eye/.test(r) ? CAT_STYLE.Optician : /therap|speech|ot |physio|psych|camhs/.test(r) ? CAT_STYLE.Therapy : /school|teacher|senco|head|teaching/.test(r) ? CAT_STYLE.School : /social|care|council|short break/.test(r) ? CAT_STYLE["Social care"] : CAT_STYLE.Other; }
+  function contactCard(c, kind) {
+    var line = [c.role || c.relationship, c.org].filter(Boolean).join(" · ");
+    var acts = el("div", { class: "acts" });
+    if (c.phone) { var tel = el("a", { class: "btn btn-main btn-small", href: "tel:" + c.phone.replace(/[^\d+]/g, "") }, [ico("phone", 16), "Call"]); tel.setAttribute("aria-label", "Call " + (c.name || c.org || "contact")); acts.appendChild(tel); }
+    if (c.email) { var ml = el("a", { class: "btn btn-ghost btn-small", href: "mailto:" + c.email }, [ico("mail", 16), "Email"]); ml.setAttribute("aria-label", "Email " + (c.name || c.org || "contact")); acts.appendChild(ml); }
+    var ed = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Edit" }); ed.addEventListener("click", function () { go(kind === "team" ? "My doctors and team" : "Emergency contacts"); });
+    acts.appendChild(ed);
+    return el("div", { class: "contact", style: "--c:" + roleColor(c.role || c.relationship), role: "group", "aria-label": c.name || c.org || "Contact" }, [
+      el("div", { class: "who2" }, [el("span", { class: "cav", "aria-hidden": "true", text: initials2(c.name || c.org) }), el("span", { class: "nm" }, [el("b", { text: c.name || c.org || "Unnamed" }), el("span", { text: line || (kind === "emergency" ? "Emergency contact" : "") })])]),
+      c.phone ? el("div", { style: "font-weight:600", text: c.phone }) : null, c.notes ? el("div", { class: "note", text: c.notes }) : null, acts]);
+  }
+  function renderContacts() {
+    var box = $("contacts"), p = cur(); box.textContent = "";
+    var head = el("div", { class: "actions", style: "margin:0 0 4px" });
+    var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan a letter to add contacts"]); scan.addEventListener("click", pickLetter);
+    var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add a contact" });
+    add.addEventListener("click", function () { if (p.team.length < LIM.arr) p.team.push({ role: "", name: "", org: "", phone: "", email: "", notes: "" }); save(); go("My doctors and team"); });
+    head.appendChild(scan); head.appendChild(add); box.appendChild(head);
+    box.appendChild(el("p", { class: "note", text: "Everyone who helps your child. Scanning a letter adds the clinic, the doctor and any phone numbers on it." }));
+    var q = el("input", { type: "text", id: "cq", class: "csearch", placeholder: "Search by name, role or place", "aria-label": "Search contacts", autocomplete: "off" }); box.appendChild(q);
+    var out = el("div", {}); box.appendChild(out);
+    function draw() {
+      out.textContent = ""; var t = norm(q.value);
+      function match(c) { return !t || norm([c.name, c.role, c.relationship, c.org, c.phone, c.email].join(" ")).indexOf(t) >= 0; }
+      var team = p.team.filter(function (c) { return (c.name || c.org || c.phone) && match(c); }), em = p.contacts.filter(function (c) { return (c.name || c.phone) && match(c); });
+      var sch = []; if (p.school.name || p.school.teacher || p.school.senco) { [["Class teacher", p.school.teacher], ["SENCo", p.school.senco]].forEach(function (x) { if (x[1] && match({ name: x[1], role: x[0], org: p.school.name })) sch.push({ name: x[1], role: x[0], org: p.school.name, phone: "", email: "", notes: "" }); }); }
+      function section(title, list, kind) { if (!list.length) return; out.appendChild(el("h2", { class: "sec-h", text: title + " (" + list.length + ")", style: "margin-top:14px" })); out.appendChild(el("div", { class: "cgrid", style: "margin-top:8px" }, list.map(function (c) { return contactCard(c, kind); }))); }
+      section("Doctors and team", team, "team"); section("School", sch, "school"); section("Emergency contacts", em, "emergency");
+      if (!team.length && !em.length && !sch.length) out.appendChild(el("p", { class: "empty", text: t ? "No one matches that search." : "No contacts yet. Scan a letter and the people and phone numbers on it are added for you." }));
+    }
+    q.addEventListener("input", draw); draw();
   }
 
   /* ---------- overview: everything in one place ---------- */
@@ -1095,7 +1320,26 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   function lb(text, fn) { var b = el("button", { type: "button", class: "linkbtn", text: text }); b.addEventListener("click", fn); return b; }
   function renderOverview() {
     var box = $("overview"), p = cur(); box.textContent = "";
-    var next = p.appts.filter(function (a) { return a.when && apptTime(a) >= Date.now(); }).sort(function (a, b) { return apptTime(a) - apptTime(b); })[0];
+    var upcoming = p.appts.filter(function (a) { return a.when && apptTime(a) >= Date.now(); }).sort(function (a, b) { return apptTime(a) - apptTime(b); });
+    var next = upcoming[0];
+    var go2 = el("button", { type: "button", class: "btn-scan" }, [ico("camera", 24), "Scan a letter or text"]); go2.addEventListener("click", pickLetter);
+    var hand = el("button", { type: "button", class: "alt", text: "or add one by hand" }); hand.addEventListener("click", function () { setMode("appts"); });
+    box.appendChild(el("section", { class: "hero", "aria-labelledby": "heroT" }, [
+      el("h2", { id: "heroT", text: "Photograph it. We file it." }),
+      el("p", { text: "Take a picture of any appointment letter, text or prescription. Child Organiser reads it and does the rest." }),
+      el("ul", { class: "steps" }, [el("li", { text: "Adds the appointment to the diary" }), el("li", { text: "Saves the letter in Documents" }), el("li", { text: "Adds the clinic and doctor to Contacts" }), el("li", { text: "Fills in medicines, allergies and school if it spots them" })]),
+      el("div", {}, [go2, hand])]));
+    if (upcoming.length) {
+      box.appendChild(el("h2", { class: "sec-h", text: "Coming up" }));
+      var upc = el("div", { class: "upc" });
+      upcoming.slice(0, 3).forEach(function (a) {
+        var d = new Date(a.when.length > 10 ? a.when : a.when + "T12:00");
+        upc.appendChild(el("div", { class: "upc-item", style: "--c:" + catColor(a.cat) }, [
+          el("div", { class: "dateblock", "aria-hidden": "true" }, [el("b", { text: String(d.getDate()) }), el("span", { text: d.toLocaleDateString("en-GB", { month: "short" }) })]),
+          el("div", { class: "what" }, [el("b", { text: a.title || "Appointment" }), el("span", { text: whenText(a.when) + (a.where ? " · " + a.where : "") })]), catChip(a.cat)]));
+      });
+      box.appendChild(upc);
+    }
     var grid = el("div", { class: "grid-cards" });
     grid.appendChild(tile("Next appointment", next ? (next.title || "Appointment") : "None booked", next ? whenText(next.when) + (next.where ? " · " + next.where : "") : "Add the next one so it is not forgotten.", "", [lb(next ? "See all appointments" : "Add an appointment", function () { setMode("appts"); })]));
     var gdocs = tile("Documents", "…", "", "", [lb("Open documents", function () { setMode("docs"); })]); grid.appendChild(gdocs);
@@ -1306,24 +1550,25 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     if (!store.profiles.length) store.profiles.push(blank());
     store.current = (named()[0] || store.profiles[0]).id; save(); refresh(); toolMsg("Deleted from this device.");
   }
-  var PANES = { overview: "overview", edit: "editor", appts: "appts", docs: "docs", view: "viewWrap", card: "viewWrap" };
-  var TABS = { overview: "tabOverview", edit: "tabEdit", appts: "tabAppts", docs: "tabDocs", view: "tabView", card: "tabCard" };
+  var PANES = { overview: "overview", edit: "editor", appts: "appts", contacts: "contacts", docs: "docs", view: "viewWrap", card: "viewWrap" };
+  var TABS = { overview: "tabOverview", edit: "tabEdit", appts: "tabAppts", contacts: "tabContacts", docs: "tabDocs", view: "tabView", card: "tabCard" };
   function emptyState() {
     var box = $("overview"); box.textContent = "";
     var add = el("button", { type: "button", class: "btn btn-main", text: "Add a child" }); add.addEventListener("click", openChildDialog);
     var ex = el("button", { type: "button", class: "btn btn-ghost", text: "See an example" }); ex.addEventListener("click", showExample);
+    var sc0 = el("button", { type: "button", class: "btn btn-main", style: "min-height:50px" }, [ico("camera", 20), "Scan a letter to get started"]); sc0.addEventListener("click", pickLetter); box.appendChild(sc0);
     box.appendChild(el("div", { class: "empty-state" }, [el("h2", { text: "Start with your child's name" }), el("p", { text: "Make a one-page passport with how they communicate, what helps, medicines, doctors and emergency contacts. Keep their documents and appointments in the same place." }), el("div", { class: "actions", style: "justify-content:center" }, [add, ex])]));
   }
   function setMode(m) {
     if (shared) m = "view";
     if (!shared && !cur().name && m !== "edit") m = "overview";
     mode = m;
-    ["editor", "overview", "appts", "docs", "viewWrap"].forEach(function (pid) { $(pid).hidden = PANES[m] !== pid; });
+    ["editor", "overview", "appts", "contacts", "docs", "viewWrap"].forEach(function (pid) { $(pid).hidden = PANES[m] !== pid; });
     Object.keys(TABS).forEach(function (k) { if (k === m) $(TABS[k]).setAttribute("aria-current", "page"); else $(TABS[k]).removeAttribute("aria-current"); });
-    if (m === "view" || m === "card") renderViewer(); else if (m === "overview") { if (!shared && !cur().name) emptyState(); else renderOverview(); } else if (m === "appts") renderAppts(); else if (m === "docs") renderDocs();
+    if (m === "view" || m === "card") renderViewer(); else if (m === "overview") { if (!shared && !cur().name) emptyState(); else renderOverview(); } else if (m === "appts") renderAppts(); else if (m === "contacts") renderContacts(); else if (m === "docs") renderDocs();
   }
   function refresh() { renderWho(); renderEditor(); renderIncl(); setMode(mode); }
-  function chrome(on) { updateInstall(on); $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
+  function chrome(on) { $("scanFab").hidden = !on || !!shared; updateInstall(on); $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
   /* Prompt to save it to the home screen: shown at the top until it is installed, or hidden for two weeks */
   var installEvt = null, INST_KEY = "includeme.passport.installhide.v1";
   function isInstalled() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
@@ -1372,6 +1617,8 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     wireMenu($("kidBtn"), $("kidMenu")); wireMenu($("acctBtn"), $("acctMenu")); wireMenu($("shareBtn"), $("shareMenu"));
     [$("kidMenu"), $("acctMenu"), $("shareMenu")].forEach(function (m) { after(m); });
     Object.keys(TABS).forEach(function (k) { $(TABS[k]).addEventListener("click", function () { setMode(k); }); });
+    $("scanFab").addEventListener("click", pickLetter);
+    $("scanFile").addEventListener("change", function () { var f = this.files && this.files[0]; this.value = ""; startScan(f); });
     $("print").addEventListener("click", function () { if (!shared && mode !== "view" && mode !== "card") setMode("view"); setTimeout(function () { window.print(); }, 50); });
     $("printShared").addEventListener("click", function () { window.print(); });
     $("miText").addEventListener("click", function () { copy(asText(cur()), "Copied. Paste it into a message or email."); });
