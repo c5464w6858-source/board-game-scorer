@@ -666,7 +666,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     return { id: id(), name: "", preferred: "", dob: "", pronouns: "", languages: "", diagnoses: "", nhs: "", photo: "",
       strengths: "", goals: "", medsChecked: "", hide: ["portfolio"], large: false, noAllergies: false, noMeds: false, appts: [],
       communication: "", helps: "", upsets: "", calming: "", sensory: "", likes: "", dislikes: "",
-      food: "", personalCare: "", sleep: "", safety: "",
+      food: "", personalCare: "", sleep: "", safety: "", movement: "", learning: "",
       allergies: [], meds: [], team: [], contacts: [], portfolio: [],
       school: { name: "", teacher: "", senco: "", ehcp: "", review: "" }, updated: "" };
   }
@@ -685,7 +685,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     o = o && typeof o === "object" ? o : {};
     var b = blank();
     ["name", "preferred", "dob", "pronouns", "languages", "nhs"].forEach(function (k) { b[k] = s(o[k], LIM.short); });
-    ["strengths", "goals", "diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety"].forEach(function (k) { b[k] = s(o[k]); });
+    ["strengths", "goals", "diagnoses", "communication", "helps", "upsets", "calming", "sensory", "likes", "dislikes", "food", "personalCare", "sleep", "safety", "movement", "learning"].forEach(function (k) { b[k] = s(o[k]); });
     b.medsChecked = /^\d{4}-\d{2}-\d{2}$/.test(o.medsChecked || "") ? o.medsChecked : "";
     b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
     b.portfolio = (Array.isArray(o.portfolio) ? o.portfolio : []).slice(0, 400).map(function (x) {
@@ -910,6 +910,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       field("Sensory needs", "sensory", { area: true, help: "Noise, light, touch, crowds, textures." })
     ]));
     box.appendChild(section("Daily life", false, [
+      field("Movement and mobility", "movement", { area: true, help: "What I can do, what I am working on and what needs support." }),
+      field("Learning and play", "learning", { area: true }),
       field("What I like", "likes", { area: true }), field("What I dislike", "dislikes", { area: true }),
       field("Food and drink", "food", { area: true, help: "Likes, dislikes, how I eat and drink, any special diet." }),
       field("Personal care and toileting", "personalCare", { area: true }),
@@ -995,7 +997,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var body = el("div", { class: "pp-body" });
     [["What people like about me", p.strengths], ["What matters to me and what I am working on", p.goals], ["How I communicate", p.communication], ["What helps me", p.helps], ["What upsets or worries me", p.upsets], ["What helps me calm down", p.calming],
      ["Sensory needs", p.sensory], ["What I like", p.likes], ["What I dislike", p.dislikes], ["Food and drink", p.food],
-     ["Personal care and toileting", p.personalCare], ["Sleep", p.sleep], ["Staying safe", p.safety]].forEach(function (x) { if (x[1]) body.appendChild(blk(x[0], para(x[1]))); });
+     ["Movement and mobility", p.movement], ["Learning and play", p.learning], ["Personal care and toileting", p.personalCare], ["Sleep", p.sleep], ["Staying safe", p.safety]].forEach(function (x) { if (x[1]) body.appendChild(blk(x[0], para(x[1]))); });
 
     if (p.portfolio && p.portfolio.length) {
       [["What I can do", ["can"]], ["What I am working on", ["working on", "next step"]], ["What I find hard", ["cannot yet", "difficulty"]]].forEach(function (g) {
@@ -1087,7 +1089,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     p.allergies.forEach(function (a) { if (a.what) L.push("ALLERGY: " + [a.what, a.reaction, a.action].filter(Boolean).join(" | ")); });
     add("What people like about me", p.strengths); add("What matters to me", p.goals); add("How I communicate", p.communication); add("What helps", p.helps); add("What upsets me", p.upsets); add("What calms me", p.calming); add("Sensory", p.sensory);
     [["CAN DO", ["can"]], ["WORKING ON", ["working on", "next step"]], ["FINDS HARD", ["cannot yet", "difficulty"]]].forEach(function (g) { (p.portfolio || []).filter(function (x) { return g[1].indexOf(x.kind) >= 0; }).slice(0, 12).forEach(function (x) { L.push(g[0] + ": " + x.text); }); });
-    add("Likes", p.likes); add("Dislikes", p.dislikes); add("Food", p.food); add("Personal care", p.personalCare); add("Sleep", p.sleep); add("Safety", p.safety);
+    add("Movement", p.movement); add("Learning and play", p.learning); add("Likes", p.likes); add("Dislikes", p.dislikes); add("Food", p.food); add("Personal care", p.personalCare); add("Sleep", p.sleep); add("Safety", p.safety);
     if (p.meds.length && p.medsChecked) add("Medicines last checked", longDate(p.medsChecked));
     p.meds.forEach(function (m) { if (m.name) L.push("MEDICINE: " + [m.name, m.dose, m.when, m.forWhat && "for " + m.forWhat, m.prescriber && "by " + m.prescriber, m.notes].filter(Boolean).join(" | ")); });
     p.team.forEach(function (t) { if (t.name || t.role) L.push("TEAM: " + [t.role, t.name, t.org, t.phone, t.email].filter(Boolean).join(" | ")); });
@@ -1614,6 +1616,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     }, Promise.resolve());
     chain.then(function () { tray = []; if (!items.length) { readFail(lastErr); return; } scanReview(items, failed); }, readFail);
   }
+  function fk(v) { return String(v || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }   // compares words and numbers only, so "2 mg" and "2mg" are the same
   function norm(v) { return String(v || "").toLowerCase().replace(/\s+/g, " ").trim(); }
   function first(v) { return norm(v).split(" ")[0]; }
   function teamIndex(t, c) {
@@ -1627,7 +1630,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     function scalar(label, have, val, set, fmt) {
       if (!val) return; var shown = fmt ? fmt(val) : val;
       if (!have) out.push({ label: label, detail: shown, on: true, apply: function () { set(val); } });
-      else if (norm(have) !== norm(val)) out.push({ label: label, detail: shown, was: fmt ? fmt(have) : have, on: false, apply: function () { set(val); } });
+      else if (fk(have) !== fk(val)) out.push({ label: label, detail: shown, was: fmt ? fmt(have) : have, on: false, apply: function () { set(val); } });
     }
     scalar("Name", p.name, c.name, function (v) { p.name = s(v, LIM.short); });
     scalar("Likes to be called", p.preferred, c.preferred, function (v) { p.preferred = s(v, LIM.short); });
@@ -1635,14 +1638,18 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     scalar("NHS number", p.nhs, c.nhs, function (v) { p.nhs = s(v, LIM.short); });
     if (c.diagnoses) {
       if (!p.diagnoses) out.push({ label: "Diagnoses or needs", detail: c.diagnoses, on: true, apply: function () { p.diagnoses = s(c.diagnoses); } });
-      else if (norm(p.diagnoses).indexOf(norm(c.diagnoses)) < 0) out.push({ label: "Diagnoses or needs", detail: "Add: " + c.diagnoses, on: false, apply: function () { p.diagnoses = s(p.diagnoses + "\n" + c.diagnoses); } });
+      else if (fk(p.diagnoses).indexOf(fk(c.diagnoses)) < 0) out.push({ label: "Diagnoses or needs", detail: "Add: " + c.diagnoses, on: false, apply: function () { p.diagnoses = s(p.diagnoses + "\n" + c.diagnoses); } });
     }
     (r.allergies || []).forEach(function (a) {
-      if (p.allergies.some(function (x) { return norm(x.what) === norm(a.what); })) return;
+      if (p.allergies.some(function (x) { return fk(x.what) === fk(a.what); })) return;
       out.push({ label: "Allergy", detail: a.what + (a.reaction ? " (" + a.reaction + ")" : ""), on: true, apply: function () { if (p.allergies.length < LIM.arr) p.allergies.push({ what: s(a.what, LIM.short), reaction: s(a.reaction, LIM.short), action: s(a.action, LIM.short) }); p.noAllergies = false; } });
     });
     (r.meds || []).forEach(function (m) {
-      if (p.meds.some(function (x) { return norm(x.name) === norm(m.name); })) return;
+      var have = p.meds.filter(function (x) { return fk(x.name) === fk(m.name); })[0];
+      if (have) {
+        if (m.dose && have.dose && fk(m.dose) !== fk(have.dose)) out.push({ label: "Dose of " + m.name, detail: m.dose, was: have.dose, on: false, apply: function () { have.dose = s(m.dose, LIM.short); if (m.when) have.when = s(m.when, LIM.short); } });
+        return;
+      }
       out.push({ label: "Medicine", detail: [m.name, m.dose, m.when].filter(Boolean).join(", "), on: true, apply: function () { if (p.meds.length < LIM.arr) p.meds.push({ name: s(m.name, LIM.short), dose: s(m.dose, LIM.short), when: s(m.when, LIM.short), forWhat: s(m.forWhat, LIM.short), prescriber: s(m.prescriber, LIM.short), notes: s(m.notes, LIM.str) }); p.noMeds = false; } });
     });
     scalar("School", p.school.name, sc.name, function (v) { p.school.name = s(v, LIM.short); });
@@ -1688,14 +1695,14 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       });
       [["name", "name"], ["preferred", "preferred"], ["dob", "dob"], ["nhs", "NHS number"]].forEach(function (k) {
         var v = r.child && r.child[k[0]]; if (!v) return;
-        if (!out.child[k[0]]) out.child[k[0]] = v; else if (norm(out.child[k[0]]) !== norm(v)) out.notes.push("The letters give different " + k[1] + "s: " + out.child[k[0]] + " and " + v + ". The newest is used.");
+        if (!out.child[k[0]]) out.child[k[0]] = v; else if (fk(out.child[k[0]]) !== fk(v)) out.notes.push("The letters give different " + k[1] + "s: " + out.child[k[0]] + " and " + v + ". The newest is used.");
       });
       var dg = r.child && r.child.diagnoses; if (dg) out.child.diagnoses = out.child.diagnoses && norm(out.child.diagnoses).indexOf(norm(dg)) >= 0 ? out.child.diagnoses : (out.child.diagnoses ? out.child.diagnoses + "; " + dg : dg);
       (r.allergies || []).forEach(function (a) { if (!out.allergies.some(function (x) { return norm(x.what) === norm(a.what); })) out.allergies.push(a); });
       (r.meds || []).forEach(function (m) {
         var hit = out.meds.filter(function (x) { return norm(x.name) === norm(m.name); })[0];
         if (!hit) out.meds.push(JSON.parse(JSON.stringify(m)));
-        else { if (m.dose && hit.dose && norm(m.dose) !== norm(hit.dose)) out.notes.push("The letters give different doses of " + m.name + ": " + hit.dose + " and " + m.dose + ". The newest is used. Check it against the label."); ["dose", "when", "forWhat", "prescriber", "notes"].forEach(function (k) { if (!hit[k] && m[k]) hit[k] = m[k]; }); }
+        else { if (m.dose && hit.dose && fk(m.dose) !== fk(hit.dose)) out.notes.push("The letters give different doses of " + m.name + ": " + hit.dose + " and " + m.dose + ". The newest is used. Check it against the label."); ["dose", "when", "forWhat", "prescriber", "notes"].forEach(function (k) { if (!hit[k] && m[k]) hit[k] = m[k]; }); }
       });
       ["name", "teacher", "senco", "ehcp", "review"].forEach(function (k) { var v = r.school && r.school[k]; if (v && !out.school[k]) out.school[k] = v; });
       if (r.child && r.child.name) out.names.push(r.child.name);
@@ -1736,7 +1743,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     });
     if (cs.length) N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Contacts" })].concat(cs.map(function (x) { return x.row.node; }))));
     // 4. the passport
-    var props = proposals(p, K).map(function (x, i) { x.row = pickRow(sid + "p" + i, x.on, x.label + ": " + x.detail, x.was ? "Currently: " + x.was : ""); return x; });
+    var props = proposals(p, K).map(function (x, i) { x.row = pickRow(sid + "p" + i, x.on, x.was ? "Change " + x.label + " from " + x.was + " to " + x.detail : x.label + ": " + x.detail, x.was ? "This would replace what you have now, so it is not ticked. Tick it only if the letter is right." : ""); return x; });
     if (props.length) N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Fill in the passport" }), el("p", { class: "note", text: "Only gaps are ticked for you. Check medicines, doses and allergies against the label or letter before you save." })].concat(props.map(function (x) { return x.row.node; }))));
     // 5. what the report says about the child: kept as a portfolio
     var abUI = (K.abilities || []).map(function (a, i) { var o = { a: a }; o.row = pickRow(sid + "b" + i, true, a.text, KLABEL[a.kind] + (a.kind === "enjoys" ? "" : " \u00b7 " + a.area)); return o; });
@@ -1990,12 +1997,59 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     scanDlg([el("h2", { text: isNew ? "Add to the portfolio" : "Edit" }), el("div", { class: "g2" }, [el("div", {}, [el("label", { for: "pfk", text: "What is it?" }), kind]), el("div", {}, [el("label", { for: "pfa", text: "Area" }), area]), el("div", { style: "grid-column:1/-1" }, [el("label", { for: "pft", text: "In a short sentence" }), text])]), err, el("div", { class: "actions", style: "justify-content:flex-end;margin-top:12px" }, [cancel, save2])]);
     text.focus();
   }
+  /* ---------- portfolio -> About my child: short summaries, added to the end, never replacing ---------- */
+  var ABOUT = [
+    { f: "communication", label: "How I communicate", test: function (x) { return x.area === "Communication" && (x.kind === "can" || x.kind === "working on"); } },
+    { f: "movement", label: "Movement and mobility", test: function (x) { return x.area === "Movement and mobility" && x.kind !== "enjoys" && x.kind !== "next step"; } },
+    { f: "learning", label: "Learning and play", test: function (x) { return (x.area === "Understanding and learning" || x.area === "Play and social") && x.kind !== "enjoys" && x.kind !== "next step"; } },
+    { f: "sensory", label: "Sensory needs", test: function (x) { return x.area === "Sensory" && x.kind !== "next step"; } },
+    { f: "food", label: "Food and drink", test: function (x) { return x.area === "Eating and drinking" && x.kind !== "next step"; } },
+    { f: "personalCare", label: "Personal care and toileting", test: function (x) { return x.area === "Personal care" && x.kind !== "next step"; } },
+    { f: "sleep", label: "Sleep", test: function (x) { return x.area === "Sleep" && x.kind !== "next step"; } },
+    { f: "upsets", label: "What upsets or worries me", test: function (x) { return x.area === "Behaviour and emotions" && (x.kind === "difficulty" || x.kind === "cannot yet"); } },
+    { f: "likes", label: "What I like", test: function (x) { return x.kind === "enjoys"; } },
+    { f: "goals", label: "What matters to me and what I am working on", test: function (x) { return x.kind === "working on" || x.kind === "next step"; } }
+  ];
+  function aboutDlg() {
+    var p = cur(), items = (p.portfolio || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }), taken = {}, secs = [];
+    ABOUT.forEach(function (m) {
+      var rows = items.filter(function (x) { return !taken[x.id] && m.test(x); }).slice(0, 8); rows.forEach(function (x) { taken[x.id] = 1; });
+      if (rows.length) secs.push({ m: m, rows: rows });
+    });
+    if (!secs.length) { scanDlg([el("h2", { text: "Add to About my child" }), el("p", { text: "There is nothing in the portfolio to summarise yet. Scan a report first." }), closeBtn()]); return; }
+    var nodes = [el("h2", { text: "Add to About my child" }), el("p", { class: "note", text: "A short summary is added to the end of each box below. Nothing that is already there is changed or removed. Untick any line you do not want." })];
+    var apply = [];
+    secs.forEach(function (sec, si) {
+      var have = (p[sec.m.f] || ""), box = el("div", { class: "scan-sec" }, [el("h3", { text: sec.m.label })]);
+      if (have.trim()) box.appendChild(el("p", { class: "note", style: "margin:0 0 6px", text: "Already there: " + (have.length > 140 ? have.slice(0, 140) + "..." : have) }));
+      var picks = sec.rows.map(function (x, i) { var dup = fk(have).indexOf(fk(x.text)) >= 0; var r = pickRow("ab" + si + "_" + i, !dup, x.text, dup ? "Already in there" : KLABEL[x.kind]); box.appendChild(r.node); return { r: r, x: x, dup: dup }; });
+      var prev = el("p", { class: "note", style: "margin:6px 0 0" });
+      function show() { var t = text(); prev.textContent = t ? "Will add: " + t : "Nothing ticked."; }
+      function text() { return picks.filter(function (k) { return k.r.cb.checked; }).map(function (k) { return k.x.text.replace(/[.\s]+$/, "") + "."; }).join(" "); }
+      picks.forEach(function (k) { k.r.cb.addEventListener("change", show); }); show(); box.appendChild(prev);
+      apply.push(function () { var t = text(); if (!t) return ""; p[sec.m.f] = s((have.trim() ? have.replace(/\s+$/, "") + "\n" : "") + t); return sec.m.label; });
+      nodes.push(box);
+    });
+    var go = el("button", { type: "button", class: "btn btn-main", text: "Add to About my child" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    cancel.addEventListener("click", scanClose);
+    go.addEventListener("click", function () {
+      var did = apply.map(function (f) { return f(); }).filter(Boolean);
+      if (!did.length) { scanClose(); return; }
+      save(); renderEditor();
+      var open = el("button", { type: "button", class: "btn btn-main", text: "Open About my child" }); open.addEventListener("click", function () { scanClose(); setMode("edit"); });
+      var done = el("button", { type: "button", class: "btn btn-ghost", text: "Done" }); done.addEventListener("click", scanClose);
+      scanDlg([el("h2", { text: "Added" }), el("p", { text: "Added to the end of: " + did.join(", ") + "." }), el("div", { class: "actions", style: "justify-content:flex-end" }, [done, open])]);
+    });
+    nodes.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, go]));
+    scanDlg(nodes);
+  }
   function renderPortfolio() {
     var box = $("portfolio"), p = cur(); box.textContent = ""; var all = (p.portfolio || []).slice();
     var head = el("div", { class: "actions", style: "margin:0 0 4px" });
     var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan or upload a report"]); scan.addEventListener("click", pickLetter);
     var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add by hand" }); add.addEventListener("click", function () { portDlg(null); });
-    head.appendChild(scan); head.appendChild(add); box.appendChild(head);
+    var toAbout = el("button", { type: "button", class: "btn btn-ghost", text: "Add a summary to About my child" }); toAbout.addEventListener("click", aboutDlg);
+    head.appendChild(scan); head.appendChild(add); if (all.length) head.appendChild(toAbout); box.appendChild(head);
     box.appendChild(el("p", { class: "note", text: "What reports, assessments and letters say " + (p.preferred || p.name || "your child") + " can do, is working on and finds hard. It builds up each time you scan one. It stays on this phone unless you keep a private copy, and it is left out of printed and shared passports unless you choose it under What to include." }));
     if (!all.length) { box.appendChild(el("p", { class: "empty", text: "Nothing yet. Scan a progress report, assessment or school letter and the abilities, difficulties and next steps in it are collected here." })); return; }
     var by = {}; KINDS.forEach(function (k) { by[k] = 0; }); all.forEach(function (x) { by[x.kind] = (by[x.kind] || 0) + 1; });
@@ -2578,7 +2632,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.33", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.34", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
