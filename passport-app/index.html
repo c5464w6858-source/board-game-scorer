@@ -1946,8 +1946,9 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var box = $("overview"); box.textContent = "";
     var add = el("button", { type: "button", class: "btn btn-main", text: "Add a child" }); add.addEventListener("click", openChildDialog);
     var ex = el("button", { type: "button", class: "btn btn-ghost", text: "See an example" }); ex.addEventListener("click", showExample);
+    var ld = el("button", { type: "button", class: "btn btn-ghost", text: "Load a backup" }); ld.addEventListener("click", function () { $("upload").click(); });
     var sc0 = el("button", { type: "button", class: "btn btn-main", style: "min-height:50px" }, [ico("camera", 20), "Scan a letter to get started"]); sc0.addEventListener("click", pickLetter); box.appendChild(sc0);
-    box.appendChild(el("div", { class: "empty-state" }, [el("h2", { text: "Start with your child's name" }), el("p", { text: "Make a one-page passport with how they communicate, what helps, medicines, doctors and emergency contacts. Keep their documents and appointments in the same place." }), el("div", { class: "actions", style: "justify-content:center" }, [add, ex])]));
+    box.appendChild(el("div", { class: "empty-state" }, [el("h2", { text: "Start with your child's name" }), el("p", { text: "Make a one-page passport with how they communicate, what helps, medicines, doctors and emergency contacts. Keep their documents and appointments in the same place." }), el("div", { class: "actions", style: "justify-content:center" }, [add, ex, ld]), el("p", { class: "note", style: "margin-top:12px", text: "Saved this to your Home Screen and it looks empty? Your details live only on the device. In the browser version, open the account menu and choose Backup with documents, then come back here and Load a backup." })]));
   }
   function setMode(m) {
     if (shared) m = "view";
@@ -1992,7 +1993,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       ["Tap the ", ["Share"], " button: the square with an arrow pointing up, at the bottom of Safari or the top right of Chrome."],
       ["Scroll the list and tap ", ["Add to Home Screen"], "."],
       ["Tap ", ["Add"], ". The Child Organiser icon now sits on your Home Screen."]]),
-      el("p", { class: "note", text: "The saved app keeps its own sign-in, so you sign in once the first time you open it from the Home Screen." })]);
+      el("p", { class: "note", text: "The saved app is a separate copy on your phone: it keeps its own sign-in and starts empty, because your child's details are stored only on the device and are not sent to us. Before you save it, use the account menu to Backup with documents, then open the saved app and choose Load a backup." })]);
     var andBody = [];
     if (installEvt) { var go = el("button", { type: "button", class: "btn btn-main", text: "Install now" }); go.addEventListener("click", function () { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; updateInstall(); scanClose(); }); }); andBody.push(el("p", { text: "Your phone is ready to install it:" }), go, el("p", { class: "note", style: "margin-top:10px", text: "Or by hand:" })); }
     andBody.push(steps([["Open this page in ", ["Chrome"], "."], ["Tap the ", ["three dots"], " at the top right."], ["Tap ", ["Install app"], " (or ", ["Add to Home screen"], ")."], ["Tap ", ["Install"], ". The icon now sits on your Home screen."]]));
@@ -2105,7 +2106,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.16", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.17", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
