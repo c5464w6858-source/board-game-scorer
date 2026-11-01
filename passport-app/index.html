@@ -561,7 +561,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   </footer>
 </div>
 
-<aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*,application/pdf,.pdf,.doc,.docx,.txt,.heic,.heif" multiple class="sr" tabindex="-1" aria-label="Take photos or choose files: letters, texts, prescriptions, reports"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan or upload</span></button></aside>
+<aside aria-label="Scan a letter"><input type="file" id="scanFile" multiple class="sr" tabindex="-1" aria-label="Take photos or choose files: letters, texts, prescriptions, reports"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan or upload</span></button></aside>
 
 <div class="updbar" id="updBar" role="status" hidden><span>A newer version of Child Organiser is ready.</span><button type="button" class="btn btn-main btn-small" id="updGo">Update now</button></div>
 
@@ -1044,7 +1044,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function allDocs() { return db().then(function (d) { return new Promise(function (res, rej) { var rq = d.transaction("docs").objectStore("docs").getAll(); rq.onsuccess = function () { res(rq.result || []); }; rq.onerror = function () { rej(rq.error); }; }); }); }
   function delDoc(i) { store.deletedDocs[i] = new Date().toISOString(); return tx("readwrite", function (st) { return st.delete(i); }).then(function (v) { try { localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current, deleted: store.deleted, deletedDocs: store.deletedDocs })); } catch (e) { /* storage blocked */ } if (window.cloudDocsSoon) window.cloudDocsSoon(); return v; }); }
   function delDocsOf(pid) { return docsOf(pid).then(function (a) { return Promise.all(a.map(function (r) { return delDoc(r.id); })); }); }
-  function mime(f) { var t = (f.type || "").toLowerCase(); if (OKTYPES[t]) return t; var m = /\.([a-z0-9]+)$/i.exec(f.name || ""); return m && EXT2[m[1].toLowerCase()] || ""; }
+  function mime(f) { var t = (f.type || "").toLowerCase(); if (OKTYPES[t]) return t; var m = /\.([a-z0-9]+)$/i.exec(f.name || ""); if (m && EXT2[m[1].toLowerCase()]) return EXT2[m[1].toLowerCase()]; return /^[a-z0-9.+-]+\/[a-z0-9.+-]+$/.test(t) && t.length <= 100 ? t : "application/octet-stream"; }
+  function kind(r) { if (OKTYPES[r.type]) return OKTYPES[r.type]; var m = /\.([a-z0-9]{1,5})$/i.exec(r.name || ""); return m ? m[1].toUpperCase() : "FILE"; }
   function bytes(n) { return n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB"; }
   var urls = [];
   function freeUrls() { urls.forEach(function (u) { URL.revokeObjectURL(u); }); urls = []; }
@@ -1055,7 +1056,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     box.appendChild(el("p", { class: "note", text: "Keep reports, letters and photos of documents with the passport. They are saved on this device, and copied (encrypted) to your private copy only if you turned that on. They are never included in a shared link or printed passport." }));
     var status = el("p", { class: "status", role: "status", "aria-live": "polite" });
     var addScan = el("button", { type: "button", class: "docscan" }, [ico("camera", 22), "Scan or upload"]); addScan.addEventListener("click", pickLetter);
-    box.appendChild(el("div", { class: "drop" }, [addScan, el("p", { class: "help", text: "Take a photo or choose files. Letters and photos can be read for you; PDF, Word and text files up to 25 MB each are filed as they are." })]));
+    box.appendChild(el("div", { class: "drop" }, [addScan, el("p", { class: "help", text: "Take a photo or choose files. Photos of letters can be read for you. Any other file, such as PDF, Word, spreadsheets, audio or video, is filed as it is, up to 25 MB each." })]));
     box.appendChild(status);
     var listBox = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(listBox);
     var meter = el("p", { class: "help" }); box.appendChild(meter);
@@ -1077,7 +1078,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         var shown = all.filter(function (r) { return docFilter === "All" || r.category === docFilter; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || b.added - a.added; });
         if (!all.length) listBox.appendChild(el("p", { class: "empty", text: "No documents yet." }));
         shown.forEach(function (r) {
-          var thumb = el("div", { class: "thumb", "aria-hidden": "true", text: OKTYPES[r.type] || "FILE" });
+          var thumb = el("div", { class: "thumb", "aria-hidden": "true", text: kind(r) });
           if (/^image\/(jpeg|png|webp|gif)$/.test(r.type)) { var u = URL.createObjectURL(r.blob); urls.push(u); thumb.textContent = ""; thumb.appendChild(el("img", { src: u, alt: "" })); }
           var tid = "dt" + r.id, title = el("input", { type: "text", id: tid, value: r.title });
           title.addEventListener("input", function () { r.title = title.value.slice(0, 160); putDoc(r); });
@@ -1096,7 +1097,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
           var sumTitle = el("b", { text: r.title || "Document" });
           title.addEventListener("input", function () { sumTitle.textContent = title.value || "Document"; });
           var dd = el("details", { class: "doc" }, [
-            el("summary", {}, [thumb, el("span", { class: "dsum" }, [sumTitle, el("span", { class: "meta", text: [CATLABEL(r.category), r.date ? whenText(r.date) : "", (OKTYPES[r.type] || "File") + " " + bytes(r.size)].filter(Boolean).join(" · ") })])]),
+            el("summary", {}, [thumb, el("span", { class: "dsum" }, [sumTitle, el("span", { class: "meta", text: [CATLABEL(r.category), r.date ? whenText(r.date) : "", kind(r) + " " + bytes(r.size)].filter(Boolean).join(" · ") })])]),
             el("div", { class: "dbody" }, [
               el("div", {}, [el("label", { for: tid, text: "Title" }), title, el("div", { class: "meta", text: (r.name || "") })]),
               el("div", { class: "two" }, [el("div", {}, [el("label", { for: "dc" + r.id, text: "Type" }), cat]), el("div", {}, [el("label", { for: "dd" + r.id, text: "Date on the document" }), dt])]),
@@ -1298,7 +1299,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     return files.reduce(function (pr, f) {
       return pr.then(function () {
         var t = mime(f);
-        if (!t) { bad.push(f.name + " (type not supported)"); return; }
+        if (!t) { bad.push(f.name + " (could not be read)"); return; }
         if (f.size > MAXFILE) { bad.push(f.name + " (over 25 MB)"); return; }
         return putDoc({ id: id(), profileId: p.id, title: (f.name || "Document").replace(/\.[^.]+$/, "").slice(0, 160), category: /^image\//.test(t) ? "Photos" : "Other", date: today(), notes: "", name: (f.name || "").slice(0, 200), type: t, size: f.size, blob: f, added: Date.now() }).then(function () { ok++; });
       });
@@ -1343,7 +1344,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   function handleFiles(files) {
     if (!files || !files.length) return;
-    var isImg = function (f) { return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); };
+    var isImg = function (f) { return /^image\/(jpeg|png|webp|heic|heif|gif)$/.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); };
     var pics = files.filter(isImg), other = files.filter(function (f) { return !isImg(f); });
     if (other.length) fileFiles(other);
     if (!pics.length) return;
@@ -2155,7 +2156,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         });
       });
       Object.keys(idx).forEach(function (id) {
-        var m = idx[id]; if (local[id] || gone[id] || !find(m.profileId) || !OKTYPES[m.type]) return;
+        var m = idx[id]; if (local[id] || gone[id] || !find(m.profileId) || typeof m.type !== "string") return;
         seq = seq.then(function () { if (!quiet) toolMsg("Bringing over your documents..."); return downDoc(m); }).then(function (blob) { return putDocRaw({ id: m.id, profileId: m.profileId, title: m.title, category: m.category, date: m.date, notes: m.notes, name: m.name, type: m.type, size: blob.size, blob: blob, mod: m.updated }); }).then(function () { got++; }, function () { /* tried again next time */ });
       });
       return seq;
@@ -2277,7 +2278,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         function bin(d) { var s2 = atob(d), a = new Uint8Array(s2.length); for (var i = 0; i < s2.length; i++) a[i] = s2.charCodeAt(i); return a; }
         docs.reduce(function (pr, d) {
           return pr.then(function () {
-            var t = d && typeof d.type === "string" && OKTYPES[d.type] ? d.type : ""; if (!t || typeof d.data !== "string") return;
+            var t = d && typeof d.type === "string" && /^[a-z0-9.+-]+\/[a-z0-9.+-]+$/.test(d.type) ? d.type : ""; if (!t || typeof d.data !== "string") return;
             var blob; try { blob = new Blob([bin(d.data)], { type: t }); } catch (e) { return; } if (blob.size > MAXFILE) return;
             return putDoc({ id: id(), profileId: p.id, title: s(d.title, 160) || "Document", category: CATS.indexOf(d.category) >= 0 ? d.category : "Other", date: /^\d{4}-\d{2}-\d{2}$/.test(d.date || "") ? d.date : "", notes: s(d.notes, 1000), name: s(d.name, 200), type: t, size: blob.size, blob: blob, added: Date.now() }).then(function () { n++; });
           });
@@ -2297,7 +2298,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.22", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.23", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
