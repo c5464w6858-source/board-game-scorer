@@ -82,6 +82,16 @@ h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-heigh
 .menu { position: absolute; right: 0; top: calc(100% + 6px); min-width: 230px; max-width: 86vw; background: var(--surface); border: 1px solid var(--line-2); border-radius: 10px; box-shadow: 0 14px 34px -10px rgba(27,21,48,.35); padding: 6px; z-index: 50; }
 .menu .mi { display: flex; width: 100%; align-items: center; gap: 10px; text-align: left; font: 500 14.5px Inter, sans-serif; padding: 10px 10px; min-height: 42px; border: 0; background: none; border-radius: 6px; color: var(--ink); cursor: pointer; text-decoration: none; }
 .menu .mi:hover, .menu .mi:focus-visible { background: var(--plum-soft); }
+.menu a.app { color: #fff; margin: 4px 0; padding: 8px 10px; border-radius: 10px; min-height: 52px; }
+.menu a.app img { width: 32px; height: 32px; border-radius: 8px; flex: none; background: #fff; }
+.menu a.app span { display: block; min-width: 0; }
+.menu a.app b { display: block; font-size: 14.5px; }
+.menu a.app small { display: block; font-size: 12.5px; opacity: .9; font-weight: 400; }
+.menu a.app-finder { background: #0F6B5C; }
+.menu a.app-ehcp { background: #243480; }
+.menu a.app:hover, .menu a.app:focus-visible { filter: brightness(1.12); background-color: inherit; }
+.menu a.app-finder:hover, .menu a.app-finder:focus-visible { background: #14806F; }
+.menu a.app-ehcp:hover, .menu a.app-ehcp:focus-visible { background: #2E419E; }
 .menu .mi.danger { color: var(--red); }
 .menu .mi[aria-current="true"] { font-weight: 700; }
 .menu .mi[aria-current="true"]::after { content: "✓"; margin-left: auto; color: var(--ok); }
@@ -562,8 +572,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
             <button type="button" class="mi" id="miSave">Save to your phone</button>
             <button type="button" class="mi" id="miUpdate">Check for updates</button>
             <hr>
-            <a class="mi" href="https://includeme.uk/" rel="noopener">Open the Activity Finder</a>
-            <a class="mi" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener">Try EHCP Tracker for EHCP cases</a>
+            <a class="mi app app-finder" href="https://includeme.uk/" rel="noopener"><img src="app-finder.png" alt="" width="32" height="32"><span><b>Activity Finder</b><small>Find inclusive activities near you</small></span></a>
+            <a class="mi app app-ehcp" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener"><img src="app-ehcp.png" alt="" width="32" height="32"><span><b>EHCP Tracker</b><small>Keep an EHCP case in one place</small></span></a>
             <button type="button" class="mi danger" id="miSignOut">Sign out</button>
           </div>
         </div>
@@ -2722,7 +2732,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.36", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.37", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
