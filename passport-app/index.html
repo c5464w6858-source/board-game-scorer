@@ -348,6 +348,18 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .calbtn small { display: block; font-weight: 400; opacity: .85; font-size: 12.5px; margin-top: 2px; }
 
 .quiet:empty { display: none; }
+
+/* diary cards: closed by default, date first with the name small underneath */
+details.appt { display: block; padding: 0; }
+details.appt > summary.apsm { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; min-height: 52px; }
+details.appt > summary.apsm::-webkit-details-marker { display: none; }
+details.appt > summary.apsm::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: -4px 2px 0 4px; transition: transform .15s; }
+details.appt[open] > summary.apsm::after { transform: rotate(225deg); margin-top: 4px; }
+.apsm-main { min-width: 0; flex: 1; display: block; }
+.apdate { display: block; font: 700 1.02rem/1.25 Fraunces, Georgia, serif; color: var(--plum); }
+.apname { display: block; font: 500 13px/1.3 Inter, sans-serif; color: var(--muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.apsm .catchip { flex: none; }
+details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
 /* diary: compact controls */
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
@@ -1414,7 +1426,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
   function refreshSoon() { setTimeout(function () { if (mode === "overview") renderOverview(); else if (mode === "contacts") renderContacts(); else if (mode === "docs") renderDocs(); }, 0); }
 
   /* ---------- the diary: a list or a month calendar, with filters ---------- */
-  var DV = { view: "list", time: "upcoming", cat: "All", q: "", month: null, sel: "", fopen: false };
+  var DV = { view: "list", time: "upcoming", cat: "All", q: "", month: null, sel: "", fopen: false, open: {} };
   try { var dvs = localStorage.getItem("includeme.passport.diaryview.v1"); if (dvs === "list" || dvs === "calendar") DV.view = dvs; } catch (e) { /* storage blocked */ }
   function ymdOf(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function renderAppts() {
@@ -1440,11 +1452,19 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
       cal.addEventListener("click", function () { addToCalendar(a, p.preferred || p.name); });
       var letter = null;
       if (a.docId) { letter = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "View the letter" }); letter.addEventListener("click", function () { getDoc(a.docId).then(function (d) { if (!d) { savedMsg("That letter is no longer on this phone.", true); return; } var u = URL.createObjectURL(new Blob([d.blob], { type: d.type })); var l = el("a", { href: u, target: "_blank", rel: "noopener" }); document.body.appendChild(l); l.click(); l.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }); }); }
-      return el("div", { class: "appt" + (past ? " past" : ""), style: "--c:" + catColor(a.cat), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
-        el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap" }, [el("span", {}, [el("b", { style: "color:var(--plum);display:block", text: whenText(a.when) + (past ? " (past)" : "") }), catChip(a.cat)]), el("span", { class: "actions", style: "margin:0" }, [letter, cal])]),
-        el("p", { class: "apsum", text: [a.title || "Appointment", [a.who, a.where].filter(Boolean).join(" · ")].filter(Boolean).join(" — ") }),
-        a.notes ? el("p", { class: "note", text: a.notes }) : null,
-        el("details", { class: "apedit", open: !a.title && !a.when ? "" : null }, [el("summary", { text: "Edit details" }), el("div", { class: "two", style: "margin-top:10px" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)]), el("div", { class: "actions", style: "margin-top:10px" }, [rm])])]);
+      var who2 = [a.who, a.where].filter(Boolean).join(" · ");
+      var det = el("details", { class: "appt" + (past ? " past" : ""), style: "--c:" + catColor(a.cat) }, [
+        el("summary", { class: "apsm" }, [
+          el("span", { class: "apsm-main" }, [el("b", { class: "apdate", text: whenText(a.when) + (past ? " (past)" : "") }), el("span", { class: "apname", text: a.title || "Appointment" })]),
+          catChip(a.cat)]),
+        el("div", { class: "apbody" }, [
+          who2 ? el("p", { class: "apsum", text: who2 }) : null,
+          a.notes ? el("p", { class: "note", text: a.notes }) : null,
+          el("div", { class: "actions", style: "margin:0" }, [letter, cal]),
+          el("details", { class: "apedit", open: !a.title && !a.when ? "" : null }, [el("summary", { text: "Edit details" }), el("div", { class: "two", style: "margin-top:10px" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)]), el("div", { class: "actions", style: "margin-top:10px" }, [rm])])])]);
+      if (DV.open[a.aid] || (!a.title && !a.when)) det.setAttribute("open", "");
+      det.addEventListener("toggle", function () { DV.open[a.aid] = det.open; });
+      return det;
     }
     function toolbar() {
       tools.textContent = "";
@@ -1952,7 +1972,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.10", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.11", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
