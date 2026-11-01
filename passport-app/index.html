@@ -393,6 +393,20 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 .qlink .ico { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--plum-soft); color: var(--plum); display: inline-flex; align-items: center; justify-content: center; }
 .qlink.red .ico { background: var(--red-soft); color: var(--red); }
 @media (max-width: 380px) { .qlinks { grid-template-columns: 1fr; } }
+
+.hero .hhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; position: relative; }
+.hero .hhead h2 { margin: 0; }
+.hero .htoggle { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.12); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.hero .htoggle:focus-visible { outline-color: #fff; }
+.hero .hchev { width: 10px; height: 10px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg); margin-top: -3px; transition: transform .15s; }
+.hero .htoggle[aria-expanded="true"] .hchev { transform: rotate(225deg); margin-top: 4px; }
+.hero .hscan { position: relative; margin-top: 14px; }
+.hero .hbody { position: relative; margin-top: 14px; }
+.hero.compact { padding: 14px 16px 16px; }
+.hero.compact h2 { font-size: 1.15rem; }
+.hero.compact .hscan { margin-top: 10px; }
+.hero.compact .btn-scan { min-height: 46px; padding: 10px 18px; font-size: 15.5px; }
+.hero.compact::after { width: 150px; height: 150px; right: -50px; top: -60px; }
 /* diary: compact controls */
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
@@ -1675,13 +1689,20 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var box = $("overview"), p = cur(); box.textContent = "";
     var upcoming = p.appts.filter(function (a) { return a.when && apptTime(a) >= Date.now(); }).sort(function (a, b) { return apptTime(a) - apptTime(b); });
     var next = upcoming[0];
-    var go2 = el("button", { type: "button", class: "btn-scan" }, [ico("camera", 24), "Scan a letter or text"]); go2.addEventListener("click", pickLetter);
+    var go2 = el("button", { type: "button", class: "btn-scan" }, [ico("camera", 22), "Scan a letter or text"]); go2.addEventListener("click", pickLetter);
     var hand = el("button", { type: "button", class: "alt", text: "or add one by hand" }); hand.addEventListener("click", function () { setMode("appts"); });
-    box.appendChild(el("section", { class: "hero", "aria-labelledby": "heroT" }, [
-      el("h2", { id: "heroT", text: "Photograph it. We file it." }),
+    var open = false; try { open = localStorage.getItem("includeme.passport.hero.v1") === "open"; } catch (e) { /* storage blocked */ }
+    var tog = el("button", { type: "button", class: "htoggle", "aria-expanded": open ? "true" : "false", "aria-controls": "heroBody" }, [el("span", { class: "sr", text: "How scanning works" }), el("span", { class: "hchev", "aria-hidden": "true" })]);
+    var body = el("div", { class: "hbody", id: "heroBody" }, [
       el("p", { text: "Take a picture of any appointment letter, text or prescription. Child Organiser reads it and does the rest." }),
       el("ul", { class: "steps" }, [el("li", { text: "Adds the appointment to the diary" }), el("li", { text: "Saves the letter in Documents" }), el("li", { text: "Adds the clinic and doctor to Contacts" }), el("li", { text: "Fills in medicines, allergies and school if it spots them" })]),
-      el("div", {}, [go2, hand])]));
+      el("div", {}, [hand])]);
+    body.hidden = !open;
+    var hero = el("section", { class: "hero" + (open ? "" : " compact"), "aria-labelledby": "heroT" }, [
+      el("div", { class: "hhead" }, [el("h2", { id: "heroT", text: "Photograph it. We file it." }), tog]),
+      el("div", { class: "hscan" }, [go2]), body]);
+    tog.addEventListener("click", function () { var now = body.hidden; body.hidden = !now; tog.setAttribute("aria-expanded", now ? "true" : "false"); hero.classList.toggle("compact", !now); try { localStorage.setItem("includeme.passport.hero.v1", now ? "open" : "closed"); } catch (e) { /* storage blocked */ } });
+    box.appendChild(hero);
     var q1 = el("button", { type: "button", class: "qlink" }, [ico("file", 22), el("span", {}, ["The passport", el("small", { text: "One page to share" })])]); q1.addEventListener("click", function () { setMode("view"); });
     var q2 = el("button", { type: "button", class: "qlink red" }, [ico("alert", 22), el("span", {}, ["Emergency card", el("small", { text: "Key facts at a glance" })])]); q2.addEventListener("click", function () { setMode("card"); });
     box.appendChild(el("div", { class: "qlinks" }, [q1, q2]));
