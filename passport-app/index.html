@@ -115,7 +115,7 @@ h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-heigh
 
 /* forms */
 label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--ink); }
-input[type=text], input[type=password], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], textarea, select.f {
+input[type=text], input[type=password], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], textarea, select.f, select {
   width: 100%; font: 400 16px Inter, sans-serif; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: #fff; color: var(--ink); min-height: 44px; }
 textarea { min-height: 84px; resize: vertical; }
 input:focus, textarea:focus, select:focus { border-color: var(--plum); }
@@ -339,6 +339,10 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   </form>
 </dialog>
 
+<dialog id="dlgScan" aria-label="Read an appointment letter" style="width:min(94vw,560px);max-height:92vh">
+  <div class="dlg" id="scanBody"></div>
+</dialog>
+
 <dialog id="dlgIncl" aria-labelledby="diTitle">
   <div class="dlg">
     <h2 id="diTitle">What to include</h2>
@@ -356,6 +360,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
   var $ = function (id) { return document.getElementById(id); };
   var ROLES = ["GP", "Paediatrician", "CAMHS", "Speech and language therapist", "Occupational therapist", "Physiotherapist", "Educational psychologist", "SENCo", "Teacher or key worker", "Social worker", "Dentist", "Optician", "Pharmacist", "Other"];
 
+  var APPT_CATS = ["GP", "Hospital", "Dentist", "Optician", "Therapy", "School", "Social care", "Review meeting", "Other"];
   function id() { return "p" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
   function blank() {
     return { id: id(), name: "", preferred: "", dob: "", pronouns: "", languages: "", diagnoses: "", nhs: "", photo: "",
@@ -384,7 +389,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     b.medsChecked = /^\d{4}-\d{2}-\d{2}$/.test(o.medsChecked || "") ? o.medsChecked : "";
     b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
     b.large = o.large === true; b.noAllergies = o.noAllergies === true; b.noMeds = o.noMeds === true;
-    b.appts = list(o.appts, ["title", "when", "who", "where", "notes"]).map(function (a) { a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; return a; });
+    b.appts = list(o.appts, ["title", "when", "who", "where", "notes", "cat", "aid"]).map(function (a) { a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; if (APPT_CATS.indexOf(a.cat) < 0) a.cat = "Other"; if (!/^[A-Za-z0-9]{3,40}$/.test(a.aid)) a.aid = id(); return a; });
     b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
     b.allergies = list(o.allergies, ["what", "reaction", "action"]);
     b.meds = list(o.meds, ["name", "dose", "when", "forWhat", "prescriber", "notes"]);
@@ -439,6 +444,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
         cur().updated = new Date().toISOString();
         localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current }));
         savedMsg("Saved on this device only");
+        if (window.diarySyncSoon) window.diarySyncSoon();
       } catch (e) { savedMsg("Could not save on this device. Download a backup file so you do not lose it.", true); }
     }, 350);
   }
@@ -880,30 +886,202 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     L.push(allday ? "DTSTART;VALUE=DATE:" + d : "DTSTART:" + d + "00");
     L.push("SUMMARY:" + esc((who ? who + ": " : "") + (a.title || "Appointment")));
     if (a.where) L.push("LOCATION:" + esc(a.where)); var desc = [a.who && "With: " + a.who, a.notes].filter(Boolean).join("\n"); if (desc) L.push("DESCRIPTION:" + esc(desc));
+    var pf = prefs(); if (pf.calAlarm) L.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Appointment reminder", "TRIGGER:" + (pf.leadDays ? "-P" + pf.leadDays + "D" : "-PT1H"), "END:VALARM");
     L.push("END:VEVENT", "END:VCALENDAR"); return L.join("\r\n");
   }
+  /* ---------- the diary: reminders, and reading a letter from a photo ---------- */
+  var API = "https://advocate.includeme.uk", PREFS_KEY = "includeme.passport.prefs.v1";
+  var LEADS = [[0, "On the day"], [1, "1 day before"], [2, "2 days before"], [3, "3 days before"], [5, "5 days before"], [7, "1 week before"], [14, "2 weeks before"]];
+  function prefs() {
+    var p = {}; try { p = JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch (e) { p = {}; }
+    return { leadDays: Number.isInteger(p.leadDays) && p.leadDays >= 0 && p.leadDays <= 30 ? p.leadDays : 3, email: p.email === true, push: p.push === true, consent: p.consent === true, calAlarm: p.calAlarm !== false, synced: p.synced === true };
+  }
+  function setPrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch (e) { /* storage blocked */ } }
+  function patchPrefs(o) { var p = prefs(); Object.keys(o).forEach(function (k) { p[k] = o[k]; }); setPrefs(p); return p; }
+  function api(path, o) {
+    o = o || {};
+    return checkAuth().then(function (ok) {
+      var s = getSession(); if (!ok || !s) { var e = new Error("Please sign in again."); e.status = 401; throw e; }
+      var h = { authorization: "Bearer " + s.access_token }; if (o.body) h["content-type"] = "application/json";
+      return fetch(API + path, { method: o.method || "GET", headers: h, body: o.body ? JSON.stringify(o.body) : undefined });
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (d) { if (!res.ok) { var e = new Error(d.error || "Something went wrong. Please try again."); e.status = res.status; throw e; } return d; });
+    });
+  }
+  var cfgP = null;
+  function getCfg() { if (!cfgP) cfgP = fetch(API + "/api/diary/config").then(function (r) { return r.json(); }).catch(function () { cfgP = null; return { scan: false, reminders: false, publicKey: null }; }); return cfgP; }
+  function b64ToU8(b) { var pad = "=".repeat((4 - b.length % 4) % 4), raw = atob((b + pad).replace(/-/g, "+").replace(/_/g, "/")), u = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++) u[i] = raw.charCodeAt(i); return u; }
+  function thisSub() { if (!("serviceWorker" in navigator) || !("PushManager" in window)) return Promise.resolve(null); return navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription(); }).catch(function () { return null; }); }
+
+  /* what the server is told: only an id, the date and time, and a general type. Never the name, place, notes or contacts. */
+  function reminderItems() {
+    var out = [], today = new Date(Date.now() - 36 * 3600 * 1000).toISOString().slice(0, 10);
+    store.profiles.forEach(function (p) { p.appts.forEach(function (a) { if (a.when && a.when.slice(0, 10) >= today && out.length < 200) out.push({ id: a.aid, when: a.when, label: a.cat || "Other" }); }); });
+    return out;
+  }
+  var syncTimer = null, syncMsg = function () {};
+  function syncNow(extra) {
+    var pf = prefs(); extra = extra || {};
+    if (!pf.email && !pf.push && !pf.synced) return Promise.resolve(null);
+    return thisSub().then(function (sub) {
+      var body = { prefs: { emailOn: pf.email, leadDays: pf.leadDays }, items: reminderItems() };
+      if (pf.push && sub) body.subscription = sub.toJSON();
+      if (extra.removeEndpoint) body.removeEndpoint = extra.removeEndpoint;
+      return api("/api/diary/sync", { method: "POST", body: body });
+    }).then(function (r) { patchPrefs({ synced: true }); return r; });
+  }
+  window.diarySyncSoon = function () { var pf = prefs(); if (!pf.email && !pf.push) return; clearTimeout(syncTimer); syncTimer = setTimeout(function () { syncNow().catch(function () { /* tried again at the next change */ }); }, 1500); };
+
+  function enablePush() {
+    return getCfg().then(function (c) {
+      if (!c.reminders || !c.publicKey) throw new Error("Phone notifications are not switched on yet.");
+      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) throw new Error("This browser cannot show notifications. On an iPhone, add Child Organiser to your Home Screen first, then open it from there.");
+      return Notification.requestPermission().then(function (perm) {
+        if (perm !== "granted") throw new Error("Notifications were not allowed. You can allow them in your phone's settings for this app.");
+        return navigator.serviceWorker.ready;
+      }).then(function (reg) { return reg.pushManager.getSubscription().then(function (sub) { return sub || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(c.publicKey) }); }); });
+    });
+  }
+  function check(idv, label, on, fn) {
+    var c = el("input", { type: "checkbox", id: idv }); c.checked = on; c.addEventListener("change", function () { fn(c.checked, c); });
+    return el("div", { class: "chkrow", style: "display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:6px 0" }, [c, el("label", { for: idv, text: label, style: "margin:0;font-weight:500" })]);
+  }
+  function remindersPanel() {
+    var pf = prefs(), who = getSession(), msg = el("p", { class: "status", role: "status", "aria-live": "polite" }), box = el("div", { class: "panel", style: "margin-top:0" });
+    function say(t, err) { msg.textContent = t || ""; msg.className = "status" + (err ? " err" : ""); }
+    function fail(e) { say(e && e.message ? e.message : "Something went wrong. Please try again.", true); }
+    box.appendChild(el("h2", { text: "Reminders", style: "margin-bottom:4px;font-size:1.2rem" }));
+    box.appendChild(el("p", { class: "note", text: "We remind you before each appointment, three days before unless you choose otherwise." }));
+    var sel = el("select", { id: "leadSel" }); LEADS.forEach(function (l) { var o = el("option", { value: String(l[0]), text: l[1] }); if (l[0] === pf.leadDays) o.selected = true; sel.appendChild(o); });
+    sel.addEventListener("change", function () { patchPrefs({ leadDays: +sel.value }); say("Saved."); syncNow().then(function () { say("Saved. Reminders will come " + LEADS.filter(function (l) { return l[0] === +sel.value; })[0][1].toLowerCase() + "."); }).catch(function () { say("Saved on this phone. It will update the reminders next time you are online."); }); });
+    box.appendChild(el("div", { style: "max-width:260px" }, [el("label", { for: "leadSel", text: "Remind me" }), sel]));
+    box.appendChild(check("remEmail", "Email me" + (who && who.email ? " at " + who.email : ""), pf.email, function (on, c) {
+      getCfg().then(function (cf) { if (!cf.reminders) throw new Error("Email reminders are not switched on yet."); patchPrefs({ email: on }); return syncNow(); }).then(function () { say(on ? "Email reminders are on." : "Email reminders are off."); }).catch(function (e) { c.checked = !on; patchPrefs({ email: !on }); fail(e); });
+    }));
+    var pushRow = check("remPush", "Notify this phone", pf.push, function (on, c) {
+      if (on) { enablePush().then(function () { patchPrefs({ push: true }); return syncNow(); }).then(function () { say("Phone notifications are on for this device."); }).catch(function (e) { c.checked = false; patchPrefs({ push: false }); fail(e); }); }
+      else { patchPrefs({ push: false }); thisSub().then(function (sub) { var ep = sub && sub.endpoint; return syncNow(ep ? { removeEndpoint: ep } : {}).then(function () { if (sub) return sub.unsubscribe(); }); }).then(function () { say("Phone notifications are off for this device."); }).catch(fail); }
+    });
+    box.appendChild(pushRow);
+    box.appendChild(check("remCal", "Put an alert in the calendar file when I add an appointment to my calendar", pf.calAlarm, function (on) { patchPrefs({ calAlarm: on }); say("Saved."); }));
+    var test = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Send me a test reminder" });
+    test.addEventListener("click", function () { say("Sending..."); syncNow().then(function () { return api("/api/diary/test", { method: "POST", body: {} }); }).then(function (r) { say((r.push && r.push.sent ? "Sent to your phone. " : "") + (r.email ? "Sent to your email. " : "") + (!(r.push && r.push.sent) && !r.email ? "Nothing could be sent. Check the settings above." : "")); }).catch(fail); });
+    var del = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Delete my reminder data" });
+    del.addEventListener("click", function () { if (!window.confirm("Delete the reminder dates, email setting and phone notifications we hold? Your appointments on this phone are not touched.")) return;
+      api("/api/diary/data", { method: "DELETE" }).then(function () { patchPrefs({ email: false, push: false, synced: false }); return thisSub(); }).then(function (sub) { if (sub) sub.unsubscribe(); renderAppts(); $("appts").querySelector(".status").textContent = "Deleted. Reminders are off."; }).catch(fail); });
+    box.appendChild(el("div", { class: "actions", style: "margin:10px 0 4px" }, [test, del]));
+    box.appendChild(msg);
+    box.appendChild(el("p", { class: "note", style: "font-size:13px", text: "To send reminders we keep, for each upcoming appointment, only its date, time and type (for example Hospital), plus your email address and this phone's notification address. Never your child's name, the place, notes or contacts. On an iPhone, notifications work once Child Organiser is on your Home Screen." }));
+    return box;
+  }
+
+  /* ---- scanning a letter ---- */
+  function shrinkLetter(f) {
+    return new Promise(function (res, rej) {
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function () {
+        var m = 1800, r = Math.min(1, m / Math.max(img.width, img.height)), c = document.createElement("canvas"); c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error("That picture could not be opened. Try taking it again.")); };
+      img.src = url;
+    });
+  }
+  function scanDlg(nodes) { var d = $("dlgScan"), b = $("scanBody"); b.textContent = ""; nodes.forEach(function (n) { b.appendChild(n); }); if (!d.open) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); } }
+  function scanClose() { closeDlg("dlgScan"); }
+  function startScan(file) {
+    if (!file) return;
+    var run = function () {
+      scanDlg([el("h2", { text: "Reading your letter" }), el("p", { class: "note", role: "status", text: "This takes a few seconds. Please keep this page open." })]);
+      shrinkLetter(file).then(function (img) { return api("/api/diary/scan", { method: "POST", body: { image: img, consent: true } }); }).then(scanReview).catch(function (e) {
+        scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add the appointment by hand instead." }),
+          (function () { var b = el("button", { type: "button", class: "btn btn-main", text: "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); })()]);
+      });
+    };
+    if (prefs().consent) { run(); return; }
+    var agree = el("button", { type: "button", class: "btn btn-main", text: "I agree, read my letter" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    agree.addEventListener("click", function () { patchPrefs({ consent: true }); run(); }); no.addEventListener("click", scanClose);
+    scanDlg([el("h2", { text: "Before we read your letter" }),
+      el("p", { text: "To fill in the appointment for you, this photo is sent to us and read by an AI service. The photo is not saved, not shared and not used for anything else: it is deleted as soon as it has been read." }),
+      el("p", { class: "note", text: "This is the one thing in Child Organiser that leaves your phone, and only when you choose to scan. Check what it found before you save. If you would rather not, add the appointment by hand." }),
+      el("div", { class: "actions", style: "justify-content:flex-end" }, [no, agree])]);
+  }
+  function dline(label, key, v, type, wide) {
+    var fid = "sc" + (++uid), c = el("input", { id: fid, type: type || "text" }); c.value = v || ""; c.setAttribute("data-k", key);
+    return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]);
+  }
+  function scanReview(r) {
+    var p = cur(), ids = {};
+    var head = [el("h2", { text: r.isAppointment === false ? "That does not look like an appointment" : "Check the appointment" }),
+      el("p", { class: "note", text: "This is what we read. Correct anything that is wrong, then save it to the diary." })];
+    var cat = el("select", { id: "scCat" }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === r.category) o.selected = true; cat.appendChild(o); });
+    var notes = el("textarea", { id: "scNotes", rows: "3" }); notes.value = r.notes || "";
+    var when = (r.date || "") + (r.date && r.time ? "T" + r.time : "");
+    var form = el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [dline("What is it?", "title", r.title), el("div", {}, [el("label", { for: "scCat", text: "Type" }), cat]),
+      dline("Date and time", "when", when && when.length > 10 ? when : (r.date ? r.date + "T09:00" : ""), "datetime-local"), dline("Who with", "who", r["with"]), dline("Where", "where", r.where, "text"),
+      el("div", {}, [el("label", { for: "scNotes", text: "Notes (what to bring, reference number)" }), notes])]);
+    var contacts = el("div", {}), cs = (r.contacts || []).map(function (c, i) {
+      var cb = el("input", { type: "checkbox", id: "scc" + i }); cb.checked = true;
+      var line = [c.name || c.org, c.role, c.phone, c.email].filter(Boolean).join(" · ");
+      contacts.appendChild(el("div", { style: "display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:4px 0" }, [cb, el("label", { for: "scc" + i, text: line, style: "margin:0;font-weight:500" })]));
+      return { c: c, cb: cb };
+    });
+    var body = head.concat([form]);
+    if (cs.length) body = body.concat([el("h3", { text: "Add these to my doctors and team", style: "margin-top:14px;font-size:1rem" }), contacts]);
+    var err = el("p", { class: "msg", role: "alert" });
+    var save2 = el("button", { type: "button", class: "btn btn-main", text: "Save to the diary" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    cancel.addEventListener("click", scanClose);
+    save2.addEventListener("click", function () {
+      var v = {}; Array.prototype.forEach.call($("scanBody").querySelectorAll("[data-k]"), function (i) { v[i.getAttribute("data-k")] = i.value.trim(); });
+      if (!v.title && !v.when) { err.textContent = "Add a name or a date first."; return; }
+      if (p.appts.length >= LIM.arr * 4) { err.textContent = "There are a lot of appointments already. Remove old ones first."; return; }
+      p.appts.push({ aid: id(), title: s(v.title, LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(v.when) ? v.when : "", who: s(v.who, LIM.short), where: s(v.where, LIM.short), notes: s(notes.value, LIM.str), cat: cat.value });
+      var added = 0;
+      cs.forEach(function (x) {
+        if (!x.cb.checked || p.team.length >= LIM.arr) return;
+        var digits = (x.c.phone || "").replace(/\D/g, ""), nm = x.c.name || x.c.org || "";
+        var dup = p.team.some(function (t) { return (digits && (t.phone || "").replace(/\D/g, "") === digits) || (nm && t.name === nm && (t.org || "") === (x.c.org || "")); });
+        if (dup) return;
+        p.team.push({ role: s(x.c.role || cat.value, LIM.short), name: s(nm, LIM.short), org: s(x.c.name ? x.c.org : "", LIM.short), phone: s(x.c.phone, LIM.short), email: s(x.c.email, LIM.short), notes: "" }); added++;
+      });
+      save(); scanClose(); renderAppts(); renderEditor(); savedMsg("Added to the diary" + (added ? " and " + added + (added === 1 ? " contact" : " contacts") + " added to my doctors and team" : "") + ".");
+    });
+    scanDlg(body.concat([err, el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, save2])]));
+  }
+
   function renderAppts() {
     var box = $("appts"), p = cur(); box.textContent = "";
     box.appendChild(el("p", { class: "note", text: "Keep appointments here so everything is in one place. They are private: they are not part of the printed passport or shared link." }));
-    var add = el("button", { type: "button", class: "btn btn-main", text: "Add an appointment" });
-    add.addEventListener("click", function () { p.appts.push({ title: "", when: "", who: "", where: "", notes: "" }); save(); draw(); var last = box.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
-    box.appendChild(add);
-    var list = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(list);
+    var bar = el("div", { class: "actions", style: "margin:0 0 12px" });
+    var scan = el("label", { class: "btn btn-main", for: "scanFile", style: "margin:0", text: "Scan a letter or text" });
+    var inp = el("input", { type: "file", id: "scanFile", accept: "image/*", capture: "environment", class: "sr" });
+    inp.addEventListener("change", function () { var f = inp.files && inp.files[0]; inp.value = ""; if (!getSession()) { savedMsg("Sign in to read letters from a photo.", true); return; } startScan(f); });
+    var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add an appointment" });
+    add.addEventListener("click", function () { p.appts.push({ aid: id(), title: "", when: "", who: "", where: "", notes: "", cat: "Other" }); save(); draw(); var last = list.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
+    bar.appendChild(scan); bar.appendChild(inp); bar.appendChild(add); box.appendChild(bar);
+    if (getSession()) box.appendChild(remindersPanel());
+    var list = el("div", { class: "panel", style: "margin-top:12px" }); box.appendChild(list);
+    function row(a, i, past) {
+      var n = ++uid;
+      function f(label, key, type, wide) { var fid = "ap" + n + key, c = key === "notes" ? el("textarea", { id: fid, rows: "2" }) : el("input", { id: fid, type: type || "text" }); c.value = a[key] || ""; c.addEventListener("input", function () { a[key] = c.value; save(); }); return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]); }
+      var catSel = el("select", { id: "ap" + n + "cat" }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === (a.cat || "Other")) o.selected = true; catSel.appendChild(o); });
+      catSel.addEventListener("change", function () { a.cat = catSel.value; save(); });
+      var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove appointment " + (a.title || ""));
+      rm.addEventListener("click", function () { p.appts.splice(i, 1); save(); draw(); });
+      var cal = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Add to my calendar" });
+      cal.addEventListener("click", function () { if (!a.when) { savedMsg("Set a date first.", true); return; } var blob = new Blob([icsFor(a, p.preferred || p.name)], { type: "text/calendar" }), u = URL.createObjectURL(blob), lnk = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(lnk); lnk.click(); lnk.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 2000); });
+      return el("div", { class: "appt" + (past ? " past" : ""), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
+        el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap" }, [el("b", { style: "color:var(--plum)", text: whenText(a.when) + (past ? " (past)" : "") }), el("span", { class: "actions", style: "margin:0" }, [cal, rm])]),
+        el("div", { class: "two" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])]);
+    }
     function draw() {
       list.textContent = "";
-      if (!p.appts.length) list.appendChild(el("p", { class: "empty", text: "No appointments yet." }));
-      var order = p.appts.map(function (a, i) { return i; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
-      order.forEach(function (i) {
-        var a = p.appts[i], past = a.when && apptTime(a) < Date.now(), n = ++uid;
-        function f(label, key, type, wide) { var fid = "ap" + n + key, c = key === "notes" ? el("textarea", { id: fid, rows: "2" }) : el("input", { id: fid, type: type || "text" }); c.value = a[key] || ""; c.addEventListener("input", function () { a[key] = c.value; save(); }); return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]); }
-        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove appointment " + (a.title || ""));
-        rm.addEventListener("click", function () { p.appts.splice(i, 1); save(); draw(); });
-        var cal = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Add to my calendar" });
-        cal.addEventListener("click", function () { if (!a.when) { savedMsg("Set a date first.", true); return; } var blob = new Blob([icsFor(a, p.preferred || p.name)], { type: "text/calendar" }), u = URL.createObjectURL(blob), lnk = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(lnk); lnk.click(); document.body.removeChild(lnk); setTimeout(function () { URL.revokeObjectURL(u); }, 3000); });
-        list.appendChild(el("div", { class: "appt" + (past ? " past" : ""), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
-          el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center" }, [el("b", { style: "color:var(--plum)", text: whenText(a.when) + (past ? " (past)" : "") }), el("span", { class: "actions", style: "margin:0" }, [cal, rm])]),
-          el("div", { class: "two" }, [f("What is it?", "title"), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])]));
-      });
+      if (!p.appts.length) { list.appendChild(el("p", { class: "empty", text: "No appointments yet. Scan a letter or text, or add one by hand." })); return; }
+      var idx = p.appts.map(function (a, i) { return i; }), now = Date.now();
+      var up = idx.filter(function (i) { return !p.appts[i].when || apptTime(p.appts[i]) >= now; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
+      var old = idx.filter(function (i) { return p.appts[i].when && apptTime(p.appts[i]) < now; }).sort(function (x, y) { return apptTime(p.appts[y]) - apptTime(p.appts[x]); });
+      up.forEach(function (i) { list.appendChild(row(p.appts[i], i, false)); });
+      if (old.length) { var d = el("details", { style: "margin-top:10px" }, [el("summary", { text: "Past appointments (" + old.length + ")", style: "cursor:pointer;min-height:44px;display:flex;align-items:center" })]); old.forEach(function (i) { d.appendChild(row(p.appts[i], i, true)); }); list.appendChild(d); }
     }
     draw();
   }
