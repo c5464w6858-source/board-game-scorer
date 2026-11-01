@@ -324,6 +324,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .doneList li { display: flex; gap: 10px; align-items: flex-start; }
 .doneList li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--ok); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
 .tray { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; margin: 12px 0; }
+.tdoc { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 76px; background: var(--plum-soft); color: var(--plum); font: 700 13px Inter, sans-serif; }
 .tthumb { position: relative; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: #fff; aspect-ratio: 3 / 4; }
 .tthumb img { width: 100%; height: 100%; object-fit: cover; }
 .tthumb .tn { position: absolute; left: 6px; top: 6px; background: var(--plum); color: #fff; font: 700 12px Inter, sans-serif; border-radius: 999px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
@@ -1288,10 +1289,52 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function scanClose() { closeDlg("dlgScan"); }
   function closeBtn(label) { var b = el("button", { type: "button", class: "btn btn-main", text: label || "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); }
   /* the tray: add as many pictures as you like, then read them together */
-  var tray = [], trayMode = "separate", MAXPIC = 6;
+  var tray = [], trayMode = "separate", MAXPIC = 6, trayFiles = {}, PDFREAD = 3100000;
+  function isPic(u) { return /^data:image\//.test(u); }
+  function tileLabel(u) { return /^data:application\/pdf/.test(u) ? "PDF" : "TEXT"; }
   function shrinkMany(files) {
     var list = Array.prototype.slice.call(files || []).filter(function (f) { return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); });
     return list.reduce(function (pr, f) { return pr.then(function () { if (tray.length >= MAXPIC) return; return shrinkLetter(f).then(function (u) { tray.push(u); }); }); }, Promise.resolve());
+  }
+  /* the words in a Word document: read the zip it is, take word/document.xml, strip the tags */
+  function docxText(f) {
+    if (typeof DecompressionStream === "undefined") return Promise.resolve("");
+    return f.arrayBuffer().then(function (buf) {
+      var v = new DataView(buf), u8 = new Uint8Array(buf), e = -1;
+      for (var i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 70000); i--) if (v.getUint32(i, true) === 0x06054b50) { e = i; break; }
+      if (e < 0) return "";
+      var n = v.getUint16(e + 10, true), p = v.getUint32(e + 16, true);
+      for (var k = 0; k < n && p + 46 <= buf.byteLength; k++) {
+        var nl = v.getUint16(p + 28, true), xl = v.getUint16(p + 30, true), cl = v.getUint16(p + 32, true), name = new TextDecoder().decode(u8.slice(p + 46, p + 46 + nl));
+        if (name === "word/document.xml") {
+          var m = v.getUint16(p + 10, true), cs = v.getUint32(p + 20, true), lo = v.getUint32(p + 42, true), ds = lo + 30 + v.getUint16(lo + 26, true) + v.getUint16(lo + 28, true), raw = u8.slice(ds, ds + cs);
+          var get = m === 0 ? Promise.resolve(raw) : new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer().then(function (b) { return new Uint8Array(b); });
+          return get.then(function (x) { return new TextDecoder().decode(x).replace(/<\/w:p>/g, "\n").replace(/<w:tab\/>/g, " ").replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&").trim(); });
+        }
+        p += 46 + nl + xl + cl;
+      }
+      return "";
+    }).catch(function () { return ""; });
+  }
+  function fileToUrl(f) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result)); }; r.onerror = function () { rej(r.error); }; r.readAsDataURL(f); }); }
+  /* anything that is not a picture: a PDF or the words of a document go in the tray to be read; the rest are filed as they are */
+  function intakeOthers(files) {
+    var keep = [], tooBig = 0;
+    return files.reduce(function (pr, f) {
+      return pr.then(function () {
+        if (tray.length >= MAXPIC) { keep.push(f); return; }
+        var t = mime(f), name = f.name || "";
+        if (t === "application/pdf") {
+          if (f.size > PDFREAD) { tooBig++; keep.push(f); return; }
+          return fileToUrl(f).then(function (u) { tray.push(u); trayFiles[u] = f; });
+        }
+        if (t === "text/plain" || /\.(txt|md|csv)$/i.test(name) || t === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+          var get = t === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? docxText(f) : f.text().catch(function () { return ""; });
+          return get.then(function (txt) { if (!txt || !txt.trim()) { keep.push(f); return; } var key = "txt:" + txt.slice(0, 40000); tray.push(key); trayFiles[key] = f; });
+        }
+        keep.push(f);
+      });
+    }, Promise.resolve()).then(function () { if (keep.length) fileFiles(keep).then(function () { if (tooBig) toolMsg(tooBig + (tooBig === 1 ? " PDF is" : " PDFs are") + " too big to read here, so " + (tooBig === 1 ? "it was" : "they were") + " just filed in Documents."); }); });
   }
   /* files that are filed as they are (PDF, Word, text), without being read */
   function fileFiles(files) {
@@ -1330,6 +1373,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   /* what to store for the pictures of one letter: a single picture as it is, several as one PDF */
   function letterFile(imgs) {
+    if (imgs.length === 1 && trayFiles[imgs[0]]) { var of = trayFiles[imgs[0]], ot = mime(of); return Promise.resolve({ blob: of, type: ot, name: (of.name || "document").slice(0, 200) }); }
     if (imgs.length === 1) { var b = dataUrlToBlob(imgs[0]); return Promise.resolve({ blob: b, type: "image/jpeg", name: "scanned-letter.jpg" }); }
     return imagesToPdf(imgs).then(function (b) { return { blob: b, type: "application/pdf", name: "scanned-letter.pdf" }; });
   }
@@ -1346,12 +1390,10 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     if (!files || !files.length) return;
     var isImg = function (f) { return /^image\/(jpeg|png|webp|heic|heif|gif)$/.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); };
     var pics = files.filter(isImg), other = files.filter(function (f) { return !isImg(f); });
-    if (other.length) fileFiles(other);
-    if (!pics.length) return;
-    files = pics;
     var trayOpen = $("dlgScan").open && tray.length;
-    if (!trayOpen) { tray = []; trayMode = "separate"; }
-    shrinkMany(files).then(showTray, function (e) { scanDlg([el("h2", { text: "Could not open that picture" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Try taking it again." }), closeBtn()]); });
+    if (!trayOpen) { tray = []; trayFiles = {}; trayMode = "separate"; }
+    files = pics;
+    shrinkMany(files).then(function () { return intakeOthers(other); }).then(function () { if (tray.length) showTray(); }, function (e) { scanDlg([el("h2", { text: "Could not open that picture" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Try taking it again." }), closeBtn()]); });
   }
   function askToRead(next) {
     if (prefs().consent) { next(); return; }
@@ -1367,11 +1409,13 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var n = tray.length;
     var grid = el("div", { class: "tray" }, tray.map(function (u, i) {
       var rm = el("button", { type: "button", class: "trm", "aria-label": "Remove picture " + (i + 1), text: "×" }); rm.addEventListener("click", function () { tray.splice(i, 1); if (tray.length) showTray(); else scanClose(); });
-      return el("div", { class: "tthumb" }, [el("img", { src: u, alt: "Picture " + (i + 1) }), el("span", { class: "tn", "aria-hidden": "true", text: String(i + 1) }), rm]);
+      return el("div", { class: "tthumb" }, [isPic(u) ? el("img", { src: u, alt: "Picture " + (i + 1) }) : el("span", { class: "tdoc", text: tileLabel(u) }), el("span", { class: "tn", "aria-hidden": "true", text: String(i + 1) }), rm]);
     }));
     var more = el("button", { type: "button", class: "btn btn-ghost", text: tray.length >= MAXPIC ? "That is the most at once" : "Add another" }); more.disabled = tray.length >= MAXPIC; more.addEventListener("click", function () { $("scanFile").click(); });
-    var nodes = [el("h2", { text: n === 1 ? "Ready to read" : n + " pictures ready" }), el("p", { class: "note", text: "Add more if you have them: the other pages, or other letters. They are read together and combined into one list for you to check." }), grid];
-    if (n > 1) {
+    var nodes = [el("h2", { text: n === 1 ? "Ready to read" : n + " items ready" }), el("p", { class: "note", text: "Add more if you have them: the other pages, or other letters. They are read together and combined into one list for you to check." }), grid];
+    var allPics = tray.every(isPic);
+    if (!allPics) trayMode = "separate";
+    if (n > 1 && allPics) {
       var mk = function (val, label, hint) {
         var r = el("input", { type: "radio", name: "tmode", id: "tm" + val, value: val }); r.checked = trayMode === val; r.addEventListener("change", function () { trayMode = val; showTray(); });
         return el("div", { class: "pick" }, [r, el("label", { for: "tm" + val }, [label, el("small", { text: hint })])]);
@@ -1398,7 +1442,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var chain = imgs.reduce(function (pr, img, i) {
       return pr.then(function () {
         prog.textContent = imgs.length > 1 ? "Reading letter " + (i + 1) + " of " + imgs.length + "..." : prog.textContent;
-        return api("/api/diary/scan", { method: "POST", body: { images: [img], consent: true } }).then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
+        return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true } : { images: [img], consent: true } }).then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
       });
     }, Promise.resolve());
     chain.then(function () { tray = []; if (!items.length) { readFail(lastErr); return; } scanReview(items, failed); }, readFail);
@@ -1492,7 +1536,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function scanReview(items, failed) {
     var p = cur(), K = collate(items), N = [], sid = "sv" + (++uid), many = items.length > 1;
     N.push(el("h2", { text: many ? "Everything we found" : "Here is what we found" }));
-    N.push(el("div", { class: "scan-top" }, [el("img", { src: items[0].imgs[0], alt: "The first letter you scanned" }), el("div", {}, many ? [el("p", { text: "Read " + items.length + (items[0].imgs.length > 1 ? " pages as one letter" : " letters") + " and combined them into one list." })].concat(items.map(function (it, i) { return it.r.summary ? el("p", { class: "note", text: (i + 1) + ". " + it.r.summary }) : null; })) : [el("p", { text: items[0].r.summary || "Check each part below, then save." })])]));
+    N.push(el("div", { class: "scan-top" }, [(isPic(items[0].imgs[0]) ? el("img", { src: items[0].imgs[0], alt: "The first letter you scanned" }) : el("span", { class: "tdoc", style: "width:76px;min-height:76px;border-radius:8px", text: tileLabel(items[0].imgs[0]) })), el("div", {}, many ? [el("p", { text: "Read " + items.length + (items[0].imgs.length > 1 ? " pages as one letter" : " letters") + " and combined them into one list." })].concat(items.map(function (it, i) { return it.r.summary ? el("p", { class: "note", text: (i + 1) + ". " + it.r.summary }) : null; })) : [el("p", { text: items[0].r.summary || "Check each part below, then save." })])]));
     if (failed) N.push(el("div", { class: "warnbox", role: "alert", text: failed + (failed === 1 ? " picture" : " pictures") + " could not be read and " + (failed === 1 ? "is" : "are") + " left out. You can scan " + (failed === 1 ? "it" : "them") + " again." }));
     var mine = [first(p.name), first(p.preferred)].filter(Boolean), odd = {};
     K.names.forEach(function (n) { var f = first(n); if (f && mine.length && mine.indexOf(f) < 0) odd[n] = 1; });
@@ -2298,7 +2342,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.23", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.24", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
