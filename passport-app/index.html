@@ -367,15 +367,26 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 .remdet > summary::after, .apedit > summary::after, .pastsum::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--plum); border-bottom: 2px solid var(--plum); transform: rotate(45deg); margin: -4px 4px 0 8px; transition: transform .15s; }
 .remdet[open] > summary::after, .apedit[open] > summary::after, details[open] > .pastsum::after { transform: rotate(225deg); margin-top: 4px; }
 
-/* phones: every section visible at once, no sideways scrolling */
+/* phones: all five sections visible at once, no sideways scrolling; Details and Passport open a small menu */
+.tabwrap { display: flex; }
+.tabwrap > .tab { flex: 1; }
+.tab[aria-haspopup]::after { content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); margin: -3px 0 0 6px; flex: none; }
+.tabmenu { left: 0; right: auto; min-width: 210px; z-index: 40; }
+.tabwrap:last-child .tabmenu, .tabwrap:nth-last-child(2) .tabmenu { left: auto; right: 0; }
+.menu .mi[aria-current="page"] { font-weight: 700; color: var(--plum); background: var(--plum-soft); }
+.menu .mi .ico svg { width: 18px; height: 18px; }
 @media (max-width: 640px) {
-  .tabs-in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; overflow: visible; padding: 8px 10px 8px; }
-  .tab { flex-direction: column; justify-content: center; gap: 4px; padding: 8px 2px 7px; min-height: 58px; font-size: 12.5px; line-height: 1.15; text-align: center; white-space: normal; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .tabs-in { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; overflow: visible; padding: 8px 8px; }
+  .tab { flex-direction: column; justify-content: center; gap: 4px; padding: 8px 1px 7px; min-height: 58px; font-size: 12px; line-height: 1.15; text-align: center; white-space: normal; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); width: 100%; }
   .tab .ico svg { width: 21px; height: 21px; }
+  .tab[aria-haspopup]::after { margin: 0; position: absolute; right: 6px; top: 8px; width: 5px; height: 5px; }
+  .tabwrap { position: relative; }
   .tab[aria-current="page"] { background: var(--plum); color: #fff; border-color: var(--plum); }
   .tab:hover { color: inherit; }
   .tab[aria-current="page"]:hover { color: #fff; }
+  .tabmenu { min-width: 190px; }
 }
+@media (max-width: 360px) { .tab { font-size: 11px; } }
 .qlinks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .qlink { display: flex; align-items: center; gap: 12px; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; min-height: 64px; cursor: pointer; font: 600 15px Inter, sans-serif; color: var(--plum); box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
 .qlink small { display: block; font: 400 12.5px Inter, sans-serif; color: var(--muted); margin-top: 2px; }
@@ -440,11 +451,21 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     <div class="tabs-in" id="tabsIn">
       <button type="button" class="tab" id="tabOverview">Overview</button>
       <button type="button" class="tab" id="tabAppts">Diary</button>
-      <button type="button" class="tab" id="tabContacts">Contacts</button>
       <button type="button" class="tab" id="tabDocs">Documents</button>
-      <button type="button" class="tab" id="tabEdit">Details</button>
-      <button type="button" class="tab" id="tabView">Passport</button>
-      <button type="button" class="tab" id="tabCard">Emergency card</button>
+      <div class="menuwrap tabwrap">
+        <button type="button" class="tab" id="grpDetails" aria-expanded="false" aria-haspopup="true">Details</button>
+        <div class="menu tabmenu" id="menuDetails" aria-label="Details" hidden>
+          <button type="button" class="mi" id="tabEdit">About my child</button>
+          <button type="button" class="mi" id="tabContacts">Contacts</button>
+        </div>
+      </div>
+      <div class="menuwrap tabwrap">
+        <button type="button" class="tab" id="grpPassport" aria-expanded="false" aria-haspopup="true">Passport</button>
+        <div class="menu tabmenu" id="menuPassport" aria-label="Passport" hidden>
+          <button type="button" class="mi" id="tabView">The passport</button>
+          <button type="button" class="mi" id="tabCard">Emergency card</button>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -1197,7 +1218,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function catColor(c) { return CAT_STYLE[c] || CAT_STYLE.Other; }
   function catChip(c) { return el("span", { class: "catchip", style: "--c:" + catColor(c) }, [c || "Other"]); }
   (function tabIcons() {
-    var map = { tabOverview: "home", tabEdit: "user", tabAppts: "calendar", tabContacts: "users", tabDocs: "folder", tabView: "file", tabCard: "alert" };
+    var map = { tabOverview: "home", tabAppts: "calendar", tabDocs: "folder", grpDetails: "user", grpPassport: "file", tabEdit: "user", tabContacts: "users", tabView: "file", tabCard: "alert" };
     Object.keys(map).forEach(function (k) { var t = $(k); if (t && !t.querySelector(".ico")) t.insertBefore(ico(map[k], 18), t.firstChild); });
     $("scanFab").querySelector(".ico").appendChild(ico("camera", 24));
   })();
@@ -1900,6 +1921,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     mode = m;
     ["editor", "overview", "appts", "contacts", "docs", "viewWrap"].forEach(function (pid) { $(pid).hidden = PANES[m] !== pid; });
     Object.keys(TABS).forEach(function (k) { if (k === m) $(TABS[k]).setAttribute("aria-current", "page"); else $(TABS[k]).removeAttribute("aria-current"); });
+    [["grpDetails", m === "edit" || m === "contacts"], ["grpPassport", m === "view" || m === "card"]].forEach(function (g) { if (g[1]) $(g[0]).setAttribute("aria-current", "page"); else $(g[0]).removeAttribute("aria-current"); });
     if (m === "view" || m === "card") renderViewer(); else if (m === "overview") { if (!shared && !cur().name) emptyState(); else renderOverview(); } else if (m === "appts") renderAppts(); else if (m === "contacts") renderContacts(); else if (m === "docs") renderDocs();
   }
   function refresh() { renderWho(); renderEditor(); renderIncl(); setMode(mode); }
@@ -1949,8 +1971,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   function wire() {
     if (wired) return; wired = true;
-    wireMenu($("kidBtn"), $("kidMenu")); wireMenu($("acctBtn"), $("acctMenu")); wireMenu($("shareBtn"), $("shareMenu"));
-    [$("kidMenu"), $("acctMenu"), $("shareMenu")].forEach(function (m) { after(m); });
+    wireMenu($("kidBtn"), $("kidMenu")); wireMenu($("acctBtn"), $("acctMenu")); wireMenu($("shareBtn"), $("shareMenu")); wireMenu($("grpDetails"), $("menuDetails")); wireMenu($("grpPassport"), $("menuPassport"));
+    [$("kidMenu"), $("acctMenu"), $("shareMenu"), $("menuDetails"), $("menuPassport")].forEach(function (m) { after(m); });
     Object.keys(TABS).forEach(function (k) { $(TABS[k]).addEventListener("click", function () { setMode(k); }); });
     $("scanFab").addEventListener("click", pickLetter);
     $("scanFile").addEventListener("change", function () { var fs = Array.prototype.slice.call(this.files || []); this.value = ""; handleFiles(fs); });
