@@ -307,6 +307,11 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .doneList { list-style: none; display: grid; gap: 8px; margin: 12px 0; }
 .doneList li { display: flex; gap: 10px; align-items: flex-start; }
 .doneList li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--ok); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.tray { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; margin: 12px 0; }
+.tthumb { position: relative; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: #fff; aspect-ratio: 3 / 4; }
+.tthumb img { width: 100%; height: 100%; object-fit: cover; }
+.tthumb .tn { position: absolute; left: 6px; top: 6px; background: var(--plum); color: #fff; font: 700 12px Inter, sans-serif; border-radius: 999px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
+.tthumb .trm { position: absolute; right: 4px; top: 4px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(27,21,48,.78); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; }
 @media (max-width: 520px) { .fab span:last-child { font-size: 15px; } .hero h2 { font-size: 1.35rem; } }
 @media print { .fab { display: none !important; } }
 </style>
@@ -397,7 +402,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
   </footer>
 </div>
 
-<aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*" class="sr" tabindex="-1" aria-label="Choose a photo of a letter, text or prescription"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan a letter</span></button></aside>
+<aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*" multiple class="sr" tabindex="-1" aria-label="Choose photos of letters, texts or prescriptions"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan a letter</span></button></aside>
 
 <p class="toast" id="toolStatus" role="status" aria-live="polite"></p>
 
@@ -1093,21 +1098,63 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
   function scanDlg(nodes) { var d = $("dlgScan"), b = $("scanBody"); b.textContent = ""; nodes.forEach(function (n) { if (n) b.appendChild(n); }); if (!d.open) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); } d.scrollTop = 0; }
   function scanClose() { closeDlg("dlgScan"); }
   function closeBtn(label) { var b = el("button", { type: "button", class: "btn btn-main", text: label || "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); }
-  function startScan(file) {
-    if (!file) return;
-    var run = function () {
-      scanDlg([el("h2", { text: "Reading your letter" }), el("p", { class: "note", role: "status", text: "This takes a few seconds. Please keep this page open." })]);
-      shrinkLetter(file).then(function (img) { return api("/api/diary/scan", { method: "POST", body: { image: img, consent: true } }).then(function (r) { scanReview(r, img); }); }).catch(function (e) {
-        scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add the appointment by hand instead." }), e && e.why ? el("p", { class: "note", style: "font-size:12px", text: "Reference for support: " + e.why }) : null, closeBtn()]);
-      });
-    };
-    if (prefs().consent) { run(); return; }
-    var agree = el("button", { type: "button", class: "btn btn-main", text: "I agree, read my letter" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
-    agree.addEventListener("click", function () { patchPrefs({ consent: true }); run(); }); no.addEventListener("click", scanClose);
-    scanDlg([el("h2", { text: "Before we read your letter" }),
-      el("p", { text: "To read it, the photo is sent to us and read by an AI service. It is not saved, not shared and not used for anything else: it is deleted as soon as it has been read. We keep a copy on this phone only, if you choose to." }),
+  /* the tray: add as many pictures as you like, then read them together */
+  var tray = [], trayMode = "separate", MAXPIC = 6;
+  function shrinkMany(files) {
+    var list = Array.prototype.slice.call(files || []).filter(function (f) { return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); });
+    return list.reduce(function (pr, f) { return pr.then(function () { if (tray.length >= MAXPIC) return; return shrinkLetter(f).then(function (u) { tray.push(u); }); }); }, Promise.resolve());
+  }
+  function handleFiles(files) {
+    if (!files || !files.length) return;
+    var trayOpen = $("dlgScan").open && tray.length;
+    if (!trayOpen) { tray = []; trayMode = "separate"; }
+    var go = function () { shrinkMany(files).then(showTray, function (e) { scanDlg([el("h2", { text: "Could not open that picture" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Try taking it again." }), closeBtn()]); }); };
+    if (prefs().consent) { go(); return; }
+    var agree = el("button", { type: "button", class: "btn btn-main", text: "I agree, read my letters" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    agree.addEventListener("click", function () { patchPrefs({ consent: true }); go(); }); no.addEventListener("click", function () { tray = []; scanClose(); });
+    scanDlg([el("h2", { text: "Before we read your letters" }),
+      el("p", { text: "To read them, each photo is sent to us and read by an AI service. The photos are not saved, not shared and not used for anything else: they are deleted as soon as they have been read. A copy is kept on this phone only, if you choose to." }),
       el("p", { class: "note", text: "This is the one thing in Child Organiser that leaves your phone, and only when you choose to scan. You check everything it found before anything is saved. If you would rather not, add things by hand." }),
       el("div", { class: "actions", style: "justify-content:flex-end" }, [no, agree])]);
+  }
+  function showTray() {
+    var n = tray.length;
+    var grid = el("div", { class: "tray" }, tray.map(function (u, i) {
+      var rm = el("button", { type: "button", class: "trm", "aria-label": "Remove picture " + (i + 1), text: "×" }); rm.addEventListener("click", function () { tray.splice(i, 1); if (tray.length) showTray(); else scanClose(); });
+      return el("div", { class: "tthumb" }, [el("img", { src: u, alt: "Picture " + (i + 1) }), el("span", { class: "tn", "aria-hidden": "true", text: String(i + 1) }), rm]);
+    }));
+    var more = el("button", { type: "button", class: "btn btn-ghost", text: tray.length >= MAXPIC ? "That is the most at once" : "Add another" }); more.disabled = tray.length >= MAXPIC; more.addEventListener("click", function () { $("scanFile").click(); });
+    var nodes = [el("h2", { text: n === 1 ? "Ready to read" : n + " pictures ready" }), el("p", { class: "note", text: "Add more if you have them: the other pages, or other letters. They are read together and combined into one list for you to check." }), grid];
+    if (n > 1) {
+      var mk = function (val, label, hint) {
+        var r = el("input", { type: "radio", name: "tmode", id: "tm" + val, value: val }); r.checked = trayMode === val; r.addEventListener("change", function () { trayMode = val; showTray(); });
+        return el("div", { class: "pick" }, [r, el("label", { for: "tm" + val }, [label, el("small", { text: hint })])]);
+      };
+      nodes.push(el("div", { class: "scan-sec", role: "radiogroup", "aria-label": "What are these pictures?" }, [mk("separate", "Separate letters", "Each is read on its own, then everything is combined"), mk("pages", "Pages of one letter", "Read together as a single document")]));
+    }
+    var go = el("button", { type: "button", class: "btn btn-main", text: n === 1 ? "Read it" : trayMode === "pages" ? "Read this " + n + "-page letter" : "Read " + n + " letters" }); go.addEventListener("click", readTray);
+    var cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" }); cancel.addEventListener("click", function () { tray = []; scanClose(); });
+    nodes.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:12px" }, [cancel, more, go]));
+    scanDlg(nodes);
+  }
+  function readFail(e, prefix) {
+    scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add things by hand instead." }), e && e.why ? el("p", { class: "note", style: "font-size:12px", text: "Reference for support: " + e.why }) : null, closeBtn()]);
+  }
+  function readTray() {
+    var imgs = tray.slice(), mode2 = imgs.length > 1 ? trayMode : "separate", prog = el("p", { class: "note", role: "status", "aria-live": "polite", text: "This takes a few seconds for each. Please keep this page open." });
+    scanDlg([el("h2", { text: imgs.length > 1 ? "Reading your letters" : "Reading your letter" }), prog]);
+    var items = [], failed = 0, lastErr = null;
+    if (mode2 === "pages") {
+      api("/api/diary/scan", { method: "POST", body: { images: imgs, pages: true, consent: true } }).then(function (r) { tray = []; scanReview([{ imgs: imgs, r: r }], 0); }, readFail);
+      return;
+    }
+    var chain = imgs.reduce(function (pr, img, i) {
+      return pr.then(function () {
+        prog.textContent = imgs.length > 1 ? "Reading letter " + (i + 1) + " of " + imgs.length + "..." : prog.textContent;
+        return api("/api/diary/scan", { method: "POST", body: { images: [img], consent: true } }).then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
+      });
+    }, Promise.resolve());
+    chain.then(function () { tray = []; if (!items.length) { readFail(lastErr); return; } scanReview(items, failed); }, readFail);
   }
   function norm(v) { return String(v || "").toLowerCase().replace(/\s+/g, " ").trim(); }
   function first(v) { return norm(v).split(" ")[0]; }
@@ -1151,83 +1198,129 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     var cb = el("input", { type: "checkbox", id: idv }); cb.checked = on;
     return { cb: cb, node: el("div", { class: "pick" }, [cb, el("label", { for: idv }, [title, small ? el("small", { text: small }) : null])]) };
   }
-  function dline(label, key, v, type) {
-    var fid = "sc" + (++uid), c = el("input", { id: fid, type: type || "text" }); c.value = v || ""; c.setAttribute("data-k", key);
-    return el("div", {}, [el("label", { for: fid, text: label }), c]);
+  function dfield(label, v, type) {
+    var fid = "sc" + (++uid), c = el("input", { id: fid, type: type || "text" }); c.value = v || "";
+    return { node: el("div", {}, [el("label", { for: fid, text: label }), c]), input: c };
   }
-  function scanReview(r, img) {
-    var p = cur(), ap = r.appointment, N = [], sid = "sv" + (++uid);
-    N.push(el("h2", { text: "Here is what we found" }));
-    N.push(el("div", { class: "scan-top" }, [el("img", { src: img, alt: "The letter you scanned" }), el("p", { text: r.summary || "Check each part below, then save." })]));
-    var cn = first(r.child && r.child.name), mine = [first(p.name), first(p.preferred)].filter(Boolean);
-    if (cn && mine.length && mine.indexOf(cn) < 0) N.push(el("div", { class: "warnbox", role: "alert" }, ["This letter looks like it is about ", el("b", { text: r.child.name }), ", but you are in ", el("b", { text: p.preferred || p.name }), "'s diary. Check it is the right child before saving."]));
-    // 1. keep the letter itself
-    var docOn = pickRow(sid + "d", true, "Save the letter in Documents", "Kept on this phone only");
-    var docTitle = el("input", { type: "text", id: sid + "dt" }); docTitle.value = r.docTitle || "Scanned letter";
-    var docCat = el("select", { id: sid + "dc" }); CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === r.docCategory) o.selected = true; docCat.appendChild(o); });
-    N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "The letter" }), docOn.node, el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [el("div", {}, [el("label", { for: sid + "dt", text: "Name it" }), docTitle]), el("div", {}, [el("label", { for: sid + "dc", text: "Filed under" }), docCat])])]));
-    // 2. the appointment
-    var apOn = null, cat = null, apNotes = null;
-    if (ap && (ap.date || ap.title)) {
-      apOn = pickRow(sid + "a", true, "Add to the diary");
-      cat = el("select", { id: sid + "ac" }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === ap.category) o.selected = true; cat.appendChild(o); });
-      apNotes = el("textarea", { id: sid + "an", rows: "3" }); apNotes.value = ap.notes || "";
-      var when = ap.date ? ap.date + "T" + (ap.time || "09:00") : "";
-      N.push(el("div", { class: "scan-sec", id: sid + "form" }, [el("h3", { text: "The appointment" }), apOn.node,
-        el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [dline("What is it?", "title", ap.title), el("div", {}, [el("label", { for: sid + "ac", text: "Type" }), cat]), dline("Date and time", "when", when, "datetime-local"), dline("Who with", "who", ap["with"]), dline("Where", "where", ap.where), el("div", {}, [el("label", { for: sid + "an", text: "Notes (what to bring, reference number)" }), apNotes])])]));
-    }
+  function digitsOf(v) { return String(v || "").replace(/\D/g, ""); }
+  function sameAppt(a, b) {
+    if (!a.date || a.date !== b.date) return false;
+    if (a.time && b.time) return a.time === b.time;   // the same day and the same time is the same appointment, however each letter words it
+    var x = norm(a.title), y = norm(b.title); return !x || !y || x === y || x.indexOf(y) >= 0 || y.indexOf(x) >= 0;
+  }
+  function apptInDiary(p, a) { return p.appts.some(function (e) { return e.when && a.date && e.when.slice(0, 10) === a.date && (!a.time || e.when.length <= 10 || e.when.slice(11, 16) === a.time); }); }
+  /* several letters become one list: duplicates joined, gaps filled from whichever letter has it, disagreements flagged */
+  function collate(items) {
+    var order = items.map(function (it, i) { return i; }).sort(function (a, b) { return (items[b].r.docDate || "").localeCompare(items[a].r.docDate || "") || a - b; });   // newest first, so the latest letter wins
+    var out = { docs: [], appts: [], contacts: [], child: {}, allergies: [], meds: [], school: {}, notes: [], names: [] };
+    items.forEach(function (it, i) { out.docs.push({ imgs: it.imgs, title: it.r.docTitle, category: it.r.docCategory, date: it.r.docDate, summary: it.r.summary }); });
+    items.forEach(function (it, i) {
+      var ap = it.r.appointment; if (!ap || !(ap.date || ap.title)) return;
+      var hit = out.appts.filter(function (x) { return sameAppt(x.a, ap); })[0];
+      if (hit) { ["title", "time", "where", "with"].forEach(function (k) { if (!hit.a[k] && ap[k]) hit.a[k] = ap[k]; }); if (ap.notes && norm(hit.a.notes).indexOf(norm(ap.notes)) < 0) hit.a.notes = (hit.a.notes ? hit.a.notes + " " : "") + ap.notes; hit.srcs.push(i); }
+      else out.appts.push({ a: JSON.parse(JSON.stringify(ap)), srcs: [i] });
+    });
+    order.forEach(function (i) {
+      var r = items[i].r;
+      (r.contacts || []).forEach(function (c) {
+        var hit = out.contacts.filter(function (x) { return (digitsOf(c.phone) && digitsOf(x.phone) === digitsOf(c.phone)) || (norm(c.name || c.org) && norm(x.name || x.org) === norm(c.name || c.org) && norm(x.org) === norm(c.org)); })[0];
+        if (hit) { ["name", "role", "org", "phone", "email"].forEach(function (k) { if (!hit[k] && c[k]) hit[k] = c[k]; }); } else out.contacts.push(JSON.parse(JSON.stringify(c)));
+      });
+      [["name", "name"], ["preferred", "preferred"], ["dob", "dob"], ["nhs", "NHS number"]].forEach(function (k) {
+        var v = r.child && r.child[k[0]]; if (!v) return;
+        if (!out.child[k[0]]) out.child[k[0]] = v; else if (norm(out.child[k[0]]) !== norm(v)) out.notes.push("The letters give different " + k[1] + "s: " + out.child[k[0]] + " and " + v + ". The newest is used.");
+      });
+      var dg = r.child && r.child.diagnoses; if (dg) out.child.diagnoses = out.child.diagnoses && norm(out.child.diagnoses).indexOf(norm(dg)) >= 0 ? out.child.diagnoses : (out.child.diagnoses ? out.child.diagnoses + "; " + dg : dg);
+      (r.allergies || []).forEach(function (a) { if (!out.allergies.some(function (x) { return norm(x.what) === norm(a.what); })) out.allergies.push(a); });
+      (r.meds || []).forEach(function (m) {
+        var hit = out.meds.filter(function (x) { return norm(x.name) === norm(m.name); })[0];
+        if (!hit) out.meds.push(JSON.parse(JSON.stringify(m)));
+        else { if (m.dose && hit.dose && norm(m.dose) !== norm(hit.dose)) out.notes.push("The letters give different doses of " + m.name + ": " + hit.dose + " and " + m.dose + ". The newest is used. Check it against the label."); ["dose", "when", "forWhat", "prescriber", "notes"].forEach(function (k) { if (!hit[k] && m[k]) hit[k] = m[k]; }); }
+      });
+      ["name", "teacher", "senco", "ehcp", "review"].forEach(function (k) { var v = r.school && r.school[k]; if (v && !out.school[k]) out.school[k] = v; });
+      if (r.child && r.child.name) out.names.push(r.child.name);
+    });
+    return out;
+  }
+  function scanReview(items, failed) {
+    var p = cur(), K = collate(items), N = [], sid = "sv" + (++uid), many = items.length > 1;
+    N.push(el("h2", { text: many ? "Everything we found" : "Here is what we found" }));
+    N.push(el("div", { class: "scan-top" }, [el("img", { src: items[0].imgs[0], alt: "The first letter you scanned" }), el("div", {}, many ? [el("p", { text: "Read " + items.length + (items[0].imgs.length > 1 ? " pages as one letter" : " letters") + " and combined them into one list." })].concat(items.map(function (it, i) { return it.r.summary ? el("p", { class: "note", text: (i + 1) + ". " + it.r.summary }) : null; })) : [el("p", { text: items[0].r.summary || "Check each part below, then save." })])]));
+    if (failed) N.push(el("div", { class: "warnbox", role: "alert", text: failed + (failed === 1 ? " picture" : " pictures") + " could not be read and " + (failed === 1 ? "is" : "are") + " left out. You can scan " + (failed === 1 ? "it" : "them") + " again." }));
+    var mine = [first(p.name), first(p.preferred)].filter(Boolean), odd = {};
+    K.names.forEach(function (n) { var f = first(n); if (f && mine.length && mine.indexOf(f) < 0) odd[n] = 1; });
+    Object.keys(odd).forEach(function (n) { N.push(el("div", { class: "warnbox", role: "alert" }, ["A letter looks like it is about ", el("b", { text: n }), ", but you are in ", el("b", { text: p.preferred || p.name }), "'s diary. Check it is the right child before saving."])); });
+    K.notes.forEach(function (t) { N.push(el("div", { class: "warnbox", role: "alert", text: t })); });
+    // 1. the letters themselves
+    var docUI = K.docs.map(function (d, i) {
+      var on = pickRow(sid + "d" + i, true, many ? "Save in Documents: " + (d.title || "Letter " + (i + 1)) : "Save the letter in Documents", "Kept on this phone only" + (d.imgs.length > 1 ? " (" + d.imgs.length + " pages)" : ""));
+      var title = el("input", { type: "text", id: sid + "dt" + i }); title.value = d.title || "Scanned letter";
+      var cat = el("select", { id: sid + "dc" + i }); CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === d.category) o.selected = true; cat.appendChild(o); });
+      N.push(el("div", { class: "scan-sec" }, [el("h3", { text: many ? "Letter " + (i + 1) : "The letter" }), on.node, el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [el("div", {}, [el("label", { for: sid + "dt" + i, text: "Name it" }), title]), el("div", {}, [el("label", { for: sid + "dc" + i, text: "Filed under" }), cat])])]));
+      return { d: d, on: on, title: title, cat: cat };
+    });
+    // 2. appointments
+    var apUI = K.appts.map(function (x, i) {
+      var a = x.a, exists = apptInDiary(p, a), on = pickRow(sid + "a" + i, !exists, "Add to the diary: " + (a.title || "Appointment") + (a.date ? ", " + whenText(a.time ? a.date + "T" + a.time : a.date) : ""), exists ? "Already in your diary, so not ticked" : x.srcs.length > 1 ? "Found in " + x.srcs.length + " letters, added once" : "");
+      var cat = el("select", { id: sid + "ac" + i }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === a.category) o.selected = true; cat.appendChild(o); });
+      var notes = el("textarea", { id: sid + "an" + i, rows: "3" }); notes.value = a.notes || "";
+      var fT = dfield("What is it?", a.title), fW = dfield("Date and time", a.date ? a.date + "T" + (a.time || "09:00") : "", "datetime-local"), fWho = dfield("Who with", a["with"]), fWh = dfield("Where", a.where);
+      var det = el("details", { class: "apedit", open: K.appts.length === 1 && !exists ? "" : null }, [el("summary", { text: "Check the details" }), el("div", { class: "two", style: "grid-template-columns:1fr !important;margin-top:10px" }, [fT.node, el("div", {}, [el("label", { for: sid + "ac" + i, text: "Type" }), cat]), fW.node, fWho.node, fWh.node, el("div", {}, [el("label", { for: sid + "an" + i, text: "Notes (what to bring, reference number)" }), notes])])]);
+      N.push(el("div", { class: "scan-sec" }, [el("h3", { text: K.appts.length > 1 ? "Appointment " + (i + 1) : "The appointment" }), on.node, det]));
+      return { x: x, on: on, cat: cat, notes: notes, fT: fT, fW: fW, fWho: fWho, fWh: fWh };
+    });
     // 3. contacts
-    var cs = (r.contacts || []).map(function (c, i) {
+    var cs = K.contacts.map(function (c, i) {
       var exists = teamIndex(p.team, c) >= 0, line = [c.name || c.org, c.role, c.phone, c.email].filter(Boolean).join(" · ");
-      var row = pickRow(sid + "c" + i, !exists, line, exists ? "Already in your contacts" : (c.org && c.name ? c.org : ""));
-      return { c: c, row: row, exists: exists };
+      return { c: c, row: pickRow(sid + "c" + i, !exists, line, exists ? "Already in your contacts" : (c.org && c.name ? c.org : "")), exists: exists };
     });
     if (cs.length) N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Contacts" })].concat(cs.map(function (x) { return x.row.node; }))));
-    // 4. fill in the passport
-    var props = proposals(p, r).map(function (x, i) {
-      x.row = pickRow(sid + "p" + i, x.on, x.label + ": " + x.detail, x.was ? "Currently: " + x.was : ""); return x;
-    });
-    if (props.length) {
-      N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Fill in the passport" }), el("p", { class: "note", text: "Only gaps are ticked for you. Check medicines, doses and allergies against the label or letter before you save." })].concat(props.map(function (x) { return x.row.node; }))));
-    }
+    // 4. the passport
+    var props = proposals(p, K).map(function (x, i) { x.row = pickRow(sid + "p" + i, x.on, x.label + ": " + x.detail, x.was ? "Currently: " + x.was : ""); return x; });
+    if (props.length) N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Fill in the passport" }), el("p", { class: "note", text: "Only gaps are ticked for you. Check medicines, doses and allergies against the label or letter before you save." })].concat(props.map(function (x) { return x.row.node; }))));
     var err = el("p", { class: "msg", role: "alert" });
     var save2 = el("button", { type: "button", class: "btn btn-main", text: "Save what is ticked" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
     cancel.addEventListener("click", scanClose);
     save2.addEventListener("click", function () {
-      var v = {}; Array.prototype.forEach.call($("scanBody").querySelectorAll("[data-k]"), function (i) { v[i.getAttribute("data-k")] = i.value.trim(); });
-      var addAppt = apOn && apOn.cb.checked;
-      if (addAppt && !v.title && !v.when) { err.textContent = "Add a name or a date for the appointment, or untick it."; return; }
-      save2.disabled = true; var done = [], docRec = null;
+      var picked = apUI.filter(function (u) { return u.on.cb.checked; });
+      for (var k = 0; k < picked.length; k++) { if (!picked[k].fT.input.value.trim() && !picked[k].fW.input.value) { err.textContent = "Add a name or a date for each appointment, or untick it."; return; } }
+      save2.disabled = true; var done = [], recs = {};
       var chain = Promise.resolve();
-      if (docOn.cb.checked) {
-        chain = chain.then(function () {
-          var blob = dataUrlToBlob(img);
-          docRec = { id: id(), profileId: p.id, title: (docTitle.value || "Scanned letter").trim().slice(0, 160), category: docCat.value, date: r.docDate || today(), notes: (r.summary || "").slice(0, 1000), name: "scanned-letter.jpg", type: "image/jpeg", size: blob.size, blob: blob, added: Date.now() };
-          return putDoc(docRec).then(function () { done.push("The letter is saved in Documents under " + docRec.category); if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); });
+      docUI.forEach(function (u, i) {
+        if (!u.on.cb.checked) return;
+        u.d.imgs.forEach(function (img, pg) {
+          chain = chain.then(function () {
+            var blob = dataUrlToBlob(img), name = (u.title.value || "Scanned letter").trim().slice(0, 150) + (u.d.imgs.length > 1 ? " (page " + (pg + 1) + ")" : "");
+            var rec = { id: id(), profileId: p.id, title: name, category: u.cat.value, date: u.d.date || today(), notes: (u.d.summary || "").slice(0, 1000), name: "scanned-letter.jpg", type: "image/jpeg", size: blob.size, blob: blob, added: Date.now() };
+            if (pg === 0) recs[i] = rec.id;
+            return putDoc(rec);
+          });
         });
-      }
+      });
       chain.then(function () {
-        if (addAppt) {
-          p.appts.push({ aid: id(), title: s(v.title, LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(v.when) ? v.when : "", who: s(v.who, LIM.short), where: s(v.where, LIM.short), notes: s(apNotes.value, LIM.str), cat: cat.value, docId: docRec ? docRec.id : "" });
-          done.push("Added to the diary: " + (v.title || "appointment") + (v.when ? ", " + whenText(v.when) : ""));
-        }
+        var nDocs = Object.keys(recs).length; if (nDocs) { done.push(nDocs === 1 ? "The letter is saved in Documents" : nDocs + " letters are saved in Documents"); if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); }
+        picked.forEach(function (u) {
+          var when = u.fW.input.value; var src = u.x.srcs[0];
+          p.appts.push({ aid: id(), title: s(u.fT.input.value.trim(), LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(when) ? when : "", who: s(u.fWho.input.value.trim(), LIM.short), where: s(u.fWh.input.value.trim(), LIM.short), notes: s(u.notes.value, LIM.str), cat: u.cat.value, docId: recs[src] || "" });
+        });
+        if (picked.length) done.push(picked.length === 1 ? "Added to the diary: " + (picked[0].fT.input.value || "appointment") + (picked[0].fW.input.value ? ", " + whenText(picked[0].fW.input.value) : "") : picked.length + " appointments added to the diary");
         var added = 0;
         cs.forEach(function (x) {
           if (!x.row.cb.checked || x.exists || p.team.length >= LIM.arr) return;
           var nm = x.c.name || x.c.org || "";
-          p.team.push({ role: s(x.c.role || (cat ? cat.value : ""), LIM.short), name: s(nm, LIM.short), org: s(x.c.name ? x.c.org : "", LIM.short), phone: s(x.c.phone, LIM.short), email: s(x.c.email, LIM.short), notes: "" }); added++;
+          p.team.push({ role: s(x.c.role || (picked[0] ? picked[0].cat.value : ""), LIM.short), name: s(nm, LIM.short), org: s(x.c.name ? x.c.org : "", LIM.short), phone: s(x.c.phone, LIM.short), email: s(x.c.email, LIM.short), notes: "" }); added++;
         });
         if (added) done.push(added + (added === 1 ? " contact" : " contacts") + " added to Contacts");
         var filled = 0; props.forEach(function (x) { if (x.row.cb.checked) { x.apply(); filled++; } });
         if (filled) done.push(filled + (filled === 1 ? " detail" : " details") + " filled in on the passport");
         if (!done.length) { scanClose(); return; }
         save(); renderAppts(); renderEditor();
-        var more = el("button", { type: "button", class: "btn btn-ghost", text: "Scan another" }); more.addEventListener("click", function () { scanClose(); pickLetter(); });
-        var see = el("button", { type: "button", class: "btn btn-main", text: addAppt ? "See the diary" : "Done" });
-        see.addEventListener("click", function () { scanClose(); if (addAppt) setMode("appts"); else setMode(mode); });
+        var more = el("button", { type: "button", class: "btn btn-ghost", text: "Scan more" }); more.addEventListener("click", function () { scanClose(); pickLetter(); });
+        var see = el("button", { type: "button", class: "btn btn-main", text: picked.length ? "See the diary" : "Done" });
+        see.addEventListener("click", function () { scanClose(); if (picked.length) setMode("appts"); else setMode(mode); });
         scanDlg([el("h2", { text: "All filed" }), el("ul", { class: "doneList" }, done.map(function (t) { return el("li", { text: t }); })), el("div", { class: "actions", style: "justify-content:flex-end" }, [more, see])]);
         refreshSoon();
-      }, function () { save2.disabled = false; err.textContent = "Could not save the letter on this phone. There may not be enough room."; });
+      }, function () { save2.disabled = false; err.textContent = "Could not save the letters on this phone. There may not be enough room."; });
     });
     N.push(err); N.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, save2]));
     scanDlg(N);
@@ -1618,7 +1711,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     [$("kidMenu"), $("acctMenu"), $("shareMenu")].forEach(function (m) { after(m); });
     Object.keys(TABS).forEach(function (k) { $(TABS[k]).addEventListener("click", function () { setMode(k); }); });
     $("scanFab").addEventListener("click", pickLetter);
-    $("scanFile").addEventListener("change", function () { var f = this.files && this.files[0]; this.value = ""; startScan(f); });
+    $("scanFile").addEventListener("change", function () { var fs = Array.prototype.slice.call(this.files || []); this.value = ""; handleFiles(fs); });
     $("print").addEventListener("click", function () { if (!shared && mode !== "view" && mode !== "card") setMode("view"); setTimeout(function () { window.print(); }, 50); });
     $("printShared").addEventListener("click", function () { window.print(); });
     $("miText").addEventListener("click", function () { copy(asText(cur()), "Copied. Paste it into a message or email."); });
