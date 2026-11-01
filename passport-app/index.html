@@ -1290,6 +1290,28 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function closeBtn(label) { var b = el("button", { type: "button", class: "btn btn-main", text: label || "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); }
   /* the tray: add as many pictures as you like, then read them together */
   var tray = [], trayMode = "separate", MAXPIC = 6, trayFiles = {}, PDFREAD = 3100000;
+  var trayExtra = {}, PDFPAGES = 6, trayNote = "";
+  /* a PDF too big to send is turned into pictures of its first pages, here on the phone (PDF.js, served from this site) */
+  function loadPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise(function (res, rej) {
+      var sc = document.createElement("script"); sc.src = "vendor/pdf-3.11.174.min.js";
+      sc.onload = function () { if (window.pdfjsLib) { window.pdfjsLib.GlobalWorkerOptions.workerSrc = "vendor/pdf-3.11.174.worker.min.js"; res(window.pdfjsLib); } else rej(new Error("pdf")); };
+      sc.onerror = function () { rej(new Error("pdf")); }; document.head.appendChild(sc);
+    });
+  }
+  function pdfPictures(f) {
+    return loadPdfJs().then(function (lib) { return f.arrayBuffer().then(function (buf) { return lib.getDocument({ data: buf }).promise; }); }).then(function (doc) {
+      var n = Math.min(doc.numPages, PDFPAGES), out = [], seq = Promise.resolve();
+      for (var i = 1; i <= n; i++) (function (i) { seq = seq.then(function () { return doc.getPage(i); }).then(function (pg) {
+        var v0 = pg.getViewport({ scale: 1 }), sc = Math.min(3, 1500 / Math.max(v0.width, v0.height)), v = pg.getViewport({ scale: sc }), c = document.createElement("canvas");
+        c.width = Math.round(v.width); c.height = Math.round(v.height);
+        var cx = c.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, c.width, c.height);
+        return pg.render({ canvasContext: cx, viewport: v }).promise.then(function () { out.push(c.toDataURL("image/jpeg", 0.8)); pg.cleanup(); });
+      }); })(i);
+      return seq.then(function () { var total = doc.numPages; doc.destroy(); var sum = function () { return out.reduce(function (t, u) { return t + u.length; }, 0); }; while (out.length > 1 && sum() > 4000000) out.pop(); /* keep the request well under the 6 MB limit */ return { pics: out, total: total }; });
+    });
+  }
   function isPic(u) { return /^data:image\//.test(u); }
   function tileLabel(u) { return /^data:application\/pdf/.test(u) ? "PDF" : "TEXT"; }
   function shrinkMany(files) {
@@ -1325,7 +1347,13 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         if (tray.length >= MAXPIC) { keep.push(f); return; }
         var t = mime(f), name = f.name || "";
         if (t === "application/pdf") {
-          if (f.size > PDFREAD) { tooBig++; keep.push(f); return; }
+          if (f.size > PDFREAD) {
+            if (f.size > MAXFILE) { tooBig++; keep.push(f); return; }
+            return pdfPictures(f).then(function (r) {
+              if (!r.pics.length) throw new Error("none");
+              var key = r.pics[0]; tray.push(key); trayFiles[key] = f; trayExtra[key] = r.pics.slice(1); if (r.total > r.pics.length) trayNote = "Only the first " + r.pics.length + " pages of " + (f.name || "the PDF") + " are read. The whole file is saved.";
+            }, function () { tooBig++; keep.push(f); });
+          }
           return fileToUrl(f).then(function (u) { tray.push(u); trayFiles[u] = f; });
         }
         if (t === "text/plain" || /\.(txt|md|csv)$/i.test(name) || t === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
@@ -1334,7 +1362,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         }
         keep.push(f);
       });
-    }, Promise.resolve()).then(function () { if (keep.length) fileFiles(keep).then(function () { if (tooBig) toolMsg(tooBig + (tooBig === 1 ? " PDF is" : " PDFs are") + " too big to read here, so " + (tooBig === 1 ? "it was" : "they were") + " just filed in Documents."); }); });
+    }, Promise.resolve()).then(function () { if (keep.length) fileFiles(keep).then(function () { if (tooBig) toolMsg(tooBig + (tooBig === 1 ? " PDF is" : " PDFs are") + " too big to read (over 25 MB), so " + (tooBig === 1 ? "it was" : "they were") + " just filed in Documents."); }); });
   }
   /* files that are filed as they are (PDF, Word, text), without being read */
   function fileFiles(files) {
@@ -1391,7 +1419,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var isImg = function (f) { return /^image\/(jpeg|png|webp|heic|heif|gif)$/.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); };
     var pics = files.filter(isImg), other = files.filter(function (f) { return !isImg(f); });
     var trayOpen = $("dlgScan").open && tray.length;
-    if (!trayOpen) { tray = []; trayFiles = {}; trayMode = "separate"; }
+    if (!trayOpen) { tray = []; trayFiles = {}; trayExtra = {}; trayNote = ""; trayMode = "separate"; }
     files = pics;
     shrinkMany(files).then(function () { return intakeOthers(other); }).then(function () { if (tray.length) showTray(); }, function (e) { scanDlg([el("h2", { text: "Could not open that picture" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Try taking it again." }), closeBtn()]); });
   }
@@ -1412,8 +1440,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       return el("div", { class: "tthumb" }, [isPic(u) ? el("img", { src: u, alt: "Picture " + (i + 1) }) : el("span", { class: "tdoc", text: tileLabel(u) }), el("span", { class: "tn", "aria-hidden": "true", text: String(i + 1) }), rm]);
     }));
     var more = el("button", { type: "button", class: "btn btn-ghost", text: tray.length >= MAXPIC ? "That is the most at once" : "Add another" }); more.disabled = tray.length >= MAXPIC; more.addEventListener("click", function () { $("scanFile").click(); });
-    var nodes = [el("h2", { text: n === 1 ? "Ready to read" : n + " items ready" }), el("p", { class: "note", text: "Add more if you have them: the other pages, or other letters. They are read together and combined into one list for you to check." }), grid];
-    var allPics = tray.every(isPic);
+    var nodes = [el("h2", { text: n === 1 ? "Ready to read" : n + " items ready" }), trayNote ? el("p", { class: "note", text: trayNote }) : null, el("p", { class: "note", text: "Add more if you have them: the other pages, or other letters. They are read together and combined into one list for you to check." }), grid];
+    var allPics = tray.every(function (u) { return isPic(u) && !trayFiles[u]; });
     if (!allPics) trayMode = "separate";
     if (n > 1 && allPics) {
       var mk = function (val, label, hint) {
@@ -1442,7 +1470,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var chain = imgs.reduce(function (pr, img, i) {
       return pr.then(function () {
         prog.textContent = imgs.length > 1 ? "Reading letter " + (i + 1) + " of " + imgs.length + "..." : prog.textContent;
-        return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true } : { images: [img], consent: true } }).then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
+        return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true } : trayExtra[img] && trayExtra[img].length ? { images: [img].concat(trayExtra[img]), pages: true, consent: true } : { images: [img], consent: true } }).then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
       });
     }, Promise.resolve());
     chain.then(function () { tray = []; if (!items.length) { readFail(lastErr); return; } scanReview(items, failed); }, readFail);
@@ -2342,7 +2370,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.24", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.25", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
