@@ -360,6 +360,12 @@ details.appt[open] > summary.apsm::after { transform: rotate(225deg); margin-top
 .apname { display: block; font: 500 13px/1.3 Inter, sans-serif; color: var(--muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .apsm .catchip { flex: none; }
 details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* every expandable row shows a down arrow, turning up when open */
+.remdet > summary, .apedit > summary, .pastsum { list-style: none; justify-content: space-between; gap: 10px; }
+.remdet > summary::-webkit-details-marker, .apedit > summary::-webkit-details-marker, .pastsum::-webkit-details-marker { display: none; }
+.remdet > summary::after, .apedit > summary::after, .pastsum::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--plum); border-bottom: 2px solid var(--plum); transform: rotate(45deg); margin: -4px 4px 0 8px; transition: transform .15s; }
+.remdet[open] > summary::after, .apedit[open] > summary::after, details[open] > .pastsum::after { transform: rotate(225deg); margin-top: 4px; }
 /* diary: compact controls */
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
@@ -1124,7 +1130,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function remindersPanel() {
     var pf = prefs(), who = getSession(), msg = el("p", { class: "status", role: "status", "aria-live": "polite" }), box = el("div", { class: "panel", style: "margin-top:0" });
     var leadName = LEADS.filter(function (l) { return l[0] === pf.leadDays; })[0][1].toLowerCase();
-    var sumTxt = "Reminders: " + leadName + (pf.email || pf.push ? " · " + [pf.email ? "email" : "", pf.push ? "phone" : ""].filter(Boolean).join(" and ") + " on" : " · tap to switch on");
+    var sumTxt = "Reminders: " + leadName + (pf.email || pf.push ? " · " + [pf.email ? "email" : "", pf.push ? "phone" : ""].filter(Boolean).join(" and ") + " on" : " · off");
     function say(t, err) { msg.textContent = t || ""; msg.className = "status" + (err ? " err" : ""); }
     function fail(e) { say(e && e.message ? e.message : "Something went wrong. Please try again.", true); }
     box.appendChild(el("p", { class: "note", text: "We remind you before each appointment, three days before unless you choose otherwise." }));
@@ -1540,7 +1546,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       }
       up.forEach(function (i) { out.appendChild(row(p.appts[i], i, false)); });
       if (old.length) {
-        var d = el("details", { style: "margin-top:10px", open: DV.time === "past" ? "" : null }, [el("summary", { text: "Past appointments (" + old.length + ")", style: "cursor:pointer;min-height:44px;display:flex;align-items:center" })]);
+        var d = el("details", { style: "margin-top:10px", open: DV.time === "past" ? "" : null }, [el("summary", { class: "pastsum", text: "Past appointments (" + old.length + ")", style: "cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--plum)" })]);
         old.forEach(function (i) { d.appendChild(row(p.appts[i], i, true)); }); out.appendChild(d);
       }
     }
@@ -1997,7 +2003,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.11", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.12", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
