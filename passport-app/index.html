@@ -149,6 +149,15 @@ details.item > summary b { color: var(--plum); font-size: 14.5px; overflow-wrap:
 details.item > summary .isub { display: block; color: var(--muted); font-size: 13px; font-weight: 400; }
 details.item > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
 details.item[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+details.item .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+details.item .g2 > div { min-width: 0; }
+details.item label { font-size: 13px; margin-bottom: 3px; }
+details.item input, details.item select { min-height: 40px; padding: 7px 10px; }
+details.item textarea { min-height: 64px; }
+details.item .more { border-top: 1px dashed var(--line-2); padding-top: 8px; }
+details.item .more > summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--plum); min-height: 36px; display: flex; align-items: center; margin-bottom: 6px; }
+details.item .irm { display: flex; justify-content: flex-end; }
+details.item .irm .btn { min-height: 34px; padding: 4px 12px; font-size: 13px; }
 details.item .ibody { display: grid; gap: 10px; padding: 12px; border-top: 1px solid var(--line); }
 details.blk > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; font: 700 1.02rem Fraunces, Georgia, serif; color: var(--plum); }
 details.blk > summary::-webkit-details-marker { display: none; }
@@ -768,8 +777,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         var sumB = el("b", { text: nm() });
         item.appendChild(el("summary", {}, [sumB]));
         var ibody = el("div", { class: "ibody" }); item.appendChild(ibody);
-        ibody.appendChild(el("div", { class: "head" }, [el("span", { class: "note", style: "margin:0", text: title + " " + (i + 1) }), rm]));
-        var grid = el("div", { class: "two" });
+        var grid = el("div", { class: "g2" }), moreGrid = el("div", { class: "g2" }), moreHas = false;
         keys.forEach(function (k) {
           var fid = "r" + (++uid);
           var ctl;
@@ -786,10 +794,16 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
             ctl.addEventListener("input", function () { o[k.key] = ctl.value; sumB.textContent = nm(); save(); });
             if (k.type === "tel") ctl.setAttribute("autocomplete", "off");
           }
-          var cell = el("div", k.wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]);
-          grid.appendChild(cell);
+          var cell = el("div", k.wide || k.area ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]);
+          if (k.more) { moreGrid.appendChild(cell); if (o[k.key]) moreHas = true; } else grid.appendChild(cell);
         });
         ibody.appendChild(grid);
+        if (moreGrid.children.length) {
+          var mored = el("details", { class: "more" }, [el("summary", { text: "More details" }), moreGrid]);
+          if (moreHas) mored.setAttribute("open", "");
+          ibody.appendChild(mored);
+        }
+        ibody.appendChild(el("div", { class: "irm" }, [rm]));
         holder.appendChild(item);
       });
       if (!arr.length) holder.appendChild(el("p", { class: "empty", text: empty }));
@@ -873,8 +887,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         { key: "what", label: "Allergic to" }, { key: "reaction", label: "What happens" }, { key: "action", label: "What to do", wide: true }
       ], "Add an allergy", "No allergies added.")]),
       subsec("Medicines", function () { var n = p.meds.filter(function (m) { return m.name; }).length, m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.medsChecked || ""), due = !!(n && (!m || (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) > 183 * 864e5)); return (p.noMeds && !n ? "None" : n ? String(n) : "Not added") + (due ? " · check due" : ""); }, [flag("No regular medicines", "noMeds"), repeater("Medicine", p.meds, [
-        { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given" }, { key: "forWhat", label: "What it is for" },
-        { key: "prescriber", label: "Prescribed by", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
+        { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given", wide: true }, { key: "forWhat", label: "What it is for", more: true },
+        { key: "prescriber", label: "Prescribed by", more: true }, { key: "notes", label: "Notes", area: true, wide: true, more: true }
       ], "Add a medicine", "No medicines added."),
       (function () {
         var f = field("Medicines last checked", "medsChecked", { type: "date", help: "The day a doctor or pharmacist last went through this list with you." });
@@ -887,7 +901,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     box.appendChild(section("My doctors and team", false, [
       repeater("Person", p.team, [
         { key: "role", label: "Role", type: "role" }, { key: "name", label: "Name" }, { key: "org", label: "Surgery, clinic or school" }, { key: "phone", label: "Phone", type: "tel" },
-        { key: "email", label: "Email", type: "email", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
+        { key: "email", label: "Email", type: "email", wide: true }, { key: "notes", label: "Notes", area: true, wide: true, more: true }
       ], "Add a doctor or professional", "Nobody added yet. Add the GP first.")
     ]));
     box.appendChild(section("School", false, [
@@ -898,7 +912,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     ]));
     box.appendChild(section("Emergency contacts", false, [
       repeater("Contact", p.contacts, [
-        { key: "name", label: "Name" }, { key: "relationship", label: "Relationship" }, { key: "phone", label: "Phone", type: "tel" }, { key: "notes", label: "Notes (can collect, speaks which language)", area: true }
+        { key: "name", label: "Name" }, { key: "relationship", label: "Relationship" }, { key: "phone", label: "Phone", type: "tel", wide: true }, { key: "notes", label: "Notes (can collect, speaks which language)", area: true, more: true }
       ], "Add a contact", "No contacts added yet.")
     ]));
   }
@@ -2454,7 +2468,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.29", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.30", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
