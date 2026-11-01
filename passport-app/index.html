@@ -273,6 +273,8 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .hero .steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: rgba(255,255,255,.92); }
 .hero .steps li::before { content: "✓"; flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,.18); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
 .hero .btn-scan { position: relative; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 12px; padding: 14px 22px; min-height: 52px; background: #FF8A5B; color: #1B1530; font: 700 16.5px Inter, sans-serif; cursor: pointer; box-shadow: 0 10px 22px -10px rgba(0,0,0,.6); }
+.docscan { display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 12px; padding: 12px 20px; min-height: 48px; background: #FF8A5B; color: #1B1530; font: 700 16px Inter, sans-serif; cursor: pointer; box-shadow: 0 10px 22px -12px rgba(0,0,0,.5); }
+.docscan .ico svg { width: 22px; height: 22px; }
 .hero .btn-scan .ico svg { width: 24px; height: 24px; }
 .hero .alt { position: relative; margin-left: 10px; background: none; border: 0; color: #fff; text-decoration: underline; text-underline-offset: 3px; font: 600 14.5px Inter, sans-serif; cursor: pointer; min-height: 44px; }
 .hero .alt:focus-visible { outline-color: #fff; }
@@ -559,7 +561,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   </footer>
 </div>
 
-<aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*" multiple class="sr" tabindex="-1" aria-label="Choose photos of letters, texts or prescriptions"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan a letter</span></button></aside>
+<aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*,application/pdf,.pdf,.doc,.docx,.txt,.heic,.heif" multiple class="sr" tabindex="-1" aria-label="Take photos or choose files: letters, texts, prescriptions, reports"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan or upload</span></button></aside>
 
 <div class="updbar" id="updBar" role="status" hidden><span>A newer version of Child Organiser is ready.</span><button type="button" class="btn btn-main btn-small" id="updGo">Update now</button></div>
 
@@ -1052,9 +1054,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var box = $("docs"), p = cur(); freeUrls(); box.textContent = "";
     box.appendChild(el("p", { class: "note", text: "Keep reports, letters and photos of documents with the passport. They are saved on this device, and copied (encrypted) to your private copy only if you turned that on. They are never included in a shared link or printed passport." }));
     var status = el("p", { class: "status", role: "status", "aria-live": "polite" });
-    var pick = el("input", { type: "file", id: "docIn", class: "sr", multiple: "", accept: ".pdf,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.txt,.doc,.docx,image/*,application/pdf" });
-    var addLbl = el("label", { class: "btn btn-main", for: "docIn", text: "Add documents or photos" });
-    box.appendChild(el("div", { class: "drop" }, [addLbl, pick, el("p", { class: "help", text: "PDF, photos, Word documents and text files, up to 25 MB each." })]));
+    var addScan = el("button", { type: "button", class: "docscan" }, [ico("camera", 22), "Scan or upload"]); addScan.addEventListener("click", pickLetter);
+    box.appendChild(el("div", { class: "drop" }, [addScan, el("p", { class: "help", text: "Take a photo or choose files. Letters and photos can be read for you; PDF, Word and text files up to 25 MB each are filed as they are." })]));
     box.appendChild(status);
     var listBox = el("div", { class: "panel", style: "margin-top:0" }); box.appendChild(listBox);
     var meter = el("p", { class: "help" }); box.appendChild(meter);
@@ -1106,25 +1107,6 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         });
       }, function () { listBox.textContent = ""; listBox.appendChild(el("p", { class: "warn", text: "This browser cannot keep files on this device (it may be in private mode). Try a normal window." })); });
     }
-    pick.addEventListener("change", function () {
-      var files = Array.prototype.slice.call(pick.files || []); pick.value = ""; if (!files.length) return;
-      var ok = 0, bad = [];
-      var chain = files.reduce(function (pr, f) {
-        return pr.then(function () {
-          var t = mime(f);
-          if (!t) { bad.push(f.name + " (type not supported)"); return; }
-          if (f.size > MAXFILE) { bad.push(f.name + " (over 25 MB)"); return; }
-          var rec = { id: id(), profileId: p.id, title: (f.name || "Document").replace(/\.[^.]+$/, "").slice(0, 160), category: /^image\//.test(t) ? "Photos" : "Other", date: today(), notes: "", name: (f.name || "").slice(0, 200), type: t, size: f.size, blob: f, added: Date.now() };
-          return putDoc(rec).then(function () { ok++; });
-        });
-      }, Promise.resolve());
-      chain.then(function () {
-        status.className = bad.length ? "status err" : "status";
-        status.textContent = (ok ? "Added " + ok + " file" + (ok === 1 ? "" : "s") + ". " : "") + (bad.length ? "Could not add: " + bad.join(", ") + "." : "");
-        if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-        draw();
-      }, function () { status.className = "status err"; status.textContent = "Could not save the files on this device. There may not be enough room."; });
-    });
     draw();
   }
 
@@ -1310,14 +1292,71 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var list = Array.prototype.slice.call(files || []).filter(function (f) { return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); });
     return list.reduce(function (pr, f) { return pr.then(function () { if (tray.length >= MAXPIC) return; return shrinkLetter(f).then(function (u) { tray.push(u); }); }); }, Promise.resolve());
   }
+  /* files that are filed as they are (PDF, Word, text), without being read */
+  function fileFiles(files) {
+    var p = cur(), ok = 0, bad = [];
+    return files.reduce(function (pr, f) {
+      return pr.then(function () {
+        var t = mime(f);
+        if (!t) { bad.push(f.name + " (type not supported)"); return; }
+        if (f.size > MAXFILE) { bad.push(f.name + " (over 25 MB)"); return; }
+        return putDoc({ id: id(), profileId: p.id, title: (f.name || "Document").replace(/\.[^.]+$/, "").slice(0, 160), category: /^image\//.test(t) ? "Photos" : "Other", date: today(), notes: "", name: (f.name || "").slice(0, 200), type: t, size: f.size, blob: f, added: Date.now() }).then(function () { ok++; });
+      });
+    }, Promise.resolve()).then(function () {
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+      refresh(); toolMsg((ok ? "Added " + ok + " file" + (ok === 1 ? "" : "s") + " to Documents. " : "") + (bad.length ? "Could not add: " + bad.join(", ") + "." : ""), !ok && bad.length > 0);
+    }, function () { toolMsg("Could not save the files on this device. There may not be enough room.", true); });
+  }
+  /* several pictures of one letter become one clean PDF, one picture per page */
+  function dataBytes(u) { var m = /^data:[^;]+;base64,(.*)$/.exec(u), bin = atob(m[1]), a = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return a; }
+  function imagesToPdf(urls) {
+    return Promise.all(urls.map(function (u) { return new Promise(function (res, rej) { var im = new Image(); im.onload = function () { res({ w: im.naturalWidth, h: im.naturalHeight, bytes: dataBytes(u) }); }; im.onerror = function () { rej(new Error("A picture could not be opened.")); }; im.src = u; }); })).then(function (pgs) {
+      var enc = new TextEncoder(), chunks = [], offs = [], pos = 0, n = pgs.length;
+      function put(x) { var b = typeof x === "string" ? enc.encode(x) : x; chunks.push(b); pos += b.length; }
+      put("%PDF-1.4\n"); offs[1] = pos; put("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+      offs[2] = pos; put("2 0 obj\n<< /Type /Pages /Count " + n + " /Kids [" + pgs.map(function (_, i) { return (3 + 3 * i) + " 0 R"; }).join(" ") + "] >>\nendobj\n");
+      pgs.forEach(function (g, i) {
+        var pn = 3 + 3 * i, W = 595, H = Math.round(595 * g.h / g.w), cs = "q " + W + " 0 0 " + H + " 0 0 cm /Im0 Do Q";
+        offs[pn] = pos; put(pn + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + W + " " + H + "] /Resources << /XObject << /Im0 " + (pn + 2) + " 0 R >> >> /Contents " + (pn + 1) + " 0 R >>\nendobj\n");
+        offs[pn + 1] = pos; put((pn + 1) + " 0 obj\n<< /Length " + cs.length + " >>\nstream\n" + cs + "\nendstream\nendobj\n");
+        offs[pn + 2] = pos; put((pn + 2) + " 0 obj\n<< /Type /XObject /Subtype /Image /Width " + g.w + " /Height " + g.h + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + g.bytes.length + " >>\nstream\n"); put(g.bytes); put("\nendstream\nendobj\n");
+      });
+      var total = 3 + 3 * n, xr = pos; put("xref\n0 " + total + "\n0000000000 65535 f \n");
+      for (var k = 1; k < total; k++) put(("0000000000" + offs[k]).slice(-10) + " 00000 n \n");
+      put("trailer\n<< /Size " + total + " /Root 1 0 R >>\nstartxref\n" + xr + "\n%%EOF\n");
+      return new Blob(chunks, { type: "application/pdf" });
+    });
+  }
+  /* what to store for the pictures of one letter: a single picture as it is, several as one PDF */
+  function letterFile(imgs) {
+    if (imgs.length === 1) { var b = dataUrlToBlob(imgs[0]); return Promise.resolve({ blob: b, type: "image/jpeg", name: "scanned-letter.jpg" }); }
+    return imagesToPdf(imgs).then(function (b) { return { blob: b, type: "application/pdf", name: "scanned-letter.pdf" }; });
+  }
+  function fileWithoutReading() {
+    var imgs = tray.slice(), mode2 = imgs.length > 1 ? trayMode : "separate", p = cur(), groups = mode2 === "pages" ? [imgs] : imgs.map(function (x) { return [x]; });
+    scanDlg([el("h2", { text: "Filing it" }), el("p", { class: "note", role: "status", text: "Saving to Documents. Nothing is sent anywhere." })]);
+    groups.reduce(function (pr, g, i) {
+      return pr.then(function () { return letterFile(g); }).then(function (f) {
+        return putDoc({ id: id(), profileId: p.id, title: "Scan " + today() + (groups.length > 1 ? " (" + (i + 1) + ")" : ""), category: "Other", date: today(), notes: "", name: f.name, type: f.type, size: f.blob.size, blob: f.blob, added: Date.now() });
+      });
+    }, Promise.resolve()).then(function () { tray = []; scanClose(); refresh(); toolMsg(groups.length === 1 ? "Filed in Documents." : groups.length + " documents filed in Documents."); if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); }, function (e) { scanDlg([el("h2", { text: "Could not file it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "There may not be enough room on this phone." }), closeBtn()]); });
+  }
   function handleFiles(files) {
     if (!files || !files.length) return;
+    var isImg = function (f) { return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name || ""); };
+    var pics = files.filter(isImg), other = files.filter(function (f) { return !isImg(f); });
+    if (other.length) fileFiles(other);
+    if (!pics.length) return;
+    files = pics;
     var trayOpen = $("dlgScan").open && tray.length;
     if (!trayOpen) { tray = []; trayMode = "separate"; }
-    var go = function () { shrinkMany(files).then(showTray, function (e) { scanDlg([el("h2", { text: "Could not open that picture" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Try taking it again." }), closeBtn()]); }); };
-    if (prefs().consent) { go(); return; }
+    shrinkMany(files).then(showTray, function (e) { scanDlg([el("h2", { text: "Could not open that picture" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Try taking it again." }), closeBtn()]); });
+  }
+  function askToRead(next) {
+    if (prefs().consent) { next(); return; }
+    var go = next;
     var agree = el("button", { type: "button", class: "btn btn-main", text: "I agree, read my letters" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
-    agree.addEventListener("click", function () { patchPrefs({ consent: true }); go(); }); no.addEventListener("click", function () { tray = []; scanClose(); });
+    agree.addEventListener("click", function () { patchPrefs({ consent: true }); go(); }); no.addEventListener("click", function () { showTray(); });
     scanDlg([el("h2", { text: "Before we read your letters" }),
       el("p", { text: "To read them, each photo is sent to us and read by an AI service. The photos are not saved, not shared and not used for anything else: they are deleted as soon as they have been read. A copy is kept on this phone only, if you choose to." }),
       el("p", { class: "note", text: "This is the one thing in Child Organiser that leaves your phone, and only when you choose to scan. You check everything it found before anything is saved. If you would rather not, add things by hand." }),
@@ -1338,9 +1377,10 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       };
       nodes.push(el("div", { class: "scan-sec", role: "radiogroup", "aria-label": "What are these pictures?" }, [mk("separate", "Separate letters", "Each is read on its own, then everything is combined"), mk("pages", "Pages of one letter", "Read together as a single document")]));
     }
-    var go = el("button", { type: "button", class: "btn btn-main", text: n === 1 ? "Read it" : trayMode === "pages" ? "Read this " + n + "-page letter" : "Read " + n + " letters" }); go.addEventListener("click", readTray);
+    var go = el("button", { type: "button", class: "btn btn-main", text: n === 1 ? "Read it" : trayMode === "pages" ? "Read this " + n + "-page letter" : "Read " + n + " letters" }); go.addEventListener("click", function () { askToRead(readTray); });
     var cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" }); cancel.addEventListener("click", function () { tray = []; scanClose(); });
-    nodes.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:12px" }, [cancel, more, go]));
+    var filed = el("button", { type: "button", class: "btn btn-ghost", text: "Just file it, do not read" }); filed.addEventListener("click", fileWithoutReading);
+    nodes.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:12px;flex-wrap:wrap" }, [cancel, more, filed, go]));
     scanDlg(nodes);
   }
   function readFail(e, prefix) {
@@ -1494,13 +1534,10 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       var chain = Promise.resolve();
       docUI.forEach(function (u, i) {
         if (!u.on.cb.checked) return;
-        u.d.imgs.forEach(function (img, pg) {
-          chain = chain.then(function () {
-            var blob = dataUrlToBlob(img), name = (u.title.value || "Scanned letter").trim().slice(0, 150) + (u.d.imgs.length > 1 ? " (page " + (pg + 1) + ")" : "");
-            var rec = { id: id(), profileId: p.id, title: name, category: u.cat.value, date: u.d.date || today(), notes: (u.d.summary || "").slice(0, 1000), name: "scanned-letter.jpg", type: "image/jpeg", size: blob.size, blob: blob, added: Date.now() };
-            if (pg === 0) recs[i] = rec.id;
-            return putDoc(rec);
-          });
+        chain = chain.then(function () { return letterFile(u.d.imgs); }).then(function (f) {
+          var rec = { id: id(), profileId: p.id, title: (u.title.value || "Scanned letter").trim().slice(0, 150), category: u.cat.value, date: u.d.date || today(), notes: (u.d.summary || "").slice(0, 1000), name: f.name, type: f.type, size: f.blob.size, blob: f.blob, added: Date.now() };
+          recs[i] = rec.id;
+          return putDoc(rec);
         });
       });
       chain.then(function () {
@@ -1708,7 +1745,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function renderContacts() {
     var box = $("contacts"), p = cur(); box.textContent = "";
     var head = el("div", { class: "actions", style: "margin:0 0 4px" });
-    var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan a letter to add contacts"]); scan.addEventListener("click", pickLetter);
+    var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan or upload to add contacts"]); scan.addEventListener("click", pickLetter);
     var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add a contact" });
     add.addEventListener("click", function () { if (p.team.length < LIM.arr) p.team.push({ role: "", name: "", org: "", phone: "", email: "", notes: "" }); save(); go("My doctors and team"); });
     head.appendChild(scan); head.appendChild(add); box.appendChild(head);
@@ -1739,7 +1776,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var box = $("overview"), p = cur(); box.textContent = "";
     var upcoming = p.appts.filter(function (a) { return a.when && apptTime(a) >= Date.now(); }).sort(function (a, b) { return apptTime(a) - apptTime(b); });
     var next = upcoming[0];
-    var go2 = el("button", { type: "button", class: "btn-scan" }, [ico("camera", 22), "Scan a letter or text"]); go2.addEventListener("click", pickLetter);
+    var go2 = el("button", { type: "button", class: "btn-scan" }, [ico("camera", 22), "Scan or upload"]); go2.addEventListener("click", pickLetter);
     var hand = el("button", { type: "button", class: "alt", text: "or add by hand" }); hand.addEventListener("click", function () { setMode("appts"); });
     var open = true; try { open = localStorage.getItem("includeme.passport.hero.v1") !== "closed"; } catch (e) { /* storage blocked */ }
     var tog = el("button", { type: "button", class: "htoggle", "aria-expanded": open ? "true" : "false", "aria-controls": "heroBody" }, [el("span", { class: "sr", text: "How scanning works" }), el("span", { class: "hchev", "aria-hidden": "true" })]);
@@ -1985,7 +2022,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var add = el("button", { type: "button", class: "btn btn-main", text: "Add a child" }); add.addEventListener("click", openChildDialog);
     var ex = el("button", { type: "button", class: "btn btn-ghost", text: "See an example" }); ex.addEventListener("click", showExample);
     var ld = el("button", { type: "button", class: "btn btn-ghost", text: "Load a backup" }); ld.addEventListener("click", function () { $("upload").click(); });
-    var sc0 = el("button", { type: "button", class: "btn btn-main", style: "min-height:50px" }, [ico("camera", 20), "Scan a letter to get started"]); sc0.addEventListener("click", pickLetter); box.appendChild(sc0);
+    var sc0 = el("button", { type: "button", class: "btn btn-main", style: "min-height:50px" }, [ico("camera", 20), "Scan or upload to get started"]); sc0.addEventListener("click", pickLetter); box.appendChild(sc0);
     box.appendChild(el("div", { class: "empty-state" }, [el("h2", { text: "Start with your child's name" }), el("p", { text: "Make a one-page passport with how they communicate, what helps, medicines, doctors and emergency contacts. Keep their documents and appointments in the same place." }), el("div", { class: "actions", style: "justify-content:center" }, [add, ex, ld]), el("p", { class: "note", style: "margin-top:12px", text: "Saved this to your Home Screen and it looks empty? Your details live only on the device. In the browser version, open the account menu and choose Backup with documents, then come back here and Load a backup." })]));
   }
   function setMode(m) {
@@ -2260,7 +2297,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.21", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.22", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
