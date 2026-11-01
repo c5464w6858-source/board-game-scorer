@@ -370,7 +370,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
 #appts .seg.small button { min-height: 34px; padding: 5px 11px; }
-#appts .scanb { color: var(--plum); }
+#appts .scanb, #appts .scanb:hover { background: #FF8A5B; border-color: #FF8A5B; color: #1B1530; }
+#appts .scanb:hover { filter: brightness(1.05); }
 #appts .drow > .btn, #appts .fbtn { min-height: 36px !important; padding: 5px 13px; font-size: 13.5px; }
 #appts .fbtn .ico svg { width: 15px; height: 15px; }
 #appts .btn-small { min-height: 34px; padding: 5px 11px; font-size: 13.5px; }
@@ -2003,7 +2004,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.13", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.14", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
