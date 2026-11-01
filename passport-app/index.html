@@ -115,7 +115,7 @@ h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-heigh
 
 /* forms */
 label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--ink); }
-input[type=text], input[type=password], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], textarea, select.f, select {
+input[type=text], input[type=password], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], input[type=search], textarea, select.f, select {
   width: 100%; font: 400 16px Inter, sans-serif; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: #fff; color: var(--ink); min-height: 44px; }
 textarea { min-height: 84px; resize: vertical; }
 input:focus, textarea:focus, select:focus { border-color: var(--plum); }
@@ -315,6 +315,33 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 @media (max-width: 520px) { .fab span:last-child { font-size: 15px; } .hero h2 { font-size: 1.35rem; } }
 .updbar { position: fixed; left: 12px; right: 12px; top: calc(10px + env(safe-area-inset-top)); z-index: 60; display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #1B1530; color: #fff; padding: 10px 12px 10px 16px; border-radius: 12px; box-shadow: 0 16px 30px -12px rgba(0,0,0,.6); font-size: 14.5px; }
 .ver { margin-left: 8px; opacity: .7; }
+
+.dtools { margin-top: 4px; }
+.drow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.dsearch { flex: 1 1 200px; min-width: 0; max-width: 360px; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; font: 600 14px Inter, sans-serif; color: var(--muted); padding: 9px 14px; min-height: 44px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line-2); }
+.seg button[aria-pressed="true"] { background: var(--plum); color: #fff; }
+.seg.small { margin-top: 8px; }
+.seg.small button { padding: 8px 12px; min-height: 40px; }
+.chips .chip[aria-pressed="true"] { background: var(--c, var(--plum)); border-color: var(--c, var(--plum)); }
+.calhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.calhead h2 { font-size: 1.15rem; flex: 1; text-align: center; }
+.calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+.calgrid .dow { text-align: center; font: 700 11px Inter, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 0; }
+.cday { min-height: 54px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 6px 2px; font: 600 15px Inter, sans-serif; color: var(--ink); cursor: pointer; }
+.cday.blank { border: 0; background: none; cursor: default; }
+.cday .dots { display: flex; gap: 3px; min-height: 8px; }
+.cday .dots i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+.cday.has { background: var(--plum-soft); border-color: var(--line-2); }
+.cday.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cday.sel { background: var(--plum); color: #fff; border-color: var(--plum); }
+.cday.sel .dots i { box-shadow: 0 0 0 1.5px #fff; }
+.calopts { display: grid; gap: 10px; margin: 12px 0; }
+.calbtn { justify-content: flex-start; text-align: left; text-decoration: none; padding: 12px 14px; min-height: 58px; }
+.calbtn span:last-child { display: block; }
+.calbtn small { display: block; font-weight: 400; opacity: .85; font-size: 12.5px; margin-top: 2px; }
 @media print { .fab, .updbar { display: none !important; } }
 </style>
 </head>
@@ -965,13 +992,44 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
   function whenText(w) { if (!w) return "Date not set"; try { var d = new Date(w.length > 10 ? w : w + "T12:00"); return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) + (w.length > 10 ? ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : ""); } catch (e) { return w; } }
   function apptTime(a) { return a.when ? new Date(a.when.length > 10 ? a.when : a.when + "T23:59").getTime() : Infinity; }
   function icsFor(a, who) {
-    function esc(t) { return String(t || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\;"); }
-    var d = a.when.replace(/[-:]/g, ""), allday = a.when.length <= 10, L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//IncludeMe//Passport//EN", "BEGIN:VEVENT", "UID:" + id() + "@includeme.uk", "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d{3}/g, "")];
-    L.push(allday ? "DTSTART;VALUE=DATE:" + d : "DTSTART:" + d + "00");
+    function esc(t) { return String(t || "").replace(/\\/g, "\\\\").replace(/\r?\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\;"); }
+    var allday = a.when.length <= 10, d = a.when.replace(/[-:]/g, ""), pf = prefs();
+    var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//IncludeMe//Child Organiser//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "BEGIN:VEVENT", "UID:" + (a.aid || id()) + "@includeme.uk", "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d{3}/g, "")];
+    if (allday) { var nx = new Date(a.when + "T12:00:00"); nx.setDate(nx.getDate() + 1); L.push("DTSTART;VALUE=DATE:" + d, "DTEND;VALUE=DATE:" + nx.getFullYear() + ("0" + (nx.getMonth() + 1)).slice(-2) + ("0" + nx.getDate()).slice(-2)); }
+    else { var en = new Date(a.when); en.setHours(en.getHours() + 1); L.push("DTSTART:" + d + "00", "DTEND:" + en.getFullYear() + ("0" + (en.getMonth() + 1)).slice(-2) + ("0" + en.getDate()).slice(-2) + "T" + ("0" + en.getHours()).slice(-2) + ("0" + en.getMinutes()).slice(-2) + "00"); }
     L.push("SUMMARY:" + esc((who ? who + ": " : "") + (a.title || "Appointment")));
-    if (a.where) L.push("LOCATION:" + esc(a.where)); var desc = [a.who && "With: " + a.who, a.notes].filter(Boolean).join("\n"); if (desc) L.push("DESCRIPTION:" + esc(desc));
-    var pf = prefs(); if (pf.calAlarm) L.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Appointment reminder", "TRIGGER:" + (pf.leadDays ? "-P" + pf.leadDays + "D" : "-PT1H"), "END:VALARM");
+    if (a.where) L.push("LOCATION:" + esc(a.where));
+    var desc = [a.who && "With: " + a.who, a.notes].filter(Boolean).join("\n"); if (desc) L.push("DESCRIPTION:" + esc(desc));
+    if (pf.calAlarm) L.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Appointment reminder", "TRIGGER:" + (pf.leadDays ? "-P" + pf.leadDays + "D" : "-PT1H"), "END:VALARM");
     L.push("END:VEVENT", "END:VCALENDAR"); return L.join("\r\n");
+  }
+  /* "Add to my calendar": a phone cannot add an event from a downloaded file in every browser, so offer the ways that do */
+  function calLinks(a, who) {
+    var title = (who ? who + ": " : "") + (a.title || "Appointment"), allday = a.when.length <= 10, st = a.when.replace(/[-:]/g, ""), details = [a.who && "With: " + a.who, a.notes].filter(Boolean).join("\n");
+    function pad(n) { return ("0" + n).slice(-2); }
+    var en, stG, enG;
+    if (allday) { var nx = new Date(a.when + "T12:00:00"); nx.setDate(nx.getDate() + 1); stG = st; enG = nx.getFullYear() + pad(nx.getMonth() + 1) + pad(nx.getDate()); }
+    else { var e = new Date(a.when); e.setHours(e.getHours() + 1); stG = st + "00"; enG = e.getFullYear() + pad(e.getMonth() + 1) + pad(e.getDate()) + "T" + pad(e.getHours()) + pad(e.getMinutes()) + "00"; }
+    var tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (x) { tz = ""; }
+    var google = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) + "&dates=" + stG + "/" + enG + (allday || !tz ? "" : "&ctz=" + encodeURIComponent(tz)) + "&details=" + encodeURIComponent(details) + "&location=" + encodeURIComponent(a.where || "");
+    var iso = function (w, plus) { var d = new Date(allday ? w + "T00:00:00" : w); if (plus) d.setHours(d.getHours() + plus); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + (allday ? "" : "T" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":00"); };
+    var outlook = "https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&rru=addevent&subject=" + encodeURIComponent(title) + "&startdt=" + encodeURIComponent(iso(a.when, 0)) + "&enddt=" + encodeURIComponent(allday ? iso(a.when, 24) : iso(a.when, 1)) + (allday ? "&allday=true" : "") + "&body=" + encodeURIComponent(details) + "&location=" + encodeURIComponent(a.where || "");
+    return { google: google, outlook: outlook };
+  }
+  function addToCalendar(a, who) {
+    if (!a.when) { savedMsg("Set a date first.", true); return; }
+    var text = icsFor(a, who), file = null; try { file = new File([text], "appointment.ics", { type: "text/calendar" }); } catch (e) { file = null; }
+    var links = calLinks(a, who), msg = el("p", { class: "note", role: "status", "aria-live": "polite" });
+    function download() { var u = URL.createObjectURL(new Blob([text], { type: "text/calendar" })), l = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(l); l.click(); l.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); msg.textContent = "The file was saved to your downloads. Open it to add the event."; }
+    var phone = el("button", { type: "button", class: "btn btn-main calbtn" }, [ico("calendar", 20), el("span", {}, ["Apple, Samsung or phone calendar", el("small", { text: "Opens your phone's own share menu: choose Calendar" })])]);
+    phone.addEventListener("click", function () {
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: a.title || "Appointment" }).catch(function (e) { if (e && e.name !== "AbortError") download(); }); }
+      else download();
+    });
+    var g = el("a", { class: "btn btn-ghost calbtn", href: links.google, target: "_blank", rel: "noopener" }, [ico("calendar", 20), el("span", {}, ["Google Calendar", el("small", { text: "Opens Google Calendar with it filled in. Press Save." })])]);
+    var o = el("a", { class: "btn btn-ghost calbtn", href: links.outlook, target: "_blank", rel: "noopener" }, [ico("calendar", 20), el("span", {}, ["Outlook", el("small", { text: "Opens Outlook with it filled in. Press Save." })])]);
+    var d = el("button", { type: "button", class: "linkbtn", text: "Download the file instead" }); d.addEventListener("click", download);
+    scanDlg([el("h2", { text: "Add to your calendar" }), el("p", { class: "note", text: [a.title || "Appointment", whenText(a.when)].join(" · ") }), el("div", { class: "calopts" }, [phone, g, o]), msg, el("div", { class: "actions", style: "justify-content:space-between;margin-top:8px" }, [d, closeBtn("Close").firstChild])]);
   }
   /* ---------- the diary: reminders, and reading a letter from a photo ---------- */
   var API = "https://advocate.includeme.uk", PREFS_KEY = "includeme.passport.prefs.v1";
@@ -1072,10 +1130,14 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
     alert: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
     phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    list: '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>',
+    left: '<polyline points="15 18 9 12 15 6"/>',
+    right: '<polyline points="9 18 15 12 9 6"/>',
+    search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
     mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'
   };
   function ico(n, size) { var e = document.createElement("span"); e.className = "ico"; e.setAttribute("aria-hidden", "true"); e.innerHTML = '<svg viewBox="0 0 24 24" width="' + (size || 20) + '" height="' + (size || 20) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[n] + "</svg>"; return e; }
-  var CAT_STYLE = { "GP": "#1B6E4C", "Hospital": "#B4332A", "Dentist": "#0E7490", "Optician": "#4F46E5", "Therapy": "#7E3FB5", "School": "#B45309", "Social care": "#1D4ED8", "Review meeting": "#3B1F63", "Other": "#5B5470" };
+  var CAT_STYLE = { "GP": "#1B6E4C", "Hospital": "#B4332A", "Dentist": "#0B6580", "Optician": "#4F46E5", "Therapy": "#7E3FB5", "School": "#B45309", "Social care": "#1D4ED8", "Review meeting": "#3B1F63", "Other": "#5B5470" };
   function catColor(c) { return CAT_STYLE[c] || CAT_STYLE.Other; }
   function catChip(c) { return el("span", { class: "catchip", style: "--c:" + catColor(c) }, [c || "Other"]); }
   (function tabIcons() {
@@ -1331,26 +1393,39 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
   }
   function refreshSoon() { setTimeout(function () { if (mode === "overview") renderOverview(); else if (mode === "contacts") renderContacts(); else if (mode === "docs") renderDocs(); }, 0); }
 
+  /* ---------- the diary: a list or a month calendar, with filters ---------- */
+  var DV = { view: "list", time: "upcoming", cat: "All", q: "", month: null, sel: "" };
+  try { var dvs = localStorage.getItem("includeme.passport.diaryview.v1"); if (dvs === "list" || dvs === "calendar") DV.view = dvs; } catch (e) { /* storage blocked */ }
+  function ymdOf(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function renderAppts() {
     var box = $("appts"), p = cur(); box.textContent = "";
+    if (!DV.month) { var t0 = new Date(); DV.month = new Date(t0.getFullYear(), t0.getMonth(), 1); }
     box.appendChild(el("p", { class: "note", text: "Every appointment in one diary. Scan a letter or text and it is filed for you. Appointments are private: they are not part of the printed passport or shared link." }));
     var bar = el("div", { class: "actions", style: "margin:0 0 12px" });
     var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan a letter or text"]);
     scan.addEventListener("click", pickLetter);
     var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add by hand" });
-    add.addEventListener("click", function () { p.appts.push({ aid: id(), title: "", when: "", who: "", where: "", notes: "", cat: "Other", docId: "" }); save(); draw(); var last = list.querySelectorAll(".appt"); var f = last[last.length - 1].querySelector("input"); if (f) f.focus(); });
+    add.addEventListener("click", function () { addBlank(DV.view === "calendar" && DV.sel ? DV.sel + "T09:00" : ""); });
     bar.appendChild(scan); bar.appendChild(add); box.appendChild(bar);
     if (getSession()) box.appendChild(remindersPanel());
-    var list = el("div", { class: "panel", style: "margin-top:12px" }); box.appendChild(list);
+    var tools = el("div", { class: "dtools" }); box.appendChild(tools);
+    var out = el("div", { class: "panel", style: "margin-top:10px" }); box.appendChild(out);
+    function addBlank(when) { p.appts.push({ aid: id(), title: "", when: when || "", who: "", where: "", notes: "", cat: "Other", docId: "" }); DV.time = "all"; DV.cat = "All"; DV.q = ""; save(); draw(); var all = out.querySelectorAll(".appt"); var f = all[all.length - 1] && all[all.length - 1].querySelector("input"); if (f) f.focus(); }
+    function matches(a, ignoreTime) {
+      if (DV.cat !== "All" && (a.cat || "Other") !== DV.cat) return false;
+      if (DV.q && norm([a.title, a.who, a.where, a.notes, a.cat].join(" ")).indexOf(norm(DV.q)) < 0) return false;
+      if (!ignoreTime && DV.view === "list") { var up = !a.when || a.when.slice(0, 10) >= today(); if (DV.time === "upcoming" && !up) return false; if (DV.time === "past" && up) return false; }
+      return true;
+    }
     function row(a, i, past) {
       var n = ++uid;
-      function f(label, key, type, wide) { var fid = "ap" + n + key, c = key === "notes" ? el("textarea", { id: fid, rows: "2" }) : el("input", { id: fid, type: type || "text" }); c.value = a[key] || ""; c.addEventListener("input", function () { a[key] = c.value; save(); }); return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]); }
+      function f(label, key, type, wide) { var fid = "ap" + n + key, c = key === "notes" ? el("textarea", { id: fid, rows: "2" }) : el("input", { id: fid, type: type || "text" }); c.value = a[key] || ""; c.addEventListener("input", function () { a[key] = c.value; save(); }); if (key === "when") c.addEventListener("change", draw); return el("div", wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: label }), c]); }
       var catSel = el("select", { id: "ap" + n + "cat" }); APPT_CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === (a.cat || "Other")) o.selected = true; catSel.appendChild(o); });
-      catSel.addEventListener("change", function () { a.cat = catSel.value; save(); });
+      catSel.addEventListener("change", function () { a.cat = catSel.value; save(); draw(); });
       var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove appointment " + (a.title || ""));
       rm.addEventListener("click", function () { p.appts.splice(i, 1); save(); draw(); });
-      var cal = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Add to my calendar" });
-      cal.addEventListener("click", function () { if (!a.when) { savedMsg("Set a date first.", true); return; } var blob = new Blob([icsFor(a, p.preferred || p.name)], { type: "text/calendar" }), u = URL.createObjectURL(blob), lnk = el("a", { href: u, download: "appointment.ics" }); document.body.appendChild(lnk); lnk.click(); lnk.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 2000); });
+      var cal = el("button", { type: "button", class: "btn btn-ghost btn-small" }, [ico("calendar", 16), "Add to my calendar"]);
+      cal.addEventListener("click", function () { addToCalendar(a, p.preferred || p.name); });
       var letter = null;
       if (a.docId) { letter = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "View the letter" }); letter.addEventListener("click", function () { getDoc(a.docId).then(function (d) { if (!d) { savedMsg("That letter is no longer on this phone.", true); return; } var u = URL.createObjectURL(new Blob([d.blob], { type: d.type })); var l = el("a", { href: u, target: "_blank", rel: "noopener" }); document.body.appendChild(l); l.click(); l.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }); }); }
       return el("div", { class: "appt" + (past ? " past" : ""), style: "--c:" + catColor(a.cat), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
@@ -1359,18 +1434,87 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
         a.notes ? el("p", { class: "note", text: a.notes }) : null,
         el("details", { class: "apedit", open: !a.title && !a.when ? "" : null }, [el("summary", { text: "Edit details" }), el("div", { class: "two", style: "margin-top:10px" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])])]);
     }
-    function draw() {
-      list.textContent = "";
-      if (!p.appts.length) { list.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Tap Scan a letter or text and photograph your next appointment letter." })); return; }
-      var idx = p.appts.map(function (a, i) { return i; }), now = Date.now();
-      var up = idx.filter(function (i) { return !p.appts[i].when || apptTime(p.appts[i]) >= now; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
-      var old = idx.filter(function (i) { return p.appts[i].when && apptTime(p.appts[i]) < now; }).sort(function (x, y) { return apptTime(p.appts[y]) - apptTime(p.appts[x]); });
-      up.forEach(function (i) { list.appendChild(row(p.appts[i], i, false)); });
-      if (old.length) { var d = el("details", { style: "margin-top:10px" }, [el("summary", { text: "Past appointments (" + old.length + ")", style: "cursor:pointer;min-height:44px;display:flex;align-items:center" })]); old.forEach(function (i) { d.appendChild(row(p.appts[i], i, true)); }); list.appendChild(d); }
+    function toolbar() {
+      tools.textContent = "";
+      var seg = el("div", { class: "seg", role: "group", "aria-label": "How to show the diary" });
+      [["list", "List", "list"], ["calendar", "Calendar", "calendar"]].forEach(function (v) {
+        var b = el("button", { type: "button", "aria-pressed": DV.view === v[0] ? "true" : "false" }, [ico(v[2], 18), v[1]]);
+        b.addEventListener("click", function () { DV.view = v[0]; try { localStorage.setItem("includeme.passport.diaryview.v1", v[0]); } catch (e) { /* storage blocked */ } draw(); }); seg.appendChild(b);
+      });
+      var q = el("input", { type: "search", id: "dq", placeholder: "Search the diary", "aria-label": "Search the diary", autocomplete: "off", class: "dsearch" }); q.value = DV.q;
+      q.addEventListener("input", function () { DV.q = q.value; draw(true); });
+      tools.appendChild(el("div", { class: "drow" }, [seg, q]));
+      if (DV.view === "list") {
+        var tseg = el("div", { class: "seg small", role: "group", "aria-label": "Which dates" });
+        [["upcoming", "Coming up"], ["past", "Past"], ["all", "All"]].forEach(function (v) { var b = el("button", { type: "button", "aria-pressed": DV.time === v[0] ? "true" : "false", text: v[1] }); b.addEventListener("click", function () { DV.time = v[0]; draw(); }); tseg.appendChild(b); });
+        tools.appendChild(tseg);
+      }
+      var counts = {}; p.appts.forEach(function (a) { var c = a.cat || "Other"; counts[c] = (counts[c] || 0) + 1; });
+      var present = APPT_CATS.filter(function (c) { return counts[c]; });
+      if (present.length > 1) {
+        var chips = el("div", { class: "chips", role: "group", "aria-label": "Filter by type", style: "margin-top:8px" });
+        ["All"].concat(present).forEach(function (c) {
+          var b = el("button", { type: "button", class: "chip", "aria-pressed": DV.cat === c ? "true" : "false", text: c === "All" ? "All types" : c + " (" + counts[c] + ")" });
+          if (c !== "All") b.style.setProperty("--c", catColor(c)); b.addEventListener("click", function () { DV.cat = c; draw(); }); chips.appendChild(b);
+        });
+        tools.appendChild(chips);
+      }
     }
-    draw();
+    function listView() {
+      var idx = p.appts.map(function (a, i) { return i; }).filter(function (i) { return matches(p.appts[i]); }), now = today();
+      var up = idx.filter(function (i) { return !p.appts[i].when || p.appts[i].when.slice(0, 10) >= now; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
+      var old = idx.filter(function (i) { return p.appts[i].when && p.appts[i].when.slice(0, 10) < now; }).sort(function (x, y) { return apptTime(p.appts[y]) - apptTime(p.appts[x]); });
+      if (!p.appts.length) { out.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Tap Scan a letter or text and photograph your next appointment letter." })); return; }
+      var total = p.appts.length, filtered = DV.cat !== "All" || DV.q || DV.time !== "all";
+      out.appendChild(el("p", { class: "status", role: "status", "aria-live": "polite", text: idx.length + " of " + total + (total === 1 ? " appointment" : " appointments") + (filtered ? " shown" : "") }));
+      if (!idx.length) {
+        var clr = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Clear the filters" }); clr.addEventListener("click", function () { DV.q = ""; DV.cat = "All"; DV.time = "all"; draw(); });
+        out.appendChild(el("p", { class: "empty", text: "Nothing matches." })); out.appendChild(clr); return;
+      }
+      up.forEach(function (i) { out.appendChild(row(p.appts[i], i, false)); });
+      if (old.length) {
+        var d = el("details", { style: "margin-top:10px", open: DV.time === "past" ? "" : null }, [el("summary", { text: "Past appointments (" + old.length + ")", style: "cursor:pointer;min-height:44px;display:flex;align-items:center" })]);
+        old.forEach(function (i) { d.appendChild(row(p.appts[i], i, true)); }); out.appendChild(d);
+      }
+    }
+    function calView() {
+      var m = DV.month, yr = m.getFullYear(), mo = m.getMonth(), first = new Date(yr, mo, 1), startDow = (first.getDay() + 6) % 7, days = new Date(yr, mo + 1, 0).getDate(), tdy = today();
+      var byDay = {}; p.appts.forEach(function (a, i) { if (a.when && matches(a, true)) { var k = a.when.slice(0, 10); (byDay[k] = byDay[k] || []).push(i); } });
+      var prev = el("button", { type: "button", class: "btn btn-ghost btn-small", "aria-label": "Previous month" }, [ico("left", 18)]), next = el("button", { type: "button", class: "btn btn-ghost btn-small", "aria-label": "Next month" }, [ico("right", 18)]), now = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Today" });
+      prev.addEventListener("click", function () { DV.month = new Date(yr, mo - 1, 1); DV.sel = ""; draw(); });
+      next.addEventListener("click", function () { DV.month = new Date(yr, mo + 1, 1); DV.sel = ""; draw(); });
+      now.addEventListener("click", function () { var t = new Date(); DV.month = new Date(t.getFullYear(), t.getMonth(), 1); DV.sel = tdy; draw(); });
+      out.appendChild(el("div", { class: "calhead" }, [prev, el("h2", { text: first.toLocaleDateString("en-GB", { month: "long", year: "numeric" }), "aria-live": "polite" }), el("span", { class: "actions", style: "margin:0;flex-wrap:nowrap" }, [now, next])]));
+      var grid = el("div", { class: "calgrid", role: "group", "aria-label": first.toLocaleDateString("en-GB", { month: "long", year: "numeric" }) });
+      ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach(function (d) { grid.appendChild(el("div", { class: "dow", "aria-hidden": "true", text: d })); });
+      for (var k = 0; k < startDow; k++) grid.appendChild(el("div", { class: "cday blank", "aria-hidden": "true" }));
+      for (var d = 1; d <= days; d++) {
+        var key = yr + "-" + ("0" + (mo + 1)).slice(-2) + "-" + ("0" + d).slice(-2), list2 = byDay[key] || [];
+        var dots = el("span", { class: "dots", "aria-hidden": "true" }, list2.slice(0, 3).map(function (i) { return el("i", { style: "background:" + catColor(p.appts[i].cat) }); }));
+        var cell = el("button", { type: "button", class: "cday" + (key === tdy ? " today" : "") + (key === DV.sel ? " sel" : "") + (list2.length ? " has" : ""), "aria-pressed": key === DV.sel ? "true" : "false", "aria-label": new Date(yr, mo, d).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }) + (list2.length ? ", " + list2.length + (list2.length === 1 ? " appointment" : " appointments") : ", nothing booked") }, [el("span", { class: "dn", text: String(d) }), dots]);
+        (function (kk) { cell.addEventListener("click", function () { DV.sel = DV.sel === kk ? "" : kk; draw(); }); })(key);
+        grid.appendChild(cell);
+      }
+      out.appendChild(grid);
+      var sel = DV.sel, ids;
+      if (sel) {
+        ids = byDay[sel] || [];
+        out.appendChild(el("h3", { class: "sec-h", text: new Date(sel + "T12:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }), style: "margin-top:14px" }));
+        if (!ids.length) { var ab = el("button", { type: "button", class: "btn btn-main btn-small", text: "Add an appointment on this day" }); ab.addEventListener("click", function () { addBlank(sel + "T09:00"); }); out.appendChild(el("p", { class: "empty", text: "Nothing booked." })); out.appendChild(ab); }
+        ids.sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); }).forEach(function (i) { out.appendChild(row(p.appts[i], i, sel < tdy)); });
+      } else {
+        var prefix = yr + "-" + ("0" + (mo + 1)).slice(-2), inMonth = Object.keys(byDay).filter(function (k) { return k.indexOf(prefix) === 0; }).sort();
+        out.appendChild(el("h3", { class: "sec-h", text: inMonth.length ? "This month" : "Nothing booked this month", style: "margin-top:14px" }));
+        inMonth.forEach(function (k) { byDay[k].sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); }).forEach(function (i) { out.appendChild(row(p.appts[i], i, k < tdy)); }); });
+      }
+    }
+    function draw(keepFocus) {
+      var focusQ = keepFocus === true;
+      out.textContent = ""; if (!focusQ) toolbar();
+      if (DV.view === "calendar") calView(); else listView();
+    }
+    toolbar(); draw(true);
   }
-
 
   /* ---------- contacts: everyone in one place, one tap to call ---------- */
   function initials2(n) { var q = String(n || "?").replace(/^(Dr|Mr|Mrs|Ms|Miss|Prof)\.?\s+/i, "").trim().split(/\s+/); return ((q[0] || "?")[0] + (q[1] ? q[1][0] : "")).toUpperCase(); }
@@ -1785,7 +1929,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.7", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.8", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
