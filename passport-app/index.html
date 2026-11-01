@@ -709,6 +709,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       return { status: x.status === "earlier" ? "earlier" : "current", replacedBy: /^[A-Za-z0-9]{3,40}$/.test(x.replacedBy || "") ? x.replacedBy : "", id: /^[A-Za-z0-9]{3,40}$/.test(x.id || "") ? x.id : id(), area: AREAS.indexOf(x.area) >= 0 ? x.area : "Other", kind: KINDS.indexOf(x.kind) >= 0 ? x.kind : "can", text: s(x.text, 240), date: /^\d{4}-\d{2}-\d{2}$/.test(x.date || "") ? x.date : "", source: s(x.source, 120), docId: /^[A-Za-z0-9]{3,40}$/.test(x.docId || "") ? x.docId : "" };
     }).filter(function (x) { return x.text; });
     if (!("portfolio" in o) && b.hide.indexOf("portfolio") < 0) b.hide.push("portfolio");   // older passports: kept out of shared and printed copies unless chosen
+    b.autoAbout = o.autoAbout === true;
     b.large = o.large === true; b.noAllergies = o.noAllergies === true; b.noMeds = o.noMeds === true;
     b.appts = list(o.appts, ["title", "when", "who", "where", "notes", "cat", "aid", "docId"]).map(function (a) { if (!/^[A-Za-z0-9]{3,40}$/.test(a.docId)) a.docId = ""; a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; if (APPT_CATS.indexOf(a.cat) < 0) a.cat = "Other"; if (!/^[A-Za-z0-9]{3,40}$/.test(a.aid)) a.aid = id(); return a; });
     b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
@@ -1771,8 +1772,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     if (abUI.length) {
       var abBox = el("div", { class: "scan-sec" }, [el("h3", { text: "What this tells us about " + (p.name || "your child") + " (" + abUI.length + ")" }), el("p", { class: "note", text: "Added to their portfolio under Details, sorted by area. A newer report moves the old line to Earlier, and nothing is deleted. Untick anything that is not right." })]);
       if (knownList().length) abBox.appendChild(el("p", { class: "note", style: "font-size:12.5px", text: "To spot what has changed, the short lines already in the portfolio were sent with this report to be read. They are not stored." }));
-      var canAbout = abUI.some(function (o) { return !o.older; }), aboutRow = canAbout ? pickRow(sid + "about", true, "Also add a short summary to About my child", "Added to the end of the matching boxes, such as How I communicate. Nothing already there is changed.") : null;
-      if (aboutRow) abBox.appendChild(aboutRow.node);
+      var canAbout = abUI.some(function (o) { return !o.older; }) && !p.autoAbout, aboutRow = canAbout ? pickRow(sid + "about", true, "Keep About my child updated with a short summary", "Writes a \u201cFrom reports\u201d summary at the end of the matching boxes, such as How I communicate, and refreshes it whenever a newer report changes things. What you wrote yourself is never changed.") : null;
+      if (aboutRow) abBox.appendChild(aboutRow.node); else if (p.autoAbout) abBox.appendChild(el("p", { class: "note", style: "font-size:12.5px", text: "The From reports summary in About my child will be refreshed when you save." }));
       AREAS.forEach(function (ar) {
         var rows = abUI.filter(function (o) { return o.a.area === ar; }); if (!rows.length) return;
         abBox.appendChild(el("p", { class: "subh", style: "margin:10px 0 2px", text: ar })); rows.forEach(function (o) { abBox.appendChild(o.row.node); });
@@ -1819,9 +1820,9 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         });
         if (abAdded) done.push(abAdded + (abAdded === 1 ? " thing" : " things") + " added to the portfolio under Details");
         var superseded = abUI.filter(function (o) { return o.row.cb.checked && o.old && !o.older; }).length; if (superseded) done.push(superseded + (superseded === 1 ? " older line moved" : " older lines moved") + " to Earlier in the portfolio");
-        if (typeof aboutRow !== "undefined" && aboutRow && aboutRow.cb.checked && addedNew.length) {
-          var did = aboutGroups(addedNew).map(function (g) { return appendAbout(p, g.m, g.rows.map(function (x) { return x.text; })); }).filter(Boolean);
-          if (did.length) done.push("A short summary was added to the end of: " + did.join(", ") + " under About my child");
+        if (abAdded && (p.autoAbout || (typeof aboutRow !== "undefined" && aboutRow && aboutRow.cb.checked))) {
+          p.autoAbout = true; var did = refreshAbout(p);
+          if (did.length) done.push("About my child updated with a short From reports summary: " + did.join(", "));
         }
         var filled = 0; props.forEach(function (x) { if (x.row.cb.checked) { x.apply(); filled++; } });
         if (filled) done.push(filled + (filled === 1 ? " detail" : " details") + " filled in on the passport");
@@ -2047,40 +2048,25 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     return secs;
   }
   function sentence(t) { return String(t || "").replace(/[.\s]+$/, "") + "."; }
-  /* adds the lines to the END of the box; returns the label if anything was added */
-  function appendAbout(p, m, lines) {
-    var have = p[m.f] || "", add = lines.filter(function (t) { return fk(have).indexOf(fk(t)) < 0; }).map(sentence).join(" ");
-    if (!add) return "";
-    p[m.f] = s((have.trim() ? have.replace(/\s+$/, "") + "\n" : "") + add); return m.label;
+  /* The "From reports" part at the end of an About box is ours: it is rebuilt from the CURRENT portfolio each time, so a line that a newer report replaced drops out.
+     Everything above it is the parent's own writing and is never touched. */
+  var AHEAD = "From reports:";
+  function splitAbout(text) { var t = String(text || ""), i = t.search(/(^|\n\n)From reports:\n/); if (i < 0) return { mine: t.replace(/\s+$/, ""), auto: "" }; var m = t.slice(0, i).replace(/\s+$/, ""), rest = t.slice(i).replace(/^\n*From reports:\n/, ""); return { mine: m, auto: rest }; }
+  function refreshAbout(p) {
+    var groups = aboutGroups(curItems(p)), byField = {}, changed = [];
+    groups.forEach(function (g) { byField[g.m.f] = g; });
+    ABOUT.forEach(function (m) {
+      var sp = splitAbout(p[m.f]), g = byField[m.f], lines = g ? g.rows.map(function (x) { return x.text; }).filter(function (t) { return fk(sp.mine).indexOf(fk(t)) < 0; }) : [];
+      var auto = lines.map(sentence).join(" "), next = sp.mine + (auto ? (sp.mine ? "\n\n" : "") + AHEAD + "\n" + auto : "");
+      if (next !== (p[m.f] || "")) { p[m.f] = s(next); changed.push(m.label); }
+    });
+    return changed;
   }
   function aboutDlg() {
-    var p = cur(), secs = aboutGroups(curItems(p));
-    if (!secs.length) { scanDlg([el("h2", { text: "Add to About my child" }), el("p", { text: "There is nothing current in the portfolio to summarise yet. Scan a report first." }), closeBtn()]); return; }
-    var nodes = [el("h2", { text: "Add to About my child" }), el("p", { class: "note", text: "A short summary of what is current is added to the end of each box below. Nothing that is already there is changed or removed. Earlier items are left out. Untick any line you do not want." })];
-    var apply = [];
-    secs.forEach(function (sec, si) {
-      var have = (p[sec.m.f] || ""), box = el("div", { class: "scan-sec" }, [el("h3", { text: sec.m.label })]);
-      if (have.trim()) box.appendChild(el("p", { class: "note", style: "margin:0 0 6px", text: "Already there: " + (have.length > 140 ? have.slice(0, 140) + "..." : have) }));
-      var picks = sec.rows.map(function (x, i) { var dup = fk(have).indexOf(fk(x.text)) >= 0; var r = pickRow("ab" + si + "_" + i, !dup, x.text, dup ? "Already in there" : KLABEL[x.kind]); box.appendChild(r.node); return { r: r, x: x }; });
-      var prev = el("p", { class: "note", style: "margin:6px 0 0" });
-      function lines() { return picks.filter(function (k) { return k.r.cb.checked; }).map(function (k) { return k.x.text; }); }
-      function show() { var t = lines().map(sentence).join(" "); prev.textContent = t ? "Will add: " + t : "Nothing ticked."; }
-      picks.forEach(function (k) { k.r.cb.addEventListener("change", show); }); show(); box.appendChild(prev);
-      apply.push(function () { return appendAbout(p, sec.m, lines()); });
-      nodes.push(box);
-    });
-    var go = el("button", { type: "button", class: "btn btn-main", text: "Add to About my child" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
-    cancel.addEventListener("click", scanClose);
-    go.addEventListener("click", function () {
-      var did = apply.map(function (f) { return f(); }).filter(Boolean);
-      if (!did.length) { scanClose(); return; }
-      save(); renderEditor();
-      var open = el("button", { type: "button", class: "btn btn-main", text: "Open About my child" }); open.addEventListener("click", function () { scanClose(); setMode("edit"); });
-      var done = el("button", { type: "button", class: "btn btn-ghost", text: "Done" }); done.addEventListener("click", scanClose);
-      scanDlg([el("h2", { text: "Added" }), el("p", { text: "Added to the end of: " + did.join(", ") + "." }), el("div", { class: "actions", style: "justify-content:flex-end" }, [done, open])]);
-    });
-    nodes.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, go]));
-    scanDlg(nodes);
+    var p = cur(), changed = refreshAbout(p); p.autoAbout = true; save(); renderEditor(); renderPortfolio();
+    var open = el("button", { type: "button", class: "btn btn-main", text: "Open About my child" }); open.addEventListener("click", function () { scanClose(); setMode("edit"); });
+    var done = el("button", { type: "button", class: "btn btn-ghost", text: "Done" }); done.addEventListener("click", scanClose);
+    scanDlg([el("h2", { text: changed.length ? "About my child is up to date" : "Nothing to change" }), el("p", { text: changed.length ? "A short \u201cFrom reports\u201d summary was written at the end of: " + changed.join(", ") + "." : "There is nothing current in the portfolio to add, or it is already there." }), el("p", { class: "note", text: "It is kept up to date from now on: when a newer report replaces something, the old line drops out of the summary. What you wrote yourself in those boxes is never changed. Turn this off under Portfolio." }), el("div", { class: "actions", style: "justify-content:flex-end" }, [done, open])]);
   }
   /* ---------- portfolio: what the reports say the child can do, is working on and finds hard ---------- */
   var PF = { kind: "All", view: "area", q: "" };
@@ -2097,12 +2083,13 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       if (!text.value.trim()) { err.textContent = "Write a short sentence first."; return; }
       it.kind = kind.value; it.area = area.value; it.text = text.value.trim().slice(0, 240); it.status = stat.value; if (it.status === "current") it.replacedBy = "";
       p.portfolio = p.portfolio || []; if (isNew) p.portfolio.push(it);
+      if (p.autoAbout) { refreshAbout(p); renderEditor(); }
       save(); scanClose(); renderPortfolio();
     });
     var row = [cancel, save2];
     if (!isNew) {
       var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
-      rm.addEventListener("click", function () { if (!window.confirm("Remove this from the portfolio?")) return; p.portfolio = p.portfolio.filter(function (y) { return y.id !== it.id; }); save(); scanClose(); renderPortfolio(); });
+      rm.addEventListener("click", function () { if (!window.confirm("Remove this from the portfolio?")) return; p.portfolio = p.portfolio.filter(function (y) { return y.id !== it.id; }); if (p.autoAbout) { refreshAbout(p); renderEditor(); } save(); scanClose(); renderPortfolio(); });
       row.unshift(rm);
     }
     var by = it.replacedBy ? (p.portfolio || []).filter(function (y) { return y.id === it.replacedBy; })[0] : null;
@@ -2124,12 +2111,15 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var head = el("div", { class: "actions", style: "margin:0 0 4px" });
     var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan or upload a report"]); scan.addEventListener("click", pickLetter);
     var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add by hand" }); add.addEventListener("click", function () { portDlg(null); });
-    var toAbout = el("button", { type: "button", class: "btn btn-ghost", text: "Add a summary to About my child" }); toAbout.addEventListener("click", aboutDlg);
+    var toAbout = el("button", { type: "button", class: "btn btn-ghost", text: p.autoAbout ? "Update About my child now" : "Add a summary to About my child" }); toAbout.addEventListener("click", aboutDlg);
     head.appendChild(scan); head.appendChild(add); if (all.length) head.appendChild(toAbout); box.appendChild(head);
     var nowN = all.filter(function (x) { return x.status !== "earlier"; }).length, srcN = {}; all.forEach(function (x) { srcN[(x.source || "") + "|" + (x.date || "")] = 1; });
     box.appendChild(el("p", { class: "note", text: all.length ? nowN + " current, " + (all.length - nowN) + " earlier, from " + Object.keys(srcN).length + (Object.keys(srcN).length === 1 ? " report" : " reports") + ". A newer report replaces an older line, which moves to Earlier and is never deleted. Printed and shared passports leave this out unless you choose it." : "What reports, assessments and letters say " + (p.preferred || p.name || "your child") + " can do, is working on and finds hard. It stays on this phone unless you keep a private copy." }));
     if (!all.length) { box.appendChild(el("p", { class: "empty", text: "Nothing yet. Scan a progress report, assessment or school letter and the abilities, difficulties and next steps in it are collected here." })); return; }
     // view, search and filter
+    var ac = el("input", { type: "checkbox", id: "pfauto" }); ac.checked = !!p.autoAbout;
+    ac.addEventListener("change", function () { p.autoAbout = ac.checked; if (ac.checked) { var ch = refreshAbout(p); renderEditor(); toolMsg(ch.length ? "About my child updated: " + ch.join(", ") : "About my child is already up to date."); } else { toolMsg("About my child will no longer be updated. The From reports summary already there stays until you remove it."); } save(); });
+    box.appendChild(el("label", { class: "chk2", for: "pfauto", style: "margin:6px 0" }, [ac, document.createTextNode("Keep About my child updated from the current portfolio")]));
     var seg = el("div", { class: "seg", role: "group", "aria-label": "How to arrange the portfolio" });
     [["area", "By area"], ["report", "By report"]].forEach(function (v) { var b = el("button", { type: "button", "aria-pressed": PF.view === v[0] ? "true" : "false", text: v[1] }); b.addEventListener("click", function () { PF.view = v[0]; renderPortfolio(); }); seg.appendChild(b); });
     box.appendChild(seg);
@@ -2732,7 +2722,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.35", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.36", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
