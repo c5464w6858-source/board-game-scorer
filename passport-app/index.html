@@ -142,23 +142,17 @@ input:focus, textarea:focus, select:focus { border-color: var(--plum); }
 .sec[open] > summary { border-bottom: 1px solid var(--line); }
 .sec .in { padding: 16px; display: grid; gap: 14px; }
 .item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; background: #FBFAFD; }
-details.item { padding: 0; gap: 0; }
-details.item > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 8px 12px; }
-details.item > summary::-webkit-details-marker { display: none; }
-details.item > summary b { color: var(--plum); font-size: 14.5px; overflow-wrap: anywhere; }
-details.item > summary .isub { display: block; color: var(--muted); font-size: 13px; font-weight: 400; }
-details.item > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
-details.item[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
-details.item .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
-details.item .g2 > div { min-width: 0; }
-details.item label { font-size: 13px; margin-bottom: 3px; }
-details.item input, details.item select { min-height: 40px; padding: 7px 10px; }
-details.item textarea { min-height: 64px; }
-details.item .more { border-top: 1px dashed var(--line-2); padding-top: 8px; }
-details.item .more > summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--plum); min-height: 36px; display: flex; align-items: center; margin-bottom: 6px; }
-details.item .irm { display: flex; justify-content: flex-end; }
-details.item .irm .btn { min-height: 34px; padding: 4px 12px; font-size: 13px; }
-details.item .ibody { display: grid; gap: 10px; padding: 12px; border-top: 1px solid var(--line); }
+.rlist { display: grid; gap: 8px; }
+.rrow { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; background: #FBFAFD; padding: 8px 8px 8px 14px; min-height: 52px; }
+.rrow .rtxt { flex: 1; min-width: 0; }
+.rrow .rtxt b { display: block; color: var(--plum); font-size: 15px; overflow-wrap: anywhere; }
+.rrow .rtxt span { display: block; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.rrow .btn { flex: none; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+.g2 > div { min-width: 0; }
+.g2 label { font-size: 13px; margin-bottom: 3px; }
+.g2 input, .g2 select { min-height: 42px; padding: 7px 10px; }
+.g2 textarea { min-height: 64px; }
 details.blk > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; font: 700 1.02rem Fraunces, Georgia, serif; color: var(--plum); }
 details.blk > summary::-webkit-details-marker { display: none; }
 details.blk > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
@@ -763,56 +757,56 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   function repeater(title, arr, keys, addLabel, empty) {
     var wrap = el("div", { class: "in", style: "padding:0;border:0" });
-    var holder = el("div", { style: "display:grid;gap:10px" }), openItems = {}, justAdded = null;
+    var holder = el("div", { class: "rlist" });
+    function lines(o) {
+      var vals = function (ks) { return ks.map(function (k) { return o[k.key]; }).filter(Boolean); };
+      var short = keys.filter(function (k) { return !k.area && k.key !== "notes"; });
+      var head = keys[0].type === "role" ? vals(short.slice(0, 2)).join(" · ") : (o[keys[0].key] || "");
+      var rest = keys[0].type === "role" ? vals(short.slice(2)) : vals(short.slice(1));
+      return { head: head || "New " + title.toLowerCase(), sub: rest.slice(0, 3).join(" · ") };
+    }
+    function editor(o) {
+      var form = el("div", { class: "g2" });
+      keys.forEach(function (k) {
+        var fid = "r" + (++uid), ctl;
+        if (k.type === "role") {
+          ctl = el("select", { id: fid, class: "f" });
+          ctl.appendChild(el("option", { value: "", text: "Choose" }));
+          ROLES.forEach(function (r) { ctl.appendChild(el("option", { value: r, text: r })); });
+          if (o[k.key] && ROLES.indexOf(o[k.key]) < 0) ctl.appendChild(el("option", { value: o[k.key], text: o[k.key] }));
+          ctl.value = o[k.key] || "";
+          ctl.addEventListener("change", function () { o[k.key] = ctl.value; save(); });
+        } else {
+          ctl = k.area ? el("textarea", { id: fid, rows: 2 }) : el("input", { id: fid, type: k.type || "text" });
+          ctl.value = o[k.key] || "";
+          ctl.addEventListener("input", function () { o[k.key] = ctl.value; save(); });
+          if (k.type === "tel") ctl.setAttribute("autocomplete", "off");
+        }
+        form.appendChild(el("div", k.wide || k.area ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]));
+      });
+      var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
+      rm.addEventListener("click", function () { if (!window.confirm("Remove this " + title.toLowerCase() + "?")) return; arr.splice(arr.indexOf(o), 1); save(); scanClose(); draw(); });
+      var done = el("button", { type: "button", class: "btn btn-main", text: "Done" });
+      done.addEventListener("click", function () { scanClose(); });
+      var dlg = $("dlgScan"), after = function () { dlg.removeEventListener("close", after); draw(); };
+      dlg.addEventListener("close", after);
+      scanDlg([el("h2", { text: lines(o).head }), form, el("div", { class: "actions", style: "justify-content:space-between;margin-top:14px" }, [rm, done])]);
+      var first = form.querySelector("input,select,textarea"); if (first && !o[keys[0].key]) first.focus();
+    }
     function draw() {
       holder.textContent = "";
       arr.forEach(function (o, i) {
-        var item = el("details", { class: "item" });
-        if (openItems[arr.indexOf(o)] || (!keys.some(function (k) { return o[k.key]; })) || justAdded === o) item.setAttribute("open", "");
-        item.addEventListener("toggle", function () { openItems[arr.indexOf(o)] = item.open; });
-        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
-        rm.setAttribute("aria-label", "Remove " + title.toLowerCase() + " " + (i + 1));
-        rm.addEventListener("click", function () { arr.splice(i, 1); openItems = {}; save(); draw(); });
-        var nm = function () { var a = o[keys[0].key] || "", b2 = keys[1] && o[keys[1].key] || "", c = keys[3] && keys[3].key !== "notes" ? "" : ""; var t = [a, b2].filter(Boolean).join(" · "); return t || title + " " + (i + 1); };
-        var sumB = el("b", { text: nm() });
-        item.appendChild(el("summary", {}, [sumB]));
-        var ibody = el("div", { class: "ibody" }); item.appendChild(ibody);
-        var grid = el("div", { class: "g2" }), moreGrid = el("div", { class: "g2" }), moreHas = false;
-        keys.forEach(function (k) {
-          var fid = "r" + (++uid);
-          var ctl;
-          if (k.type === "role") {
-            ctl = el("select", { id: fid, class: "f" });
-            ctl.appendChild(el("option", { value: "", text: "Choose" }));
-            ROLES.forEach(function (r) { ctl.appendChild(el("option", { value: r, text: r })); });
-            if (o[k.key] && ROLES.indexOf(o[k.key]) < 0) ctl.appendChild(el("option", { value: o[k.key], text: o[k.key] }));
-            ctl.value = o[k.key] || "";
-            ctl.addEventListener("change", function () { o[k.key] = ctl.value; sumB.textContent = nm(); save(); });
-          } else {
-            ctl = k.area ? el("textarea", { id: fid, rows: 2 }) : el("input", { id: fid, type: k.type || "text" });
-            ctl.value = o[k.key] || "";
-            ctl.addEventListener("input", function () { o[k.key] = ctl.value; sumB.textContent = nm(); save(); });
-            if (k.type === "tel") ctl.setAttribute("autocomplete", "off");
-          }
-          var cell = el("div", k.wide || k.area ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]);
-          if (k.more) { moreGrid.appendChild(cell); if (o[k.key]) moreHas = true; } else grid.appendChild(cell);
-        });
-        ibody.appendChild(grid);
-        if (moreGrid.children.length) {
-          var mored = el("details", { class: "more" }, [el("summary", { text: "More details" }), moreGrid]);
-          if (moreHas) mored.setAttribute("open", "");
-          ibody.appendChild(mored);
-        }
-        ibody.appendChild(el("div", { class: "irm" }, [rm]));
-        holder.appendChild(item);
+        var l = lines(o), edit = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Edit" });
+        edit.setAttribute("aria-label", "Edit " + l.head);
+        edit.addEventListener("click", function () { editor(o); });
+        holder.appendChild(el("div", { class: "rrow" }, [el("div", { class: "rtxt" }, [el("b", { text: l.head }), l.sub ? el("span", { text: l.sub }) : null]), edit]));
       });
       if (!arr.length) holder.appendChild(el("p", { class: "empty", text: empty }));
     }
     var add = el("button", { type: "button", class: "btn btn-ghost btn-small", text: addLabel });
     add.addEventListener("click", function () {
       if (arr.length >= LIM.arr) return;
-      var o = {}; keys.forEach(function (k) { o[k.key] = ""; }); arr.push(o); justAdded = o; save(); draw();
-      var last = holder.querySelectorAll(".item"); var f = last[last.length - 1].querySelector("input,select,textarea"); if (f) f.focus();
+      var o = {}; keys.forEach(function (k) { o[k.key] = ""; }); arr.push(o); save(); draw(); editor(o);
     });
     draw(); wrap.appendChild(holder); wrap.appendChild(add);
     return wrap;
@@ -887,7 +881,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         { key: "what", label: "Allergic to" }, { key: "reaction", label: "What happens" }, { key: "action", label: "What to do", wide: true }
       ], "Add an allergy", "No allergies added.")]),
       subsec("Medicines", function () { var n = p.meds.filter(function (m) { return m.name; }).length, m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.medsChecked || ""), due = !!(n && (!m || (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) > 183 * 864e5)); return (p.noMeds && !n ? "None" : n ? String(n) : "Not added") + (due ? " · check due" : ""); }, [flag("No regular medicines", "noMeds"), repeater("Medicine", p.meds, [
-        { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given", wide: true }, { key: "forWhat", label: "What it is for", more: true },
+        { key: "name", label: "Medicine", wide: true }, { key: "dose", label: "Dose" }, { key: "when", label: "When given" }, { key: "forWhat", label: "What it is for", more: true },
         { key: "prescriber", label: "Prescribed by", more: true }, { key: "notes", label: "Notes", area: true, wide: true, more: true }
       ], "Add a medicine", "No medicines added."),
       (function () {
@@ -2468,7 +2462,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.30", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.31", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
