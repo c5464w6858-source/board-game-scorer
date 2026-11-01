@@ -366,6 +366,22 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 .remdet > summary::-webkit-details-marker, .apedit > summary::-webkit-details-marker, .pastsum::-webkit-details-marker { display: none; }
 .remdet > summary::after, .apedit > summary::after, .pastsum::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--plum); border-bottom: 2px solid var(--plum); transform: rotate(45deg); margin: -4px 4px 0 8px; transition: transform .15s; }
 .remdet[open] > summary::after, .apedit[open] > summary::after, details[open] > .pastsum::after { transform: rotate(225deg); margin-top: 4px; }
+
+/* phones: every section visible at once, no sideways scrolling */
+@media (max-width: 640px) {
+  .tabs-in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; overflow: visible; padding: 8px 10px 8px; }
+  .tab { flex-direction: column; justify-content: center; gap: 4px; padding: 8px 2px 7px; min-height: 58px; font-size: 12.5px; line-height: 1.15; text-align: center; white-space: normal; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .tab .ico svg { width: 21px; height: 21px; }
+  .tab[aria-current="page"] { background: var(--plum); color: #fff; border-color: var(--plum); }
+  .tab:hover { color: inherit; }
+  .tab[aria-current="page"]:hover { color: #fff; }
+}
+.qlinks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.qlink { display: flex; align-items: center; gap: 12px; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; min-height: 64px; cursor: pointer; font: 600 15px Inter, sans-serif; color: var(--plum); box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
+.qlink small { display: block; font: 400 12.5px Inter, sans-serif; color: var(--muted); margin-top: 2px; }
+.qlink .ico { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--plum-soft); color: var(--plum); display: inline-flex; align-items: center; justify-content: center; }
+.qlink.red .ico { background: var(--red-soft); color: var(--red); }
+@media (max-width: 380px) { .qlinks { grid-template-columns: 1fr; } }
 /* diary: compact controls */
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
@@ -423,10 +439,10 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   <nav class="tabs" aria-label="Sections">
     <div class="tabs-in" id="tabsIn">
       <button type="button" class="tab" id="tabOverview">Overview</button>
-      <button type="button" class="tab" id="tabEdit">Details</button>
       <button type="button" class="tab" id="tabAppts">Diary</button>
       <button type="button" class="tab" id="tabContacts">Contacts</button>
       <button type="button" class="tab" id="tabDocs">Documents</button>
+      <button type="button" class="tab" id="tabEdit">Details</button>
       <button type="button" class="tab" id="tabView">Passport</button>
       <button type="button" class="tab" id="tabCard">Emergency card</button>
     </div>
@@ -1645,6 +1661,9 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       el("p", { text: "Take a picture of any appointment letter, text or prescription. Child Organiser reads it and does the rest." }),
       el("ul", { class: "steps" }, [el("li", { text: "Adds the appointment to the diary" }), el("li", { text: "Saves the letter in Documents" }), el("li", { text: "Adds the clinic and doctor to Contacts" }), el("li", { text: "Fills in medicines, allergies and school if it spots them" })]),
       el("div", {}, [go2, hand])]));
+    var q1 = el("button", { type: "button", class: "qlink" }, [ico("file", 22), el("span", {}, ["The passport", el("small", { text: "One page to share" })])]); q1.addEventListener("click", function () { setMode("view"); });
+    var q2 = el("button", { type: "button", class: "qlink red" }, [ico("alert", 22), el("span", {}, ["Emergency card", el("small", { text: "Key facts at a glance" })])]); q2.addEventListener("click", function () { setMode("card"); });
+    box.appendChild(el("div", { class: "qlinks" }, [q1, q2]));
     if (upcoming.length) {
       box.appendChild(el("h2", { class: "sec-h", text: "Coming up" }));
       var upc = el("div", { class: "upc" });
@@ -2004,7 +2023,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.14", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.15", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
