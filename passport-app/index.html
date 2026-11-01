@@ -905,7 +905,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
       var h = { authorization: "Bearer " + s.access_token }; if (o.body) h["content-type"] = "application/json";
       return fetch(API + path, { method: o.method || "GET", headers: h, body: o.body ? JSON.stringify(o.body) : undefined });
     }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (d) { if (!res.ok) { var e = new Error(d.error || "Something went wrong. Please try again."); e.status = res.status; throw e; } return d; });
+      return res.json().catch(function () { return {}; }).then(function (d) { if (!res.ok) { var e = new Error(d.error || "Something went wrong. Please try again."); e.status = res.status; e.why = d.why || ""; throw e; } return d; });
     });
   }
   var cfgP = null;
@@ -994,7 +994,7 @@ footer.fine { max-width: 940px; margin: 0 auto; padding: 0 16px 30px; }
     var run = function () {
       scanDlg([el("h2", { text: "Reading your letter" }), el("p", { class: "note", role: "status", text: "This takes a few seconds. Please keep this page open." })]);
       shrinkLetter(file).then(function (img) { return api("/api/diary/scan", { method: "POST", body: { image: img, consent: true } }); }).then(scanReview).catch(function (e) {
-        scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add the appointment by hand instead." }),
+        scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add the appointment by hand instead." }), e && e.why ? el("p", { class: "note", style: "font-size:12px", text: "Reference for support: " + e.why }) : null,
           (function () { var b = el("button", { type: "button", class: "btn btn-main", text: "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); })()]);
       });
     };
