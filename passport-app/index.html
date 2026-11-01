@@ -128,6 +128,20 @@ input:focus, textarea:focus, select:focus { border-color: var(--plum); }
 .sec[open] > summary { border-bottom: 1px solid var(--line); }
 .sec .in { padding: 16px; display: grid; gap: 14px; }
 .item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; background: #FBFAFD; }
+details.item { padding: 0; gap: 0; }
+details.item > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 8px 12px; }
+details.item > summary::-webkit-details-marker { display: none; }
+details.item > summary b { color: var(--plum); font-size: 14.5px; overflow-wrap: anywhere; }
+details.item > summary .isub { display: block; color: var(--muted); font-size: 13px; font-weight: 400; }
+details.item > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
+details.item[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+details.item .ibody { display: grid; gap: 10px; padding: 12px; border-top: 1px solid var(--line); }
+details.blk > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; font: 700 1.02rem Fraunces, Georgia, serif; color: var(--plum); }
+details.blk > summary::-webkit-details-marker { display: none; }
+details.blk > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
+details.blk[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+details.blk[open] > summary { margin-bottom: 6px; }
+@media print { details.blk > summary::after { display: none; } }
 .item .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .item .head b { color: var(--plum); font-size: 14px; }
 .photo { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
@@ -726,15 +740,21 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   function repeater(title, arr, keys, addLabel, empty) {
     var wrap = el("div", { class: "in", style: "padding:0;border:0" });
-    var holder = el("div", { style: "display:grid;gap:10px" });
+    var holder = el("div", { style: "display:grid;gap:10px" }), openItems = {}, justAdded = null;
     function draw() {
       holder.textContent = "";
       arr.forEach(function (o, i) {
-        var item = el("div", { class: "item", role: "group", "aria-label": title + " " + (i + 1) });
+        var item = el("details", { class: "item" });
+        if (openItems[arr.indexOf(o)] || (!keys.some(function (k) { return o[k.key]; })) || justAdded === o) item.setAttribute("open", "");
+        item.addEventListener("toggle", function () { openItems[arr.indexOf(o)] = item.open; });
         var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
         rm.setAttribute("aria-label", "Remove " + title.toLowerCase() + " " + (i + 1));
-        rm.addEventListener("click", function () { arr.splice(i, 1); save(); draw(); });
-        item.appendChild(el("div", { class: "head" }, [el("b", { text: title + " " + (i + 1) }), rm]));
+        rm.addEventListener("click", function () { arr.splice(i, 1); openItems = {}; save(); draw(); });
+        var nm = function () { var a = o[keys[0].key] || "", b2 = keys[1] && o[keys[1].key] || "", c = keys[3] && keys[3].key !== "notes" ? "" : ""; var t = [a, b2].filter(Boolean).join(" · "); return t || title + " " + (i + 1); };
+        var sumB = el("b", { text: nm() });
+        item.appendChild(el("summary", {}, [sumB]));
+        var ibody = el("div", { class: "ibody" }); item.appendChild(ibody);
+        ibody.appendChild(el("div", { class: "head" }, [el("span", { class: "note", style: "margin:0", text: title + " " + (i + 1) }), rm]));
         var grid = el("div", { class: "two" });
         keys.forEach(function (k) {
           var fid = "r" + (++uid);
@@ -745,17 +765,17 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
             ROLES.forEach(function (r) { ctl.appendChild(el("option", { value: r, text: r })); });
             if (o[k.key] && ROLES.indexOf(o[k.key]) < 0) ctl.appendChild(el("option", { value: o[k.key], text: o[k.key] }));
             ctl.value = o[k.key] || "";
-            ctl.addEventListener("change", function () { o[k.key] = ctl.value; save(); });
+            ctl.addEventListener("change", function () { o[k.key] = ctl.value; sumB.textContent = nm(); save(); });
           } else {
             ctl = k.area ? el("textarea", { id: fid, rows: 2 }) : el("input", { id: fid, type: k.type || "text" });
             ctl.value = o[k.key] || "";
-            ctl.addEventListener("input", function () { o[k.key] = ctl.value; save(); });
+            ctl.addEventListener("input", function () { o[k.key] = ctl.value; sumB.textContent = nm(); save(); });
             if (k.type === "tel") ctl.setAttribute("autocomplete", "off");
           }
           var cell = el("div", k.wide ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]);
           grid.appendChild(cell);
         });
-        item.appendChild(grid);
+        ibody.appendChild(grid);
         holder.appendChild(item);
       });
       if (!arr.length) holder.appendChild(el("p", { class: "empty", text: empty }));
@@ -763,7 +783,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var add = el("button", { type: "button", class: "btn btn-ghost btn-small", text: addLabel });
     add.addEventListener("click", function () {
       if (arr.length >= LIM.arr) return;
-      var o = {}; keys.forEach(function (k) { o[k.key] = ""; }); arr.push(o); save(); draw();
+      var o = {}; keys.forEach(function (k) { o[k.key] = ""; }); arr.push(o); justAdded = o; save(); draw();
       var last = holder.querySelectorAll(".item"); var f = last[last.length - 1].querySelector("input,select,textarea"); if (f) f.focus();
     });
     draw(); wrap.appendChild(holder); wrap.appendChild(add);
@@ -805,7 +825,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 
     var nameF = field("Name", "name", { autocomplete: "off" });
     nameF.querySelector("input").addEventListener("input", drawPic);
-    box.appendChild(section("About me", true, [
+    box.appendChild(section("About me", false, [
       photoRow, nameF,
       el("div", { class: "two" }, [field("What I like to be called", "preferred"), field("Date of birth", "dob", { type: "date" })]),
       el("div", { class: "two" }, [field("Pronouns", "pronouns"), field("Languages", "languages")]),
@@ -865,7 +885,16 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
 
   /* ---------- the passport view ---------- */
-  function blk(title, body) { var b = el("div", { class: "blk" }, [el("h3", { text: title })]); b.appendChild(body); return b; }
+  var viewOpen = {};
+  function blk(title, body) {
+    var b = el("details", { class: "blk" }, [el("summary", { text: title })]); b.appendChild(body);
+    if (viewOpen[title]) b.setAttribute("open", "");
+    b.addEventListener("toggle", function () { viewOpen[title] = b.open; });
+    return b;
+  }
+  /* a printed passport is always fully open */
+  window.addEventListener("beforeprint", function () { document.querySelectorAll("#viewer details.blk").forEach(function (d) { d.dataset.was = d.open ? "1" : ""; d.open = true; }); });
+  window.addEventListener("afterprint", function () { document.querySelectorAll("#viewer details.blk").forEach(function (d) { d.open = d.dataset.was === "1"; }); });
   function para(t) { return el("p", { text: t }); }
   function renderPassport(p) {
     var out = el("article", { class: "pp" + (p.large ? " large" : ""), "aria-label": "Passport for " + (p.preferred || p.name || "child") });
@@ -936,6 +965,12 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       body.appendChild(blk("Emergency contacts", cr));
     }
     if (!body.children.length && !em.length) body.appendChild(el("p", { class: "empty", text: "Nothing added yet. Open Details and add a few things." }));
+    if (body.querySelectorAll("details.blk").length > 1) {
+      var allOpen = Array.prototype.every.call(body.querySelectorAll("details.blk"), function (d) { return d.open; });
+      var tg = el("button", { type: "button", class: "linkbtn no-print", style: "margin:6px 20px 0", text: allOpen ? "Collapse all" : "Expand all" });
+      tg.addEventListener("click", function () { var want = !allOpen; body.querySelectorAll("details.blk").forEach(function (d) { d.open = want; }); allOpen = want; tg.textContent = want ? "Collapse all" : "Expand all"; });
+      out.appendChild(tg);
+    }
     out.appendChild(body);
     out.appendChild(el("div", { class: "pp-foot", text: "Made with the free IncludeMe Child Organiser." + (p.updated ? " Last updated " + new Date(p.updated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + "." : "") + " Check medicines against the label or the pharmacist. This is not a medical record." }));
     return out;
@@ -2399,7 +2434,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.26", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.27", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
