@@ -1750,14 +1750,27 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     K.names.forEach(function (n) { var f = first(n); if (f && mine.length && mine.indexOf(f) < 0) odd[n] = 1; });
     Object.keys(odd).forEach(function (n) { N.push(el("div", { class: "warnbox", role: "alert" }, ["A letter looks like it is about ", el("b", { text: n }), ", but you are in ", el("b", { text: p.preferred || p.name }), "'s diary. Check it is the right child before saving."])); });
     K.notes.forEach(function (t) { N.push(el("div", { class: "warnbox", role: "alert", text: t })); });
-    // 1. the letters themselves
+    // 1. the letters themselves. Several scanned together are kept as ONE document unless you untick it.
+    var perBox = el("div", {});
     var docUI = K.docs.map(function (d, i) {
       var on = pickRow(sid + "d" + i, true, many ? "Save in Documents: " + (d.title || "Letter " + (i + 1)) : "Save the letter in Documents", "Kept on this phone only" + (d.imgs.length > 1 ? " (" + d.imgs.length + " pages)" : ""));
       var title = el("input", { type: "text", id: sid + "dt" + i }); title.value = d.title || "Scanned letter";
       var cat = el("select", { id: sid + "dc" + i }); CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === d.category) o.selected = true; cat.appendChild(o); });
-      N.push(el("div", { class: "scan-sec" }, [el("h3", { text: many ? "Letter " + (i + 1) : "The letter" }), on.node, el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [el("div", {}, [el("label", { for: sid + "dt" + i, text: "Name it" }), title]), el("div", {}, [el("label", { for: sid + "dc" + i, text: "Filed under" }), cat])])]));
+      perBox.appendChild(el("div", { class: "scan-sec" }, [el("h3", { text: many ? "Letter " + (i + 1) : "The letter" }), on.node, el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [el("div", {}, [el("label", { for: sid + "dt" + i, text: "Name it" }), title]), el("div", {}, [el("label", { for: sid + "dc" + i, text: "Filed under" }), cat])])]));
       return { d: d, on: on, title: title, cat: cat };
     });
+    var canCombine = many && docUI.length > 1 && docUI.every(function (u) { return u.d.imgs.every(function (g) { return isPic(g) && !trayFiles[g]; }); });
+    var comb = null;
+    if (canCombine) {
+      var cOn = pickRow(sid + "dall", true, "Save all " + docUI.length + " as one document in Documents", "One PDF with every page in order. Kept on this phone only."), cTitle = el("input", { type: "text", id: sid + "dallt" }), cCat = el("select", { id: sid + "dallc" });
+      cTitle.value = (docUI[0].d.title || "Scanned letters") + " (" + docUI.length + " letters)";
+      CATS.forEach(function (c) { var o = el("option", { value: c, text: c }); if (c === docUI[0].d.category) o.selected = true; cCat.appendChild(o); });
+      var cBody = el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [el("div", {}, [el("label", { for: sid + "dallt", text: "Name it" }), cTitle]), el("div", {}, [el("label", { for: sid + "dallc", text: "Filed under" }), cCat])]);
+      N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "The letters" }), cOn.node, cBody]));
+      comb = { on: cOn, title: cTitle, cat: cCat };
+      var sync = function () { cBody.hidden = !cOn.cb.checked; perBox.hidden = cOn.cb.checked; }; cOn.cb.addEventListener("change", sync); sync();
+    }
+    N.push(perBox);
     // 2. appointments
     var apUI = K.appts.map(function (x, i) {
       var a = x.a, exists = apptInDiary(p, a), on = pickRow(sid + "a" + i, !exists, "Add to the diary: " + (a.title || "Appointment") + (a.date ? ", " + whenText(a.time ? a.date + "T" + a.time : a.date) : ""), exists ? "Already in your diary, so not ticked" : x.srcs.length > 1 ? "Found in " + x.srcs.length + " letters, added once" : "");
@@ -1803,7 +1816,15 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       for (var k = 0; k < picked.length; k++) { if (!picked[k].fT.input.value.trim() && !picked[k].fW.input.value) { err.textContent = "Add a name or a date for each appointment, or untick it."; return; } }
       save2.disabled = true; var done = [], recs = {};
       var chain = Promise.resolve();
-      docUI.forEach(function (u, i) {
+      if (comb && comb.on.cb.checked) {
+        var allImgs = []; docUI.forEach(function (u) { u.d.imgs.forEach(function (g) { allImgs.push(g); }); });
+        chain = chain.then(function () { return letterFile(allImgs); }).then(function (f) {
+          var best = docUI.map(function (u) { return u.d.date || ""; }).sort().pop() || today(), sums = docUI.map(function (u) { return u.d.summary; }).filter(Boolean).join(" ");
+          var rec = { id: id(), profileId: p.id, title: (comb.title.value || "Scanned letters").trim().slice(0, 150), category: comb.cat.value, date: best, notes: sums.slice(0, 1000), name: f.name, type: f.type, size: f.blob.size, blob: f.blob, added: Date.now() };
+          docUI.forEach(function (u, i) { recs[i] = rec.id; });
+          return putDoc(rec);
+        });
+      } else docUI.forEach(function (u, i) {
         if (!u.on.cb.checked) return;
         chain = chain.then(function () { return letterFile(u.d.imgs); }).then(function (f) {
           var rec = { id: id(), profileId: p.id, title: (u.title.value || "Scanned letter").trim().slice(0, 150), category: u.cat.value, date: u.d.date || today(), notes: (u.d.summary || "").slice(0, 1000), name: f.name, type: f.type, size: f.blob.size, blob: f.blob, added: Date.now() };
@@ -1812,7 +1833,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         });
       });
       chain.then(function () {
-        var nDocs = Object.keys(recs).length; if (nDocs) { done.push(nDocs === 1 ? "The letter is saved in Documents" : nDocs + " letters are saved in Documents"); if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); }
+        var nDocs = Object.keys(recs).map(function (k) { return recs[k]; }).filter(function (v, i, a2) { return a2.indexOf(v) === i; }).length, nLet = Object.keys(recs).length; if (nDocs) { done.push(nDocs === 1 && nLet > 1 ? "All " + nLet + " letters are saved together as one document in Documents" : nDocs === 1 ? "The letter is saved in Documents" : nDocs + " letters are saved in Documents"); if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); }
         picked.forEach(function (u) {
           var when = u.fW.input.value; var src = u.x.srcs[0];
           p.appts.push({ aid: id(), title: s(u.fT.input.value.trim(), LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(when) ? when : "", who: s(u.fWho.input.value.trim(), LIM.short), where: s(u.fWh.input.value.trim(), LIM.short), notes: s(u.notes.value, LIM.str), cat: u.cat.value, docId: recs[src] || "" });
@@ -2737,7 +2758,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.38", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.39", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
