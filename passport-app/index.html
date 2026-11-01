@@ -387,12 +387,6 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   .tabmenu { min-width: 190px; }
 }
 @media (max-width: 360px) { .tab { font-size: 11px; } }
-.qlinks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.qlink { display: flex; align-items: center; gap: 12px; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; min-height: 64px; cursor: pointer; font: 600 15px Inter, sans-serif; color: var(--plum); box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
-.qlink small { display: block; font: 400 12.5px Inter, sans-serif; color: var(--muted); margin-top: 2px; }
-.qlink .ico { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--plum-soft); color: var(--plum); display: inline-flex; align-items: center; justify-content: center; }
-.qlink.red .ico { background: var(--red-soft); color: var(--red); }
-@media (max-width: 380px) { .qlinks { grid-template-columns: 1fr; } }
 
 .hero .hhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; position: relative; }
 .hero .hhead h2 { margin: 0; }
@@ -1703,9 +1697,6 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       el("div", { class: "hscan" }, [go2]), body]);
     tog.addEventListener("click", function () { var now = body.hidden; body.hidden = !now; tog.setAttribute("aria-expanded", now ? "true" : "false"); hero.classList.toggle("compact", !now); try { localStorage.setItem("includeme.passport.hero.v1", now ? "open" : "closed"); } catch (e) { /* storage blocked */ } });
     box.appendChild(hero);
-    var q1 = el("button", { type: "button", class: "qlink" }, [ico("file", 22), el("span", {}, ["The passport", el("small", { text: "One page to share" })])]); q1.addEventListener("click", function () { setMode("view"); });
-    var q2 = el("button", { type: "button", class: "qlink red" }, [ico("alert", 22), el("span", {}, ["Emergency card", el("small", { text: "Key facts at a glance" })])]); q2.addEventListener("click", function () { setMode("card"); });
-    box.appendChild(el("div", { class: "qlinks" }, [q1, q2]));
     if (upcoming.length) {
       box.appendChild(el("h2", { class: "sec-h", text: "Coming up" }));
       var upc = el("div", { class: "upc" });
