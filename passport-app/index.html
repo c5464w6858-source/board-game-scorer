@@ -299,9 +299,14 @@ dialog { border: 0; border-radius: 14px; padding: 0; margin: auto; width: min(92
 dialog::backdrop { background: rgba(27,21,48,.55); }
 .dlg { padding: 18px; display: grid; gap: 10px; }
 .dlg .two { grid-template-columns: 1fr 1fr !important; gap: 8px; }
-.upsell { border: 1px solid var(--plum-soft); border-left: 4px solid var(--accent); border-radius: 12px; background: var(--plum-soft); padding: 16px; margin-top: 14px; }
-.upsell h3 { font: 700 1.1rem Fraunces, Georgia, serif; color: var(--plum); }
-.upsell p { font-size: 14px; color: var(--ink); margin: 4px 0 10px; }
+.upsell { border-radius: 14px; background: #243480; color: #fff; padding: 16px; margin-top: 14px; box-shadow: 0 14px 28px -20px rgba(36,52,128,.9); }
+.upsell .uhead { display: flex; gap: 12px; align-items: center; }
+.upsell .uhead img { width: 44px; height: 44px; border-radius: 10px; flex: none; background: #fff; }
+.upsell h3 { font: 700 1.1rem Fraunces, Georgia, serif; color: #fff; margin: 0; }
+.upsell small { display: block; font-size: 12.5px; color: rgba(255,255,255,.8); }
+.upsell p { font-size: 14px; color: rgba(255,255,255,.92); margin: 10px 0 12px; }
+.upsell .ubtn { background: #fff; color: #243480; border: 0; font-weight: 700; }
+.upsell .ubtn:hover, .upsell .ubtn:focus-visible { background: #E8ECFB; }
 .dlg h2 { font-size: 1.3rem; }
 .dlg .chk { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; font-size: 15px; margin: 0; }
 
@@ -2267,8 +2272,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var qb = function (t, m) { var b = el("button", { type: "button", class: "btn btn-ghost btn-small", text: t }); b.addEventListener("click", function () { setMode(m); }); return b; };
     var q = el("div", { class: "actions", style: "margin:14px 0" }, [qb("See the passport", "view"), qb("Emergency card", "card"), qb("Documents", "docs")]);
     box.appendChild(q);
-    box.appendChild(el("div", { class: "upsell" }, [el("h3", { text: "Managing an EHCP?" }), el("p", { text: "EHCP Tracker keeps the whole case in one place: deadlines, reports, phone calls, letters and a printable case pack. £3.99 a month. Case details stay on your phone." }),
-      el("a", { class: "btn btn-main btn-small", href: "https://info.includeme.uk/advocate/?utm_campaign=passport_overview", rel: "noopener", text: "See how EHCP Tracker works" })]));
+    box.appendChild(el("div", { class: "upsell" }, [el("div", { class: "uhead" }, [el("img", { src: "app-ehcp.png", alt: "", width: "44", height: "44" }), el("div", {}, [el("h3", { text: "Managing an EHCP?" }), el("small", { text: "EHCP Tracker" })])]), el("p", { text: "EHCP Tracker keeps the whole case in one place: deadlines, reports, phone calls, letters and a printable case pack. £3.99 a month. Case details stay on your phone." }),
+      el("a", { class: "btn btn-small ubtn", href: "https://info.includeme.uk/advocate/?utm_campaign=passport_overview", rel: "noopener", text: "See how EHCP Tracker works" })]));
   }
 
 
@@ -2732,7 +2737,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.37", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.38", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
