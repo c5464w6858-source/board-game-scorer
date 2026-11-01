@@ -117,6 +117,22 @@ h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-heigh
 .cdet > summary .cpct { margin-left: auto; font: 700 1.1rem Fraunces, Georgia, serif; color: var(--plum); }
 .cdet > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 6px; transition: transform .15s; }
 .cdet[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+.seg { display: flex; width: fit-content; max-width: 100%; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; margin: 6px 0 8px; }
+.seg button { border: 0; background: #fff; padding: 9px 16px; min-height: 40px; font: 600 14px Inter, sans-serif; color: var(--plum); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--plum); color: #fff; }
+.csec > summary .sumsub { display: block; font: 400 12.5px Inter, sans-serif; color: var(--muted); margin-top: 2px; }
+.pgroup { display: grid; gap: 6px; margin-top: 4px; }
+.pkh { font: 700 12px Inter, sans-serif; text-transform: uppercase; letter-spacing: .05em; margin: 8px 0 0; padding: 0; border: 0; background: none; }
+.pkh.pk-can { color: #14532d; } .pkh.pk-working-on { color: #1e3a8a; } .pkh.pk-next-step { color: #0f5560; } .pkh.pk-cannot-yet { color: #7a3e00; } .pkh.pk-difficulty { color: #8a1c1c; } .pkh.pk-enjoys { color: #4a1d96; }
+.pit { display: grid; gap: 2px; text-align: left; width: 100%; border: 1px solid var(--line); border-left: 5px solid var(--line-2); border-radius: 8px; background: #fff; padding: 9px 12px; cursor: pointer; font: inherit; color: inherit; min-height: 44px; }
+.pit .pt { font-size: 15px; color: var(--ink); }
+.pit .pm { font-size: 12.5px; color: var(--muted); }
+.pit-can { border-left-color: #2E8B57; } .pit-working-on { border-left-color: #3B63D6; } .pit-next-step { border-left-color: #1E8794; } .pit-cannot-yet { border-left-color: #D98A1E; } .pit-difficulty { border-left-color: #C23B30; } .pit-enjoys { border-left-color: #7B4CCB; }
+.pit.old { opacity: .72; background: #FAF9FC; }
+.pearlier { margin-top: 10px; border-top: 1px dashed var(--line-2); padding-top: 6px; }
+.pearlier > summary { cursor: pointer; font: 600 14px Inter, sans-serif; color: var(--muted); min-height: 40px; display: flex; align-items: center; }
+.pearlier[open] > summary { margin-bottom: 6px; }
+.pearlier .pit { margin-bottom: 6px; }
 .plist { display: grid; gap: 8px; margin-top: 4px; }
 .prow { border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 10px 12px; display: grid; gap: 6px; }
 .prow .ptop { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -690,9 +706,10 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     b.hide = Array.isArray(o.hide) ? o.hide.filter(function (k) { return HIDE.some(function (h) { return h[0] === k; }); }).slice(0, 12) : [];
     b.portfolio = (Array.isArray(o.portfolio) ? o.portfolio : []).slice(0, 400).map(function (x) {
       x = x && typeof x === "object" ? x : {};
-      return { id: /^[A-Za-z0-9]{3,40}$/.test(x.id || "") ? x.id : id(), area: AREAS.indexOf(x.area) >= 0 ? x.area : "Other", kind: KINDS.indexOf(x.kind) >= 0 ? x.kind : "can", text: s(x.text, 240), date: /^\d{4}-\d{2}-\d{2}$/.test(x.date || "") ? x.date : "", source: s(x.source, 120), docId: /^[A-Za-z0-9]{3,40}$/.test(x.docId || "") ? x.docId : "" };
+      return { status: x.status === "earlier" ? "earlier" : "current", replacedBy: /^[A-Za-z0-9]{3,40}$/.test(x.replacedBy || "") ? x.replacedBy : "", id: /^[A-Za-z0-9]{3,40}$/.test(x.id || "") ? x.id : id(), area: AREAS.indexOf(x.area) >= 0 ? x.area : "Other", kind: KINDS.indexOf(x.kind) >= 0 ? x.kind : "can", text: s(x.text, 240), date: /^\d{4}-\d{2}-\d{2}$/.test(x.date || "") ? x.date : "", source: s(x.source, 120), docId: /^[A-Za-z0-9]{3,40}$/.test(x.docId || "") ? x.docId : "" };
     }).filter(function (x) { return x.text; });
     if (!("portfolio" in o) && b.hide.indexOf("portfolio") < 0) b.hide.push("portfolio");   // older passports: kept out of shared and printed copies unless chosen
+    b.autoAbout = o.autoAbout === true;
     b.large = o.large === true; b.noAllergies = o.noAllergies === true; b.noMeds = o.noMeds === true;
     b.appts = list(o.appts, ["title", "when", "who", "where", "notes", "cat", "aid", "docId"]).map(function (a) { if (!/^[A-Za-z0-9]{3,40}$/.test(a.docId)) a.docId = ""; a.when = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(a.when) ? a.when : ""; if (APPT_CATS.indexOf(a.cat) < 0) a.cat = "Other"; if (!/^[A-Za-z0-9]{3,40}$/.test(a.aid)) a.aid = id(); return a; });
     b.photo = typeof o.photo === "string" && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(o.photo) && o.photo.length < 120000 ? o.photo : "";
@@ -1001,7 +1018,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 
     if (p.portfolio && p.portfolio.length) {
       [["What I can do", ["can"]], ["What I am working on", ["working on", "next step"]], ["What I find hard", ["cannot yet", "difficulty"]]].forEach(function (g) {
-        var its = p.portfolio.filter(function (x) { return g[1].indexOf(x.kind) >= 0; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).slice(0, 12);
+        var its = curItems(p).filter(function (x) { return g[1].indexOf(x.kind) >= 0; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).slice(0, 12);
         if (its.length) body.appendChild(blk(g[0], para(its.map(function (x) { return "\u2022 " + x.text; }).join("\n"))));
       });
     }
@@ -1088,7 +1105,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     if (p.dob) add("Born", longDate(p.dob)); add("Pronouns", p.pronouns); add("Languages", p.languages); add("Needs", p.diagnoses);
     p.allergies.forEach(function (a) { if (a.what) L.push("ALLERGY: " + [a.what, a.reaction, a.action].filter(Boolean).join(" | ")); });
     add("What people like about me", p.strengths); add("What matters to me", p.goals); add("How I communicate", p.communication); add("What helps", p.helps); add("What upsets me", p.upsets); add("What calms me", p.calming); add("Sensory", p.sensory);
-    [["CAN DO", ["can"]], ["WORKING ON", ["working on", "next step"]], ["FINDS HARD", ["cannot yet", "difficulty"]]].forEach(function (g) { (p.portfolio || []).filter(function (x) { return g[1].indexOf(x.kind) >= 0; }).slice(0, 12).forEach(function (x) { L.push(g[0] + ": " + x.text); }); });
+    [["CAN DO", ["can"]], ["WORKING ON", ["working on", "next step"]], ["FINDS HARD", ["cannot yet", "difficulty"]]].forEach(function (g) { curItems(p).filter(function (x) { return g[1].indexOf(x.kind) >= 0; }).slice(0, 12).forEach(function (x) { L.push(g[0] + ": " + x.text); }); });
     add("Movement", p.movement); add("Learning and play", p.learning); add("Likes", p.likes); add("Dislikes", p.dislikes); add("Food", p.food); add("Personal care", p.personalCare); add("Sleep", p.sleep); add("Safety", p.safety);
     if (p.meds.length && p.medsChecked) add("Medicines last checked", longDate(p.medsChecked));
     p.meds.forEach(function (m) { if (m.name) L.push("MEDICINE: " + [m.name, m.dose, m.when, m.forWhat && "for " + m.forWhat, m.prescriber && "by " + m.prescriber, m.notes].filter(Boolean).join(" | ")); });
@@ -1587,7 +1604,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   function readOne(img, prog, label) {
     var all = [img].concat(trayExtra[img] || []);
-    if (all.length === 1) return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true } : { images: [img], consent: true } });
+    if (all.length === 1) return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true, known: knownList() } : { images: [img], consent: true, known: knownList() } });
     var batches = [], cur2 = [], size = 0;
     all.forEach(function (u) { if (cur2.length && (size + u.length > 3200000 || cur2.length >= 8)) { batches.push(cur2); cur2 = []; size = 0; } cur2.push(u); size += u.length; });
     if (cur2.length) batches.push(cur2);
@@ -1595,7 +1612,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     function worker() {
       if (failed || next >= batches.length) return Promise.resolve();
       var i = next++, bt = batches[i];
-      return api("/api/diary/scan", { method: "POST", body: { images: bt, pages: bt.length > 1, consent: true } }).then(function (r) { rs[i] = r; done += bt.length; if (prog) prog.textContent = (label ? label + ": " : "") + "Read " + done + " of " + all.length + " pages..."; return worker(); }, function (e) { failed = e; throw e; });
+      return api("/api/diary/scan", { method: "POST", body: { images: bt, pages: bt.length > 1, consent: true, known: knownList() } }).then(function (r) { rs[i] = r; done += bt.length; if (prog) prog.textContent = (label ? label + ": " : "") + "Read " + done + " of " + all.length + " pages..."; return worker(); }, function (e) { failed = e; throw e; });
     }
     if (prog) prog.textContent = (label ? label + ": " : "") + "Reading " + all.length + " pages...";
     return Promise.all([worker(), worker(), worker()]).then(function () { return mergeReads(rs.filter(Boolean)); });
@@ -1605,7 +1622,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     scanDlg([el("h2", { text: imgs.length > 1 ? "Reading your letters" : "Reading your letter" }), prog]);
     var items = [], failed = 0, lastErr = null;
     if (mode2 === "pages") {
-      api("/api/diary/scan", { method: "POST", body: { images: imgs, pages: true, consent: true } }).then(function (r) { tray = []; scanReview([{ imgs: imgs, r: r }], 0); }, readFail);
+      api("/api/diary/scan", { method: "POST", body: { images: imgs, pages: true, consent: true, known: knownList() } }).then(function (r) { tray = []; scanReview([{ imgs: imgs, r: r }], 0); }, readFail);
       return;
     }
     var chain = imgs.reduce(function (pr, img, i) {
@@ -1686,7 +1703,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       else out.appts.push({ a: JSON.parse(JSON.stringify(ap)), srcs: [i] });
     });
     var seenAb = {}; (cur().portfolio || []).forEach(function (x) { seenAb[x.kind + "|" + norm(x.text)] = 1; });
-    items.forEach(function (it, i) { (it.r.abilities || []).forEach(function (a) { var k = a.kind + "|" + norm(a.text); if (seenAb[k]) return; seenAb[k] = 1; out.abilities.push({ area: a.area, kind: a.kind, text: a.text, date: it.r.docDate || today(), src: i }); }); });
+    items.forEach(function (it, i) { (it.r.abilities || []).forEach(function (a) { var k = a.kind + "|" + norm(a.text); if (seenAb[k]) return; seenAb[k] = 1; out.abilities.push({ area: a.area, kind: a.kind, text: a.text, updates: a.updates || "", date: it.r.docDate || today(), src: i }); }); });
     order.forEach(function (i) {
       var r = items[i].r;
       (r.contacts || []).forEach(function (c) {
@@ -1746,9 +1763,17 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var props = proposals(p, K).map(function (x, i) { x.row = pickRow(sid + "p" + i, x.on, x.was ? "Change " + x.label + " from " + x.was + " to " + x.detail : x.label + ": " + x.detail, x.was ? "This would replace what you have now, so it is not ticked. Tick it only if the letter is right." : ""); return x; });
     if (props.length) N.push(el("div", { class: "scan-sec" }, [el("h3", { text: "Fill in the passport" }), el("p", { class: "note", text: "Only gaps are ticked for you. Check medicines, doses and allergies against the label or letter before you save." })].concat(props.map(function (x) { return x.row.node; }))));
     // 5. what the report says about the child: kept as a portfolio
-    var abUI = (K.abilities || []).map(function (a, i) { var o = { a: a }; o.row = pickRow(sid + "b" + i, true, a.text, KLABEL[a.kind] + (a.kind === "enjoys" ? "" : " \u00b7 " + a.area)); return o; });
+    var abUI = (K.abilities || []).map(function (a, i) {
+      var old = findOlder(a, p), older = !!(old && (a.date || "") < (old.date || "")), small = KLABEL[a.kind] + (a.kind === "enjoys" ? "" : " \u00b7 " + a.area);
+      if (old && older) small += ". Older than what you already have, so it is filed under Earlier.";
+      else if (old) small += ". Newer than \u201c" + old.text + "\u201d (" + (old.date ? longDate(old.date) : "earlier") + "), which moves to Earlier.";
+      var o = { a: a, old: old, older: older }; o.row = pickRow(sid + "b" + i, true, a.text, small); return o;
+    });
     if (abUI.length) {
-      var abBox = el("div", { class: "scan-sec" }, [el("h3", { text: "What this tells us about " + (p.name || "your child") + " (" + abUI.length + ")" }), el("p", { class: "note", text: "Added to their portfolio under Details, sorted by area, so you can see progress over time. Untick anything that is not right." })]);
+      var abBox = el("div", { class: "scan-sec" }, [el("h3", { text: "What this tells us about " + (p.name || "your child") + " (" + abUI.length + ")" }), el("p", { class: "note", text: "Added to their portfolio under Details, sorted by area. A newer report moves the old line to Earlier, and nothing is deleted. Untick anything that is not right." })]);
+      if (knownList().length) abBox.appendChild(el("p", { class: "note", style: "font-size:12.5px", text: "To spot what has changed, the short lines already in the portfolio were sent with this report to be read. They are not stored." }));
+      var canAbout = abUI.some(function (o) { return !o.older; }) && !p.autoAbout, aboutRow = canAbout ? pickRow(sid + "about", true, "Keep About my child updated with a short summary", "Writes a \u201cFrom reports\u201d summary at the end of the matching boxes, such as How I communicate, and refreshes it whenever a newer report changes things. What you wrote yourself is never changed.") : null;
+      if (aboutRow) abBox.appendChild(aboutRow.node); else if (p.autoAbout) abBox.appendChild(el("p", { class: "note", style: "font-size:12.5px", text: "The From reports summary in About my child will be refreshed when you save." }));
       AREAS.forEach(function (ar) {
         var rows = abUI.filter(function (o) { return o.a.area === ar; }); if (!rows.length) return;
         abBox.appendChild(el("p", { class: "subh", style: "margin:10px 0 2px", text: ar })); rows.forEach(function (o) { abBox.appendChild(o.row.node); });
@@ -1785,12 +1810,20 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
           p.team.push({ role: s(x.c.role || (picked[0] ? picked[0].cat.value : ""), LIM.short), name: s(nm, LIM.short), org: s(x.c.name ? x.c.org : "", LIM.short), phone: s(x.c.phone, LIM.short), email: s(x.c.email, LIM.short), notes: "" }); added++;
         });
         if (added) done.push(added + (added === 1 ? " contact" : " contacts") + " added to Contacts");
-        var abAdded = 0; abUI.forEach(function (o) {
-          if (!o.row.cb.checked || (p.portfolio || []).length >= 400) return;
-          var du = docUI[o.a.src]; p.portfolio = p.portfolio || [];
-          p.portfolio.push({ id: id(), area: o.a.area, kind: o.a.kind, text: s(o.a.text, 240), date: /^\d{4}-\d{2}-\d{2}$/.test(o.a.date || "") ? o.a.date : today(), source: du ? s(du.title.value.trim(), 120) : "", docId: recs[o.a.src] || "" }); abAdded++;
+        var abAdded = 0, addedNew = []; p.portfolio = p.portfolio || [];
+        abUI.forEach(function (o) {
+          if (!o.row.cb.checked || p.portfolio.length >= 400) return;
+          var du = docUI[o.a.src], nid = id();
+          var item = { id: nid, area: o.a.area, kind: o.a.kind, text: s(o.a.text, 240), date: /^\d{4}-\d{2}-\d{2}$/.test(o.a.date || "") ? o.a.date : today(), source: du ? s(du.title.value.trim(), 120) : "", docId: recs[o.a.src] || "", status: "current", replacedBy: "" };
+          if (o.old && o.older) { item.status = "earlier"; item.replacedBy = o.old.id; } else if (o.old) { o.old.status = "earlier"; o.old.replacedBy = nid; }
+          p.portfolio.push(item); abAdded++; if (item.status === "current") addedNew.push(item);
         });
         if (abAdded) done.push(abAdded + (abAdded === 1 ? " thing" : " things") + " added to the portfolio under Details");
+        var superseded = abUI.filter(function (o) { return o.row.cb.checked && o.old && !o.older; }).length; if (superseded) done.push(superseded + (superseded === 1 ? " older line moved" : " older lines moved") + " to Earlier in the portfolio");
+        if (abAdded && (p.autoAbout || (typeof aboutRow !== "undefined" && aboutRow && aboutRow.cb.checked))) {
+          p.autoAbout = true; var did = refreshAbout(p);
+          if (did.length) done.push("About my child updated with a short From reports summary: " + did.join(", "));
+        }
         var filled = 0; props.forEach(function (x) { if (x.row.cb.checked) { x.apply(); filled++; } });
         if (filled) done.push(filled + (filled === 1 ? " detail" : " details") + " filled in on the passport");
         if (!done.length) { scanClose(); return; }
@@ -1979,23 +2012,18 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       el("div", { class: "who2" }, [el("span", { class: "cav", "aria-hidden": "true", text: initials2(c.name || c.org) }), el("span", { class: "nm" }, [el("b", { text: c.name || c.org || "Unnamed" }), el("span", { text: line || (kind === "emergency" ? "Emergency contact" : "") })])]),
       c.phone ? el("div", { style: "font-weight:600", text: c.phone }) : null, c.notes ? el("div", { class: "note", text: c.notes }) : null, acts]);
   }
-  /* ---------- portfolio: what the reports say the child can do, is working on and finds hard ---------- */
-  var PF = { kind: "All" };
-  function portDlg(it) {
-    var isNew = !it; it = it || { id: id(), area: "Other", kind: "can", text: "", date: today(), source: "Added by hand", docId: "" };
-    var kind = el("select", { id: "pfk" }), area = el("select", { id: "pfa" }), text = el("textarea", { id: "pft", rows: 3, maxlength: "240" });
-    KINDS.forEach(function (k) { kind.appendChild(el("option", { value: k, text: KLABEL[k] })); }); AREAS.forEach(function (a) { area.appendChild(el("option", { value: a, text: a })); });
-    kind.value = it.kind; area.value = it.area; text.value = it.text;
-    var err = el("p", { class: "msg", role: "alert" }), save2 = el("button", { type: "button", class: "btn btn-main", text: "Save" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
-    cancel.addEventListener("click", scanClose);
-    save2.addEventListener("click", function () {
-      if (!text.value.trim()) { err.textContent = "Write a short sentence first."; return; }
-      it.kind = kind.value; it.area = area.value; it.text = text.value.trim().slice(0, 240);
-      var p = cur(); p.portfolio = p.portfolio || []; if (isNew) p.portfolio.push(it);
-      save(); scanClose(); renderPortfolio();
-    });
-    scanDlg([el("h2", { text: isNew ? "Add to the portfolio" : "Edit" }), el("div", { class: "g2" }, [el("div", {}, [el("label", { for: "pfk", text: "What is it?" }), kind]), el("div", {}, [el("label", { for: "pfa", text: "Area" }), area]), el("div", { style: "grid-column:1/-1" }, [el("label", { for: "pft", text: "In a short sentence" }), text])]), err, el("div", { class: "actions", style: "justify-content:flex-end;margin-top:12px" }, [cancel, save2])]);
-    text.focus();
+  /* ---------- portfolio history: what is current, what is earlier, what a new report updates ---------- */
+  var STOPW = { the: 1, and: 1, with: 1, for: 1, his: 1, her: 1, their: 1, own: 1, can: 1, has: 1, have: 1, that: 1, this: 1, when: 1, from: 1, but: 1, are: 1, not: 1, will: 1, more: 1, some: 1, very: 1, often: 1, able: 1, they: 1, them: 1, also: 1 };
+  function stems(t) { var o = {}; String(t || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).forEach(function (w) { if (w.length > 2 && !STOPW[w]) o[w.slice(0, 4)] = 1; }); return Object.keys(o); }
+  function overlap(a, b) { var A = stems(a), B = stems(b); if (A.length < 2 || B.length < 2) return 0; var n = A.filter(function (w) { return B.indexOf(w) >= 0; }).length; return n / Math.min(A.length, B.length); }
+  function curItems(p) { return (p.portfolio || []).filter(function (x) { return x.status !== "earlier"; }); }
+  function knownList() { return curItems(cur()).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).slice(0, 80).map(function (x) { return { id: x.id, kind: x.kind, text: x.text }; }); }
+  /* the existing item a new one most likely updates: the reader's link first, else the closest wording in the same area */
+  function findOlder(a, p) {
+    var cs = curItems(p), hit = null;
+    if (a.updates) hit = cs.filter(function (x) { return x.id === a.updates; })[0] || null;
+    if (!hit) { var best = 0; cs.forEach(function (x) { if (x.area !== a.area || fk(x.text) === fk(a.text)) return; var o = overlap(x.text, a.text); if (o >= 0.6 && o > best) { best = o; hit = x; } }); }
+    return hit;
   }
   /* ---------- portfolio -> About my child: short summaries, added to the end, never replacing ---------- */
   var ABOUT = [
@@ -2010,70 +2038,132 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     { f: "likes", label: "What I like", test: function (x) { return x.kind === "enjoys"; } },
     { f: "goals", label: "What matters to me and what I am working on", test: function (x) { return x.kind === "working on" || x.kind === "next step"; } }
   ];
-  function aboutDlg() {
-    var p = cur(), items = (p.portfolio || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }), taken = {}, secs = [];
+  /* which About box each item belongs in (first match wins), newest first */
+  function aboutGroups(items) {
+    var taken = {}, secs = [], sorted = items.slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
     ABOUT.forEach(function (m) {
-      var rows = items.filter(function (x) { return !taken[x.id] && m.test(x); }).slice(0, 8); rows.forEach(function (x) { taken[x.id] = 1; });
+      var rows = sorted.filter(function (x) { return !taken[x.id] && m.test(x); }).slice(0, 8); rows.forEach(function (x) { taken[x.id] = 1; });
       if (rows.length) secs.push({ m: m, rows: rows });
     });
-    if (!secs.length) { scanDlg([el("h2", { text: "Add to About my child" }), el("p", { text: "There is nothing in the portfolio to summarise yet. Scan a report first." }), closeBtn()]); return; }
-    var nodes = [el("h2", { text: "Add to About my child" }), el("p", { class: "note", text: "A short summary is added to the end of each box below. Nothing that is already there is changed or removed. Untick any line you do not want." })];
-    var apply = [];
-    secs.forEach(function (sec, si) {
-      var have = (p[sec.m.f] || ""), box = el("div", { class: "scan-sec" }, [el("h3", { text: sec.m.label })]);
-      if (have.trim()) box.appendChild(el("p", { class: "note", style: "margin:0 0 6px", text: "Already there: " + (have.length > 140 ? have.slice(0, 140) + "..." : have) }));
-      var picks = sec.rows.map(function (x, i) { var dup = fk(have).indexOf(fk(x.text)) >= 0; var r = pickRow("ab" + si + "_" + i, !dup, x.text, dup ? "Already in there" : KLABEL[x.kind]); box.appendChild(r.node); return { r: r, x: x, dup: dup }; });
-      var prev = el("p", { class: "note", style: "margin:6px 0 0" });
-      function show() { var t = text(); prev.textContent = t ? "Will add: " + t : "Nothing ticked."; }
-      function text() { return picks.filter(function (k) { return k.r.cb.checked; }).map(function (k) { return k.x.text.replace(/[.\s]+$/, "") + "."; }).join(" "); }
-      picks.forEach(function (k) { k.r.cb.addEventListener("change", show); }); show(); box.appendChild(prev);
-      apply.push(function () { var t = text(); if (!t) return ""; p[sec.m.f] = s((have.trim() ? have.replace(/\s+$/, "") + "\n" : "") + t); return sec.m.label; });
-      nodes.push(box);
+    return secs;
+  }
+  function sentence(t) { return String(t || "").replace(/[.\s]+$/, "") + "."; }
+  /* The "From reports" part at the end of an About box is ours: it is rebuilt from the CURRENT portfolio each time, so a line that a newer report replaced drops out.
+     Everything above it is the parent's own writing and is never touched. */
+  var AHEAD = "From reports:";
+  function splitAbout(text) { var t = String(text || ""), i = t.search(/(^|\n\n)From reports:\n/); if (i < 0) return { mine: t.replace(/\s+$/, ""), auto: "" }; var m = t.slice(0, i).replace(/\s+$/, ""), rest = t.slice(i).replace(/^\n*From reports:\n/, ""); return { mine: m, auto: rest }; }
+  function refreshAbout(p) {
+    var groups = aboutGroups(curItems(p)), byField = {}, changed = [];
+    groups.forEach(function (g) { byField[g.m.f] = g; });
+    ABOUT.forEach(function (m) {
+      var sp = splitAbout(p[m.f]), g = byField[m.f], lines = g ? g.rows.map(function (x) { return x.text; }).filter(function (t) { return fk(sp.mine).indexOf(fk(t)) < 0; }) : [];
+      var auto = lines.map(sentence).join(" "), next = sp.mine + (auto ? (sp.mine ? "\n\n" : "") + AHEAD + "\n" + auto : "");
+      if (next !== (p[m.f] || "")) { p[m.f] = s(next); changed.push(m.label); }
     });
-    var go = el("button", { type: "button", class: "btn btn-main", text: "Add to About my child" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    return changed;
+  }
+  function aboutDlg() {
+    var p = cur(), changed = refreshAbout(p); p.autoAbout = true; save(); renderEditor(); renderPortfolio();
+    var open = el("button", { type: "button", class: "btn btn-main", text: "Open About my child" }); open.addEventListener("click", function () { scanClose(); setMode("edit"); });
+    var done = el("button", { type: "button", class: "btn btn-ghost", text: "Done" }); done.addEventListener("click", scanClose);
+    scanDlg([el("h2", { text: changed.length ? "About my child is up to date" : "Nothing to change" }), el("p", { text: changed.length ? "A short \u201cFrom reports\u201d summary was written at the end of: " + changed.join(", ") + "." : "There is nothing current in the portfolio to add, or it is already there." }), el("p", { class: "note", text: "It is kept up to date from now on: when a newer report replaces something, the old line drops out of the summary. What you wrote yourself in those boxes is never changed. Turn this off under Portfolio." }), el("div", { class: "actions", style: "justify-content:flex-end" }, [done, open])]);
+  }
+  /* ---------- portfolio: what the reports say the child can do, is working on and finds hard ---------- */
+  var PF = { kind: "All", view: "area", q: "" };
+  var KORDER = ["can", "working on", "next step", "cannot yet", "difficulty", "enjoys"];
+  function portDlg(it) {
+    var isNew = !it, p = cur(); it = it || { id: id(), area: "Other", kind: "can", text: "", date: today(), source: "Added by hand", docId: "", status: "current", replacedBy: "" };
+    var kind = el("select", { id: "pfk" }), area = el("select", { id: "pfa" }), stat = el("select", { id: "pfs" }), text = el("textarea", { id: "pft", rows: 3, maxlength: "240" });
+    KINDS.forEach(function (k) { kind.appendChild(el("option", { value: k, text: KLABEL[k] })); }); AREAS.forEach(function (a) { area.appendChild(el("option", { value: a, text: a })); });
+    stat.appendChild(el("option", { value: "current", text: "Current" })); stat.appendChild(el("option", { value: "earlier", text: "Earlier (no longer the latest)" }));
+    kind.value = it.kind; area.value = it.area; text.value = it.text; stat.value = it.status === "earlier" ? "earlier" : "current";
+    var err = el("p", { class: "msg", role: "alert" }), save2 = el("button", { type: "button", class: "btn btn-main", text: "Save" }), cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
     cancel.addEventListener("click", scanClose);
-    go.addEventListener("click", function () {
-      var did = apply.map(function (f) { return f(); }).filter(Boolean);
-      if (!did.length) { scanClose(); return; }
-      save(); renderEditor();
-      var open = el("button", { type: "button", class: "btn btn-main", text: "Open About my child" }); open.addEventListener("click", function () { scanClose(); setMode("edit"); });
-      var done = el("button", { type: "button", class: "btn btn-ghost", text: "Done" }); done.addEventListener("click", scanClose);
-      scanDlg([el("h2", { text: "Added" }), el("p", { text: "Added to the end of: " + did.join(", ") + "." }), el("div", { class: "actions", style: "justify-content:flex-end" }, [done, open])]);
+    save2.addEventListener("click", function () {
+      if (!text.value.trim()) { err.textContent = "Write a short sentence first."; return; }
+      it.kind = kind.value; it.area = area.value; it.text = text.value.trim().slice(0, 240); it.status = stat.value; if (it.status === "current") it.replacedBy = "";
+      p.portfolio = p.portfolio || []; if (isNew) p.portfolio.push(it);
+      if (p.autoAbout) { refreshAbout(p); renderEditor(); }
+      save(); scanClose(); renderPortfolio();
     });
-    nodes.push(el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [cancel, go]));
-    scanDlg(nodes);
+    var row = [cancel, save2];
+    if (!isNew) {
+      var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
+      rm.addEventListener("click", function () { if (!window.confirm("Remove this from the portfolio?")) return; p.portfolio = p.portfolio.filter(function (y) { return y.id !== it.id; }); if (p.autoAbout) { refreshAbout(p); renderEditor(); } save(); scanClose(); renderPortfolio(); });
+      row.unshift(rm);
+    }
+    var by = it.replacedBy ? (p.portfolio || []).filter(function (y) { return y.id === it.replacedBy; })[0] : null;
+    scanDlg([el("h2", { text: isNew ? "Add to the portfolio" : "Edit" }), by ? el("p", { class: "note", text: "Replaced by: " + by.text }) : null,
+      el("div", { class: "g2" }, [el("div", {}, [el("label", { for: "pfk", text: "What is it?" }), kind]), el("div", {}, [el("label", { for: "pfa", text: "Area" }), area]),
+        el("div", { style: "grid-column:1/-1" }, [el("label", { for: "pft", text: "In a short sentence" }), text]), el("div", { style: "grid-column:1/-1" }, [el("label", { for: "pfs", text: "Is it still the latest?" }), stat])]),
+      err, el("div", { class: "actions", style: "justify-content:space-between;margin-top:12px" }, row)]);
+    text.focus();
+  }
+  function pit(x, showKind, note) {
+    var b = el("button", { type: "button", class: "pit pit-" + x.kind.replace(/\s+/g, "-") + (x.status === "earlier" ? " old" : "") }, [
+      el("span", { class: "pt", text: x.text }),
+      el("span", { class: "pm", text: [showKind ? KLABEL[x.kind] : "", x.source, x.date ? longDate(x.date) : ""].filter(Boolean).join(" · ") }),
+      note ? el("span", { class: "pm", text: note }) : null]);
+    b.addEventListener("click", function () { portDlg(x); }); return b;
   }
   function renderPortfolio() {
     var box = $("portfolio"), p = cur(); box.textContent = ""; var all = (p.portfolio || []).slice();
     var head = el("div", { class: "actions", style: "margin:0 0 4px" });
     var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan or upload a report"]); scan.addEventListener("click", pickLetter);
     var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add by hand" }); add.addEventListener("click", function () { portDlg(null); });
-    var toAbout = el("button", { type: "button", class: "btn btn-ghost", text: "Add a summary to About my child" }); toAbout.addEventListener("click", aboutDlg);
+    var toAbout = el("button", { type: "button", class: "btn btn-ghost", text: p.autoAbout ? "Update About my child now" : "Add a summary to About my child" }); toAbout.addEventListener("click", aboutDlg);
     head.appendChild(scan); head.appendChild(add); if (all.length) head.appendChild(toAbout); box.appendChild(head);
-    box.appendChild(el("p", { class: "note", text: "What reports, assessments and letters say " + (p.preferred || p.name || "your child") + " can do, is working on and finds hard. It builds up each time you scan one. It stays on this phone unless you keep a private copy, and it is left out of printed and shared passports unless you choose it under What to include." }));
+    var nowN = all.filter(function (x) { return x.status !== "earlier"; }).length, srcN = {}; all.forEach(function (x) { srcN[(x.source || "") + "|" + (x.date || "")] = 1; });
+    box.appendChild(el("p", { class: "note", text: all.length ? nowN + " current, " + (all.length - nowN) + " earlier, from " + Object.keys(srcN).length + (Object.keys(srcN).length === 1 ? " report" : " reports") + ". A newer report replaces an older line, which moves to Earlier and is never deleted. Printed and shared passports leave this out unless you choose it." : "What reports, assessments and letters say " + (p.preferred || p.name || "your child") + " can do, is working on and finds hard. It stays on this phone unless you keep a private copy." }));
     if (!all.length) { box.appendChild(el("p", { class: "empty", text: "Nothing yet. Scan a progress report, assessment or school letter and the abilities, difficulties and next steps in it are collected here." })); return; }
-    var by = {}; KINDS.forEach(function (k) { by[k] = 0; }); all.forEach(function (x) { by[x.kind] = (by[x.kind] || 0) + 1; });
-    var chips = el("div", { class: "chips", role: "group", "aria-label": "Filter the portfolio", style: "margin:8px 0" });
-    ["All"].concat(KINDS).forEach(function (k) {
+    // view, search and filter
+    var ac = el("input", { type: "checkbox", id: "pfauto" }); ac.checked = !!p.autoAbout;
+    ac.addEventListener("change", function () { p.autoAbout = ac.checked; if (ac.checked) { var ch = refreshAbout(p); renderEditor(); toolMsg(ch.length ? "About my child updated: " + ch.join(", ") : "About my child is already up to date."); } else { toolMsg("About my child will no longer be updated. The From reports summary already there stays until you remove it."); } save(); });
+    box.appendChild(el("label", { class: "chk2", for: "pfauto", style: "margin:6px 0" }, [ac, document.createTextNode("Keep About my child updated from the current portfolio")]));
+    var seg = el("div", { class: "seg", role: "group", "aria-label": "How to arrange the portfolio" });
+    [["area", "By area"], ["report", "By report"]].forEach(function (v) { var b = el("button", { type: "button", "aria-pressed": PF.view === v[0] ? "true" : "false", text: v[1] }); b.addEventListener("click", function () { PF.view = v[0]; renderPortfolio(); }); seg.appendChild(b); });
+    box.appendChild(seg);
+    var q = el("input", { type: "search", id: "pfq", class: "csearch", placeholder: "Search the portfolio", "aria-label": "Search the portfolio", autocomplete: "off" }); q.value = PF.q; box.appendChild(q);
+    var by = {}; all.forEach(function (x) { if (x.status !== "earlier") by[x.kind] = (by[x.kind] || 0) + 1; });
+    var chips = el("div", { class: "chips", role: "group", "aria-label": "Filter by kind", style: "margin:8px 0" });
+    ["All"].concat(KORDER).forEach(function (k) {
       if (k !== "All" && !by[k]) return;
-      var b = el("button", { type: "button", class: "chip", "aria-pressed": PF.kind === k ? "true" : "false", text: (k === "All" ? "All" : KLABEL[k]) + " (" + (k === "All" ? all.length : by[k]) + ")" });
+      var b = el("button", { type: "button", class: "chip", "aria-pressed": PF.kind === k ? "true" : "false", text: (k === "All" ? "All" : KLABEL[k]) + " (" + (k === "All" ? nowN : by[k]) + ")" });
       b.addEventListener("click", function () { PF.kind = k; renderPortfolio(); }); chips.appendChild(b);
     });
     box.appendChild(chips);
-    var shown = all.filter(function (x) { return PF.kind === "All" || x.kind === PF.kind; });
-    AREAS.forEach(function (ar) {
-      var rows = shown.filter(function (x) { return x.area === ar; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
-      if (!rows.length) return;
-      var det = el("details", { class: "csec" }, [el("summary", { text: ar + " (" + rows.length + ")" }), el("div", { class: "plist" }, rows.map(function (x) {
-        var chip = el("span", { class: "pk pk-" + x.kind.replace(/\s+/g, "-"), text: KLABEL[x.kind] });
-        var ed = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Edit" }); ed.setAttribute("aria-label", "Edit: " + x.text); ed.addEventListener("click", function () { portDlg(x); });
-        var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove: " + x.text);
-        rm.addEventListener("click", function () { if (!window.confirm("Remove this from the portfolio?")) return; p.portfolio = p.portfolio.filter(function (y) { return y.id !== x.id; }); save(); renderPortfolio(); });
-        return el("div", { class: "prow" }, [el("div", { class: "ptop" }, [chip, el("span", { class: "psrc", text: [x.source, x.date ? longDate(x.date) : ""].filter(Boolean).join(" \u00b7 ") })]), el("p", { class: "ptext", text: x.text }), el("div", { class: "actions", style: "margin:0;justify-content:flex-end" }, [ed, rm])]);
-      }))]);
-      if (PF.kind !== "All" || shown.length <= 14) det.setAttribute("open", "");
-      box.appendChild(det);
-    });
+    var out = el("div", {}); box.appendChild(out);
+    function match(x) { return (PF.kind === "All" || x.kind === PF.kind) && (!PF.q || norm(x.text + " " + x.source + " " + x.area).indexOf(norm(PF.q)) >= 0); }
+    function draw() {
+      out.textContent = ""; var filtering = PF.kind !== "All" || !!PF.q, shown = 0;
+      var newest = function (a, b) { return (b.date || "").localeCompare(a.date || ""); };
+      if (PF.view === "area") {
+        var areas = AREAS.filter(function (ar) { return all.some(function (x) { return x.area === ar && match(x); }); });
+        areas.forEach(function (ar) {
+          var now = all.filter(function (x) { return x.area === ar && x.status !== "earlier" && match(x); }).sort(newest), old = all.filter(function (x) { return x.area === ar && x.status === "earlier" && match(x); }).sort(newest);
+          var counts = KORDER.map(function (k) { var n = now.filter(function (x) { return x.kind === k; }).length; return n ? n + " " + KLABEL[k].toLowerCase() : ""; }).filter(Boolean).join(" · ");
+          var body = el("div", { class: "pgroup" });
+          KORDER.forEach(function (k) { var rs = now.filter(function (x) { return x.kind === k; }); if (!rs.length) return; body.appendChild(el("p", { class: "pkh pk-" + k.replace(/\s+/g, "-"), text: KLABEL[k] })); rs.forEach(function (x) { body.appendChild(pit(x, false)); }); });
+          if (old.length) {
+            var od = el("details", { class: "pearlier" }, [el("summary", { text: "Earlier (" + old.length + ")" })]);
+            old.forEach(function (x) { var nb = x.replacedBy ? all.filter(function (y) { return y.id === x.replacedBy; })[0] : null; od.appendChild(pit(x, true, nb ? "Now: " + nb.text : "")); });
+            body.appendChild(od);
+          }
+          var det = el("details", { class: "csec" }, [el("summary", {}, [el("span", { text: ar + " (" + (now.length + old.length) + ")" }), counts ? el("small", { class: "sumsub", text: counts }) : null]), body]);
+          if (filtering || areas.length === 1) det.setAttribute("open", ""); out.appendChild(det); shown++;
+        });
+      } else {
+        var groups = {}; all.filter(match).forEach(function (x) { var k = (x.date || "") + "|" + (x.source || "Added by hand"); (groups[k] = groups[k] || []).push(x); });
+        Object.keys(groups).sort().reverse().forEach(function (k, i) {
+          var rs = groups[k], parts = k.split("|"), body = el("div", { class: "pgroup" });
+          rs.sort(function (a, b) { return KORDER.indexOf(a.kind) - KORDER.indexOf(b.kind); }).forEach(function (x) { body.appendChild(pit(x, true, x.status === "earlier" ? "Earlier" : "")); });
+          var det = el("details", { class: "csec" }, [el("summary", {}, [el("span", { text: parts[1] + (parts[0] ? " · " + longDate(parts[0]) : "") + " (" + rs.length + ")" })]), body]);
+          if (filtering || i === 0) det.setAttribute("open", ""); out.appendChild(det); shown++;
+        });
+      }
+      if (!shown) out.appendChild(el("p", { class: "empty", text: "Nothing matches that." }));
+    }
+    q.addEventListener("input", function () { PF.q = q.value; draw(); }); draw();
   }
   function renderContacts() {
     var box = $("contacts"), p = cur(); box.textContent = "";
@@ -2140,7 +2230,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     }
     var grid = el("div", { class: "grid-cards" });
     if (!next) grid.appendChild(tile("Next appointment", next ? (next.title || "Appointment") : "None booked", next ? whenText(next.when) + (next.where ? " · " + next.where : "") : "Add the next one so it is not forgotten.", "", [lb(next ? "See all appointments" : "Add an appointment", function () { setMode("appts"); })]));
-    var pn = (p.portfolio || []).length; grid.appendChild(tile("Portfolio", pn + (pn === 1 ? " thing recorded" : " things recorded"), pn ? "What " + (p.preferred || p.name || "your child") + " can do, is working on and finds hard, from their reports." : "Scan a report or assessment and what it says about their abilities is collected here.", "", [lb("Open portfolio", function () { setMode("portfolio"); })]));
+    var pn = curItems(p).length; grid.appendChild(tile("Portfolio", pn + (pn === 1 ? " thing recorded" : " things recorded"), pn ? "What " + (p.preferred || p.name || "your child") + " can do, is working on and finds hard, from their reports." : "Scan a report or assessment and what it says about their abilities is collected here.", "", [lb("Open portfolio", function () { setMode("portfolio"); })]));
     var gdocs = tile("Documents", "…", "", "", [lb("Open documents", function () { setMode("docs"); })]); grid.appendChild(gdocs);
     docsOf(p.id).then(function (all) { var by = {}; all.forEach(function (r) { by[r.category] = (by[r.category] || 0) + 1; }); gdocs.querySelector(".big").textContent = all.length + (all.length === 1 ? " file" : " files"); var sp = Object.keys(by).map(function (k) { return k + ": " + by[k]; }).join(" · "); gdocs.insertBefore(el("p", { text: sp || "Add reports, letters and photos." }), gdocs.querySelector(".linkbtn")); }, function () { gdocs.querySelector(".big").textContent = "Not available"; gdocs.insertBefore(el("p", { text: "This browser cannot keep files." }), gdocs.querySelector(".linkbtn")); });
     var mc = p.medsChecked ? (Date.now() - new Date(p.medsChecked + "T12:00:00").getTime()) > 183 * 864e5 : null;
@@ -2632,7 +2722,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.34", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.36", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
