@@ -1,4 +1,4 @@
-const CACHE = "includeme-v2";
+const CACHE = "includeme-v3";
 const OFFLINE = ["/", "/manifest.json", "/icons/icon-192.png"];
 
 self.addEventListener("install", e => {
@@ -19,6 +19,13 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (url.hostname.includes("supabase") || url.hostname.includes("googleapis") || url.hostname.includes("resend") || url.hostname.includes("netlify")) {
     return; // never intercept API/function calls
+  }
+  // Pages: network first, so a new release reaches installed copies. Cached copy only when offline.
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      fetch(e.request.url, { cache: "no-store" }).catch(() => caches.match("/"))
+    );
+    return;
   }
   e.respondWith(
     caches.match(e.request).then(cached => {

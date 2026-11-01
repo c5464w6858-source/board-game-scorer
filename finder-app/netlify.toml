@@ -17,3 +17,19 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Always revalidate the page and service worker so a new release is picked up
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
