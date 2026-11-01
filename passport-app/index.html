@@ -313,7 +313,9 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .tthumb .tn { position: absolute; left: 6px; top: 6px; background: var(--plum); color: #fff; font: 700 12px Inter, sans-serif; border-radius: 999px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
 .tthumb .trm { position: absolute; right: 4px; top: 4px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(27,21,48,.78); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; }
 @media (max-width: 520px) { .fab span:last-child { font-size: 15px; } .hero h2 { font-size: 1.35rem; } }
-@media print { .fab { display: none !important; } }
+.updbar { position: fixed; left: 12px; right: 12px; top: calc(10px + env(safe-area-inset-top)); z-index: 60; display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #1B1530; color: #fff; padding: 10px 12px 10px 16px; border-radius: 12px; box-shadow: 0 16px 30px -12px rgba(0,0,0,.6); font-size: 14.5px; }
+.ver { margin-left: 8px; opacity: .7; }
+@media print { .fab, .updbar { display: none !important; } }
 </style>
 </head>
 <body>
@@ -398,11 +400,13 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     </div>
   </main>
   <footer class="fine">
-    Everything here is saved on this device only. It is not uploaded to us. Check medicines against the label or your pharmacist. This is not a medical record or medical advice. <a href="/privacy.html">Privacy</a>
+    Everything here is saved on this device only. It is not uploaded to us. Check medicines against the label or your pharmacist. This is not a medical record or medical advice. <a href="/privacy.html">Privacy</a> <span class="ver" id="ver"></span>
   </footer>
 </div>
 
 <aside aria-label="Scan a letter"><input type="file" id="scanFile" accept="image/*" multiple class="sr" tabindex="-1" aria-label="Choose photos of letters, texts or prescriptions"><button type="button" class="fab" id="scanFab" hidden><span class="ico" aria-hidden="true"></span><span>Scan a letter</span></button></aside>
+
+<div class="updbar" id="updBar" role="status" hidden><span>A newer version of Child Organiser is ready.</span><button type="button" class="btn btn-main btn-small" id="updGo">Update now</button></div>
 
 <p class="toast" id="toolStatus" role="status" aria-live="polite"></p>
 
@@ -1780,6 +1784,21 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     $("instHide").addEventListener("click", function () { try { localStorage.setItem(INST_KEY, String(Date.now() + 14 * 864e5)); } catch (e) { /* storage blocked */ } $("installBar").hidden = true; });
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
+    /* tell people when a newer version has been published, since an open tab keeps the old page */
+    var APP_VERSION = "2026-11-01.7", lastCheck = 0;
+    $("ver").textContent = "Version " + APP_VERSION;
+    function checkVersion() {
+      if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
+      fetch(location.pathname + "?_v=" + Date.now(), { cache: "no-store", headers: { accept: "text/html" } }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (t) {
+        var m = /var APP_VERSION = "([^"]+)"/.exec(t); if (m && m[1] !== APP_VERSION) $("updBar").hidden = false;
+      }).catch(function () { /* offline: try again later */ });
+    }
+    $("updGo").addEventListener("click", function () {
+      var done = function () { location.reload(); };
+      if ("caches" in window) caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }).then(done, done); else done();
+    });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) checkVersion(); });
+    setTimeout(checkVersion, 4000);
     if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { /* offline use is a bonus */ }); });
   }
   function init() {
