@@ -330,7 +330,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .calhead h2 { font-size: 1.15rem; flex: 1; text-align: center; }
 .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
 .calgrid .dow { text-align: center; font: 700 11px Inter, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 0; }
-.cday { min-height: 54px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 6px 2px; font: 600 15px Inter, sans-serif; color: var(--ink); cursor: pointer; }
+.cday { min-height: 50px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 6px 2px; font: 600 15px Inter, sans-serif; color: var(--ink); cursor: pointer; }
 .cday.blank { border: 0; background: none; cursor: default; }
 .cday .dots { display: flex; gap: 3px; min-height: 8px; }
 .cday .dots i { width: 8px; height: 8px; border-radius: 50%; display: block; }
@@ -338,6 +338,10 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .cday.today { box-shadow: inset 0 0 0 2px var(--accent); }
 .cday.sel { background: var(--plum); color: #fff; border-color: var(--plum); }
 .cday.sel .dots i { box-shadow: 0 0 0 1.5px #fff; }
+.fpanel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 8px; }
+.fpanel .dsearch { max-width: none; width: 100%; }
+.fbtn { min-height: 42px; }
+.dfoot { margin-top: 18px; display: grid; gap: 10px; }
 .calopts { display: grid; gap: 10px; margin: 12px 0; }
 .calbtn { justify-content: flex-start; text-align: left; text-decoration: none; padding: 12px 14px; min-height: 58px; }
 .calbtn span:last-child { display: block; }
@@ -1394,20 +1398,12 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
   function refreshSoon() { setTimeout(function () { if (mode === "overview") renderOverview(); else if (mode === "contacts") renderContacts(); else if (mode === "docs") renderDocs(); }, 0); }
 
   /* ---------- the diary: a list or a month calendar, with filters ---------- */
-  var DV = { view: "list", time: "upcoming", cat: "All", q: "", month: null, sel: "" };
+  var DV = { view: "list", time: "upcoming", cat: "All", q: "", month: null, sel: "", fopen: false };
   try { var dvs = localStorage.getItem("includeme.passport.diaryview.v1"); if (dvs === "list" || dvs === "calendar") DV.view = dvs; } catch (e) { /* storage blocked */ }
   function ymdOf(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function renderAppts() {
     var box = $("appts"), p = cur(); box.textContent = "";
     if (!DV.month) { var t0 = new Date(); DV.month = new Date(t0.getFullYear(), t0.getMonth(), 1); }
-    box.appendChild(el("p", { class: "note", text: "Every appointment in one diary. Scan a letter or text and it is filed for you. Appointments are private: they are not part of the printed passport or shared link." }));
-    var bar = el("div", { class: "actions", style: "margin:0 0 12px" });
-    var scan = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px;font-size:15.5px" }, [ico("camera", 20), "Scan a letter or text"]);
-    scan.addEventListener("click", pickLetter);
-    var add = el("button", { type: "button", class: "btn btn-ghost", text: "Add by hand" });
-    add.addEventListener("click", function () { addBlank(DV.view === "calendar" && DV.sel ? DV.sel + "T09:00" : ""); });
-    bar.appendChild(scan); bar.appendChild(add); box.appendChild(bar);
-    if (getSession()) box.appendChild(remindersPanel());
     var tools = el("div", { class: "dtools" }); box.appendChild(tools);
     var out = el("div", { class: "panel", style: "margin-top:10px" }); box.appendChild(out);
     function addBlank(when) { p.appts.push({ aid: id(), title: "", when: when || "", who: "", where: "", notes: "", cat: "Other", docId: "" }); DV.time = "all"; DV.cat = "All"; DV.q = ""; save(); draw(); var all = out.querySelectorAll(".appt"); var f = all[all.length - 1] && all[all.length - 1].querySelector("input"); if (f) f.focus(); }
@@ -1429,10 +1425,10 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
       var letter = null;
       if (a.docId) { letter = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "View the letter" }); letter.addEventListener("click", function () { getDoc(a.docId).then(function (d) { if (!d) { savedMsg("That letter is no longer on this phone.", true); return; } var u = URL.createObjectURL(new Blob([d.blob], { type: d.type })); var l = el("a", { href: u, target: "_blank", rel: "noopener" }); document.body.appendChild(l); l.click(); l.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }); }); }
       return el("div", { class: "appt" + (past ? " past" : ""), style: "--c:" + catColor(a.cat), role: "group", "aria-label": (a.title || "Appointment") + ", " + whenText(a.when) }, [
-        el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap" }, [el("span", {}, [el("b", { style: "color:var(--plum);display:block", text: whenText(a.when) + (past ? " (past)" : "") }), catChip(a.cat)]), el("span", { class: "actions", style: "margin:0" }, [letter, cal, rm])]),
+        el("div", { class: "head", style: "display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap" }, [el("span", {}, [el("b", { style: "color:var(--plum);display:block", text: whenText(a.when) + (past ? " (past)" : "") }), catChip(a.cat)]), el("span", { class: "actions", style: "margin:0" }, [letter, cal])]),
         el("p", { class: "apsum", text: [a.title || "Appointment", [a.who, a.where].filter(Boolean).join(" · ")].filter(Boolean).join(" — ") }),
         a.notes ? el("p", { class: "note", text: a.notes }) : null,
-        el("details", { class: "apedit", open: !a.title && !a.when ? "" : null }, [el("summary", { text: "Edit details" }), el("div", { class: "two", style: "margin-top:10px" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)])])]);
+        el("details", { class: "apedit", open: !a.title && !a.when ? "" : null }, [el("summary", { text: "Edit details" }), el("div", { class: "two", style: "margin-top:10px" }, [f("What is it?", "title"), el("div", {}, [el("label", { for: "ap" + n + "cat", text: "Type" }), catSel]), f("Date and time", "when", "datetime-local"), f("Who with", "who"), f("Where", "where"), f("Notes", "notes", "", true)]), el("div", { class: "actions", style: "margin-top:10px" }, [rm])])]);
     }
     function toolbar() {
       tools.textContent = "";
@@ -1441,13 +1437,22 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
         var b = el("button", { type: "button", "aria-pressed": DV.view === v[0] ? "true" : "false" }, [ico(v[2], 18), v[1]]);
         b.addEventListener("click", function () { DV.view = v[0]; try { localStorage.setItem("includeme.passport.diaryview.v1", v[0]); } catch (e) { /* storage blocked */ } draw(); }); seg.appendChild(b);
       });
+      var addB = el("button", { type: "button", class: "btn btn-main", style: "min-height:44px" }, ["+ Add"]); addB.setAttribute("aria-label", "Add an appointment by hand");
+      addB.addEventListener("click", function () { addBlank(DV.view === "calendar" && DV.sel ? DV.sel + "T09:00" : ""); });
+      var nAct = (DV.cat !== "All" ? 1 : 0) + (DV.q ? 1 : 0) + (DV.view === "list" && DV.time !== "upcoming" ? 1 : 0);
+      var fb = el("button", { type: "button", class: "btn btn-ghost fbtn", "aria-expanded": DV.fopen ? "true" : "false", "aria-controls": "dfilters" }, [ico("search", 17), "Search and filter" + (nAct ? " (" + nAct + ")" : "")]);
+      fb.addEventListener("click", function () { DV.fopen = !DV.fopen; toolbar(); });
+      tools.appendChild(el("div", { class: "drow" }, [seg, addB]));
+      tools.appendChild(el("div", { class: "drow", style: "margin-top:8px" }, [fb, nAct ? (function () { var c = el("button", { type: "button", class: "linkbtn", text: "Clear" }); c.addEventListener("click", function () { DV.q = ""; DV.cat = "All"; DV.time = "upcoming"; draw(); }); return c; })() : null]));
+      if (!DV.fopen) return;
+      var panel = el("div", { class: "fpanel", id: "dfilters" });
       var q = el("input", { type: "search", id: "dq", placeholder: "Search the diary", "aria-label": "Search the diary", autocomplete: "off", class: "dsearch" }); q.value = DV.q;
       q.addEventListener("input", function () { DV.q = q.value; draw(true); });
-      tools.appendChild(el("div", { class: "drow" }, [seg, q]));
+      panel.appendChild(q);
       if (DV.view === "list") {
         var tseg = el("div", { class: "seg small", role: "group", "aria-label": "Which dates" });
         [["upcoming", "Coming up"], ["past", "Past"], ["all", "All"]].forEach(function (v) { var b = el("button", { type: "button", "aria-pressed": DV.time === v[0] ? "true" : "false", text: v[1] }); b.addEventListener("click", function () { DV.time = v[0]; draw(); }); tseg.appendChild(b); });
-        tools.appendChild(tseg);
+        panel.appendChild(tseg);
       }
       var counts = {}; p.appts.forEach(function (a) { var c = a.cat || "Other"; counts[c] = (counts[c] || 0) + 1; });
       var present = APPT_CATS.filter(function (c) { return counts[c]; });
@@ -1457,16 +1462,17 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
           var b = el("button", { type: "button", class: "chip", "aria-pressed": DV.cat === c ? "true" : "false", text: c === "All" ? "All types" : c + " (" + counts[c] + ")" });
           if (c !== "All") b.style.setProperty("--c", catColor(c)); b.addEventListener("click", function () { DV.cat = c; draw(); }); chips.appendChild(b);
         });
-        tools.appendChild(chips);
+        panel.appendChild(chips);
       }
+      tools.appendChild(panel);
     }
     function listView() {
       var idx = p.appts.map(function (a, i) { return i; }).filter(function (i) { return matches(p.appts[i]); }), now = today();
       var up = idx.filter(function (i) { return !p.appts[i].when || p.appts[i].when.slice(0, 10) >= now; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
       var old = idx.filter(function (i) { return p.appts[i].when && p.appts[i].when.slice(0, 10) < now; }).sort(function (x, y) { return apptTime(p.appts[y]) - apptTime(p.appts[x]); });
-      if (!p.appts.length) { out.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Tap Scan a letter or text and photograph your next appointment letter." })); return; }
+      if (!p.appts.length) { var sc2 = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px" }, [ico("camera", 20), "Scan a letter or text"]); sc2.addEventListener("click", pickLetter); out.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Photograph your next appointment letter or text and it is filed for you." })); out.appendChild(sc2); return; }
       var total = p.appts.length, filtered = DV.cat !== "All" || DV.q || DV.time !== "all";
-      out.appendChild(el("p", { class: "status", role: "status", "aria-live": "polite", text: idx.length + " of " + total + (total === 1 ? " appointment" : " appointments") + (filtered ? " shown" : "") }));
+      var nFilt = (DV.cat !== "All" ? 1 : 0) + (DV.q ? 1 : 0) + (DV.time !== "upcoming" ? 1 : 0); if (nFilt) out.appendChild(el("p", { class: "status", role: "status", "aria-live": "polite", text: idx.length + " of " + total + (total === 1 ? " appointment" : " appointments") + " shown" }));
       if (!idx.length) {
         var clr = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Clear the filters" }); clr.addEventListener("click", function () { DV.q = ""; DV.cat = "All"; DV.time = "all"; draw(); });
         out.appendChild(el("p", { class: "empty", text: "Nothing matches." })); out.appendChild(clr); return;
@@ -1513,6 +1519,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
       out.textContent = ""; if (!focusQ) toolbar();
       if (DV.view === "calendar") calView(); else listView();
     }
+    box.appendChild(el("div", { class: "dfoot" }, [getSession() ? remindersPanel() : null, el("p", { class: "note", style: "font-size:13px", text: "Appointments are private: they are not part of the printed passport or shared link." })]));
     toolbar(); draw(true);
   }
 
@@ -1929,7 +1936,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.8", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.9", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
