@@ -1290,7 +1290,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function closeBtn(label) { var b = el("button", { type: "button", class: "btn btn-main", text: label || "Close" }); b.addEventListener("click", scanClose); return el("div", { class: "actions", style: "justify-content:flex-end" }, [b]); }
   /* the tray: add as many pictures as you like, then read them together */
   var tray = [], trayMode = "separate", MAXPIC = 6, trayFiles = {}, PDFREAD = 3100000;
-  var trayExtra = {}, PDFPAGES = 6, trayNote = "";
+  var trayExtra = {}, PDFPAGES = 60, trayNote = "";
   /* a PDF too big to send is turned into pictures of its first pages, here on the phone (PDF.js, served from this site) */
   function loadPdfJs() {
     if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
@@ -1304,12 +1304,12 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     return loadPdfJs().then(function (lib) { return f.arrayBuffer().then(function (buf) { return lib.getDocument({ data: buf }).promise; }); }).then(function (doc) {
       var n = Math.min(doc.numPages, PDFPAGES), out = [], seq = Promise.resolve();
       for (var i = 1; i <= n; i++) (function (i) { seq = seq.then(function () { return doc.getPage(i); }).then(function (pg) {
-        var v0 = pg.getViewport({ scale: 1 }), sc = Math.min(3, 1500 / Math.max(v0.width, v0.height)), v = pg.getViewport({ scale: sc }), c = document.createElement("canvas");
+        var v0 = pg.getViewport({ scale: 1 }), sc = Math.min(3, 1200 / Math.max(v0.width, v0.height)), v = pg.getViewport({ scale: sc }), c = document.createElement("canvas");
         c.width = Math.round(v.width); c.height = Math.round(v.height);
         var cx = c.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, c.width, c.height);
-        return pg.render({ canvasContext: cx, viewport: v }).promise.then(function () { out.push(c.toDataURL("image/jpeg", 0.8)); pg.cleanup(); });
+        return pg.render({ canvasContext: cx, viewport: v }).promise.then(function () { out.push(c.toDataURL("image/jpeg", 0.72)); pg.cleanup(); });
       }); })(i);
-      return seq.then(function () { var total = doc.numPages; doc.destroy(); var sum = function () { return out.reduce(function (t, u) { return t + u.length; }, 0); }; while (out.length > 1 && sum() > 4000000) out.pop(); /* keep the request well under the 6 MB limit */ return { pics: out, total: total }; });
+      return seq.then(function () { var total = doc.numPages; doc.destroy(); return { pics: out, total: total }; });
     });
   }
   function isPic(u) { return /^data:image\//.test(u); }
@@ -1349,9 +1349,10 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         if (t === "application/pdf") {
           if (f.size > PDFREAD) {
             if (f.size > MAXFILE) { tooBig++; keep.push(f); return; }
+            scanDlg([el("h2", { text: "Opening your PDF" }), el("p", { class: "note", role: "status", text: "Preparing every page to be read. This can take a little while for a long document. Please keep this page open." })]);
             return pdfPictures(f).then(function (r) {
               if (!r.pics.length) throw new Error("none");
-              var key = r.pics[0]; tray.push(key); trayFiles[key] = f; trayExtra[key] = r.pics.slice(1); if (r.total > r.pics.length) trayNote = "Only the first " + r.pics.length + " pages of " + (f.name || "the PDF") + " are read. The whole file is saved.";
+              var key = r.pics[0]; tray.push(key); trayFiles[key] = f; trayExtra[key] = r.pics.slice(1); if (r.total > r.pics.length) trayNote = "Only the first " + r.pics.length + " of " + r.total + " pages of " + (f.name || "the PDF") + " are read. The whole file is saved."; else if (r.pics.length > 1) trayNote = (f.name || "The PDF") + " has " + r.pics.length + " pages. All of them are read, and the whole file is saved.";
             }, function () { tooBig++; keep.push(f); });
           }
           return fileToUrl(f).then(function (u) { tray.push(u); trayFiles[u] = f; });
@@ -1459,6 +1460,34 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   function readFail(e, prefix) {
     scanDlg([el("h2", { text: "Could not read it" }), el("p", { class: "msg", role: "alert", text: e && e.message ? e.message : "Something went wrong." }), el("p", { class: "note", text: "You can add things by hand instead." }), e && e.why ? el("p", { class: "note", style: "font-size:12px", text: "Reference for support: " + e.why }) : null, closeBtn()]);
   }
+  /* a long document is read in batches of pages; the answers are put back together as one */
+  function mergeReads(rs) {
+    var b = JSON.parse(JSON.stringify(rs[0])), nk = function (x) { return norm([x.name, x.phone, x.email].join("|")); };
+    rs.slice(1).forEach(function (r) {
+      if (!b.appointment && r.appointment) { b.appointment = r.appointment; ["title", "category", "date", "time", "where", "with", "notes"].forEach(function (k) { b[k] = r[k]; }); b.isAppointment = r.isAppointment; }
+      var seen = {}; (b.contacts || []).forEach(function (c) { seen[nk(c)] = 1; }); (r.contacts || []).forEach(function (c) { if (!seen[nk(c)]) { b.contacts.push(c); seen[nk(c)] = 1; } });
+      var sm = {}; (b.meds || []).forEach(function (m) { sm[norm(m.name)] = 1; }); (r.meds || []).forEach(function (m) { if (!sm[norm(m.name)]) { b.meds.push(m); sm[norm(m.name)] = 1; } });
+      var sa = {}; (b.allergies || []).forEach(function (a) { sa[norm(a.what)] = 1; }); (r.allergies || []).forEach(function (a) { if (!sa[norm(a.what)]) { b.allergies.push(a); sa[norm(a.what)] = 1; } });
+      ["child", "school"].forEach(function (g) { Object.keys(r[g] || {}).forEach(function (k) { if (!(b[g] && b[g][k]) && r[g][k]) { b[g] = b[g] || {}; b[g][k] = r[g][k]; } }); });
+      if (!b.summary) b.summary = r.summary;
+    });
+    return b;
+  }
+  function readOne(img, prog, label) {
+    var all = [img].concat(trayExtra[img] || []);
+    if (all.length === 1) return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true } : { images: [img], consent: true } });
+    var batches = [], cur2 = [], size = 0;
+    all.forEach(function (u) { if (cur2.length && (size + u.length > 3200000 || cur2.length >= 8)) { batches.push(cur2); cur2 = []; size = 0; } cur2.push(u); size += u.length; });
+    if (cur2.length) batches.push(cur2);
+    var rs = new Array(batches.length), done = 0, next = 0, failed = null;
+    function worker() {
+      if (failed || next >= batches.length) return Promise.resolve();
+      var i = next++, bt = batches[i];
+      return api("/api/diary/scan", { method: "POST", body: { images: bt, pages: bt.length > 1, consent: true } }).then(function (r) { rs[i] = r; done += bt.length; if (prog) prog.textContent = (label ? label + ": " : "") + "Read " + done + " of " + all.length + " pages..."; return worker(); }, function (e) { failed = e; throw e; });
+    }
+    if (prog) prog.textContent = (label ? label + ": " : "") + "Reading " + all.length + " pages...";
+    return Promise.all([worker(), worker(), worker()]).then(function () { return mergeReads(rs.filter(Boolean)); });
+  }
   function readTray() {
     var imgs = tray.slice(), mode2 = imgs.length > 1 ? trayMode : "separate", prog = el("p", { class: "note", role: "status", "aria-live": "polite", text: "This takes a few seconds for each. Please keep this page open." });
     scanDlg([el("h2", { text: imgs.length > 1 ? "Reading your letters" : "Reading your letter" }), prog]);
@@ -1470,7 +1499,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var chain = imgs.reduce(function (pr, img, i) {
       return pr.then(function () {
         prog.textContent = imgs.length > 1 ? "Reading letter " + (i + 1) + " of " + imgs.length + "..." : prog.textContent;
-        return api("/api/diary/scan", { method: "POST", body: /^txt:/.test(img) ? { texts: [img.slice(4)], consent: true } : trayExtra[img] && trayExtra[img].length ? { images: [img].concat(trayExtra[img]), pages: true, consent: true } : { images: [img], consent: true } }).then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
+        return readOne(img, prog, imgs.length > 1 ? "Letter " + (i + 1) : "").then(function (r) { items.push({ imgs: [img], r: r }); }, function (e) { failed++; lastErr = e; if (e && e.status === 429) throw e; });
       });
     }, Promise.resolve());
     chain.then(function () { tray = []; if (!items.length) { readFail(lastErr); return; } scanReview(items, failed); }, readFail);
@@ -2370,7 +2399,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.25", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.26", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
