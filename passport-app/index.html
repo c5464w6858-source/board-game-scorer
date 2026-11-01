@@ -158,6 +158,20 @@ input:focus, textarea:focus, select:focus { border-color: var(--plum); }
 /* documents and appointments */
 .drop { border: 1px dashed var(--line-2); border-radius: 12px; padding: 18px; text-align: center; background: var(--surface); }
 .doc, .appt { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--surface); display: grid; gap: 10px; }
+details.doc { padding: 0; gap: 0; }
+details.doc > summary { list-style: none; display: flex; gap: 12px; align-items: center; padding: 10px 14px; cursor: pointer; min-height: 56px; }
+details.doc > summary::-webkit-details-marker { display: none; }
+details.doc > summary .dsum { flex: 1; min-width: 0; }
+details.doc > summary .dsum b { display: block; color: var(--ink); font-size: 15.5px; overflow-wrap: anywhere; }
+details.doc > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
+details.doc[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+details.doc > summary .thumb { width: 44px; height: 44px; }
+details.doc .dbody { display: grid; gap: 10px; padding: 4px 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.csec { margin-top: 12px; }
+.csec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 8px 4px; font: 700 1.05rem Fraunces, Georgia, serif; color: var(--plum); }
+.csec > summary::-webkit-details-marker { display: none; }
+.csec > summary::after { content: ""; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
+.csec[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
 .doc .top { display: flex; gap: 12px; align-items: center; position: static; border: 0; background: none; z-index: auto; }
 .doc .thumb { width: 60px; height: 60px; border-radius: 8px; background: var(--plum-soft); display: flex; align-items: center; justify-content: center; font: 700 12px Inter, sans-serif; color: var(--plum); overflow: hidden; flex: none; }
 .doc .thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -1024,7 +1038,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   var docFilter = "All";
   function renderDocs() {
     var box = $("docs"), p = cur(); freeUrls(); box.textContent = "";
-    box.appendChild(el("p", { class: "note", text: "Keep reports, letters and photos of documents with the passport. They are saved on this device only. They are never uploaded to us and never included in a shared link or printed passport." }));
+    box.appendChild(el("p", { class: "note", text: "Keep reports, letters and photos of documents with the passport. They are saved on this device, and copied (encrypted) to your private copy only if you turned that on. They are never included in a shared link or printed passport." }));
     var status = el("p", { class: "status", role: "status", "aria-live": "polite" });
     var pick = el("input", { type: "file", id: "docIn", class: "sr", multiple: "", accept: ".pdf,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.txt,.doc,.docx,image/*,application/pdf" });
     var addLbl = el("label", { class: "btn btn-main", for: "docIn", text: "Add documents or photos" });
@@ -1034,6 +1048,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var meter = el("p", { class: "help" }); box.appendChild(meter);
     if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { if (e && e.quota) meter.textContent = "This browser has about " + bytes(e.quota - e.usage) + " of room left for files on this device."; });
 
+    var openDocs = {};
+    function CATLABEL(c) { return c || ""; }
     function draw() {
       docsOf(p.id).then(function (all) {
         freeUrls(); listBox.textContent = "";
@@ -1064,10 +1080,17 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
           var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" }); rm.setAttribute("aria-label", "Remove " + r.title);
           rm.addEventListener("click", function () { if (!window.confirm("Remove \u201c" + r.title + "\u201d from this device?")) return; delDoc(r.id).then(draw); });
           var acts = el("div", { class: "actions", style: "margin:0" }, canOpen ? [openB, dl, rm] : [dl, rm]);
-          listBox.appendChild(el("div", { class: "doc", role: "group", "aria-label": r.title }, [
-            el("div", { class: "top" }, [thumb, el("div", { style: "flex:1;min-width:0" }, [el("label", { for: tid, text: "Title" }), title, el("div", { class: "meta", text: (OKTYPES[r.type] || "File") + " · " + bytes(r.size) + " · " + (r.name || "") })])]),
-            el("div", { class: "two" }, [el("div", {}, [el("label", { for: "dc" + r.id, text: "Type" }), cat]), el("div", {}, [el("label", { for: "dd" + r.id, text: "Date on the document" }), dt])]),
-            el("div", {}, [el("label", { for: "dn" + r.id, text: "Notes" }), nt]), acts]));
+          var sumTitle = el("b", { text: r.title || "Document" });
+          title.addEventListener("input", function () { sumTitle.textContent = title.value || "Document"; });
+          var dd = el("details", { class: "doc" }, [
+            el("summary", {}, [thumb, el("span", { class: "dsum" }, [sumTitle, el("span", { class: "meta", text: [CATLABEL(r.category), r.date ? whenText(r.date) : "", (OKTYPES[r.type] || "File") + " " + bytes(r.size)].filter(Boolean).join(" · ") })])]),
+            el("div", { class: "dbody" }, [
+              el("div", {}, [el("label", { for: tid, text: "Title" }), title, el("div", { class: "meta", text: (r.name || "") })]),
+              el("div", { class: "two" }, [el("div", {}, [el("label", { for: "dc" + r.id, text: "Type" }), cat]), el("div", {}, [el("label", { for: "dd" + r.id, text: "Date on the document" }), dt])]),
+              el("div", {}, [el("label", { for: "dn" + r.id, text: "Notes" }), nt]), acts])]);
+          if (openDocs[r.id]) dd.setAttribute("open", "");
+          dd.addEventListener("toggle", function () { openDocs[r.id] = dd.open; });
+          listBox.appendChild(dd);
         });
       }, function () { listBox.textContent = ""; listBox.appendChild(el("p", { class: "warn", text: "This browser cannot keep files on this device (it may be in private mode). Try a normal window." })); });
     }
@@ -1680,12 +1703,13 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     box.appendChild(el("p", { class: "note", text: "Everyone who helps your child. Scanning a letter adds the clinic, the doctor and any phone numbers on it." }));
     var q = el("input", { type: "text", id: "cq", class: "csearch", placeholder: "Search by name, role or place", "aria-label": "Search contacts", autocomplete: "off" }); box.appendChild(q);
     var out = el("div", {}); box.appendChild(out);
+    var openSec = {};
     function draw() {
       out.textContent = ""; var t = norm(q.value);
       function match(c) { return !t || norm([c.name, c.role, c.relationship, c.org, c.phone, c.email].join(" ")).indexOf(t) >= 0; }
       var team = p.team.filter(function (c) { return (c.name || c.org || c.phone) && match(c); }), em = p.contacts.filter(function (c) { return (c.name || c.phone) && match(c); });
       var sch = []; if (p.school.name || p.school.teacher || p.school.senco) { [["Class teacher", p.school.teacher], ["SENCo", p.school.senco]].forEach(function (x) { if (x[1] && match({ name: x[1], role: x[0], org: p.school.name })) sch.push({ name: x[1], role: x[0], org: p.school.name, phone: "", email: "", notes: "" }); }); }
-      function section(title, list, kind) { if (!list.length) return; out.appendChild(el("h2", { class: "sec-h", text: title + " (" + list.length + ")", style: "margin-top:14px" })); out.appendChild(el("div", { class: "cgrid", style: "margin-top:8px" }, list.map(function (c) { return contactCard(c, kind); }))); }
+      function section(title, list, kind) { if (!list.length) return; var det = el("details", { class: "csec" }, [el("summary", { text: title + " (" + list.length + ")" }), el("div", { class: "cgrid", style: "margin-top:4px" }, list.map(function (c) { return contactCard(c, kind); }))]); if (t || list.length <= 3 || openSec[kind]) det.setAttribute("open", ""); det.addEventListener("toggle", function () { openSec[kind] = det.open; }); out.appendChild(det); }
       section("Doctors and team", team, "team"); section("School", sch, "school"); section("Emergency contacts", em, "emergency");
       if (!team.length && !em.length && !sch.length) out.appendChild(el("p", { class: "empty", text: t ? "No one matches that search." : "No contacts yet. Scan a letter and the people and phone numbers on it are added for you." }));
     }
@@ -2226,7 +2250,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.19", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.20", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
