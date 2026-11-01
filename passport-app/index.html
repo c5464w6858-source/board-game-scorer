@@ -401,6 +401,20 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 .hero.compact .hscan { margin-top: 10px; }
 .hero.compact .btn-scan { min-height: 46px; padding: 10px 18px; font-size: 15.5px; }
 .hero.compact::after { width: 150px; height: 150px; right: -50px; top: -60px; }
+
+.savecard { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 10px 10px 12px; box-shadow: 0 10px 22px -20px rgba(59,31,99,.6); }
+.savecard .sicon { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--plum-soft); color: var(--plum); display: inline-flex; align-items: center; justify-content: center; }
+.savecard .stext { flex: 1; min-width: 0; display: block; line-height: 1.25; }
+.savecard .stext b { display: block; color: var(--plum); font-size: 15px; }
+.savecard .stext small { display: block; font-size: 12.5px; color: var(--muted); }
+.savecard .savex { flex: none; width: 36px; height: 36px; border: 0; background: none; font-size: 22px; color: var(--muted); cursor: pointer; border-radius: 50%; }
+.insec { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 14px 12px; margin-top: 10px; }
+.insec > summary { cursor: pointer; font: 600 15px Inter, sans-serif; color: var(--plum); min-height: 46px; display: flex; align-items: center; justify-content: space-between; list-style: none; }
+.insec > summary::-webkit-details-marker { display: none; }
+.insec > summary::after { content: ""; width: 9px; height: 9px; border-right: 2px solid var(--plum); border-bottom: 2px solid var(--plum); transform: rotate(45deg); margin-top: -4px; transition: transform .15s; }
+.insec[open] > summary::after { transform: rotate(225deg); margin-top: 4px; }
+.insteps { margin: 4px 0 8px 22px; display: grid; gap: 8px; }
+.insteps li { padding-left: 4px; }
 /* diary: compact controls */
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
@@ -445,6 +459,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
             <button type="button" class="mi" id="miDownloadFull">Backup with documents</button>
             <button type="button" class="mi" id="miLoad">Load a backup</button>
             <button type="button" class="mi" id="miInstall" hidden>Install as an app</button>
+            <button type="button" class="mi" id="miSave">Save to your phone</button>
+            <button type="button" class="mi" id="miUpdate">Check for updates</button>
             <hr>
             <a class="mi" href="https://includeme.uk/" rel="noopener">Open the Activity Finder</a>
             <a class="mi" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener">Try EHCP Tracker for EHCP cases</a>
@@ -1697,6 +1713,12 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       el("div", { class: "hscan" }, [go2]), body]);
     tog.addEventListener("click", function () { var now = body.hidden; body.hidden = !now; tog.setAttribute("aria-expanded", now ? "true" : "false"); hero.classList.toggle("compact", !now); try { localStorage.setItem("includeme.passport.hero.v1", now ? "open" : "closed"); } catch (e) { /* storage blocked */ } });
     box.appendChild(hero);
+    var savedAway = 0; try { savedAway = +localStorage.getItem("includeme.passport.savecard.v1") || 0; } catch (e) { /* storage blocked */ }
+    if (!isInstalled() && savedAway < Date.now()) {
+      var showHow = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Show me how" }); showHow.addEventListener("click", function () { if (installEvt) { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; deferred = null; renderOverview(); }); } else installHelp(); });
+      var nope = el("button", { type: "button", class: "savex", "aria-label": "Hide this for a month", text: "\u00d7" }); nope.addEventListener("click", function () { try { localStorage.setItem("includeme.passport.savecard.v1", String(Date.now() + 30 * 864e5)); } catch (e) { /* storage blocked */ } renderOverview(); });
+      box.appendChild(el("div", { class: "savecard" }, [el("span", { class: "sicon" }, [ico("phone", 22)]), el("span", { class: "stext" }, [el("b", { text: "Save to your phone" }), el("small", { text: "Opens like an app from your Home Screen" })]), showHow, nope]));
+    }
     if (upcoming.length) {
       box.appendChild(el("h2", { class: "sec-h", text: "Coming up" }));
       var upc = el("div", { class: "upc" });
@@ -1937,7 +1959,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     if (m === "view" || m === "card") renderViewer(); else if (m === "overview") { if (!shared && !cur().name) emptyState(); else renderOverview(); } else if (m === "appts") renderAppts(); else if (m === "contacts") renderContacts(); else if (m === "docs") renderDocs();
   }
   function refresh() { renderWho(); renderEditor(); renderIncl(); setMode(mode); }
-  function chrome(on) { $("scanFab").hidden = !on || !!shared; updateInstall(on); $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
+  function chrome(on) { $("miSave").hidden = isInstalled(); $("scanFab").hidden = !on || !!shared; updateInstall(on); $("topR").hidden = !on; document.querySelector(".tabs").hidden = !on; $("shareWrap").hidden = !on; $("inclBtn").hidden = !on; $("saved").hidden = !on; }
   /* Prompt to save it to the home screen: shown at the top until it is installed, or hidden for two weeks */
   var installEvt = null, INST_KEY = "includeme.passport.installhide.v1";
   function isInstalled() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
@@ -1954,6 +1976,30 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     else add(["Use your browser's menu to ", ["Install"], " or ", ["Add to Home screen"], "."]);
     bar.hidden = !(own !== false && !shared && !isInstalled() && (phone || installEvt) && hidden < Date.now());
     $("instGo").hidden = !installEvt;
+  }
+  /* "Save to your phone": plain steps for iPhone and Android, whichever the browser is */
+  function platformIs() { var ua = navigator.userAgent; return /iPhone|iPad|iPod/i.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua)) ? "ios" : /Android/i.test(ua) ? "android" : "other"; }
+  function steps(list) { return el("ol", { class: "insteps" }, list.map(function (t) { return el("li", {}, t.map(function (x) { return typeof x === "string" ? document.createTextNode(x) : el("b", { text: x[0] }); })); })); }
+  function installHelp() {
+    var plat = platformIs(), nodes = [el("h2", { text: "Save Child Organiser to your phone" })];
+    if (isInstalled()) {
+      nodes.push(el("p", { text: "It is already saved on this phone and opens like an app." }), el("p", { class: "note", text: "To get the newest version, close the app completely (swipe it away in your app list) and open it again. Or use Check for updates in the P menu." }), closeBtn());
+      scanDlg(nodes); return;
+    }
+    nodes.push(el("p", { class: "note", text: "It then opens from your Home Screen like any other app, with no browser bars. Nothing is downloaded from an app store." }));
+    var ios = el("details", { class: "insec", open: plat !== "android" ? "" : null }, [el("summary", { text: "iPhone or iPad" }), steps([
+      ["Open this page in ", ["Safari"], ". (Chrome works too on iOS 16.4 or later.)"],
+      ["Tap the ", ["Share"], " button: the square with an arrow pointing up, at the bottom of Safari or the top right of Chrome."],
+      ["Scroll the list and tap ", ["Add to Home Screen"], "."],
+      ["Tap ", ["Add"], ". The Child Organiser icon now sits on your Home Screen."]]),
+      el("p", { class: "note", text: "The saved app keeps its own sign-in, so you sign in once the first time you open it from the Home Screen." })]);
+    var andBody = [];
+    if (installEvt) { var go = el("button", { type: "button", class: "btn btn-main", text: "Install now" }); go.addEventListener("click", function () { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; updateInstall(); scanClose(); }); }); andBody.push(el("p", { text: "Your phone is ready to install it:" }), go, el("p", { class: "note", style: "margin-top:10px", text: "Or by hand:" })); }
+    andBody.push(steps([["Open this page in ", ["Chrome"], "."], ["Tap the ", ["three dots"], " at the top right."], ["Tap ", ["Install app"], " (or ", ["Add to Home screen"], ")."], ["Tap ", ["Install"], ". The icon now sits on your Home screen."]]));
+    var andr = el("details", { class: "insec", open: plat === "android" ? "" : null }, [el("summary", { text: "Android" })].concat(andBody));
+    nodes.push(plat === "android" ? andr : ios, plat === "android" ? ios : andr);
+    nodes.push(el("p", { class: "note", style: "margin-top:10px", text: "On a computer: look for the install icon at the right of the address bar, or open the browser menu and choose Install." }), closeBtn());
+    scanDlg(nodes);
   }
   function showExample() { shared = example(); $("exampleBanner").hidden = false; $("sharedBanner").hidden = true; chrome(false); setMode("view"); }
   function example() {
@@ -2051,26 +2097,41 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     });
     var deferred = null;
     window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; installEvt = e; $("miInstall").hidden = false; updateInstall(); });
-    window.addEventListener("appinstalled", function () { installEvt = null; deferred = null; $("installBar").hidden = true; $("miInstall").hidden = true; toolMsg("Saved to your phone."); });
+    window.addEventListener("appinstalled", function () { installEvt = null; deferred = null; $("installBar").hidden = true; $("miInstall").hidden = true; $("miSave").hidden = true; toolMsg("Saved to your phone."); });
     $("instGo").addEventListener("click", function () { if (!installEvt) return; var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; deferred = null; updateInstall(); $("miInstall").hidden = true; }); });
     $("instHide").addEventListener("click", function () { try { localStorage.setItem(INST_KEY, String(Date.now() + 14 * 864e5)); } catch (e) { /* storage blocked */ } $("installBar").hidden = true; });
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
+    $("miSave").addEventListener("click", function () { closeMenus(); if (installEvt && !isInstalled()) { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; deferred = null; updateInstall(); $("miInstall").hidden = true; }); } else installHelp(); });
+    $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.15", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.16", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
-    function checkVersion() {
-      if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
-      fetch(location.pathname + "?_v=" + Date.now(), { cache: "no-store", headers: { accept: "text/html" } }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (t) {
-        var m = /var APP_VERSION = "([^"]+)"/.exec(t); if (m && m[1] !== APP_VERSION) $("updBar").hidden = false;
-      }).catch(function () { /* offline: try again later */ });
-    }
-    $("updGo").addEventListener("click", function () {
+    function forceUpdate() {
       var done = function () { location.reload(); };
-      if ("caches" in window) caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }).then(done, done); else done();
-    });
+      var clear = "caches" in window ? caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }) : Promise.resolve();
+      var unreg = "serviceWorker" in navigator ? navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }) : Promise.resolve();
+      Promise.all([clear, unreg]).then(done, done);
+    }
+    function busy() { var a = document.activeElement; return !!document.querySelector("dialog[open]") || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)); }
+    function checkVersion(manual) {
+      if (!manual && (Date.now() - lastCheck < 30 * 1000 || !navigator.onLine)) return; lastCheck = Date.now();
+      if (manual) toolMsg("Checking for updates...");
+      try { if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.update(); }); } catch (e) { /* not supported */ }
+      fetch(location.pathname + "?_v=" + Date.now(), { cache: "no-store", headers: { accept: "text/html" } }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (t) {
+        var m = /var APP_VERSION = "([^"]+)"/.exec(t);
+        if (m && m[1] !== APP_VERSION) {
+          var tried = ""; try { tried = sessionStorage.getItem("includeme.passport.updtried") || ""; } catch (e) { /* storage blocked */ }
+          if (manual) { toolMsg("A newer version was found. Updating..."); forceUpdate(); }
+          else if (!busy() && tried !== m[1]) { try { sessionStorage.setItem("includeme.passport.updtried", m[1]); } catch (e) { /* storage blocked */ } forceUpdate(); }   // a quiet moment: update straight away, once
+          else $("updBar").hidden = false;
+        } else if (manual) toolMsg("You have the newest version (" + APP_VERSION + ").");
+      }).catch(function () { if (manual) toolMsg("Could not check just now. Try again when you have a signal.", true); });
+    }
+    $("updGo").addEventListener("click", forceUpdate);
     document.addEventListener("visibilitychange", function () { if (!document.hidden) checkVersion(); });
-    setTimeout(checkVersion, 4000);
+    window.addEventListener("pageshow", function () { checkVersion(); });
+    setTimeout(checkVersion, 1500);
     if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { /* offline use is a bonus */ }); });
   }
   function init() {
