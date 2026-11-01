@@ -1,7 +1,7 @@
 {
   "name": "Child Organiser",
   "short_name": "Child Organiser",
-  "description": "Everything about your child in one place: profile, documents and appointments. Stays on your device.",
+  "description": "Photograph a letter and it is filed: the appointment, the contacts, the documents and the details. Stays on your device.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
