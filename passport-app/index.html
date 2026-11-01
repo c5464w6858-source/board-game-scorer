@@ -143,11 +143,21 @@ input:focus, textarea:focus, select:focus { border-color: var(--plum); }
 .sec .in { padding: 16px; display: grid; gap: 14px; }
 .item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; background: #FBFAFD; }
 .rlist { display: grid; gap: 8px; }
-.rrow { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; background: #FBFAFD; padding: 8px 8px 8px 14px; min-height: 52px; }
+.rrow { border: 1px solid var(--line); border-radius: 10px; background: #FBFAFD; }
+.rrow .rtop { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 4px; }
+.rrow .rtoggle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: left; background: none; border: 0; padding: 6px 6px 6px 10px; min-height: 48px; cursor: pointer; font: inherit; color: inherit; border-radius: 8px; }
 .rrow .rtxt { flex: 1; min-width: 0; }
 .rrow .rtxt b { display: block; color: var(--plum); font-size: 15px; overflow-wrap: anywhere; }
 .rrow .rtxt span { display: block; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
-.rrow .btn { flex: none; }
+.rrow .rchev { flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 0; transition: transform .15s; }
+.rrow .rtoggle[aria-expanded="true"] .rchev { transform: rotate(-135deg); margin-bottom: -3px; }
+.rrow > .rtop > .btn { flex: none; }
+.rinfo { margin: 0; padding: 4px 14px 12px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.rinfo[hidden] { display: none; }
+.rinfo > div { min-width: 0; padding-top: 6px; }
+.rinfo .wide { grid-column: 1 / -1; }
+.rinfo dt { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+.rinfo dd { margin: 2px 0 0; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; white-space: pre-wrap; }
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
 .g2 > div { min-width: 0; }
 .g2 label { font-size: 13px; margin-bottom: 3px; }
@@ -757,7 +767,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   function repeater(title, arr, keys, addLabel, empty) {
     var wrap = el("div", { class: "in", style: "padding:0;border:0" });
-    var holder = el("div", { class: "rlist" });
+    var holder = el("div", { class: "rlist" }), openRows = {};
     function lines(o) {
       var vals = function (ks) { return ks.map(function (k) { return o[k.key]; }).filter(Boolean); };
       var short = keys.filter(function (k) { return !k.area && k.key !== "notes"; });
@@ -785,7 +795,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         form.appendChild(el("div", k.wide || k.area ? { style: "grid-column:1/-1" } : {}, [el("label", { for: fid, text: k.label }), ctl]));
       });
       var rm = el("button", { type: "button", class: "btn btn-danger btn-small", text: "Remove" });
-      rm.addEventListener("click", function () { if (!window.confirm("Remove this " + title.toLowerCase() + "?")) return; arr.splice(arr.indexOf(o), 1); save(); scanClose(); draw(); });
+      rm.addEventListener("click", function () { if (!window.confirm("Remove this " + title.toLowerCase() + "?")) return; arr.splice(arr.indexOf(o), 1); openRows = {}; save(); scanClose(); draw(); });
       var done = el("button", { type: "button", class: "btn btn-main", text: "Done" });
       done.addEventListener("click", function () { scanClose(); });
       var dlg = $("dlgScan"), after = function () { dlg.removeEventListener("close", after); draw(); };
@@ -799,7 +809,13 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
         var l = lines(o), edit = el("button", { type: "button", class: "btn btn-ghost btn-small", text: "Edit" });
         edit.setAttribute("aria-label", "Edit " + l.head);
         edit.addEventListener("click", function () { editor(o); });
-        holder.appendChild(el("div", { class: "rrow" }, [el("div", { class: "rtxt" }, [el("b", { text: l.head }), l.sub ? el("span", { text: l.sub }) : null]), edit]));
+        var did = "ri" + (++uid), info = el("dl", { class: "rinfo", id: did }), any = false;
+        keys.forEach(function (k, ki) { if (ki < (keys[0].type === "role" ? 2 : 1)) return; if (o[k.key]) { any = true; info.appendChild(el("div", k.area ? { class: "wide" } : {}, [el("dt", { text: k.label }), el("dd", { text: o[k.key] })])); } });
+        if (!any) info.appendChild(el("p", { class: "note", style: "margin:0", text: "Nothing added yet. Tap Edit." }));
+        var isOpen = !!openRows[arr.indexOf(o)]; info.hidden = !isOpen;
+        var tg = el("button", { type: "button", class: "rtoggle", "aria-expanded": isOpen ? "true" : "false", "aria-controls": did }, [el("span", { class: "rtxt" }, [el("b", { text: l.head }), l.sub ? el("span", { text: l.sub }) : null]), el("span", { class: "rchev", "aria-hidden": "true" })]);
+        tg.addEventListener("click", function () { var now = info.hidden; info.hidden = !now; tg.setAttribute("aria-expanded", now ? "true" : "false"); openRows[arr.indexOf(o)] = now; });
+        holder.appendChild(el("div", { class: "rrow" }, [el("div", { class: "rtop" }, [tg, edit]), info]));
       });
       if (!arr.length) holder.appendChild(el("p", { class: "empty", text: empty }));
     }
@@ -2462,7 +2478,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.31", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.32", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
