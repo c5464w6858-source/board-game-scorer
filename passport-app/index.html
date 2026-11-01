@@ -364,6 +364,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 #appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
 #appts .seg button .ico svg { width: 16px; height: 16px; }
 #appts .seg.small button { min-height: 34px; padding: 5px 11px; }
+#appts .scanb { color: var(--plum); }
 #appts .drow > .btn, #appts .fbtn { min-height: 36px !important; padding: 5px 13px; font-size: 13.5px; }
 #appts .fbtn .ico svg { width: 15px; height: 15px; }
 #appts .btn-small { min-height: 34px; padding: 5px 11px; font-size: 13.5px; }
@@ -1434,7 +1435,30 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     if (!DV.month) { var t0 = new Date(); DV.month = new Date(t0.getFullYear(), t0.getMonth(), 1); }
     var tools = el("div", { class: "dtools" }); box.appendChild(tools);
     var out = el("div", { class: "panel", style: "margin-top:10px" }); box.appendChild(out);
-    function addBlank(when) { p.appts.push({ aid: id(), title: "", when: when || "", who: "", where: "", notes: "", cat: "Other", docId: "" }); DV.time = "all"; DV.cat = "All"; DV.q = ""; save(); draw(); var all = out.querySelectorAll(".appt"); var f = all[all.length - 1] && all[all.length - 1].querySelector("input"); if (f) f.focus(); }
+    function addBlank(when) { openAdd(when || ""); }
+    /* "+ Add": a pop-up form to fill in, then it goes into the diary */
+    function openAdd(prefill) {
+      var fT = dfield("What is it?", ""), fW = dfield("Date and time", prefill, "datetime-local"), fWho = dfield("Who with", ""), fWh = dfield("Where", "");
+      var catId = "ad" + (++uid), cat = el("select", { id: catId }); APPT_CATS.forEach(function (c) { cat.appendChild(el("option", { value: c, text: c })); }); cat.value = "Other";
+      var notes = el("textarea", { id: catId + "n", rows: "3" });
+      var err = el("p", { class: "msg", role: "alert" });
+      var ok = el("button", { type: "button", class: "btn btn-main", text: "Save to the diary" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+      no.addEventListener("click", scanClose);
+      ok.addEventListener("click", function () {
+        var when = fW.input.value, title = fT.input.value.trim();
+        if (!title && !when) { err.textContent = "Add a name or a date first."; return; }
+        var rec = { aid: id(), title: s(title, LIM.short), when: /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(when) ? when : "", who: s(fWho.input.value.trim(), LIM.short), where: s(fWh.input.value.trim(), LIM.short), notes: s(notes.value, LIM.str), cat: cat.value, docId: "" };
+        p.appts.push(rec);
+        if (rec.when) { var d = new Date(rec.when.slice(0, 10) + "T12:00"); DV.month = new Date(d.getFullYear(), d.getMonth(), 1); if (DV.view === "calendar") DV.sel = rec.when.slice(0, 10); }
+        if (DV.time === "past" && (!rec.when || rec.when.slice(0, 10) >= today())) DV.time = "upcoming"; else if (DV.time === "upcoming" && rec.when && rec.when.slice(0, 10) < today()) DV.time = "all";
+        DV.cat = "All"; DV.q = ""; DV.open[rec.aid] = true;
+        save(); scanClose(); renderAppts(); savedMsg("Added to the diary.");
+      });
+      scanDlg([el("h2", { text: "Add an appointment" }), el("p", { class: "note", text: "Fill in what you know. You can change it later." }),
+        el("div", { class: "two", style: "grid-template-columns:1fr !important" }, [fT.node, el("div", {}, [el("label", { for: catId, text: "Type" }), cat]), fW.node, fWho.node, fWh.node, el("div", {}, [el("label", { for: catId + "n", text: "Notes (what to bring, reference number)" }), notes])]),
+        err, el("div", { class: "actions", style: "justify-content:flex-end;margin-top:10px" }, [no, ok])]);
+      fT.input.focus();
+    }
     function matches(a, ignoreTime) {
       if (DV.cat !== "All" && (a.cat || "Other") !== DV.cat) return false;
       if (DV.q && norm([a.title, a.who, a.where, a.notes, a.cat].join(" ")).indexOf(norm(DV.q)) < 0) return false;
@@ -1476,10 +1500,11 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       var addB = el("button", { type: "button", class: "btn btn-main", style: "min-height:44px" }, ["+ Add"]); addB.setAttribute("aria-label", "Add an appointment by hand");
       addB.addEventListener("click", function () { addBlank(DV.view === "calendar" && DV.sel ? DV.sel + "T09:00" : ""); });
       var nAct = (DV.cat !== "All" ? 1 : 0) + (DV.q ? 1 : 0) + (DV.view === "list" && DV.time !== "upcoming" ? 1 : 0);
-      var fb = el("button", { type: "button", class: "btn btn-ghost fbtn", "aria-expanded": DV.fopen ? "true" : "false", "aria-controls": "dfilters" }, [ico("search", 17), "Search and filter" + (nAct ? " (" + nAct + ")" : "")]);
+      var fb = el("button", { type: "button", class: "btn btn-ghost fbtn", "aria-expanded": DV.fopen ? "true" : "false", "aria-controls": "dfilters", "aria-label": "Search and filter the diary" }, [ico("search", 16), "Filter" + (nAct ? " (" + nAct + ")" : "")]);
       fb.addEventListener("click", function () { DV.fopen = !DV.fopen; toolbar(); });
-      tools.appendChild(el("div", { class: "drow" }, [seg, addB]));
-      tools.appendChild(el("div", { class: "drow", style: "margin-top:8px" }, [fb, nAct ? (function () { var c = el("button", { type: "button", class: "linkbtn", text: "Clear" }); c.addEventListener("click", function () { DV.q = ""; DV.cat = "All"; DV.time = "upcoming"; draw(); }); return c; })() : null]));
+      var scanB = el("button", { type: "button", class: "btn btn-ghost scanb" }, [ico("camera", 16), "Scan a letter"]); scanB.addEventListener("click", pickLetter);
+      tools.appendChild(el("div", { class: "drow" }, [addB, scanB]));
+      tools.appendChild(el("div", { class: "drow", style: "margin-top:8px" }, [seg, fb, nAct ? (function () { var c = el("button", { type: "button", class: "linkbtn", text: "Clear" }); c.addEventListener("click", function () { DV.q = ""; DV.cat = "All"; DV.time = "upcoming"; draw(); }); return c; })() : null]));
       if (!DV.fopen) return;
       var panel = el("div", { class: "fpanel", id: "dfilters" });
       var q = el("input", { type: "search", id: "dq", placeholder: "Search the diary", "aria-label": "Search the diary", autocomplete: "off", class: "dsearch" }); q.value = DV.q;
@@ -1506,7 +1531,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       var idx = p.appts.map(function (a, i) { return i; }).filter(function (i) { return matches(p.appts[i]); }), now = today();
       var up = idx.filter(function (i) { return !p.appts[i].when || p.appts[i].when.slice(0, 10) >= now; }).sort(function (x, y) { return apptTime(p.appts[x]) - apptTime(p.appts[y]); });
       var old = idx.filter(function (i) { return p.appts[i].when && p.appts[i].when.slice(0, 10) < now; }).sort(function (x, y) { return apptTime(p.appts[y]) - apptTime(p.appts[x]); });
-      if (!p.appts.length) { var sc2 = el("button", { type: "button", class: "btn btn-main", style: "min-height:48px" }, [ico("camera", 20), "Scan a letter or text"]); sc2.addEventListener("click", pickLetter); out.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Photograph your next appointment letter or text and it is filed for you." })); out.appendChild(sc2); return; }
+      if (!p.appts.length) { out.appendChild(el("p", { class: "empty", text: "Nothing in the diary yet. Tap Scan a letter and photograph your next appointment letter or text, or tap Add to fill one in." })); return; }
       var total = p.appts.length, filtered = DV.cat !== "All" || DV.q || DV.time !== "all";
       var nFilt = (DV.cat !== "All" ? 1 : 0) + (DV.q ? 1 : 0) + (DV.time !== "upcoming" ? 1 : 0); if (nFilt) out.appendChild(el("p", { class: "status", role: "status", "aria-live": "polite", text: idx.length + " of " + total + (total === 1 ? " appointment" : " appointments") + " shown" }));
       if (!idx.length) {
