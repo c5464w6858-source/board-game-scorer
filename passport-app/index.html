@@ -111,6 +111,20 @@ h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 700; line-heigh
 .warn { background: var(--amber-soft); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--amber); }
 .help { font-size: 13px; color: var(--muted); margin-top: 4px; }
 .empty { color: var(--muted); font-style: italic; font-size: 14.5px; }
+.cdet > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; }
+.cdet > summary::-webkit-details-marker { display: none; }
+.cdet > summary .tl { margin: 0; }
+.cdet > summary .cpct { margin-left: auto; font: 700 1.1rem Fraunces, Georgia, serif; color: var(--plum); }
+.cdet > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 6px; transition: transform .15s; }
+.cdet[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+.subsec { border: 1px solid var(--line-2); border-radius: 12px; background: #fff; overflow: hidden; }
+.subsec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 14px; background: var(--plum-soft); font: 700 1.02rem Fraunces, Georgia, serif; color: var(--plum); }
+.subsec > summary::-webkit-details-marker { display: none; }
+.subsec > summary .cnt { margin-left: auto; font: 600 13px Inter, sans-serif; color: var(--muted); }
+.subsec > summary::after { content: ""; flex: none; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: 0 4px 3px 6px; transition: transform .15s; }
+.subsec[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+.subsec .sbody { display: grid; gap: 14px; padding: 14px; }
+input[type=date], input[type=datetime-local] { min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; min-height: 48px; }
 .subh { font: 700 1rem Fraunces, Georgia, serif; color: var(--plum); margin-bottom: 8px; }
 
 /* forms */
@@ -789,6 +803,11 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     draw(); wrap.appendChild(holder); wrap.appendChild(add);
     return wrap;
   }
+  function subsec(title, count, kids) {
+    var cnt = el("span", { class: "cnt", text: count() }), d = el("details", { class: "subsec" }, [el("summary", {}, [el("span", { text: title }), cnt]), el("div", { class: "sbody" }, kids)]);
+    watchers.push(function () { cnt.textContent = count(); });
+    return d;
+  }
   function flag(label, key) {
     var p = cur(), fid = "g" + (++uid), cb = el("input", { type: "checkbox", id: fid }); cb.checked = !!p[key];
     cb.addEventListener("change", function () { p[key] = cb.checked; save(); });
@@ -850,20 +869,20 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       field("Staying safe", "safety", { area: true, help: "For example runs off, no road sense, needs 1:1, cannot swim." })
     ]));
     box.appendChild(section("Health: allergies, medicines and NHS number", false, [
-      el("div", {}, [el("p", { class: "subh", text: "Allergies" }), flag("No known allergies", "noAllergies"), repeater("Allergy", p.allergies, [
+      subsec("Allergies", function () { var n = p.allergies.filter(function (a) { return a.what; }).length; return p.noAllergies && !n ? "None" : n ? String(n) : "Not added"; }, [flag("No known allergies", "noAllergies"), repeater("Allergy", p.allergies, [
         { key: "what", label: "Allergic to" }, { key: "reaction", label: "What happens" }, { key: "action", label: "What to do", wide: true }
       ], "Add an allergy", "No allergies added.")]),
-      el("div", {}, [el("p", { class: "subh", text: "Medicines" }), flag("No regular medicines", "noMeds"), repeater("Medicine", p.meds, [
+      subsec("Medicines", function () { var n = p.meds.filter(function (m) { return m.name; }).length, m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.medsChecked || ""), due = !!(n && (!m || (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) > 183 * 864e5)); return (p.noMeds && !n ? "None" : n ? String(n) : "Not added") + (due ? " · check due" : ""); }, [flag("No regular medicines", "noMeds"), repeater("Medicine", p.meds, [
         { key: "name", label: "Medicine" }, { key: "dose", label: "Dose" }, { key: "when", label: "When it is given" }, { key: "forWhat", label: "What it is for" },
         { key: "prescriber", label: "Prescribed by", wide: true }, { key: "notes", label: "Notes", area: true, wide: true }
-      ], "Add a medicine", "No medicines added.")]),
+      ], "Add a medicine", "No medicines added."),
       (function () {
         var f = field("Medicines last checked", "medsChecked", { type: "date", help: "The day a doctor or pharmacist last went through this list with you." });
         var note = el("p", { class: "warn", hidden: "" }); f.appendChild(note);
         function stale() { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.medsChecked || ""); var show = !!(p.meds.length && (!m || (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) > 183 * 864e5)); note.hidden = !show; note.textContent = show ? (m ? "It is over six months since this list was checked. Ask the pharmacist or doctor to go through it again." : "Add the date a doctor or pharmacist last checked this list, so people reading it know it is up to date.") : ""; }
         watchers.push(stale); stale(); return f;
-      })(),
-      field("NHS number", "nhs", { help: "Optional. Only add it if you want it on the printed passport." })
+      })()]),
+      subsec("NHS number", function () { return p.nhs ? "Added" : "Optional"; }, [field("NHS number", "nhs", { help: "Optional. Only add it if you want it on the printed passport." })])
     ]));
     box.appendChild(section("My doctors and team", false, [
       repeater("Person", p.team, [
@@ -1943,7 +1962,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       box.appendChild(upc);
     }
     var grid = el("div", { class: "grid-cards" });
-    grid.appendChild(tile("Next appointment", next ? (next.title || "Appointment") : "None booked", next ? whenText(next.when) + (next.where ? " · " + next.where : "") : "Add the next one so it is not forgotten.", "", [lb(next ? "See all appointments" : "Add an appointment", function () { setMode("appts"); })]));
+    if (!next) grid.appendChild(tile("Next appointment", next ? (next.title || "Appointment") : "None booked", next ? whenText(next.when) + (next.where ? " · " + next.where : "") : "Add the next one so it is not forgotten.", "", [lb(next ? "See all appointments" : "Add an appointment", function () { setMode("appts"); })]));
     var gdocs = tile("Documents", "…", "", "", [lb("Open documents", function () { setMode("docs"); })]); grid.appendChild(gdocs);
     docsOf(p.id).then(function (all) { var by = {}; all.forEach(function (r) { by[r.category] = (by[r.category] || 0) + 1; }); gdocs.querySelector(".big").textContent = all.length + (all.length === 1 ? " file" : " files"); var sp = Object.keys(by).map(function (k) { return k + ": " + by[k]; }).join(" · "); gdocs.insertBefore(el("p", { text: sp || "Add reports, letters and photos." }), gdocs.querySelector(".linkbtn")); }, function () { gdocs.querySelector(".big").textContent = "Not available"; gdocs.insertBefore(el("p", { text: "This browser cannot keep files." }), gdocs.querySelector(".linkbtn")); });
     var mc = p.medsChecked ? (Date.now() - new Date(p.medsChecked + "T12:00:00").getTime()) > 183 * 864e5 : null;
@@ -1963,11 +1982,12 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       ["Add the school", !!p.school.name, "School"]
     ];
     var done = items.filter(function (i) { return i[1]; }).length, pct = Math.round(done / items.length * 100);
-    var card = el("div", { class: "tile" }, [el("p", { class: "tl", text: "Passport completeness" }), el("div", { class: "big", text: pct + "%" }), el("div", { class: "bar", "aria-hidden": "true" }, [el("i", { style: "width:" + pct + "%" })])]);
+    var card = el("details", { class: "tile cdet" }, [el("summary", {}, [el("span", { class: "tl", text: "Passport completeness" }), el("span", { class: "cpct", text: pct + "%" + (pct < 100 ? " · " + (items.length - done) + " to do" : "") })]), el("div", { class: "bar", "aria-hidden": "true", style: "margin:10px 0 4px" }, [el("i", { style: "width:" + pct + "%" })])]);
     var ul = el("ul", { class: "todo" });
     items.forEach(function (it) { var li = el("li", { class: it[1] ? "done" : "" }, [el("span", { class: "dot", "aria-hidden": "true", text: it[1] ? "✓" : "" }), el("span", { class: "t", text: it[0] })]); if (!it[1]) li.appendChild(lb("Do this", function () { go(it[2]); })); else li.appendChild(el("span", { class: "sr", text: " (done)" })); ul.appendChild(li); });
     card.appendChild(ul); box.appendChild(card);
-    var q = el("div", { class: "actions" }, [lb("See the passport", function () { setMode("view"); }), lb("Emergency card", function () { setMode("card"); }), lb("Add a document", function () { setMode("docs"); })]);
+    var qb = function (t, m) { var b = el("button", { type: "button", class: "btn btn-ghost btn-small", text: t }); b.addEventListener("click", function () { setMode(m); }); return b; };
+    var q = el("div", { class: "actions", style: "margin:14px 0" }, [qb("See the passport", "view"), qb("Emergency card", "card"), qb("Documents", "docs")]);
     box.appendChild(q);
     box.appendChild(el("div", { class: "upsell" }, [el("h3", { text: "Managing an EHCP?" }), el("p", { text: "EHCP Tracker keeps the whole case in one place: deadlines, reports, phone calls, letters and a printable case pack. £3.99 a month. Case details stay on your phone." }),
       el("a", { class: "btn btn-main btn-small", href: "https://info.includeme.uk/advocate/?utm_campaign=passport_overview", rel: "noopener", text: "See how EHCP Tracker works" })]));
@@ -2434,7 +2454,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.27", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.29", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
