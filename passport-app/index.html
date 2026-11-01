@@ -455,6 +455,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
           <div class="menu" id="acctMenu" aria-label="Account and backups" hidden>
             <p class="mh" id="acctEmail"></p>
             <hr>
+            <button type="button" class="mi" id="miCloud">Private copy on our server</button>
             <button type="button" class="mi" id="miDownload">Download a backup</button>
             <button type="button" class="mi" id="miDownloadFull">Backup with documents</button>
             <button type="button" class="mi" id="miLoad">Load a backup</button>
@@ -528,7 +529,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     </div>
   </main>
   <footer class="fine">
-    Everything here is saved on this device only. It is not uploaded to us. Check medicines against the label or your pharmacist. This is not a medical record or medical advice. <a href="/privacy.html">Privacy</a> <span class="ver" id="ver"></span>
+    Everything here is saved on this device. It is only copied to us if you choose to keep a private copy. Check medicines against the label or your pharmacist. This is not a medical record or medical advice. <a href="/privacy.html">Privacy</a> <span class="ver" id="ver"></span>
   </footer>
 </div>
 
@@ -627,7 +628,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
 
   /* ---------- storage ---------- */
-  var store = { profiles: [], current: null };
+  var store = { profiles: [], current: null, deleted: {} };
   var shared = null;       // a passport opened from a link: shown, never saved unless asked
   var mode = "edit";
   function load() {
@@ -635,7 +636,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       var raw = localStorage.getItem(KEY);
       if (raw) {
         var d = JSON.parse(raw);
-        if (d && Array.isArray(d.profiles)) { store.profiles = d.profiles.slice(0, 12).map(clean); store.current = d.current; }
+        if (d && Array.isArray(d.profiles)) { store.profiles = d.profiles.slice(0, 12).map(clean); store.current = d.current; store.deleted = d.deleted && typeof d.deleted === "object" ? d.deleted : {}; }
       }
     } catch (e) { /* storage blocked: the page still works for this visit */ }
     if (!store.profiles.length) { var p = blank(); store.profiles.push(p); store.current = p.id; }
@@ -653,8 +654,9 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     saveTimer = setTimeout(function () {
       try {
         cur().updated = new Date().toISOString();
-        localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current }));
-        savedMsg("Saved on this device only");
+        localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current, deleted: store.deleted }));
+        savedMsg(window.cloudOn && window.cloudOn() ? "Saved on this device and in your private copy" : "Saved on this device only");
+        if (window.cloudPushSoon) window.cloudPushSoon();
         if (window.diarySyncSoon) window.diarySyncSoon();
       } catch (e) { savedMsg("Could not save on this device. Download a backup file so you do not lose it.", true); }
     }, 350);
@@ -1137,7 +1139,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   var LEADS = [[0, "On the day"], [1, "1 day before"], [2, "2 days before"], [3, "3 days before"], [5, "5 days before"], [7, "1 week before"], [14, "2 weeks before"]];
   function prefs() {
     var p = {}; try { p = JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; } catch (e) { p = {}; }
-    return { leadDays: Number.isInteger(p.leadDays) && p.leadDays >= 0 && p.leadDays <= 30 ? p.leadDays : 3, email: p.email === true, push: p.push === true, consent: p.consent === true, calAlarm: p.calAlarm !== false, synced: p.synced === true };
+    return { leadDays: Number.isInteger(p.leadDays) && p.leadDays >= 0 && p.leadDays <= 30 ? p.leadDays : 3, email: p.email === true, push: p.push === true, consent: p.consent === true, calAlarm: p.calAlarm !== false, synced: p.synced === true, cloud: p.cloud === true, cloudAsked: typeof p.cloud === "boolean" };
   }
   function setPrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch (e) { /* storage blocked */ } }
   function patchPrefs(o) { var p = prefs(); Object.keys(o).forEach(function (k) { p[k] = o[k]; }); setPrefs(p); return p; }
@@ -1792,7 +1794,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   var gateEmail = "";
   function gateView(kids) { var c = $("gateCard"); c.textContent = ""; c.appendChild(el("div", { class: "brand" }, [el("img", { src: "logo-passport.svg", alt: "" }), el("span", { text: "Child Organiser" })])); kids.forEach(function (k) { if (k) c.appendChild(k); }); $("app").hidden = true; $("gate").hidden = false; }
   function note(msg, isErr) { return msg ? el("p", { class: "msg" + (isErr === false ? " ok" : ""), role: isErr === false ? "status" : "alert", text: msg }) : null; }
-  function privacyLine() { return el("p", { class: "fine", style: "margin-top:14px" }, ["Free to use. Your child's details stay on this device. ", el("a", { href: "privacy.html", text: "Privacy" }), "."]); }
+  function privacyLine() { return el("p", { class: "fine", style: "margin-top:14px" }, ["Free to use. Your child's details stay on this device unless you choose to keep a private copy. ", el("a", { href: "privacy.html", text: "Privacy" }), "."]); }
   function pwField(id, label, autocomplete) {
     var inp = el("input", { id: id, type: "password", autocomplete: autocomplete, minlength: "8" }), show = el("input", { type: "checkbox", id: id + "S" });
     show.addEventListener("change", function () { inp.type = show.checked ? "text" : "password"; });
@@ -1934,9 +1936,9 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     if (p && p.name) { var del = el("button", { type: "button", class: "mi danger", text: "Delete " + p.name + "…" }); del.addEventListener("click", function () { closeMenus(); deleteChild(); }); menu.appendChild(del); }
   }
   function deleteChild() {
-    var p = cur(); if (!window.confirm("Delete " + (p.name || "this child") + " and their documents from this device? This cannot be undone. Download a backup first if you want to keep it.")) return;
+    var p = cur(); if (!window.confirm("Delete " + (p.name || "this child") + " and their documents from this device, and from your private copy if you keep one? This cannot be undone. Download a backup first if you want to keep it.")) return;
     delDocsOf(p.id).catch(function () { /* no files to remove */ });
-    store.profiles = store.profiles.filter(function (x) { return x.id !== p.id; });
+    store.deleted[p.id] = new Date().toISOString(); store.profiles = store.profiles.filter(function (x) { return x.id !== p.id; });
     if (!store.profiles.length) store.profiles.push(blank());
     store.current = (named()[0] || store.profiles[0]).id; save(); refresh(); toolMsg("Deleted from this device.");
   }
@@ -1993,7 +1995,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       ["Tap the ", ["Share"], " button: the square with an arrow pointing up, at the bottom of Safari or the top right of Chrome."],
       ["Scroll the list and tap ", ["Add to Home Screen"], "."],
       ["Tap ", ["Add"], ". The Child Organiser icon now sits on your Home Screen."]]),
-      el("p", { class: "note", text: "The saved app is a separate copy on your phone: it keeps its own sign-in and starts empty, because your child's details are stored only on the device and are not sent to us. Before you save it, use the account menu to Backup with documents, then open the saved app and choose Load a backup." })]);
+      el("p", { class: "note", text: "The saved app is a separate copy on your phone with its own sign-in. If you keep a private copy, your details appear in it when you sign in. If not, use the account menu to Backup with documents first, then Load a backup in the saved app." })]);
     var andBody = [];
     if (installEvt) { var go = el("button", { type: "button", class: "btn btn-main", text: "Install now" }); go.addEventListener("click", function () { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; updateInstall(); scanClose(); }); }); andBody.push(el("p", { text: "Your phone is ready to install it:" }), go, el("p", { class: "note", style: "margin-top:10px", text: "Or by hand:" })); }
     andBody.push(steps([["Open this page in ", ["Chrome"], "."], ["Tap the ", ["three dots"], " at the top right."], ["Tap ", ["Install app"], " (or ", ["Add to Home screen"], ")."], ["Tap ", ["Install"], ". The icon now sits on your Home screen."]]));
@@ -2002,6 +2004,72 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     nodes.push(el("p", { class: "note", style: "margin-top:10px", text: "On a computer: look for the install icon at the right of the address bar, or open the browser menu and choose Install." }), closeBtn());
     scanDlg(nodes);
   }
+  /* ---------- private copy on our server (only if the parent agrees) ---------- */
+  var cloudT = null, cloudLast = 0, cloudBusy = false, pulling = false;
+  window.cloudOn = function () { return prefs().cloud === true; };
+  function stamp(x) { return Date.parse(x && x.updated || "") || 0; }
+  function mergeIn(remote) {
+    var changed = false, byId = {}, del = {};
+    Object.keys(store.deleted || {}).forEach(function (k) { del[k] = store.deleted[k]; });
+    Object.keys(remote.deleted || {}).forEach(function (k) { if (!del[k] || Date.parse(remote.deleted[k]) > Date.parse(del[k])) { del[k] = remote.deleted[k]; } });
+    store.profiles.forEach(function (x) { byId[x.id] = x; });
+    (remote.profiles || []).slice(0, 12).forEach(function (r) {
+      var c = clean(r), mine = byId[c.id];
+      if (!mine) { byId[c.id] = c; changed = true; }
+      else if (stamp(c) > stamp(mine)) { byId[c.id] = c; changed = true; }
+    });
+    var out = Object.keys(byId).map(function (k) { return byId[k]; }).filter(function (x) { var t = del[x.id]; return !(t && Date.parse(t) >= stamp(x)); });
+    if (out.length !== store.profiles.length) changed = true;
+    if (changed) {
+      var blankOnly = out.length === 0;
+      store.profiles = blankOnly ? [blank()] : out.slice(0, 12);
+      if (!find(store.current) || (!find(store.current).name && named().length)) store.current = (named()[0] || store.profiles[0]).id;
+    }
+    store.deleted = del;
+    return changed;
+  }
+  function hasContent() { return named().length > 0; }
+  function cloudPush() {
+    if (!window.cloudOn() || shared || cloudBusy) return Promise.resolve();
+    if (!hasContent() && !Object.keys(store.deleted || {}).length) return Promise.resolve();
+    cloudBusy = true;
+    return api("/api/diary/vault", { method: "PUT", body: { consent: true, data: { profiles: store.profiles, current: store.current, deleted: store.deleted } } }).then(function () { savedMsg("Saved on this device and in your private copy"); }, function (e) { savedMsg(e && e.status === 413 ? "Your private copy is full, so it is saved on this device only." : "Could not update your private copy just now. It is still saved on this device.", true); }).then(function () { cloudBusy = false; }, function () { cloudBusy = false; });
+  }
+  window.cloudPushSoon = function () { if (!window.cloudOn()) return; clearTimeout(cloudT); cloudT = setTimeout(cloudPush, 2000); };
+  function cloudPull(quiet) {
+    if (!window.cloudOn() || shared || (Date.now() - cloudLast < 20000 && quiet)) return Promise.resolve();
+    cloudLast = Date.now();
+    return api("/api/diary/vault").then(function (r) {
+      if (r && r.data) {
+        var changed = mergeIn(r.data);
+        if (changed) { try { localStorage.setItem(KEY, JSON.stringify({ profiles: store.profiles, current: store.current, deleted: store.deleted })); } catch (e) { /* storage blocked */ } refresh(); if (!quiet) toolMsg("Brought up to date from your private copy."); }
+      }
+      return cloudPush();
+    }).catch(function () { /* offline or signed out: the device copy still works */ });
+  }
+  function cloudDialog(first) {
+    var on = prefs().cloud, nodes = [el("h2", { text: first ? "Keep a private copy so it follows you?" : "Private copy on our server" })];
+    nodes.push(el("p", { text: "Your child's details are saved on this phone. If you also keep a private copy with us, the same information appears when you sign in on another phone, on the Home Screen app, or after getting a new phone." }));
+    nodes.push(el("ul", { class: "note", style: "margin:6px 0 10px 18px" }, [
+      el("li", { text: "It includes your child's name, health and support details, appointments and contacts, as you enter them." }),
+      el("li", { text: "It is encrypted before it is stored and only opened for you when you sign in. We do not sell it or use it to train AI." }),
+      el("li", { text: "Documents and photos stay on the phone. They are not copied." }),
+      el("li", { text: "You can turn it off, or delete the copy, at any time." })]));
+    var yes = el("button", { type: "button", class: "btn btn-main", text: on ? "Keep it on" : "Yes, keep a private copy" });
+    yes.addEventListener("click", function () { patchPrefs({ cloud: true }); scanClose(); toolMsg("Private copy is on."); cloudLast = 0; pulling = true; cloudPull(false).then(function () { pulling = false; if (!named().length) openChildDialog(); }, function () { pulling = false; }); });
+    var no = el("button", { type: "button", class: "btn btn-ghost", text: on ? "Turn off" : "No, this phone only" });
+    no.addEventListener("click", function () { patchPrefs({ cloud: false }); scanClose(); toolMsg(on ? "Private copy is off. What is already stored stays until you delete it." : "Saved on this phone only. You can change this in the account menu."); });
+    var row = [yes, no];
+    if (on) { var del = el("button", { type: "button", class: "btn btn-ghost", text: "Delete my private copy" }); del.addEventListener("click", function () { api("/api/diary/vault", { method: "PUT", body: { consent: true, data: { profiles: [], deleted: {} } } }).then(function () { return api("/api/diary/data", { method: "DELETE" }); }).then(function () { patchPrefs({ cloud: false, email: false, push: false, synced: false }); scanClose(); toolMsg("Deleted. Everything stays on this phone."); }, function () { toolMsg("Could not delete just now. Try again with a signal.", true); }); }); row.push(del); }
+    nodes.push(el("div", { class: "actions", style: "flex-wrap:wrap;gap:8px;justify-content:flex-end" }, row));
+    scanDlg(nodes);
+  }
+  function cloudStart() {
+    var pf = prefs();
+    if (!pf.cloudAsked) { setTimeout(function () { if (!$("gate").hidden) return; var d = $("dlgScan"), after = function () { d.removeEventListener("close", after); setTimeout(function () { if (!pulling && !named().length) openChildDialog(); }, 50); }; d.addEventListener("close", after); cloudDialog(true); }, 900); return; }
+    cloudPull(false).then(function () { if (!named().length) openChildDialog(); });
+  }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) cloudPull(true); });
   function showExample() { shared = example(); $("exampleBanner").hidden = false; $("sharedBanner").hidden = true; chrome(false); setMode("view"); }
   function example() {
     return clean({ name: "Sam Doe", preferred: "Sam", dob: "2016-04-12", pronouns: "he/him", languages: "English",
@@ -2026,7 +2094,8 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var s = getSession(); $("acctEmail").textContent = s && s.email ? s.email : ""; $("acctAv").textContent = s && s.email ? s.email[0].toUpperCase() : "?";
     mode = named().length ? "overview" : "edit"; if (!named().length) mode = "overview";
     chrome(true); refresh();
-    if (!named().length) openChildDialog();
+    cloudStart();
+    if (!named().length && prefs().cloudAsked) openChildDialog();
   }
   function wire() {
     if (wired) return; wired = true;
@@ -2103,10 +2172,11 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("instHide").addEventListener("click", function () { try { localStorage.setItem(INST_KEY, String(Date.now() + 14 * 864e5)); } catch (e) { /* storage blocked */ } $("installBar").hidden = true; });
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miSave").addEventListener("click", function () { closeMenus(); if (installEvt && !isInstalled()) { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; deferred = null; updateInstall(); $("miInstall").hidden = true; }); } else installHelp(); });
+    $("miCloud").addEventListener("click", function () { closeMenus(); cloudDialog(false); });
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.17", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.18", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
