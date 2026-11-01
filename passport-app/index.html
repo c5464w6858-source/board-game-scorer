@@ -346,6 +346,22 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
 .calbtn { justify-content: flex-start; text-align: left; text-decoration: none; padding: 12px 14px; min-height: 58px; }
 .calbtn span:last-child { display: block; }
 .calbtn small { display: block; font-weight: 400; opacity: .85; font-size: 12.5px; margin-top: 2px; }
+
+.quiet:empty { display: none; }
+/* diary: compact controls */
+#appts .seg button { min-height: 36px; padding: 6px 12px; font-size: 13.5px; gap: 5px; }
+#appts .seg button .ico svg { width: 16px; height: 16px; }
+#appts .seg.small button { min-height: 34px; padding: 5px 11px; }
+#appts .drow > .btn, #appts .fbtn { min-height: 36px !important; padding: 5px 13px; font-size: 13.5px; }
+#appts .fbtn .ico svg { width: 15px; height: 15px; }
+#appts .btn-small { min-height: 34px; padding: 5px 11px; font-size: 13.5px; }
+#appts .calhead .btn-small { min-height: 34px; min-width: 40px; }
+#appts .chip { min-height: 32px; padding: 5px 10px; font-size: 12.5px; }
+#appts .dsearch { min-height: 38px; padding: 7px 11px; font-size: 15px; }
+#appts .cday { min-height: 46px; }
+#appts .appt .actions { gap: 6px; }
+.fab { min-height: 48px; padding: 11px 18px 11px 15px; font-size: 15px; gap: 8px; }
+.fab .ico svg { width: 21px; height: 21px; }
 @media print { .fab, .updbar { display: none !important; } }
 </style>
 </head>
@@ -1936,7 +1952,7 @@ body { background: radial-gradient(1200px 500px at 50% -120px, #E9DFF7 0%, var(-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.9", lastCheck = 0;
+    var APP_VERSION = "2026-11-01.10", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function checkVersion() {
       if (Date.now() - lastCheck < 5 * 60 * 1000 || !navigator.onLine) return; lastCheck = Date.now();
