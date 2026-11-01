@@ -38,6 +38,42 @@
         });
       }
     </script>
+    <script>
+      /* Newest-version check: an installed copy can stay asleep on an old page. Compare the running bundle with the live one. */
+      (function () {
+        var last = 0;
+        function mine() { var s = document.querySelector('script[type="module"][src*="assets/index-"]'); return s ? s.getAttribute("src") : ""; }
+        function bar() {
+          if (document.getElementById("updBar")) return;
+          var d = document.createElement("div"); d.id = "updBar"; d.setAttribute("role", "status");
+          d.style.cssText = "position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:99999;display:flex;gap:12px;align-items:center;justify-content:space-between;background:#0F3D36;color:#fff;padding:10px 12px 10px 16px;border-radius:12px;font:600 14.5px system-ui,sans-serif;box-shadow:0 16px 30px -12px rgba(0,0,0,.5)";
+          d.innerHTML = '<span>A newer version of IncludeMe is ready.</span><button type="button" style="background:#fff;color:#0F3D36;border:0;border-radius:9px;padding:9px 14px;font:700 14px system-ui,sans-serif">Update now</button>';
+          d.querySelector("button").onclick = window.includeMeUpdate; document.body.appendChild(d);
+        }
+        window.includeMeUpdate = function () {
+          var go = function () { location.reload(); };
+          var c = "caches" in window ? caches.keys().then(function (k) { return Promise.all(k.map(function (n) { return caches.delete(n); })); }) : Promise.resolve();
+          var u = "serviceWorker" in navigator ? navigator.serviceWorker.getRegistrations().then(function (r) { return Promise.all(r.map(function (x) { return x.unregister(); })); }) : Promise.resolve();
+          Promise.all([c, u]).then(go, go);
+        };
+        function check() {
+          if (Date.now() - last < 30000 || !navigator.onLine) return; last = Date.now();
+          var cur = mine(); if (!cur) return;
+          try { if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.update(); }); } catch (e) {}
+          fetch("/?_v=" + Date.now(), { cache: "no-store", headers: { accept: "text/html" } }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (t) {
+            var m = /<script[^>]+src="([^"]*assets\/index-[^"]+\.js)"/.exec(t);
+            if (!m || m[1] === cur) return;
+            var tried = ""; try { tried = sessionStorage.getItem("includeme.updtried") || ""; } catch (e) {}
+            var a = document.activeElement, busy = a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+            if (!busy && tried !== m[1]) { try { sessionStorage.setItem("includeme.updtried", m[1]); } catch (e) {} window.includeMeUpdate(); }
+            else bar();
+          }).catch(function () {});
+        }
+        document.addEventListener("visibilitychange", function () { if (!document.hidden) check(); });
+        window.addEventListener("pageshow", check);
+        setTimeout(check, 2000);
+      })();
+    </script>
     <script src="./visit.js" defer></script>
 </body>
 </html>
