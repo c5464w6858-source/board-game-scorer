@@ -1808,12 +1808,6 @@ const ActivityCard=({act,onOpen,onFav,isFav,isOwner,onEdit,onDelete,onUpgrade,on
             <Btn variant="danger" size="sm" onClick={()=>onDelete(act.id)}><Icons.trash/></Btn>
             {!featured&&(
               <div style={{marginLeft:"auto",display:"flex",gap:6,flexWrap:"wrap"}}>
-                {!act.verifiedPaid&&onVerify&&(
-                  <button onClick={()=>onVerify(act)}
-                    style={{padding:"6px 10px",borderRadius:8,border:"1.5px solid #0F6B5C",background:"#E4F0ED",color:"#0F6B5C",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",fontFamily:F.body}}>
-                    ✓ Verify £15/mo
-                  </button>
-                )}
                 {onUpgrade&&(
                   <button onClick={()=>onUpgrade(act)}
                     style={{padding:"6px 10px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",boxShadow:"0 2px 8px rgba(217,119,6,0.3)",fontFamily:F.body}}>
@@ -2217,66 +2211,6 @@ const VerifiedBadge=()=>(
     <Icons.check/>Verified
   </span>
 );
-
-// ─── Get Verified Modal (£15/month — trust tier) ──────────────────────────────
-const GetVerifiedModal=({act,user,onClose,onActivated})=>{
-  const [submitted,setSubmitted]=useState(false);
-  const [loading,setLoading]=useState(false);
-  const [err,setErr]=useState("");
-  const perks=[
-    ["✓","Verified badge on your listing","A teal certified badge shows families your sessions are real, regularly active, and have been reviewed by IncludeMe"],
-    ["🛡️","Trust signal for new visitors","Parents searching for the first time are far more likely to contact a verified listing over an unverified one"],
-    ["📧","Annual re-confirmation email","We check in once a year to confirm your details are still accurate — keeping the directory trustworthy for families"],
-    ["🤝","Priority for council partnerships","Verified listings are the first we recommend to local authority SEND teams and Local Offer directories"],
-  ];
-  const activate=async()=>{
-    setLoading(true);setErr("");
-    try{
-      const{redirecting}=await attemptCheckoutOrFallback(act,"verified",onActivated);
-      if(!redirecting)setSubmitted(true); // redirecting=true means the page is navigating to Stripe right now
-    }catch(e){setErr(e.message||"Something went wrong — please try again.");}
-    setLoading(false);
-  };
-  return(
-    <Modal onClose={onClose} maxWidth={480}>
-      {submitted?(
-        <div style={{textAlign:"center",padding:"8px 0 16px"}}>
-          <div style={{fontSize:44,marginBottom:16}}>✅</div>
-          <h3 style={{margin:"0 0 10px",fontFamily:F.display,fontWeight:600,fontSize:22,color:C.slate900}}>You're now Verified</h3>
-          <p style={{color:C.slate500,fontSize:14,lineHeight:1.6,margin:"0 0 22px"}}><strong>{act.organisation}</strong> now shows the Verified badge — effective right now.</p>
-          <Btn onClick={onClose} full>Done</Btn>
-        </div>
-      ):(
-        <>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:18,gap:12}}>
-            <div>
-              <h3 style={{margin:"0 0 4px",fontFamily:F.display,fontWeight:600,fontSize:20,color:C.slate900}}>Get Verified</h3>
-              <p style={{margin:0,color:C.slate500,fontSize:13.5}}>A trusted signal that your organisation is real and actively running sessions</p>
-            </div>
-            <div style={{textAlign:"right",flexShrink:0}}>
-              <div style={{fontSize:24,fontWeight:700,color:C.slate900,fontFamily:F.display}}>£15</div>
-              <div style={{fontSize:11,color:C.slate400,fontWeight:600}}>per month</div>
-            </div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:18}}>
-            {perks.map(([icon,title,desc])=>(
-              <div key={title} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
-                <span style={{fontSize:18,lineHeight:1,flexShrink:0,marginTop:2}}>{icon}</span>
-                <div><div style={{fontWeight:600,fontSize:14,color:C.slate800,marginBottom:2}}>{title}</div><div style={{fontSize:12.5,color:C.slate500,lineHeight:1.5}}>{desc}</div></div>
-              </div>
-            ))}
-          </div>
-          <div style={{background:"#E4F0ED",borderRadius:10,padding:13,marginBottom:18,fontSize:13,color:C.brand,lineHeight:1.55}}>
-            <strong>Want more than just the badge?</strong> Upgrade to Featured (£49/month) instead — it includes Verified <em>plus</em> top search placement and a gold Featured badge.
-          </div>
-          {err&&<p style={{color:C.red,fontSize:13,margin:"0 0 12px",textAlign:"center"}}>{err}</p>}
-          <Btn full loading={loading} onClick={activate}>Pay £15 &amp; activate →</Btn>
-          <p style={{fontSize:11.5,color:C.slate400,marginTop:12,textAlign:"center"}}>Registered charities are verified free of charge — contact us. Cancel any time.</p>
-        </>
-      )}
-    </Modal>
-  );
-};
 
 const FeaturedUpgradeModal=({act,user,onClose,onActivated,onEdit})=>{
   const [submitted,setSubmitted]=useState(false);
@@ -3328,7 +3262,6 @@ const ListingsPanel=({listings,user,onEdit,onDelete,onActivate,onActivateVerifie
     setBillingLoadingId(null);
   };
   const [upgradeAct,setUpgradeAct]=useState(null);
-  const [verifyAct,setVerifyAct]=useState(null);
   const [analyticsAct,setAnalyticsAct]=useState(null);
   const [enquiries,setEnquiries]=useState(null);
   const [activeInbox,setActiveInbox]=useState(!!initialShowEnquiries);
@@ -3352,7 +3285,6 @@ const ListingsPanel=({listings,user,onEdit,onDelete,onActivate,onActivateVerifie
   return(
     <>
       {upgradeAct&&<FeaturedUpgradeModal act={upgradeAct} user={user} onActivated={onActivate} onEdit={onEdit} onClose={()=>setUpgradeAct(null)}/>}
-      {verifyAct&&<GetVerifiedModal act={verifyAct} user={user} onActivated={onActivateVerified} onClose={()=>setVerifyAct(null)}/>}
       {analyticsAct&&<AnalyticsModal act={analyticsAct} onClose={()=>setAnalyticsAct(null)}/>}
       {upgradeConfirmation&&(
         <div style={{marginBottom:14,borderRadius:10,padding:"12px 14px",background:"#ECFDF5",border:"1px solid #6EE7B7",display:"flex",alignItems:"center",gap:10}}>
@@ -3434,18 +3366,12 @@ const ListingsPanel=({listings,user,onEdit,onDelete,onActivate,onActivateVerifie
                 <div style={{fontSize:12,color:C.slate400}}>{act.organisation} · {act.location}</div>
                 <ListingStatRow actId={act.id} featured={act.featured} onOpenAnalytics={()=>setAnalyticsAct(act)}/>
               </div>
-              {(!act.featured||!act.verifiedPaid)&&(
+              {!act.featured&&(
                 <div style={{flexShrink:0,display:"flex",flexDirection:"column",gap:6,alignItems:"flex-end"}}>
                   {!act.featured&&(
                     <button onClick={()=>setUpgradeAct(act)}
                       style={{background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",border:"none",borderRadius:8,padding:"6px 12px",fontSize:11.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",boxShadow:"0 2px 8px rgba(217,119,6,0.25)"}}>
                       ⭐ Get Featured · £49/mo
-                    </button>
-                  )}
-                  {!act.verifiedPaid&&(
-                    <button onClick={()=>setVerifyAct(act)}
-                      style={{background:C.brandLt,color:C.brand,border:`1.5px solid ${C.brand}`,borderRadius:8,padding:"6px 12px",fontSize:11.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
-                      ✓ Get Verified · £15/mo
                     </button>
                   )}
                 </div>
@@ -3468,9 +3394,8 @@ const ListingsPanel=({listings,user,onEdit,onDelete,onActivate,onActivateVerifie
       <div style={{marginTop:20,padding:"14px 16px",background:C.brandLt,borderRadius:12}}>
         <div style={{fontWeight:600,fontSize:13.5,color:C.brand,marginBottom:8}}>Grow your reach</div>
         <div style={{fontSize:12.5,color:C.brand,lineHeight:1.6,opacity:0.9}}>
-          <strong>Verified (£15/mo)</strong> adds a trust badge confirming your details are real and current.<br/>
-          <strong>Featured (£49/mo)</strong> includes everything in Verified, plus priority placement near local families, a gold badge, and room for more photos.<br/>
-          Both activate instantly — cancel any time.
+          <strong>Featured (£49/mo)</strong> gives your listing priority placement near local families, a gold badge, and room for more photos.<br/>
+          It activates instantly — cancel any time.
         </div>
       </div>
     </>
@@ -4259,7 +4184,7 @@ const AdminPanel=({activities,setActivities,onClose})=>{
             <StatBox icon="📋" label="Total listings" val={activities.length}/>
             <StatBox icon="📥" label="Pending requests" val={pending} color={pending>0?"#D97706":C.slate400}/>
             <StatBox icon="⭐" label="Featured listings" val={featured.length} sub={`£${featured.length*49}/mo potential`}/>
-            <StatBox icon="✓" label="Verified listings" val={verified.length} sub={`£${verified.length*15}/mo potential`}/>
+            <StatBox icon="✓" label="Verified listings" val={verified.length} sub="free, admin-checked"/>
             <StatBox icon="🆓" label="Free listings" val={free.length} sub={`${Math.round(free.length/activities.length*100)}% of directory`}/>
             <StatBox icon="🔐" label="Claimed listings" val={claimed.length}/>
             <StatBox icon="📧" label="With real email" val={hasEmail.length} sub={`${activities.length-hasEmail.length} contact-form only`}/>
@@ -4295,7 +4220,7 @@ const AdminPanel=({activities,setActivities,onClose})=>{
                 {requests.claims.map((r,i)=><ReqCard key={i} req={r} type="claim" onApprove={approveClaim} onReject={req=>rejectReq("claim:",req.actId,req)}/>)}
               </div>
               <div style={{marginBottom:20}}>
-                <h4 style={{margin:"0 0 10px",fontSize:12,fontWeight:700,color:C.slate500,textTransform:"uppercase",letterSpacing:"0.07em"}}>Verification Requests £15/mo — {requests.verifies.filter(r=>r.status==="pending").length} pending</h4>
+                <h4 style={{margin:"0 0 10px",fontSize:12,fontWeight:700,color:C.slate500,textTransform:"uppercase",letterSpacing:"0.07em"}}>Verification Requests — {requests.verifies.filter(r=>r.status==="pending").length} pending</h4>
                 {requests.verifies.length===0&&<p style={{color:C.slate400,fontSize:13}}>No verification requests yet.</p>}
                 {requests.verifies.map((r,i)=><ReqCard key={i} req={r} type="verify" onApprove={approveVerify} onReject={req=>rejectReq("verify-request:",req.actId,req)}/>)}
               </div>
@@ -4466,10 +4391,6 @@ const AdminPanel=({activities,setActivities,onClose})=>{
               <div style={{background:"#FFFCF0",border:"1.5px solid #F6C96A",borderRadius:10,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div><div style={{fontWeight:700,fontSize:14}}>⭐ Featured</div><div style={{fontSize:12,color:C.slate400}}>{featured.length} listings × £49/mo</div></div>
                 <div style={{fontSize:20,fontWeight:700,fontFamily:F.display,color:"#D97706"}}>£{featured.length*49}</div>
-              </div>
-              <div style={{background:"#E4F0ED",border:"1.5px solid #0F6B5C",borderRadius:10,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <div><div style={{fontWeight:700,fontSize:14}}>✓ Verified</div><div style={{fontSize:12,color:C.slate400}}>{verified.length} listings × £15/mo</div></div>
-                <div style={{fontSize:20,fontWeight:700,fontFamily:F.display,color:"#0F6B5C"}}>£{verified.length*15}</div>
               </div>
             </div>
           </div>
@@ -5863,7 +5784,6 @@ export default function App() {
   const [showPlanner,setShowPlanner]=useState(false);
   const [enquiryAct,setEnquiryAct]=useState(null);
   const [upgradeAct,setUpgradeAct]=useState(null);
-  const [verifyAct,setVerifyAct]=useState(null);
   const [search,setSearch]=useState("");
   const [typeFilter,setTypeFilter]=useState("All Types");
   const [therapyCategoryFilter,setTherapyCategoryFilter]=useState("All");
@@ -6825,7 +6745,7 @@ export default function App() {
           </div>
           :<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:14}}>
             {(()=>{
-              const cards=filtered.map(a=><ActivityCard key={a.id} act={a} dist={a.dist} onOpen={setSelected} onFav={handleFav} isFav={(user?.favourites||[]).includes(a.id)} isOwner={user&&a.ownerId===user.id} onEdit={act=>{setEditTarget(act);setShowForm(true);}} onDelete={handleDelete} onUpgrade={setUpgradeAct} onVerify={setVerifyAct} reviewVersion={reviewVersion}/>);
+              const cards=filtered.map(a=><ActivityCard key={a.id} act={a} dist={a.dist} onOpen={setSelected} onFav={handleFav} isFav={(user?.favourites||[]).includes(a.id)} isOwner={user&&a.ownerId===user.id} onEdit={act=>{setEditTarget(act);setShowForm(true);}} onDelete={handleDelete} onUpgrade={setUpgradeAct} reviewVersion={reviewVersion}/>);
               // For families, drop a prominent "Suggest an activity" card in among the listings
               if(user&&user.accountType==="individual"&&cards.length>=3){
                 const pos=Math.min(3+(filtered.length%4),cards.length);
@@ -6875,7 +6795,6 @@ export default function App() {
       {showNotifSub&&<NotifSubModal user={user} userLoc={userLoc} locLabel={locLabel} onSave={handleNotifSubSave} onClose={()=>setShowNotifSub(false)}/>}
       {showAccount&&user&&<AccountModal user={user} onClose={()=>{setShowAccount(false);setAccountInitTab("profile");setUpgradeConfirmation(null);setAccountOpenEnquiries(false);}} onUpdateUser={handleUpdateUser} onLogout={()=>{handleLogout();setShowAccount(false);}} currentFilters={currentFilters} onLoadPreset={handleLoadPreset} myListings={activities.filter(a=>a.ownerId===user.id)} onEditListing={act=>{setShowAccount(false);setEditTarget(act);setShowForm(true);}} onDeleteListing={handleDelete} onActivateListing={handleActivateFeatured} onActivateVerifiedListing={handleActivateVerified} activities={activities} userLoc={userLoc} initialTab={accountInitTab} upgradeConfirmation={upgradeConfirmation} initialShowEnquiries={accountOpenEnquiries}/>}
       {upgradeAct&&user&&<FeaturedUpgradeModal act={upgradeAct} user={user} onActivated={handleActivateFeatured} onEdit={act=>{setUpgradeAct(null);setEditTarget(act);setShowForm(true);}} onClose={()=>setUpgradeAct(null)}/>}
-      {verifyAct&&user&&<GetVerifiedModal act={verifyAct} user={user} onActivated={handleActivateVerified} onClose={()=>setVerifyAct(null)}/>}
       {showAdmin&&isAdmin&&<AdminPanel activities={activities} setActivities={setActivities} onClose={()=>setShowAdmin(false)}/>}
     </div>
   );
