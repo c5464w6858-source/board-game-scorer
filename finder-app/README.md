@@ -148,7 +148,7 @@ browser, since the browser can't be trusted to honestly report "yes, I paid."
 
 ### What's not pre-built in the dashboard
 
-No Stripe Product or Price needs to be created manually — the £15/£49
+No Stripe Product or Price needs to be created manually — the £29 Featured
 amounts are defined directly in
 [`create-checkout-session.js`](netlify/functions/create-checkout-session.js)
 (`PRICES` constant near the top). If you ever change the pricing, update it
