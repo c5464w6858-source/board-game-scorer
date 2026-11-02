@@ -619,7 +619,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       </div>
       <span class="actions"><button type="button" class="btn btn-main btn-small" id="instGo" hidden>Install</button><button type="button" class="btn btn-ghost btn-small" id="instHide">Hide for now</button></span>
     </section>
-    <div id="exampleBanner" class="banner" hidden><span><b>This is an example.</b> Nothing here is saved.</span><button type="button" class="btn btn-main btn-small" id="exampleBack">Back to my passports</button></div>
+    <div id="exampleBanner" class="banner" hidden><span><b>This is an example.</b> Nothing here is saved. In your own Child Organiser, scan or upload a letter or report and the appointment, documents, contacts and details like these are filled in for you to check.</span><button type="button" class="btn btn-main btn-small" id="exampleBack">Back to my passports</button></div>
     <div id="sharedBanner" class="banner" hidden><span><b>This passport was shared with you.</b> It is shown only in your browser and is not saved anywhere unless you choose to.</span><span class="actions"><button type="button" class="btn btn-ghost btn-small" id="printShared">Print</button><button type="button" class="btn btn-main btn-small" id="saveShared">Save a copy</button></span></div>
     <input type="file" id="upload" accept="application/json,.json" class="sr" tabindex="-1" aria-label="Load a backup file">
     <p class="quiet status" id="saved" role="status" aria-live="polite"></p>
@@ -2654,6 +2654,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
   }
   document.addEventListener("visibilitychange", function () { if (!document.hidden) cloudPull(true); });
   function showExample() { shared = example(); $("exampleBanner").hidden = false; $("sharedBanner").hidden = true; chrome(false); setMode("view"); }
+  function dayIso(n) { var d = new Date(Date.now() + n * 864e5); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function example() {
     return clean({ name: "Sam Doe", preferred: "Sam", dob: "2016-04-12", pronouns: "he/him", languages: "English",
       diagnoses: "Autism\nASD with speech delay", strengths: "Funny, kind to animals, brilliant memory for train timetables.", goals: "Asking for help with words or a sign. Trying new foods.", medsChecked: new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10),
@@ -2667,6 +2668,15 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       team: [{ role: "GP", name: "Dr B", org: "Sample Surgery", phone: "01234 567890", email: "", notes: "" }, { role: "Speech and language therapist", name: "C", org: "Sample Community Trust", phone: "", email: "", notes: "Sees Sam fortnightly" }],
       school: { name: "Sample Primary School", teacher: "Mrs D", senco: "Mr E", ehcp: "Yes" },
       contacts: [{ name: "Alex Doe", relationship: "Parent", phone: "07700 900001", notes: "Can collect" }, { name: "Jo Doe", relationship: "Grandparent", phone: "07700 900002", notes: "Can collect" }],
+      hide: [],
+      portfolio: [
+        { area: "Communication", kind: "can", text: "Uses five Makaton signs without prompting", source: "Speech and language review", date: dayIso(-50) },
+        { area: "Communication", kind: "working on", text: "Is learning to ask for help with a word or sign", source: "Speech and language review", date: dayIso(-50) },
+        { area: "Sensory", kind: "difficulty", text: "Finds hand dryers and fire alarms very hard, and copes with headphones", source: "School report", date: dayIso(-70) },
+        { area: "Understanding and learning", kind: "can", text: "Follows a two-step instruction at lunch with a prompt", source: "School report", date: dayIso(-70) },
+        { area: "Understanding and learning", kind: "working on", text: "Following two-step instructions in lessons", source: "School report", date: dayIso(-70) },
+        { area: "Interests and play", kind: "enjoys", text: "Enjoys trains, bubbles and swimming", source: "School report", date: dayIso(-70) },
+        { area: "Communication", kind: "next step", text: "Practise asking for help at snack time", source: "Speech and language review", date: dayIso(-50) }],
       updated: new Date().toISOString() });
   }
 
@@ -2759,7 +2769,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-01.39", lastCheck = 0;
+    var APP_VERSION = "2026-11-02.40", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
