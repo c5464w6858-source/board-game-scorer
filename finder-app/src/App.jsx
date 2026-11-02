@@ -1811,7 +1811,7 @@ const ActivityCard=({act,onOpen,onFav,isFav,isOwner,onEdit,onDelete,onUpgrade,on
                 {onUpgrade&&(
                   <button onClick={()=>onUpgrade(act)}
                     style={{padding:"6px 10px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",boxShadow:"0 2px 8px rgba(217,119,6,0.3)",fontFamily:F.body}}>
-                    ⭐ Feature £49/mo
+                    ⭐ Feature £29/mo
                   </button>
                 )}
               </div>
@@ -2253,7 +2253,7 @@ const FeaturedUpgradeModal=({act,user,onClose,onActivated,onEdit})=>{
             {onEdit&&<Btn full variant="secondary" onClick={()=>{onEdit(act);onClose();}}>📸 Add photos</Btn>}
             <Btn full onClick={onClose}>Done</Btn>
           </div>
-          <p style={{fontSize:11,color:C.slate400,marginTop:12,textAlign:"center"}}>£49/month · cancel any time from My Listings.</p>
+          <p style={{fontSize:11,color:C.slate400,marginTop:12,textAlign:"center"}}>£29/month · cancel any time from My Listings.</p>
         </div>
       ):(
         <>
@@ -2263,7 +2263,7 @@ const FeaturedUpgradeModal=({act,user,onClose,onActivated,onEdit})=>{
               <p style={{margin:0,color:C.slate500,fontSize:13.5}}>Get seen by more families actively searching for SEND activities</p>
             </div>
             <div style={{textAlign:"right",flexShrink:0}}>
-              <div style={{fontSize:24,fontWeight:700,color:C.slate900,fontFamily:F.display}}>£49</div>
+              <div style={{fontSize:24,fontWeight:700,color:C.slate900,fontFamily:F.display}}>£29</div>
               <div style={{fontSize:11,color:C.slate400,fontWeight:600}}>per month</div>
             </div>
           </div>
@@ -2279,7 +2279,7 @@ const FeaturedUpgradeModal=({act,user,onClose,onActivated,onEdit})=>{
             <strong>For {act.name}</strong> — activates instantly, no waiting. No long-term contract, cancel any time.
           </div>
           {err&&<p style={{color:C.red,fontSize:13,margin:"0 0 12px",textAlign:"center"}}>{err}</p>}
-          <Btn full loading={loading} onClick={pay}>Pay £49 &amp; activate →</Btn>
+          <Btn full loading={loading} onClick={pay}>Pay £29 &amp; activate →</Btn>
           <p style={{fontSize:11.5,color:C.slate400,marginTop:12,textAlign:"center"}}>Registered charities on our free tier are not eligible for paid placement.</p>
         </>
       )}
@@ -3371,7 +3371,7 @@ const ListingsPanel=({listings,user,onEdit,onDelete,onActivate,onActivateVerifie
                   {!act.featured&&(
                     <button onClick={()=>setUpgradeAct(act)}
                       style={{background:"linear-gradient(135deg,#F59E0B,#D97706)",color:"#fff",border:"none",borderRadius:8,padding:"6px 12px",fontSize:11.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",boxShadow:"0 2px 8px rgba(217,119,6,0.25)"}}>
-                      ⭐ Get Featured · £49/mo
+                      ⭐ Get Featured · £29/mo
                     </button>
                   )}
                 </div>
@@ -3394,7 +3394,7 @@ const ListingsPanel=({listings,user,onEdit,onDelete,onActivate,onActivateVerifie
       <div style={{marginTop:20,padding:"14px 16px",background:C.brandLt,borderRadius:12}}>
         <div style={{fontWeight:600,fontSize:13.5,color:C.brand,marginBottom:8}}>Grow your reach</div>
         <div style={{fontSize:12.5,color:C.brand,lineHeight:1.6,opacity:0.9}}>
-          <strong>Featured (£49/mo)</strong> gives your listing priority placement near local families, a gold badge, and room for more photos.<br/>
+          <strong>Featured (£29/mo)</strong> gives your listing priority placement near local families, a gold badge, and room for more photos.<br/>
           It activates instantly — cancel any time.
         </div>
       </div>
@@ -3542,7 +3542,7 @@ I wanted to let you know about our Featured tier, which gives you:
 • Analytics showing how many families have viewed and saved your listing
 • A trust badge that increases enquiries
 
-Featured is just £49/month and many providers see a noticeable uptick in bookings within the first few weeks.
+Featured is just £29/month and many providers see a noticeable uptick in bookings within the first few weeks.
 
 Interested? Reply to this email or visit includeme.uk to upgrade directly.
 
@@ -4058,7 +4058,7 @@ const AdminPanel=({activities,setActivities,onClose})=>{
   const hasEmail=activities.filter(a=>a.contactEmail&&!a.contactEmail.includes("via website"));
   const pending=requests.claims.filter(r=>r.status==="pending").length+requests.verifies.filter(r=>r.status==="pending").length+requests.featured.filter(r=>r.status==="pending").length+requests.suggestions.filter(r=>r.status==="new").length;
   const pendingReports=requests.reports.filter(r=>r.status==="pending").length;
-  const estMRR=featured.length*49+verified.length*15;
+  const estMRR=featured.length*29;
 
   /* ── Listings filter ── */
   const counties=[...new Set(activities.map(a=>a.location||"").filter(Boolean))].sort();
@@ -4183,7 +4183,7 @@ const AdminPanel=({activities,setActivities,onClose})=>{
             <StatBox icon="💰" label="Est. monthly revenue" val={`£${estMRR.toLocaleString()}`} sub="Before Stripe fees" color={estMRR>0?C.brand:C.slate400}/>
             <StatBox icon="📋" label="Total listings" val={activities.length}/>
             <StatBox icon="📥" label="Pending requests" val={pending} color={pending>0?"#D97706":C.slate400}/>
-            <StatBox icon="⭐" label="Featured listings" val={featured.length} sub={`£${featured.length*49}/mo potential`}/>
+            <StatBox icon="⭐" label="Featured listings" val={featured.length} sub={`£${featured.length*29}/mo potential`}/>
             <StatBox icon="✓" label="Verified listings" val={verified.length} sub="free, admin-checked"/>
             <StatBox icon="🆓" label="Free listings" val={free.length} sub={`${Math.round(free.length/activities.length*100)}% of directory`}/>
             <StatBox icon="🔐" label="Claimed listings" val={claimed.length}/>
@@ -4225,7 +4225,7 @@ const AdminPanel=({activities,setActivities,onClose})=>{
                 {requests.verifies.map((r,i)=><ReqCard key={i} req={r} type="verify" onApprove={approveVerify} onReject={req=>rejectReq("verify-request:",req.actId,req)}/>)}
               </div>
               <div>
-                <h4 style={{margin:"0 0 10px",fontSize:12,fontWeight:700,color:C.slate500,textTransform:"uppercase",letterSpacing:"0.07em"}}>Featured Upgrade Requests £49/mo — {requests.featured.filter(r=>r.status==="pending").length} pending</h4>
+                <h4 style={{margin:"0 0 10px",fontSize:12,fontWeight:700,color:C.slate500,textTransform:"uppercase",letterSpacing:"0.07em"}}>Featured Upgrade Requests £29/mo — {requests.featured.filter(r=>r.status==="pending").length} pending</h4>
                 {requests.featured.length===0&&<p style={{color:C.slate400,fontSize:13}}>No featured requests yet.</p>}
                 {requests.featured.map((r,i)=><ReqCard key={i} req={r} type="featured" onApprove={approveFeatured} onReject={req=>rejectReq("featured-request:",req.actId,req)}/>)}
               </div>
@@ -4389,8 +4389,8 @@ const AdminPanel=({activities,setActivities,onClose})=>{
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:8}}>
               <div style={{background:"#FFFCF0",border:"1.5px solid #F6C96A",borderRadius:10,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <div><div style={{fontWeight:700,fontSize:14}}>⭐ Featured</div><div style={{fontSize:12,color:C.slate400}}>{featured.length} listings × £49/mo</div></div>
-                <div style={{fontSize:20,fontWeight:700,fontFamily:F.display,color:"#D97706"}}>£{featured.length*49}</div>
+                <div><div style={{fontWeight:700,fontSize:14}}>⭐ Featured</div><div style={{fontSize:12,color:C.slate400}}>{featured.length} listings × £29/mo</div></div>
+                <div style={{fontSize:20,fontWeight:700,fontFamily:F.display,color:"#D97706"}}>£{featured.length*29}</div>
               </div>
             </div>
           </div>
