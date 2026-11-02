@@ -4654,9 +4654,9 @@ const AdminPanel=({activities,setActivities,onClose})=>{
 // Our own adverts for the other IncludeMe tools: a slim strip near the top of the list, plus two cards among the listings.
 // Families only, never providers. The strip can be dismissed for a week.
 const PROMOS={
-  ehcp:{title:"Going through an EHCP?",text:"EHCP Tracker keeps every deadline, report and phone call in one place. See what it does and how it works.",cta:"Find out more",chip:"Going through an EHCP?",chipCta:"Find out more",
+  ehcp:{title:"Going through an EHCP?",text:"EHCP Tracker keeps every deadline, report and phone call in one place, then your plan and every yearly review. See what it does and how it works.",cta:"Find out more",chip:"Going through an EHCP?",chipCta:"Find out more",
     href:c=>`https://info.includeme.uk/advocate/?utm_campaign=${c}`,logo:"./promo/logo-advocate.svg",bg:"linear-gradient(160deg,#101A45 0%,#1F2C66 100%)",accent:"#E3B94E",accentInk:"#17214D",chipBg:"#ECEEF8",chipInk:"#17214D"},
-  pp:{title:"Child Organiser, free",text:"One page about your child: medicines, doctors, how they communicate and who to call. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"Child Organiser, free",
+  pp:{title:"Child Organiser, free",text:"Photograph or upload a letter or report and it is filed for you, with a one-page passport for your child. Free, and it uses this same login.",cta:"Find out more",chip:"About your child",chipCta:"Child Organiser, free",
     href:c=>`https://info.includeme.uk/passport/?utm_campaign=${c}`,logo:"./promo/logo-passport.svg",bg:"linear-gradient(160deg,#2A1546 0%,#4E2D80 100%)",accent:"#FF8A5B",accentInk:"#1B1530",chipBg:"#F0EBF8",chipInk:"#3B1F63"},
 };
 const PromoCard=({kind})=>{
@@ -4697,8 +4697,8 @@ const PromoStrip=()=>{
 
 // Our two other products, listed inside the menu with a short description. Families only.
 const APP_ROWS=[
-  {id:"ehcp",name:"EHCP Tracker",long:"Advocate – EHCP Tracker",tag:"NEW",bg:"#243480",accent:"#E3B94E",accentInk:"#17214D",tabInk:"#FFE69A",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
-  {id:"pp",name:"Child Organiser",tag:"FREE",bg:"#552D8C",accent:"#FF8A5B",accentInk:"#1B1530",tabInk:"#FFE0D2",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Keep everything about your child organised in one place: medicines, doctors, appointments and who to call, ready to show school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
+  {id:"ehcp",name:"EHCP Tracker",long:"Advocate – EHCP Tracker",tag:"NEW",bg:"#243480",accent:"#E3B94E",accentInk:"#17214D",tabInk:"#FFE69A",tagBg:"#E3B94E",tagInk:"#17214D",desc:"Keep every EHCP deadline, report, phone call and letter in one place, then your plan and every yearly review, so nothing is missed. 3-day free trial, then £3.99 a month.",cta:"Find out more",href:"https://info.includeme.uk/advocate/?utm_campaign=finder_apps_ehcp",logo:"./promo/logo-advocate.svg"},
+  {id:"pp",name:"Child Organiser",tag:"FREE",bg:"#552D8C",accent:"#FF8A5B",accentInk:"#1B1530",tabInk:"#FFE0D2",tagBg:"#FF8A5B",tagInk:"#1B1530",desc:"Photograph or upload letters and reports and they are filed for you, with a one-page passport of medicines, doctors and who to call for school, clubs and sitters. Free, same login.",cta:"Find out more",href:"https://info.includeme.uk/passport/?utm_campaign=finder_apps_pp",logo:"./promo/logo-passport.svg"},
 ];
 
 // Product tabs along the very top: you land on IncludeMe (the Finder). Tapping EHCP Tracker or Child Organiser drops a drawer down
@@ -4804,9 +4804,9 @@ const HeaderMenu=({alerts,saved,name,onAlerts,onSaved,onAccount,onAdmin,isAdmin}
 // Gentle pointers to the other free IncludeMe tools. Shown once, inside the account menu, never as a pop-up.
 const MoreFromIncludeMe=()=>{
   const items=[
-    ["Going through an EHCP?","EHCP Tracker keeps deadlines, reports, calls and letters in one place.","https://info.includeme.uk/advocate/?utm_campaign=finder_menu","Find out about EHCP Tracker"],
+    ["Going through an EHCP?","EHCP Tracker keeps deadlines, reports, calls and letters in one place, then your plan and yearly reviews.","https://info.includeme.uk/advocate/?utm_campaign=finder_menu","Find out about EHCP Tracker"],
     ["Free EHCP deadline calculator","Enter the date the council got your request and see your 6, 16 and 20 week dates.","https://info.includeme.uk/ehcp-deadline-calculator/?utm_campaign=finder_menu","Open the calculator"],
-    ["Child Organiser, free","A one-page profile for your child with medicines, doctors and emergency contacts. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about Child Organiser"],
+    ["Child Organiser, free","Photograph or upload a letter and it is filed: appointments, documents, contacts and a one-page profile for your child. Sign in with this same email and password.","https://info.includeme.uk/passport/?utm_campaign=finder_menu","Find out about Child Organiser"],
   ];
   return(
     <div style={{marginTop:18,paddingTop:16,borderTop:`1px solid ${C.slate100}`}}>
@@ -5156,8 +5156,8 @@ const MoreFromCarousel=()=>{
   const ref=useRef(null);
   const [active,setActive]=useState(0);
   const items=[
-    {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"EHCP Tracker keeps every deadline, report, call and letter in one place. See what it does and how it works.",cta:"Find out more ↗"},
-    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"Child Organiser",blurb:"A one-page profile for your child: medicines, doctors, how they communicate. Free, and it uses your Finder login.",cta:"Find out more ↗"},
+    {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"EHCP Tracker keeps every deadline, report, call and letter in one place, then your plan and every yearly review. See what it does and how it works.",cta:"Find out more ↗"},
+    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"Child Organiser",blurb:"Photograph or upload a letter or report and it is filed for you, with a one-page profile for your child. Free, and it uses your Finder login.",cta:"Find out more ↗"},
   ];
   const onScroll=()=>{const el=ref.current;if(!el)return;const w=el.firstChild?el.firstChild.getBoundingClientRect().width+12:el.clientWidth;setActive(Math.round(el.scrollLeft/w));};
   const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.children[i].scrollIntoView({behavior:"smooth",inline:"start",block:"nearest"});};

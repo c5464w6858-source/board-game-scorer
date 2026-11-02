@@ -1,7 +1,7 @@
 {
   "name": "Child Organiser",
   "short_name": "Child Organiser",
-  "description": "Photograph a letter and it is filed: the appointment, the contacts, the documents and the details. Stays on your device.",
+  "description": "Photograph or upload a letter or report and it is filed: the appointment, contacts, documents, what your child can do, and a one-page passport. Stays on your device unless you choose a private copy.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
