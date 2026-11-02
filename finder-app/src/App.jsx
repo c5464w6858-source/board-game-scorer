@@ -2811,6 +2811,9 @@ const ActivityForm=({onClose,onSave,initial,user})=>{
   const [form,setForm]=useState(initial?{...initial,lat:initial.lat||"",lng:initial.lng||"",contactWebsite:initial.website||"",photos:initial.photos||[],availability:initial.availability||null,sessions:initial.sessions||[]}:blank);
   const [step,setStep]=useState(1);
   const [done,setDone]=useState(false);
+  const [saving,setSaving]=useState(false);
+  const [saveErr,setSaveErr]=useState("");
+  const newIdRef=useRef(null); // one id per form, so pressing Publish twice can never create two listings
   const [photoUrl,setPhotoUrl]=useState("");
   const [photoErr,setPhotoErr]=useState("");
   const MAX_PHOTOS=6;
@@ -2833,9 +2836,14 @@ const ActivityForm=({onClose,onSave,initial,user})=>{
   const setSession=(i,k,v)=>setForm(f=>({...f,sessions:(f.sessions||[]).map((s,j)=>j===i?{...s,[k]:v}:s)}));
   const removeSession=i=>setForm(f=>({...f,sessions:(f.sessions||[]).filter((_,j)=>j!==i)}));
   const handleSave=async()=>{
+    if(saving)return;
+    setSaving(true);setSaveErr("");
     const isNew=!initial;
-    const act={...form,id:initial?.id||`act-${Date.now()}`,ageMin:parseInt(form.ageMin)||0,ageMax:parseInt(form.ageMax)||18,lat:parseFloat(form.lat)||undefined,lng:parseFloat(form.lng)||undefined,website:form.contactWebsite||undefined,ownerId:user.id,verified:initial?.verified||false,createdAt:initial?.createdAt||new Date().toISOString()};
-    await store.set(`activity:${act.id}`,act);
+    if(isNew&&!newIdRef.current)newIdRef.current=`act-${Date.now()}`;
+    const act={...form,id:initial?.id||newIdRef.current,ageMin:parseInt(form.ageMin)||0,ageMax:parseInt(form.ageMax)||18,lat:parseFloat(form.lat)||undefined,lng:parseFloat(form.lng)||undefined,website:form.contactWebsite||undefined,ownerId:user.id,verified:initial?.verified||false,createdAt:initial?.createdAt||new Date().toISOString()};
+    let saved=false;
+    try{saved=await store.set(`activity:${act.id}`,act);}catch{saved=false;}
+    if(!saved){setSaveErr("We couldn't save your listing. Check your connection and try again. Large photos can take a while.");setSaving(false);return;}
     // If this is a brand-new listing (not an edit), publish it to the
     // notification feed so nearby families get a weekly email / push about it.
     // Best-effort: never block saving the listing on this.
@@ -2980,9 +2988,10 @@ const ActivityForm=({onClose,onSave,initial,user})=>{
         </div>
         <Input label="Website URL" type="url" placeholder="https://yourorganisation.org.uk" value={form.contactWebsite} onChange={e=>set("contactWebsite",e.target.value)}/>
       </>}
+      {saveErr&&<div role="alert" style={{marginTop:12,padding:"10px 12px",borderRadius:8,background:"#FBEEEB",color:C.red,fontSize:13.5}}>{saveErr}</div>}
       <div style={{display:"flex",justifyContent:"space-between",marginTop:8,paddingTop:20,borderTop:`1px solid ${C.slate100}`}}>
         {step>1?<Btn variant="secondary" onClick={()=>setStep(s=>s-1)}>← Back</Btn>:<div/>}
-        {step<3?<Btn onClick={()=>setStep(s=>s+1)}>Next →</Btn>:<Btn variant="green" onClick={handleSave}><Icons.check/>{initial?"Save Changes":"Publish Listing"}</Btn>}
+        {step<3?<Btn onClick={()=>setStep(s=>s+1)}>Next →</Btn>:<Btn variant="green" onClick={handleSave} loading={saving} disabled={saving}><Icons.check/>{initial?"Save Changes":"Publish Listing"}</Btn>}
       </div>
     </Modal>
   );
