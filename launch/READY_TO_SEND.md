@@ -80,3 +80,38 @@ Facts used: about 625 listings, 41 towns and cities with their own page, three f
 > *Notes for editors: all listings are information only and families are asked to check details with providers. The deadline calculator is a guide and not legal advice.*
 
 Where to send it: use each outlet's own "send us a story" form or newsdesk address, which I haven't collected. Good targets are your local paper's website, hyperlocal sites and community Facebook pages (Guildford, Woking, Twickenham), BBC local radio community desks, and SEN newsletters.
+
+---
+
+## More contacts (added 6 Nov)
+
+All of these come from council, NHS or directory pages, not from the organisations' own sites, so a few may be out of date. Any that bounce are no loss.
+
+| # | Who | Email | Which page to link | Confidence |
+|---|---|---|---|---|
+| 4 | Action for Carers Surrey (parent carer and autism groups, based in Guildford) | CarerSupport@actionforcarers.org.uk | includeme.uk/activities/guildford/ | Good (council directory) |
+| 5 | ADHD / ASD / SEN Time Out support group (Surrey and Hampshire) | adhdtimeout@outlook.com | includeme.uk/activities/camberley/ | Good (council directory) |
+| 6 | Hampshire SENDIASS | hampshiresendiass@coreassets.com | includeme.uk/activities/ | Medium (school list) |
+| 7 | Manchester SENDIASS | sendiass@manchester.gov.uk | includeme.uk/activities/manchester/ | Medium |
+| 8 | Birmingham SENDIASS | sendiass@birmingham.gov.uk | includeme.uk/activities/birmingham/ | Medium |
+| 9 | Leeds SENDIASS | leedssendiass@leeds.gov.uk | includeme.uk/activities/leeds/ | Medium |
+| 10 | SEND And You (Bristol, North Somerset, South Gloucestershire SENDIASS) | support@sendandyou.org.uk | includeme.uk/activities/bristol/ | Medium |
+| 11 | National Network of Parent Carer Forums | info@nnpcf.org.uk | includeme.uk/activities/ | Medium (third-party listing) |
+
+Not found: West Sussex and Kent SENDIASS, Richmond Parent Carer Forum, and direct addresses for the NAS Surrey Branch's Guildford and Woking parent groups (use nassurreybranch.org). Contact (the charity) only gives a helpline, so use the form on contact.org.uk.
+
+### Email for the city SENDIASS services (7 to 10) and others
+Subject: A free EHCP deadline calculator and local activity finder for your families
+
+> Hello,
+>
+> I run IncludeMe, a small UK project making free tools for families of children with SEND. Two may be useful to the families you support:
+>
+> - A free EHCP deadline calculator (6, 16 and 20 weeks, plus review and appeal dates). No sign-in, nothing stored, and it says clearly it's a guide to check against the council's letters: https://info.includeme.uk/ehcp-deadline-calculator/
+> - A free activity finder with clubs, therapies and charities for SEND children in [TOWN]: [PAGE LINK]
+>
+> If you think they'd help, would you consider linking to them from your resources or mentioning them to callers? If anything in the [TOWN] listings is wrong or missing, tell me and I'll fix it.
+>
+> Thank you,
+> Paul
+> IncludeMe · hello@includeme.uk
