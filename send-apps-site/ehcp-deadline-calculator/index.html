@@ -218,6 +218,14 @@ footer a:hover { color: var(--navy); }
         <button class="btn btn-ghost" type="button" id="copy">Copy a link to these dates</button>
       </div>
       <p class="status" id="status" role="status"></p>
+      <div class="no-print" id="share" style="margin-top:14px;padding:12px 14px;border:1px solid #e4dccb;border-radius:12px;background:#fffaf0">
+        <b>Know another parent who needs this?</b> It's free, so please pass it on.
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <a class="btn btn-ghost" id="sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn btn-ghost" id="sh-fb" target="_blank" rel="noopener">Facebook</a>
+          <button class="btn btn-ghost" type="button" id="sh-native" hidden>Share…</button>
+        </div>
+      </div>
       <p class="note" style="margin-top:18px">We count 7-day weeks from the day the request was received, the way most councils and charities do. Your council may count slightly differently, so treat these as the latest dates and chase early. The limits can be set aside in a few specific situations, covered below.</p>
       <p class="note" id="check-note" style="margin-top:10px"><b>Check these against your letters.</b> Every date here is worked out from the date you typed in. If a letter from the council or the Tribunal gives a different date, work to the earlier one.</p>
     </div>
@@ -479,5 +487,17 @@ footer a:hover { color: var(--navy); }
 })();
 </script>
 <script src="/assets/visit.js" defer></script>
+<script>
+(function(){
+  var base='https://info.includeme.uk/ehcp-deadline-calculator/';
+  var msg='A free calculator that works out your EHCP deadlines (6, 16 and 20 weeks) from the date the council got your request. No sign-in, nothing stored:';
+  function u(c){return base+'?utm_campaign='+c;}
+  var wa=document.getElementById('sh-wa'),fb=document.getElementById('sh-fb'),nt=document.getElementById('sh-native');
+  if(!wa)return;
+  wa.href='https://wa.me/?text='+encodeURIComponent(msg+' '+u('share_wa'));
+  fb.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(u('share_fb'));
+  if(navigator.share){nt.hidden=false;nt.addEventListener('click',function(){navigator.share({title:'EHCP deadline calculator',text:msg,url:u('share_native')}).catch(function(){});});}
+})();
+</script>
 </body>
 </html>
