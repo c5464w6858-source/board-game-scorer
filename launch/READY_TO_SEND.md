@@ -115,3 +115,51 @@ Subject: A free EHCP deadline calculator and local activity finder for your fami
 > Thank you,
 > Paul
 > IncludeMe · hello@includeme.uk
+
+---
+
+## Local press: contacts and the email (added 6 Nov)
+
+Contacts come from each outlet's own pages where possible. Addresses hidden by Cloudflare on the page were decoded by hand, so one bounce is possible.
+
+| # | Outlet | Email | Source | Town page to mention |
+|---|---|---|---|---|
+| 1 | Woking News & Mail | editor@wokingnewsandmail.org | Outlet's "About us" page (decoded) | includeme.uk/activities/woking/ |
+| 2 | Guildford Dragon | guildford.dragon@gmail.com | Outlet's "Who's who" page (contributor address) | includeme.uk/activities/guildford/ |
+| 3 | Farnham Herald | news@farnhamherald.com | Outlet's homepage (decoded); also has a form at farnhamherald.com/send_us_story | includeme.uk/activities/farnham/ |
+| 4 | Camberley News & Mail | newsdesk@aldershot.co.uk | Media directory (third party) | includeme.uk/activities/camberley/ |
+| 5 | BBC Surrey | surreynews@bbc.co.uk | BBC Surrey page on a mirror site | includeme.uk/activities/surrey/ |
+
+No usable email found for: Get Surrey / Surrey Live, Richmond and Twickenham Times, Epsom Comet (formerly Guardian), Surrey Advertiser. Submit those through their website's "send us your story" page.
+
+### Email (replace [TOWN LINE])
+Subject: Free tools help [TOWN] families of children with SEND keep track
+
+> Hello,
+>
+> A local-interest story you may like for your news or community pages. The press release is below; I can send a screenshot or answer questions.
+>
+> **Free tools help families of children with SEND keep track**
+>
+> A UK project, IncludeMe, has made three free tools for families of children with special educational needs and disabilities (SEND).
+>
+> - An activity finder listing around 600 clubs, therapies and charities for SEND children, with pages for more than 40 UK towns and cities. [TOWN LINE]
+> - An EHCP deadline calculator that works out the legal timescales (6, 16 and 20 weeks, plus review and appeal dates) from the date a council receives a request.
+> - Child Organiser, a free app that files letters and reports from a photograph and keeps appointments in one diary. Details stay on the family's phone unless they choose to keep a private copy.
+>
+> "Families of children with SEND spend a huge amount of time chasing paperwork and hunting for somewhere their child will be welcome," said Paul, who runs IncludeMe. "We built these tools to take some of that off them, and we've kept them free so cost is never a barrier."
+>
+> The tools are free at includeme.uk, with no sign-in needed to try them.
+>
+> Notes for editors: all listings are information only and families are asked to check details with providers. The deadline calculator is a guide and not legal advice.
+>
+> Thank you,
+> Paul
+> IncludeMe · hello@includeme.uk
+
+[TOWN LINE] by outlet:
+- Woking: "There is a page for Woking with 9 listings: https://includeme.uk/activities/woking/"
+- Guildford: "There is a page for Guildford with 11 listings: https://includeme.uk/activities/guildford/"
+- Farnham: "There is a page for Farnham with 4 listings: https://includeme.uk/activities/farnham/"
+- Camberley: "There is a page for Camberley with 4 listings: https://includeme.uk/activities/camberley/"
+- BBC Surrey: "There are pages for Guildford, Woking, Camberley, Epsom and Farnham: https://includeme.uk/activities/surrey/"
