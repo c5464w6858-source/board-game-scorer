@@ -61,7 +61,7 @@ Subject: Suggesting a free SEND activity finder and EHCP calculator for the Loca
 > Paul
 > IncludeMe · hello@includeme.uk
 
-## Section 3: press release (ready to send once you approve the quote)
+## Section 3: press release (quote approved, ready to send)
 
 Facts used: about 625 listings, 41 towns and cities with their own page, three free tools. Nothing here is a visitor or user count.
 
@@ -73,7 +73,7 @@ Facts used: about 625 listings, 41 towns and cities with their own page, three f
 > - **An EHCP deadline calculator** that works out the legal timescales (6, 16 and 20 weeks, plus review and appeal dates) from the date a council receives a request.
 > - **Child Organiser**, a free app that files letters and reports from a photograph and keeps appointments in one diary. Details stay on the family's phone unless they choose to keep a private copy.
 >
-> "SUGGESTED QUOTE, PLEASE EDIT OR REPLACE: Families spend a huge amount of time chasing paperwork and hunting for somewhere their child will be welcome. We wanted to take some of that off them, and to keep it free."
+> "Families of children with SEND spend a huge amount of time chasing paperwork and hunting for somewhere their child will be welcome," said Paul, who runs IncludeMe. "We built these tools to take some of that off them, and we've kept them free so cost is never a barrier."
 >
 > The tools are free at includeme.uk, with no sign-in needed to try them. For more information: hello@includeme.uk.
 >
