@@ -163,3 +163,34 @@ Subject: Free tools help [TOWN] families of children with SEND keep track
 - Farnham: "There is a page for Farnham with 4 listings: https://includeme.uk/activities/farnham/"
 - Camberley: "There is a page for Camberley with 4 listings: https://includeme.uk/activities/camberley/"
 - BBC Surrey: "There are pages for Guildford, Woking, Camberley, Epsom and Farnham: https://includeme.uk/activities/surrey/"
+
+---
+
+## Schools (SENCo and parent-support email) — added 7 Nov
+
+Verified general addresses so far (from each school's own website). Only 4 of the Surrey special schools could be read so far.
+
+| School | Town | Email | Source |
+|---|---|---|---|
+| Gosden House School | Bramley, Guildford | info@gosden-house.surrey.sch.uk | School homepage and contact page |
+| Limpsfield Grange School | Oxted | secretary@limpsfield-grange.surrey.sch.uk | School homepage footer |
+| Sunnydown School | Caterham | office@sunnydown.surrey.sch.uk | School contact page |
+| Meath School | Ottershaw, Chertsey | meath@meathschool.org.uk | School homepage (decoded) |
+
+Not yet found: Freemantles (site down when checked), and the other Surrey special schools and SEND resource-base schools.
+
+### Email
+Subject: A free EHCP deadline calculator and activity finder for your families
+
+> Hello,
+>
+> I run IncludeMe, a small UK project making free tools for families of children with SEND. Two may be useful to the parents and carers at your school, and to your SENCo:
+>
+> - A free EHCP deadline calculator (6, 16 and 20 weeks, plus review and appeal dates). No sign-in, nothing stored, and it says clearly it's a guide to check against the council's letters: https://info.includeme.uk/ehcp-deadline-calculator/
+> - A free activity finder with clubs, therapies and charities for children with SEND, with pages for more than 40 UK towns and cities: https://includeme.uk/activities/
+>
+> If you think they'd help, would you consider adding them to a parent newsletter or your SEND page? There's a printable A4 flyer with QR codes, and a short blurb you can copy, at https://info.includeme.uk/share/. I'm happy to send anything else you'd find useful.
+>
+> Thank you,
+> Paul
+> IncludeMe · hello@includeme.uk

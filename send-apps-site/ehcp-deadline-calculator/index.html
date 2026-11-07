@@ -161,7 +161,13 @@ footer a:hover { color: var(--navy); }
   .tl li { break-inside: avoid; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+.embed-credit{display:none}
+.embed .hero,.embed footer,.embed .skip,.embed #share,.embed noscript,.embed main>section:not(#calc){display:none!important}
+.embed body{background:#fff}.embed #calc{padding-top:8px!important}
+.embed .embed-credit{display:block;text-align:center;font:13px/1.4 system-ui,sans-serif;padding:10px 0 14px;color:#5a6b69}
+.embed .embed-credit a{color:#0b5a50;font-weight:700}
 </style>
+<script>if(/[?&]embed=1/.test(location.search))document.documentElement.className+=' embed';</script>
 </head>
 <body>
 <a class="skip" href="#calc">Skip to the calculator</a>
@@ -317,6 +323,7 @@ footer a:hover { color: var(--navy); }
     <p class="note" style="margin-top:22px">Dates and rules last checked against the legislation on 28 October 2026. Sources: <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/5/made" target="_blank" rel="noopener">regulation 5</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/10/made" target="_blank" rel="noopener">regulation 10</a>, <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/13/made" target="_blank" rel="noopener">regulation 13</a> and <a href="https://www.legislation.gov.uk/uksi/2014/1530/regulation/20/made" target="_blank" rel="noopener">regulation 20</a> of the SEND Regulations 2014; <a href="https://www.legislation.gov.uk/ukpga/2014/6/section/44" target="_blank" rel="noopener">section 44</a> of the Children and Families Act 2014; <a href="https://www.gov.uk/appeal-ehc-plan-decision/appeal-as-a-parent" target="_blank" rel="noopener">GOV.UK guidance on appealing</a>. Last checked 28 October 2026.</p>
   </div>
 </section>
+<p class="embed-credit">Free EHCP deadline calculator by <a href="https://info.includeme.uk/ehcp-deadline-calculator/?utm_source=embed" target="_top" rel="noopener">IncludeMe</a>. A guide only, not legal advice.</p>
 </main>
 
 <footer>
