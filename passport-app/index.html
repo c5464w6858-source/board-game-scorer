@@ -2355,7 +2355,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
       if (!p) { showGate("Enter your password.", true, mode); return; }
       if (mode === "up" && p.length < 8) { showGate("Choose a password with at least 8 characters.", true, mode); return; }
       btn.disabled = true; btn.textContent = mode === "up" ? "Creating..." : "Signing in...";
-      if (mode === "up") sbFetch("/auth/v1/signup" + redirectTo(), { body: { email: em, password: p } }).then(function (d) { if (d && d.access_token) { keep(d, em); enterApp(); } else if (d && Array.isArray(d.identities) && d.identities.length === 0) { gateEmail = em; showGate("That email already has an IncludeMe account (the same one as the Activity Finder). Sign in, or choose Forgot your password.", true, "in"); } else showCheckEmail(); }, function (e) { showGate(e.message, true, mode); });
+      if (mode === "up") sbFetch("/auth/v1/signup" + redirectTo(), { body: { email: em, password: p, data: { source: "organiser" } } }).then(function (d) { if (d && d.access_token) { keep(d, em); enterApp(); } else if (d && Array.isArray(d.identities) && d.identities.length === 0) { gateEmail = em; showGate("That email already has an IncludeMe account (the same one as the Activity Finder). Sign in, or choose Forgot your password.", true, "in"); } else showCheckEmail(); }, function (e) { showGate(e.message, true, mode); });
       else sbFetch("/auth/v1/token?grant_type=password", { body: { email: em, password: p } }).then(function (t) { keep(t, em); enterApp(); }, function (e) { if (e.code === "email_not_confirmed") showCheckEmail(e.message); else showGate(e.message, true, mode); });
     }
     btn.addEventListener("click", go); [email, pw.inp].forEach(function (i) { i.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); }); });
@@ -2691,12 +2691,26 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
 
   /* ---------- starting up ---------- */
   var wired = false;
+  /* Counts people who start using the Child Organiser, without anything about the child: it stamps the first-use date on the
+     account (organiser_joined) once, so the number of Organiser accounts can be counted. Never blocks or interrupts the app. */
+  function markOrganiser() {
+    try {
+      var s = getSession(); if (!s || localStorage.getItem("includeme.passport.joined")) return;
+      sbFetch("/auth/v1/user", { method: "GET", token: s.access_token }).then(function (u) {
+        var meta = (u && u.user_metadata) || {};
+        if (meta.organiser_joined) { localStorage.setItem("includeme.passport.joined", "1"); return; }
+        meta.organiser_joined = new Date().toISOString().slice(0, 10);
+        return sbFetch("/auth/v1/user", { method: "PUT", token: s.access_token, body: { data: meta } }).then(function () { localStorage.setItem("includeme.passport.joined", "1"); });
+      }).catch(function () { /* try again next time */ });
+    } catch (e) { /* never get in the way */ }
+  }
   function enterApp() {
     $("gate").hidden = true; $("app").hidden = false; load();
     var s = getSession(); $("acctEmail").textContent = s && s.email ? s.email : ""; $("acctAv").textContent = s && s.email ? s.email[0].toUpperCase() : "?";
     mode = named().length ? "overview" : "edit"; if (!named().length) mode = "overview";
     chrome(true); refresh();
     cloudStart();
+    markOrganiser();
     if (!named().length && prefs().cloudAsked) openChildDialog();
   }
   function wire() {
@@ -2778,7 +2792,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-06.41", lastCheck = 0;
+    var APP_VERSION = "2026-11-07.42", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
