@@ -1,0 +1,106 @@
+[
+ {
+  "name": "shim script is in the copied index.html",
+  "pass": true
+ },
+ {
+  "name": "shim is NOT in the source passport-app/index.html",
+  "pass": true
+ },
+ {
+  "name": "shim active (html.cap-native)",
+  "pass": true
+ },
+ {
+  "name": "sign-in gate renders",
+  "pass": true
+ },
+ {
+  "name": "gate shows an email field and a password field",
+  "pass": true
+ },
+ {
+  "name": "relative /api/diary/config -> advocate.includeme.uk",
+  "pass": true,
+  "extra": "GET https://advocate.includeme.uk/api/diary/config"
+ },
+ {
+  "name": "same-origin absolute /api/diary/scan?x=1 rewritten, method kept",
+  "pass": true
+ },
+ {
+  "name": "/.netlify/functions/foo -> passport site",
+  "pass": true
+ },
+ {
+  "name": "bundled static file (/privacy.html) stays local",
+  "pass": true
+ },
+ {
+  "name": "already-absolute external URL left alone",
+  "pass": true
+ },
+ {
+  "name": "Supabase redirect_to https://localhost/ -> live web app",
+  "pass": true,
+  "extra": "POST https://ysoxkcuuphaivacqmgwr.supabase.co/auth/v1/signup?redirect_to=https%3A%2F%2Fincludeme-passport.netlify.app%2F"
+ },
+ {
+  "name": "Supabase password sign-in URL left untouched",
+  "pass": true
+ },
+ {
+  "name": "sw.js never requested",
+  "pass": true
+ },
+ {
+  "name": "serviceWorker removed from navigator",
+  "pass": true
+ },
+ {
+  "name": "PushManager removed",
+  "pass": true
+ },
+ {
+  "name": "letter picker narrowed to images/pdf/text (no video)",
+  "pass": true
+ },
+ {
+  "name": "safe-area CSS rule present",
+  "pass": true
+ },
+ {
+  "name": "status bar configured through plugin",
+  "pass": true
+ },
+ {
+  "name": "blob download -> Filesystem.writeFile then Share.share",
+  "pass": true,
+  "extra": "StatusBar.setStyle,StatusBar.setBg,App.addListener,Filesystem.writeFile,Share.share"
+ },
+ {
+  "name": "share link https://localhost/#p=.. rewritten to live web app",
+  "pass": true
+ },
+ {
+  "name": "navigator.share uses the native Share plugin with fixed URL",
+  "pass": true
+ },
+ {
+  "name": "no uncaught page errors",
+  "pass": true,
+  "extra": ""
+ },
+ {
+  "name": "browser: shim inactive",
+  "pass": true
+ },
+ {
+  "name": "browser: /api fetch untouched (stays on page origin)",
+  "pass": true
+ },
+ {
+  "name": "browser: serviceWorker still present",
+  "pass": true
+ }
+]

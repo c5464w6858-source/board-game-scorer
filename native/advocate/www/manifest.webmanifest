@@ -1,0 +1,14 @@
+{
+  "name": "Advocate – EHCP Tracker",
+  "short_name": "EHCP Tracker",
+  "description": "Track every EHCP deadline, keep your plan alive with outcomes and a step-by-step yearly review, log evidence and contacts, and print a tribunal-ready chronology.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F7F6F2",
+  "theme_color": "#17214D",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

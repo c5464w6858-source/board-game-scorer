@@ -1,0 +1,13 @@
+--- a/netlify/lib/diary.mts	2026-11-09 23:10:19.139908990 +0000
++++ b/netlify/lib/diary.mts	2026-11-09 23:10:19.141814210 +0000
+@@ -48,7 +48,9 @@
+ const MAX_IMAGES = 6, MAX_PAGES = 30, MAX_BODY_CHARS = 5_600_000; // the host refuses a request over 6 MB; pages of one document may be up to MAX_PAGES
+ const MAX_PDF_CHARS = 4_200_000, MAX_TEXT_CHARS = 40_000; // a PDF (about 3 MB) or the plain text of a document
+ const MAX_ITEMS = 200, MAX_DEVICES = 5;
+-export const ALLOWED_ORIGINS = ["https://includeme-passport.netlify.app", "https://passport.includeme.uk"];
++// The native Child Organiser app (Capacitor) runs from https://localhost on Android and capacitor://localhost on iOS.
++// Both are fixed by the app shell and cannot be loaded from the internet. http://localhost is NOT needed: androidScheme is https.
++export const ALLOWED_ORIGINS = ["https://includeme-passport.netlify.app", "https://passport.includeme.uk", "https://localhost", "capacitor://localhost"];
+ const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+ 
+ /* ---------- helpers ---------- */
