@@ -5085,7 +5085,6 @@ const XMAS_UNTIL="2027-01-04";
 // One banner: our apps plus (until early January) relaxed and low-sensory Christmas events, nearest first.
 const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
   const ref=useRef(null);
-  const paused=useRef(false);
   const [active,setActive]=useState(0);
   const items=useMemo(()=>{
     const promos=showPromos?[
@@ -5105,16 +5104,10 @@ const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
     return out;
   },[acts,userLoc,showPromos]);
   const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.scrollTo({left:el.children[i].offsetLeft-el.offsetLeft,behavior:"smooth"});};
-  useEffect(()=>{
-    if(items.length<3)return;
-    const t=setInterval(()=>{if(paused.current)return;setActive(a=>{const n=(a+1)%items.length;go(n);return n;});},6000);
-    return()=>clearInterval(t);
-  },[items.length]);
   if(!items.length)return null;
   const onScroll=()=>{const el=ref.current;if(!el||!el.firstChild)return;setActive(Math.round(el.scrollLeft/(el.firstChild.getBoundingClientRect().width+12)));};
-  const pause=()=>{paused.current=true;setTimeout(()=>{paused.current=false;},15000);};
   return(
-    <div style={{marginBottom:14}} onTouchStart={pause} onMouseDown={pause}>
+    <div style={{marginBottom:14}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",margin:"0 2px 7px"}}>
         <span style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400}}>More from IncludeMe</span>
         {items.length>1&&<span style={{fontSize:11,fontWeight:600,color:C.slate400}}>{Math.min(active+1,items.length)} of {items.length}</span>}
@@ -5819,6 +5812,7 @@ export default function App() {
   const [daysFilter,setDaysFilter]=useState([]);
   const [weekendOnly,setWeekendOnly]=useState(false);
   const [holidayOnly,setHolidayOnly]=useState(false);
+  const [xmasOnly,setXmasOnly]=useState(false);
   const [userLoc,setUserLoc]=useState(null);
   const [locInput,setLocInput]=useState("");
   const [locLabel,setLocLabel]=useState("");
@@ -6081,7 +6075,7 @@ export default function App() {
   };
 
   const toggleChip=(arr,setter,val)=>setter(prev=>prev.includes(val)?prev.filter(x=>x!==val):[...prev,val]);
-  const activeFilters=[typeFilter!=="All Types"?typeFilter:null,...needsFilter,ageFilter,freeOnly?"f":null,verifiedOnly?"v":null,...accessFilter,...fundingFilter,...supportFilter,...daysFilter,weekendOnly?"we":null,holidayOnly?"hol":null,(userLoc&&distRadius)?`${distRadius}mi`:null,userLoc?"loc":null].filter(Boolean).length;
+  const activeFilters=[typeFilter!=="All Types"?typeFilter:null,...needsFilter,ageFilter,freeOnly?"f":null,verifiedOnly?"v":null,...accessFilter,...fundingFilter,...supportFilter,...daysFilter,weekendOnly?"we":null,holidayOnly?"hol":null,xmasOnly?"xmas":null,(userLoc&&distRadius)?`${distRadius}mi`:null,userLoc?"loc":null].filter(Boolean).length;
   const currentFilters={type:typeFilter,needs:needsFilter,age:ageFilter,freeOnly,verifiedOnly,access:accessFilter,days:daysFilter,weekendOnly,holidayOnly,distRadius,locLabel};
 
   const activitiesWithDist=useMemo(()=>activities.map(a=>({...a,dist:(userLoc&&a.lat&&a.lng)?haversine(userLoc.lat,userLoc.lng,a.lat,a.lng):null})),[activities,userLoc]);
@@ -6110,6 +6104,7 @@ export default function App() {
     if(daysFilter.length&&!daysFilter.some(d=>(a.days||[]).includes(d)))return false;
     if(weekendOnly&&!(a.days||[]).some(d=>["Saturday","Sunday"].includes(d)))return false;
     if(holidayOnly&&!isHolidayClub(a))return false;
+    if(xmasOnly&&a.seasonal!=="christmas-2026")return false;
     if(locActive){const cap=distRadius||1609;if(a.dist==null)return false;if(a.dist>cap*1.60934)return false;}
     return true;
     }).sort((a,b)=>{
@@ -6174,7 +6169,7 @@ export default function App() {
       }
     }
     return result;
-  },[activitiesWithDist,search,typeFilter,therapyCategoryFilter,needsFilter,ageFilter,freeOnly,fundingFilter,supportFilter,verifiedOnly,accessFilter,daysFilter,weekendOnly,holidayOnly,distRadius,userLoc,sectionTab,user]);
+  },[activitiesWithDist,search,typeFilter,therapyCategoryFilter,needsFilter,ageFilter,freeOnly,fundingFilter,supportFilter,verifiedOnly,accessFilter,daysFilter,weekendOnly,holidayOnly,xmasOnly,distRadius,userLoc,sectionTab,user]);
 
   const clearFilters=()=>{setSearch("");setTypeFilter("All Types");setTherapyCategoryFilter("All");setNeedsFilter([]);setAgeFilter("");setFreeOnly(false);setFundingFilter([]);setSupportFilter([]);setVerifiedOnly(false);setAccessFilter([]);setDaysFilter([]);setWeekendOnly(false);setHolidayOnly(false);setUserLoc(null);setLocLabel("");setLocInput("");setLocError("");setDistRadius(null);};
   const selectedDist=selected&&userLoc&&selected.lat?haversine(userLoc.lat,userLoc.lng,selected.lat,selected.lng):null;
@@ -6625,6 +6620,7 @@ export default function App() {
           <style>{`.qf-bar::-webkit-scrollbar{display:none}`}</style>
           <button onClick={()=>setTypeFilter("All Types")} style={{flexShrink:0,padding:"6px 16px",borderRadius:6,border:`1px solid ${typeFilter==="All Types"?C.brand:C.slate200}`,background:typeFilter==="All Types"?C.brand:C.white,color:typeFilter==="All Types"?C.white:C.slate600,fontSize:12,fontWeight:typeFilter==="All Types"?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>All</button>
           <button onClick={()=>{setHolidayOnly(v=>!v);if(!holidayOnly)setWeekendOnly(false);}} style={{flexShrink:0,display:"flex",alignItems:"center",gap:5,padding:"5px 14px",borderRadius:6,border:`1px solid ${holidayOnly?"#6D28D9":C.slate200}`,background:holidayOnly?"#6D28D9":C.white,color:holidayOnly?C.white:"#6D28D9",fontSize:12,fontWeight:holidayOnly?600:500,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>🏖️ Holiday Clubs</button>
+          {todayISO()<=XMAS_UNTIL&&activitiesWithDist.some(a=>a.seasonal==="christmas-2026")&&<button onClick={()=>setXmasOnly(v=>!v)} style={{flexShrink:0,padding:"5px 14px",borderRadius:6,border:`1px solid ${xmasOnly?C.brand:C.slate200}`,background:xmasOnly?C.brand:C.white,color:xmasOnly?C.white:C.brand,fontSize:12,fontWeight:xmasOnly?600:500,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>Christmas</button>}
           {Object.entries(typeConfig).filter(([type])=>activitiesWithDist.some(a=>a.type===type)).map(([type,tc])=>{
             const active=typeFilter===type;
             return(<button key={type} onClick={()=>setTypeFilter(active?"All Types":type)} style={{flexShrink:0,padding:"5px 14px",borderRadius:6,border:`1px solid ${active?tc.col:C.slate200}`,background:active?tc.bg:C.white,color:active?tc.col:C.slate500,fontSize:12,fontWeight:active?600:400,cursor:"pointer",transition:"all 0.15s",whiteSpace:"nowrap"}}>{type}</button>);
