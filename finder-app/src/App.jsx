@@ -5120,12 +5120,11 @@ const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
       </div>
       <div ref={ref} onScroll={onScroll} className="evt-scroll" style={{display:"flex",gap:12,overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",paddingBottom:2}}>
         <style>{`.evt-scroll::-webkit-scrollbar{display:none}`}</style>
-        {items.map(it=>{const m=PROMOS[it.kind];const href=it.kind==="xmas"?it.href:m.href("finder_banner_"+it.kind);return(
+        {items.map((it,ix)=>{const m=PROMOS[it.kind];const href=it.kind==="xmas"?it.href:m.href("finder_banner_"+it.kind);return(
           <a key={it.id} href={href} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
             <div style={{display:"flex",alignItems:"stretch",background:C.white,border:`1px solid ${C.slate200}`,borderRadius:14,boxShadow:"0 4px 14px rgba(40,33,22,0.08)",overflow:"hidden",height:"100%"}}>
-              <div style={{width:96,flexShrink:0,background:m?m.bg:C.brand,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                {m?<img src={m.logo} alt="" width="52" height="52" style={{borderRadius:14}}/>
-                :<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeOpacity=".9" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9.5 3.8 12 6l2.5-2.2M9.5 20.2 12 18l2.5 2.2"/></svg>}
+              <div style={{width:96,flexShrink:0,background:m?m.bg:`url(./xmas/x${(ix%5)+1}.jpg) center/cover ${C.brand}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                {m?<img src={m.logo} alt="" width="52" height="52" style={{borderRadius:14}}/>:null}
               </div>
               <div style={{flex:1,minWidth:0,padding:"12px 14px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
                 <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
