@@ -5096,7 +5096,7 @@ const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
       x=acts.filter(a=>a.seasonal==="christmas-2026"&&a.status!=="hidden"&&a.status!=="removed");
       const o=userLoc||{lat:51.236,lng:-0.570}; // no location set: default to Surrey (Guildford) so far-away events don't lead
       x.sort((a,b)=>haversine(o.lat,o.lng,a.lat,a.lng)-haversine(o.lat,o.lng,b.lat,b.lng));
-      x=x.map(a=>({id:a.id,kind:"xmas",tag:"CHRISTMAS",title:a.name,blurb:(a.accessibility||[]).filter(t=>/Relaxed|Audio|BSL|Quiet|Low-arousal/.test(t)).join(" · "),cta:"Dates and booking ↗",sub:a.location,href:a.website}));
+      x=x.map(a=>({id:a.id,n:(parseInt(String(a.id).replace(/\D/g,""),10)-1)%24+1,kind:"xmas",tag:"CHRISTMAS",title:a.name,blurb:(a.accessibility||[]).filter(t=>/Relaxed|Audio|BSL|Quiet|Low-arousal/.test(t)).join(" · "),cta:"Dates and booking ↗",sub:a.location,href:a.website}));
     }
     const out=[];let p=0;
     x.forEach((e,i)=>{out.push(e);if((i===3||i===9)&&promos[p])out.push(promos[p++]);});
@@ -5117,7 +5117,7 @@ const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
         {items.map((it,ix)=>{const m=PROMOS[it.kind];const href=it.kind==="xmas"?it.href:m.href("finder_banner_"+it.kind);return(
           <a key={it.id} href={href} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
             <div style={{display:"flex",alignItems:"stretch",background:C.white,border:`1px solid ${C.slate200}`,borderRadius:14,boxShadow:"0 4px 14px rgba(40,33,22,0.08)",overflow:"hidden",height:"100%"}}>
-              <div style={{width:96,flexShrink:0,background:m?m.bg:`url(./xmas/x${(ix%5)+1}.jpg) center/cover ${C.brand}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <div style={{width:96,flexShrink:0,background:m?m.bg:`url(./xmas/x${it.n}.jpg) center/cover ${C.brand}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
                 {m?<img src={m.logo} alt="" width="52" height="52" style={{borderRadius:14}}/>:null}
               </div>
               <div style={{flex:1,minWidth:0,padding:"12px 14px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
