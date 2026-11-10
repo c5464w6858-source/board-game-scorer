@@ -5122,6 +5122,56 @@ const MoreFromCarousel=()=>{
   );
 };
 
+// Christmas rotation: relaxed / low-sensory / audio-described festive events, auto-advances, nearest first.
+// Shown until XMAS_UNTIL, so it retires itself after the season.
+const XMAS_UNTIL="2027-01-04";
+const XmasCarousel=({acts,userLoc})=>{
+  const ref=useRef(null);
+  const [active,setActive]=useState(0);
+  const paused=useRef(false);
+  const list=useMemo(()=>{
+    const l=acts.filter(a=>a.seasonal==="christmas-2026"&&a.status!=="hidden"&&a.status!=="removed");
+    if(userLoc)l.sort((a,b)=>haversine(userLoc.lat,userLoc.lng,a.lat,a.lng)-haversine(userLoc.lat,userLoc.lng,b.lat,b.lng));
+    return l;
+  },[acts,userLoc]);
+  const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.scrollTo({left:el.children[i].offsetLeft-el.offsetLeft,behavior:"smooth"});};
+  useEffect(()=>{
+    if(list.length<2)return;
+    const t=setInterval(()=>{if(paused.current)return;setActive(a=>{const n=(a+1)%list.length;go(n);return n;});},5500);
+    return()=>clearInterval(t);
+  },[list.length]);
+  if(todayISO()>XMAS_UNTIL||!list.length)return null;
+  const onScroll=()=>{const el=ref.current;if(!el||!el.firstChild)return;setActive(Math.round(el.scrollLeft/(el.firstChild.getBoundingClientRect().width+12)));};
+  const pause=()=>{paused.current=true;setTimeout(()=>{paused.current=false;},12000);};
+  return(
+    <div style={{marginBottom:14}} onTouchStart={pause} onMouseDown={pause}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"0 2px 7px"}}>🎄 Christmas: relaxed and low-sensory</div>
+      <div ref={ref} onScroll={onScroll} className="evt-scroll" style={{display:"flex",gap:12,overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",paddingBottom:2,position:"relative"}}>
+        <style>{`.evt-scroll::-webkit-scrollbar{display:none}`}</style>
+        {list.map(a=>(
+          <a key={a.id} href={a.website} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
+            <div style={{display:"flex",alignItems:"stretch",background:C.white,border:`1px solid ${C.slate200}`,borderRadius:14,boxShadow:"0 4px 14px rgba(40,33,22,0.08)",overflow:"hidden",height:"100%"}}>
+              <div style={{width:74,flexShrink:0,background:"linear-gradient(135deg,#B3261E,#0F6B5C)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30}}>🎄</div>
+              <div style={{flex:1,minWidth:0,padding:"12px 14px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
+                  <span style={{fontSize:9,fontWeight:800,letterSpacing:"0.08em",color:"#B3261E",background:"#FDECEA",borderRadius:5,padding:"2px 7px"}}>CHRISTMAS</span>
+                  <span style={{fontSize:11,color:C.slate400,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>📍 {a.location}</span>
+                </div>
+                <div style={{color:C.slate900,fontWeight:700,fontSize:14.5,lineHeight:1.25,marginBottom:3}}>{a.name}</div>
+                <div style={{color:C.slate500,fontSize:12,lineHeight:1.4,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{(a.accessibility||[]).filter(x=>/Relaxed|Audio|BSL|Quiet|Low-arousal/.test(x)).join(" · ")}{a.time?` · ${a.time}`:""}</div>
+                <div style={{marginTop:7,color:C.brand,fontSize:12,fontWeight:700}}>Dates and booking ↗</div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:9,flexWrap:"wrap"}}>
+        {list.map((a,i)=>(<button key={a.id} onClick={()=>{setActive(i);go(i);}} aria-label={`Show ${a.name}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>))}
+      </div>
+    </div>
+  );
+};
+
 const EventCarousel=({events})=>{
   const ref=useRef(null);
   const [active,setActive]=useState(0);
@@ -6717,7 +6767,10 @@ export default function App() {
           {sectionTab==="activities"&&(()=>{
             const R=(distRadius||40)*1.60934;
             const inArea=EVENTS.filter(e=>!userLoc||(e.lat!=null&&haversine(userLoc.lat,userLoc.lng,e.lat,e.lng)<=R));
-            return (PROMO_REPLACES_EVENTS&&user&&user.accountType==="individual")?<MoreFromCarousel/>:<EventCarousel events={inArea}/>;
+            return (<>
+              <XmasCarousel acts={activities} userLoc={userLoc}/>
+              {(PROMO_REPLACES_EVENTS&&user&&user.accountType==="individual")?<MoreFromCarousel/>:<EventCarousel events={inArea}/>}
+            </>);
           })()}
           {/* ── Holiday banner (#4) — only within 30 days of a school holiday ── */}
           {sectionTab==="activities"&&(()=>{
