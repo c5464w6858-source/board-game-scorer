@@ -580,6 +580,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
             <hr>
             <a class="mi app app-finder" href="https://includeme.uk/" rel="noopener"><img src="app-finder.png" alt="" width="32" height="32"><span><b>Activity Finder</b><small>Find inclusive activities near you</small></span></a>
             <a class="mi app app-ehcp" href="https://info.includeme.uk/advocate/?utm_campaign=passport_menu" rel="noopener"><img src="app-ehcp.png" alt="" width="32" height="32"><span><b>EHCP Tracker</b><small>Keep an EHCP case in one place</small></span></a>
+            <button type="button" class="mi danger" id="miDelete">Delete my account</button>
             <button type="button" class="mi danger" id="miSignOut">Sign out</button>
           </div>
         </div>
@@ -1583,7 +1584,7 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     var agree = el("button", { type: "button", class: "btn btn-main", text: "I agree, read my letters" }), no = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
     agree.addEventListener("click", function () { patchPrefs({ consent: true }); go(); }); no.addEventListener("click", function () { showTray(); });
     scanDlg([el("h2", { text: "Before we read your letters" }),
-      el("p", { text: "To read them, each photo is sent to us and read by an AI service. The photos are not saved, not shared and not used for anything else: they are deleted as soon as they have been read. A copy is kept on this phone only, if you choose to." }),
+      el("p", { text: "To read them, each photo is sent to us and read by an AI service run by Anthropic. The photos are not saved, not shared and not used for anything else: they are deleted as soon as they have been read. A copy is kept on this phone only, if you choose to." }),
       el("p", { class: "note", text: "This is the one thing in Child Organiser that leaves your phone, and only when you choose to scan. You check everything it found before anything is saved. If you would rather not, add things by hand." }),
       el("div", { class: "actions", style: "justify-content:flex-end" }, [no, agree])]);
   }
@@ -2650,6 +2651,52 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     nodes.push(el("div", { class: "actions", style: "flex-wrap:wrap;gap:8px;justify-content:flex-end" }, row));
     scanDlg(nodes);
   }
+  /* ---------- delete my account (Apple 5.1.1(v), Google Play account deletion) ---------- */
+  function deleteAccountDialog() {
+    var s = getSession(), email = s && s.email ? s.email : "your account";
+    var nodes = [el("h2", { text: "Delete my account" })];
+    nodes.push(el("p", { text: "This permanently deletes the IncludeMe account for " + email + ". It cannot be undone." }));
+    nodes.push(el("p", { class: "note", text: "The same account is used by the Activity Finder, so you will also lose your Finder login, saved activities and email updates." }));
+    nodes.push(el("ul", { class: "note", style: "margin:6px 0 10px 18px" }, [
+      el("li", { text: "Deleted: your sign-in, the private copy and documents we hold for you (if you turned that on), reminders, and your Finder saved items and email updates." }),
+      el("li", { text: "Not deleted unless you tick the box below: the passports and documents saved on this phone." }),
+      el("li", { text: "Not affected: backup files you downloaded, and links or printouts you shared. Anyone who has a share link may still be able to open it until you stop sharing." })]));
+    var wipe = el("input", { type: "checkbox", id: "delWipe" });
+    nodes.push(el("label", { style: "display:flex;gap:8px;align-items:flex-start;margin:8px 0" }, [wipe, el("span", { text: "Also delete the passports and documents on this phone" })]));
+    var typed = el("input", { type: "text", id: "delType", autocomplete: "off", autocapitalize: "characters", "aria-label": "Type DELETE to confirm", placeholder: "Type DELETE to confirm", style: "width:100%;margin:6px 0 10px;padding:10px;border:1px solid var(--line-2);border-radius:10px;font:inherit" });
+    nodes.push(typed);
+    var status = el("p", { class: "status", role: "status" });
+    var go = el("button", { type: "button", class: "btn btn-danger", text: "Delete my account" });
+    go.disabled = true;
+    typed.addEventListener("input", function () { go.disabled = typed.value.trim().toUpperCase() !== "DELETE"; });
+    var cancel = el("button", { type: "button", class: "btn btn-ghost", text: "Cancel" });
+    cancel.addEventListener("click", scanClose);
+    go.addEventListener("click", function () {
+      go.disabled = true; cancel.disabled = true; status.textContent = "Deleting...";
+      checkAuth().then(function (ok) {
+        var sess = getSession(); if (!ok || !sess) { var e = new Error("Please sign in again first, then delete your account."); throw e; }
+        // 1. remove what we hold on our server for this account (private copy, documents, reminders)
+        return api("/api/diary/vault", { method: "PUT", body: { consent: true, data: { profiles: [], deleted: {} } } }).catch(function (e) { if (e && e.status !== 404) throw e; })
+          .then(function () { return api("/api/diary/data", { method: "DELETE" }); })
+          // 2. delete the account itself (the person's own identity only)
+          .then(function () { return sbFetch("/rest/v1/rpc/delete_my_account", { token: sess.access_token, body: {} }); });
+      }).then(function () {
+        var doWipe = wipe.checked;
+        setSession(null);
+        try { localStorage.removeItem("includeme.passport.joined"); } catch (e) { /* storage blocked */ }
+        patchPrefs({ cloud: false, docs: false, email: false, push: false, synced: false });
+        var tail = Promise.resolve();
+        if (doWipe) { tail = new Promise(function (res) { try { localStorage.removeItem(KEY); if (window.indexedDB) { var r = indexedDB.deleteDatabase("includeme-passport"); r.onsuccess = r.onerror = r.onblocked = function () { res(); }; } else res(); } catch (e) { res(); } }); }
+        return tail.then(function () {
+          scanClose(); closeMenus();
+          if (doWipe) { location.reload(); return; }
+          showGate("Your account has been deleted. The passports on this phone are still saved here.", false);
+        });
+      }).catch(function (e) { status.textContent = (e && e.message) || "Could not delete just now. Check your signal and try again, or email hello@includeme.uk."; status.className = "status err"; cancel.disabled = false; go.disabled = typed.value.trim().toUpperCase() !== "DELETE"; });
+    });
+    nodes.push(status, el("div", { class: "row", style: "display:flex;gap:8px;flex-wrap:wrap" }, [go, cancel]));
+    scanDlg(nodes);
+  }
   function cloudStart() {
     var pf = prefs();
     if (!pf.cloudAsked) { setTimeout(function () { if (!$("gate").hidden) return; var d = $("dlgScan"), after = function () { d.removeEventListener("close", after); setTimeout(function () { if (!pulling && !named().length) openChildDialog(); }, 50); }; d.addEventListener("close", after); cloudDialog(true); }, 900); return; }
@@ -2789,10 +2836,11 @@ details.appt > .apbody { display: grid; gap: 10px; padding: 0 14px 14px; border-
     $("miLoad").addEventListener("click", function () { closeMenus(); $("upload").click(); });
     $("miSave").addEventListener("click", function () { closeMenus(); if (installEvt && !isInstalled()) { var ev = installEvt; ev.prompt(); ev.userChoice.finally(function () { installEvt = null; deferred = null; updateInstall(); $("miInstall").hidden = true; }); } else installHelp(); });
     $("miCloud").addEventListener("click", function () { closeMenus(); cloudDialog(false); });
+    $("miDelete").addEventListener("click", function () { closeMenus(); deleteAccountDialog(); });
     $("miUpdate").addEventListener("click", function () { closeMenus(); checkVersion(true); });
     $("miInstall").addEventListener("click", function () { if (!deferred) return; deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; $("miInstall").hidden = true; }); });
     /* tell people when a newer version has been published, since an open tab keeps the old page */
-    var APP_VERSION = "2026-11-07.42", lastCheck = 0;
+    var APP_VERSION = "2026-11-10.43", lastCheck = 0;
     $("ver").textContent = "Version " + APP_VERSION;
     function forceUpdate() {
       var done = function () { location.reload(); };
