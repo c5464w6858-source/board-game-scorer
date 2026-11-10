@@ -5095,7 +5095,8 @@ const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
     let x=[];
     if(todayISO()<=XMAS_UNTIL){
       x=acts.filter(a=>a.seasonal==="christmas-2026"&&a.status!=="hidden"&&a.status!=="removed");
-      if(userLoc)x.sort((a,b)=>haversine(userLoc.lat,userLoc.lng,a.lat,a.lng)-haversine(userLoc.lat,userLoc.lng,b.lat,b.lng));
+      const o=userLoc||{lat:51.236,lng:-0.570}; // no location set: default to Surrey (Guildford) so far-away events don't lead
+      x.sort((a,b)=>haversine(o.lat,o.lng,a.lat,a.lng)-haversine(o.lat,o.lng,b.lat,b.lng));
       x=x.map(a=>({id:a.id,kind:"xmas",tag:"CHRISTMAS",title:a.name,blurb:(a.accessibility||[]).filter(t=>/Relaxed|Audio|BSL|Quiet|Low-arousal/.test(t)).join(" · "),cta:"Dates and booking ↗",sub:a.location,href:a.website}));
     }
     const out=[];let p=0;
