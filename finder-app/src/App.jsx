@@ -5081,92 +5081,63 @@ const EventThumb=({img,emoji})=>{
 // For now, the banner at the top of the Activities list shows our own apps instead of local events (families only).
 // Set to false to bring the events banner back.
 const PROMO_REPLACES_EVENTS=true;
-const MoreFromCarousel=()=>{
+const XMAS_UNTIL="2027-01-04";
+// One banner: our apps plus (until early January) relaxed and low-sensory Christmas events, nearest first.
+const MoreFromCarousel=({acts=[],userLoc,showPromos=true})=>{
   const ref=useRef(null);
+  const paused=useRef(false);
   const [active,setActive]=useState(0);
-  const items=[
-    {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"EHCP Tracker keeps every deadline, report, call and letter in one place, then your plan and every yearly review. See what it does and how it works.",cta:"Find out more ↗"},
-    {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"Child Organiser",blurb:"Photograph or upload a letter or report and it is filed for you, with a one-page profile for your child. Free, and it uses your Finder login.",cta:"Find out more ↗"},
-  ];
-  const onScroll=()=>{const el=ref.current;if(!el)return;const w=el.firstChild?el.firstChild.getBoundingClientRect().width+12:el.clientWidth;setActive(Math.round(el.scrollLeft/w));};
-  const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.children[i].scrollIntoView({behavior:"smooth",inline:"start",block:"nearest"});};
+  const items=useMemo(()=>{
+    const promos=showPromos?[
+      {id:"ehcp",kind:"ehcp",tag:"NEW",tagBg:"#E3B94E",tagInk:"#17214D",title:"Going through an EHCP?",blurb:"EHCP Tracker keeps every deadline, report, call and letter in one place, then your plan and every yearly review.",cta:"Find out more ↗",sub:"A separate app"},
+      {id:"pp",kind:"pp",tag:"FREE",tagBg:"#FF8A5B",tagInk:"#1B1530",title:"Child Organiser",blurb:"Photograph or upload a letter or report and it is filed for you, with a one-page profile for your child. Free.",cta:"Find out more ↗",sub:"A separate app"},
+    ]:[];
+    let x=[];
+    if(todayISO()<=XMAS_UNTIL){
+      x=acts.filter(a=>a.seasonal==="christmas-2026"&&a.status!=="hidden"&&a.status!=="removed");
+      if(userLoc)x.sort((a,b)=>haversine(userLoc.lat,userLoc.lng,a.lat,a.lng)-haversine(userLoc.lat,userLoc.lng,b.lat,b.lng));
+      x=x.map(a=>({id:a.id,kind:"xmas",tag:"CHRISTMAS",title:a.name,blurb:(a.accessibility||[]).filter(t=>/Relaxed|Audio|BSL|Quiet|Low-arousal/.test(t)).join(" · "),cta:"Dates and booking ↗",sub:a.location,href:a.website}));
+    }
+    const out=[];let p=0;
+    x.forEach((e,i)=>{out.push(e);if((i===3||i===9)&&promos[p])out.push(promos[p++]);});
+    while(p<promos.length)out.push(promos[p++]);
+    return out;
+  },[acts,userLoc,showPromos]);
+  const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.scrollTo({left:el.children[i].offsetLeft-el.offsetLeft,behavior:"smooth"});};
+  useEffect(()=>{
+    if(items.length<3)return;
+    const t=setInterval(()=>{if(paused.current)return;setActive(a=>{const n=(a+1)%items.length;go(n);return n;});},6000);
+    return()=>clearInterval(t);
+  },[items.length]);
+  if(!items.length)return null;
+  const onScroll=()=>{const el=ref.current;if(!el||!el.firstChild)return;setActive(Math.round(el.scrollLeft/(el.firstChild.getBoundingClientRect().width+12)));};
+  const pause=()=>{paused.current=true;setTimeout(()=>{paused.current=false;},15000);};
   return(
-    <div style={{marginBottom:14}}>
-      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"0 2px 7px"}}>More from IncludeMe</div>
+    <div style={{marginBottom:14}} onTouchStart={pause} onMouseDown={pause}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",margin:"0 2px 7px"}}>
+        <span style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400}}>More from IncludeMe</span>
+        {items.length>1&&<span style={{fontSize:11,fontWeight:600,color:C.slate400}}>{Math.min(active+1,items.length)} of {items.length}</span>}
+      </div>
       <div ref={ref} onScroll={onScroll} className="evt-scroll" style={{display:"flex",gap:12,overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",paddingBottom:2}}>
         <style>{`.evt-scroll::-webkit-scrollbar{display:none}`}</style>
-        {items.map(it=>{const m=PROMOS[it.kind];return(
-          <a key={it.id} href={m.href("finder_banner_"+it.kind)} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
+        {items.map(it=>{const m=PROMOS[it.kind];const href=it.kind==="xmas"?it.href:m.href("finder_banner_"+it.kind);return(
+          <a key={it.id} href={href} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
             <div style={{display:"flex",alignItems:"stretch",background:C.white,border:`1px solid ${C.slate200}`,borderRadius:14,boxShadow:"0 4px 14px rgba(40,33,22,0.08)",overflow:"hidden",height:"100%"}}>
-              <div style={{width:96,flexShrink:0,background:m.bg,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <img src={m.logo} alt="" width="52" height="52" style={{borderRadius:14}}/>
+              <div style={{width:96,flexShrink:0,background:m?m.bg:C.brand,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                {m?<img src={m.logo} alt="" width="52" height="52" style={{borderRadius:14}}/>
+                :<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeOpacity=".9" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9.5 3.8 12 6l2.5-2.2M9.5 20.2 12 18l2.5 2.2"/></svg>}
               </div>
               <div style={{flex:1,minWidth:0,padding:"12px 14px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
                 <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
-                  <span style={{fontSize:9,fontWeight:800,letterSpacing:"0.08em",color:it.tagInk,background:it.tagBg,borderRadius:5,padding:"2px 7px"}}>{it.tag}</span>
-                  <span style={{fontSize:11,color:C.slate400,fontWeight:600,whiteSpace:"nowrap"}}>A separate app</span>
+                  <span style={{fontSize:9,fontWeight:800,letterSpacing:"0.08em",color:it.tagInk||C.brand,background:it.tagBg||C.brandLt,borderRadius:5,padding:"2px 7px"}}>{it.tag}</span>
+                  <span style={{fontSize:11,color:C.slate400,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{it.sub}</span>
                 </div>
-                <div style={{color:C.slate900,fontWeight:700,fontSize:14.5,lineHeight:1.25,marginBottom:3}}>{it.title}</div>
+                <div style={{color:C.slate900,fontWeight:700,fontSize:14.5,lineHeight:1.25,marginBottom:3,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{it.title}</div>
                 <div style={{color:C.slate500,fontSize:12,lineHeight:1.4,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{it.blurb}</div>
                 <div style={{marginTop:7,color:C.brand,fontSize:12,fontWeight:700}}>{it.cta}</div>
               </div>
             </div>
           </a>);})}
-      </div>
-      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:9}}>
-        {items.map((it,i)=>(
-          <button key={it.id} onClick={()=>go(i)} aria-label={`Show ${it.kind==="ehcp"?"EHCP Tracker":"Child Organiser"}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Christmas rotation: relaxed / low-sensory / audio-described festive events, auto-advances, nearest first.
-// Shown until XMAS_UNTIL, so it retires itself after the season.
-const XMAS_UNTIL="2027-01-04";
-const XmasCarousel=({acts,userLoc})=>{
-  const ref=useRef(null);
-  const [active,setActive]=useState(0);
-  const paused=useRef(false);
-  const list=useMemo(()=>{
-    const l=acts.filter(a=>a.seasonal==="christmas-2026"&&a.status!=="hidden"&&a.status!=="removed");
-    if(userLoc)l.sort((a,b)=>haversine(userLoc.lat,userLoc.lng,a.lat,a.lng)-haversine(userLoc.lat,userLoc.lng,b.lat,b.lng));
-    return l;
-  },[acts,userLoc]);
-  const go=i=>{const el=ref.current;if(!el||!el.children[i])return;el.scrollTo({left:el.children[i].offsetLeft-el.offsetLeft,behavior:"smooth"});};
-  useEffect(()=>{
-    if(list.length<2)return;
-    const t=setInterval(()=>{if(paused.current)return;setActive(a=>{const n=(a+1)%list.length;go(n);return n;});},5500);
-    return()=>clearInterval(t);
-  },[list.length]);
-  if(todayISO()>XMAS_UNTIL||!list.length)return null;
-  const onScroll=()=>{const el=ref.current;if(!el||!el.firstChild)return;setActive(Math.round(el.scrollLeft/(el.firstChild.getBoundingClientRect().width+12)));};
-  const pause=()=>{paused.current=true;setTimeout(()=>{paused.current=false;},12000);};
-  return(
-    <div style={{marginBottom:14}} onTouchStart={pause} onMouseDown={pause}>
-      <div style={{fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:C.slate400,margin:"0 2px 7px"}}>🎄 Christmas: relaxed and low-sensory</div>
-      <div ref={ref} onScroll={onScroll} className="evt-scroll" style={{display:"flex",gap:12,overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",paddingBottom:2,position:"relative"}}>
-        <style>{`.evt-scroll::-webkit-scrollbar{display:none}`}</style>
-        {list.map(a=>(
-          <a key={a.id} href={a.website} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none",flex:"0 0 92%",scrollSnapAlign:"start"}}>
-            <div style={{display:"flex",alignItems:"stretch",background:C.white,border:`1px solid ${C.slate200}`,borderRadius:14,boxShadow:"0 4px 14px rgba(40,33,22,0.08)",overflow:"hidden",height:"100%"}}>
-              <div style={{width:74,flexShrink:0,background:"linear-gradient(135deg,#B3261E,#0F6B5C)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30}}>🎄</div>
-              <div style={{flex:1,minWidth:0,padding:"12px 14px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
-                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
-                  <span style={{fontSize:9,fontWeight:800,letterSpacing:"0.08em",color:"#B3261E",background:"#FDECEA",borderRadius:5,padding:"2px 7px"}}>CHRISTMAS</span>
-                  <span style={{fontSize:11,color:C.slate400,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>📍 {a.location}</span>
-                </div>
-                <div style={{color:C.slate900,fontWeight:700,fontSize:14.5,lineHeight:1.25,marginBottom:3}}>{a.name}</div>
-                <div style={{color:C.slate500,fontSize:12,lineHeight:1.4,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{(a.accessibility||[]).filter(x=>/Relaxed|Audio|BSL|Quiet|Low-arousal/.test(x)).join(" · ")}{a.time?` · ${a.time}`:""}</div>
-                <div style={{marginTop:7,color:C.brand,fontSize:12,fontWeight:700}}>Dates and booking ↗</div>
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
-      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:9,flexWrap:"wrap"}}>
-        {list.map((a,i)=>(<button key={a.id} onClick={()=>{setActive(i);go(i);}} aria-label={`Show ${a.name}`} style={{width:active===i?18:7,height:7,borderRadius:99,border:"none",padding:0,cursor:"pointer",background:active===i?C.brand:C.slate300,transition:"all 0.2s"}}/>))}
       </div>
     </div>
   );
@@ -6767,9 +6738,10 @@ export default function App() {
           {sectionTab==="activities"&&(()=>{
             const R=(distRadius||40)*1.60934;
             const inArea=EVENTS.filter(e=>!userLoc||(e.lat!=null&&haversine(userLoc.lat,userLoc.lng,e.lat,e.lng)<=R));
+            const promos=PROMO_REPLACES_EVENTS&&user&&user.accountType==="individual";
             return (<>
-              <XmasCarousel acts={activities} userLoc={userLoc}/>
-              {(PROMO_REPLACES_EVENTS&&user&&user.accountType==="individual")?<MoreFromCarousel/>:<EventCarousel events={inArea}/>}
+              <MoreFromCarousel acts={activities} userLoc={userLoc} showPromos={promos}/>
+              {!promos&&<EventCarousel events={inArea}/>}
             </>);
           })()}
           {/* ── Holiday banner (#4) — only within 30 days of a school holiday ── */}
