@@ -95,3 +95,14 @@ Risk: **medium**. The bundle is a PWA, which reviewers may see as a repackaged w
 - **Android backup:** I set `allowBackup=false` and excluded everything in `data_extraction_rules.xml` so a child's data does not go into Google cloud backups.
 - **External links** (Google Calendar, Outlook, WhatsApp, support) open outside the webview in the system browser on both platforms by default in Capacitor; not verified on a device.
 - **`<input type=file>` capture:** see README, section "What I could not test".
+
+---
+
+## Update, 10 Nov 2026: what has been fixed since this review
+
+- **Account deletion (5.1.1(v)):** done. "Delete my account" is in the account menu. It clears the server copy, then calls the database function `delete_my_account()` (tested on a throwaway account, rolled back), then signs out and optionally wipes local data. Public page for Google Play: https://includeme.uk/delete-account.html
+- **Scan consent** now names Anthropic.
+- **CORS** for the native origins is live on the diary and app endpoints.
+- **Capacitor 8 / Android API 36:** done.
+- **Download and print handling in the shim:** done (print shows a message).
+- **Still open (needs you):** privacy policy wording (see `launch/ORGANISER_PRIVACY_CHANGES.md`), whether to allow use without an account (Apple 4.2 / 5.1.1 risk), a pre-confirmed reviewer demo account, store accounts, upload key and signing, real-device testing, and the store forms.

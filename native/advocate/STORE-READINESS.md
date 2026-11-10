@@ -144,3 +144,11 @@ These would be noticed by reviewers and by users. I could not test any of them: 
 - iOS Info.plist: NSCameraUsageDescription, NSPhotoLibraryUsageDescription, ITSAppUsesNonExemptEncryption = false (HTTPS only). No microphone, location or tracking keys.
 - Android target SDK is 34 (Capacitor 6 default). Google Play requires new apps and updates to target a recent API level (35 or higher at the time of my knowledge, and the requirement moves each year; check the current Play Console message). If Play rejects 34, upgrade to Capacitor 7 or later, which targets a newer API.
 - CORS is prepared in the website repo but NOT deployed. The app cannot sign in or load its config until it is deployed (see README).
+
+---
+
+## Update, 10 Nov 2026
+
+- **CORS** for the native origins is live on the app's endpoints.
+- **Capacitor 8 / Android API 36:** done. **Downloads** (calendar export, backup) now go through the share sheet, and printing shows a message instead of failing silently.
+- **Still open (needs you):** the payments decision (IAP via RevenueCat, or free-in-app with purchases only on the web), a reviewer access plan (sign-in is by emailed code), store accounts, upload key and signing, real-device testing, privacy policy wording for the apps, a web account-deletion URL (the shared page https://includeme.uk/delete-account.html now covers the EHCP Tracker too), and the store forms.

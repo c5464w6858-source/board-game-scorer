@@ -76,7 +76,7 @@
  {
   "name": "blob download -> Filesystem.writeFile then Share.share",
   "pass": true,
-  "extra": "StatusBar.setStyle,StatusBar.setBg,App.addListener,Filesystem.writeFile,Share.share"
+  "extra": "StatusBar.setStyle,StatusBar.setBg,App.addListener,Filesystem.writeFile,Share.share,Filesystem.writeFile,Share.share"
  },
  {
   "name": "share link https://localhost/#p=.. rewritten to live web app",

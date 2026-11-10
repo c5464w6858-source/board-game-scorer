@@ -119,5 +119,44 @@
     };
   } catch (e) { /* ignore */ }
 
+
+  /* 7. downloads (backups, calendar files, documents): webviews ignore blob downloads. Write the file to the cache folder,
+        then hand it to the system share sheet (Save to Files, Drive, email...). */
+  try {
+    var _fs = P("Filesystem"), _sh = P("Share");
+    if (_fs && _sh) {
+      var _ext = function (t) { return /pdf/.test(t) ? ".pdf" : /jpeg|jpg/.test(t) ? ".jpg" : /png/.test(t) ? ".png" : /json/.test(t) ? ".json" : /calendar/.test(t) ? ".ics" : ""; };
+      var _realFetch = window.__nativeRealFetch || window.fetch.bind(window);
+      var _shareBlob = function (href, name) {
+        return _realFetch(href).then(function (r) { return r.blob(); }).then(function (b) {
+          return new Promise(function (res, rej) { var fr = new FileReader(); fr.onload = function () { res({ b: b, data: String(fr.result).split(",")[1] || "" }); }; fr.onerror = rej; fr.readAsDataURL(b); });
+        }).then(function (o) {
+          var fn = (name || "document").replace(/[^\w.\- ]+/g, "_"); if (!/\.\w{2,5}$/.test(fn)) fn += _ext(o.b.type);
+          return _fs.writeFile({ path: fn, data: o.data, directory: "CACHE" }).then(function (w) { return _sh.share({ title: fn, url: w.uri }); });
+        });
+      };
+      document.addEventListener("click", function (ev) {
+        var a = ev.target && ev.target.closest ? ev.target.closest("a[href^='blob:']") : null;
+        if (!a) return;
+        ev.preventDefault(); ev.stopPropagation();
+        _shareBlob(a.href, a.getAttribute("download") || "").catch(function () { /* cancelled, or plugin missing */ });
+      }, true);
+      /* files cannot go through navigator.share in a webview: make the page fall back to its download link */
+      var _cs = navigator.canShare ? navigator.canShare.bind(navigator) : null;
+      navigator.canShare = function (d) { if (d && d.files) return false; return _cs ? _cs(d) : true; };
+    }
+  } catch (e) { /* ignore */ }
+
+  /* 8. printing does not exist in the app's webview. Say so plainly instead of doing nothing. */
+  try {
+    window.print = function () {
+      var t = document.createElement("div");
+      t.setAttribute("role", "status");
+      t.textContent = "Printing is not available in the app yet. Open includeme-passport.netlify.app in your phone's browser to print or save as a PDF.";
+      t.style.cssText = "position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));background:#1B1530;color:#fff;padding:14px 16px;border-radius:12px;font:15px/1.4 system-ui,sans-serif;z-index:2147483647;box-shadow:0 6px 24px rgba(0,0,0,.35)";
+      document.body.appendChild(t); setTimeout(function () { t.remove(); }, 6000);
+    };
+  } catch (e) { /* ignore */ }
+
   window.__organiserNativeShim = { version: 1, mapUrl: mapUrl, fixLink: fixLink };
 })();

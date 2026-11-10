@@ -94,3 +94,12 @@ Accounts and cost: Apple Developer Program, GBP 79 / USD 99 a year. Needs a Mac 
 5. Archive and upload on a Mac; test on real devices.
 6. Add a web page for requesting account deletion, update the privacy policy and terms for the apps, and answer the store forms.
 7. Provide the reviewer access (demo, or a reviewer mailbox).
+
+---
+
+## Update, 10 Nov 2026
+
+- **Capacitor 8** (was 6). Android now targets **API 36** (Android 16) with minSdk 24, so it meets Google Play's current target requirement. Rebuilt and tested: `./gradlew assembleDebug bundleRelease` from `android/`.
+- **iOS:** Capacitor 8 needs **Xcode 26 or newer** on the Mac and an iOS 15 deployment target, and adopts UIScene. The iOS project was migrated, but has still never been opened or built (no Mac here). Run `npm run sync`, then `cd ios/App && pod install` (or let Xcode resolve packages), then open it in Xcode.
+- **Downloads and printing:** the native layer now sends backups, calendar files and documents (blob downloads) through the system share sheet, and `navigator.canShare` no longer claims it can share files. `window.print()` shows a plain message ("Printing is not available in the app yet") instead of doing nothing. Real printing from inside the apps is still not built.
+- The Android SDK on this machine is at `/home/user/android-sdk` (platform 36, build-tools 36.0.0).
